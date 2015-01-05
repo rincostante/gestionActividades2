@@ -13,7 +13,16 @@
         <description>Gestiona las entidades TipoCapacitacion</description>
         <managed-bean-name>mbTipoCapacitacion</managed-bean-name>
         <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbTipoCapacitacion</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
+        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
-    
+    <managed-bean>
+        <managed-bean-name>mbModalidad</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbModalidad</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbTipoOrganismo</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbTipoOrganismo</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>

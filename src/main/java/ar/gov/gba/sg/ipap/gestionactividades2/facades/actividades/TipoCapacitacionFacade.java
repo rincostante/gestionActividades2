@@ -45,5 +45,17 @@ public class TipoCapacitacionFacade extends AbstractFacade<TipoCapacitacion> {
         result = q.getResultList();
         //em.close();
         return result;
-    }     
+    }   
+    
+    /**
+     * Método que verifica si el Tipo de Capacitación puede ser eliminado
+     * @param id: Id del Tipo de Capacitación que se desea verificar
+     * @return
+     */
+    public boolean getUtilizado(Long id){
+        em = getEntityManager();
+        String queryString = "SELECT * FROM actividadplan WHERE tipocapacitacion_id = " + id;
+        Query q = em.createNativeQuery(queryString, TipoCapacitacion.class);
+        return q.getResultList().isEmpty();
+    }
 }

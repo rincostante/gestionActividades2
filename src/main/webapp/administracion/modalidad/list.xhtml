@@ -7,43 +7,43 @@
       xmlns:p="http://primefaces.org/ui">
       
     <h:head>
-        <title>#{bundle.TipoCapacitacionTitle}</title>
+        <title>#{bundle.ModalidadTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.TipoCapacitacionTitle}" />
+            <h:outputText value="#{bundle.ModalidadTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="tipoCapForm" header="#{bundle.TipoCapacitacionListTitle}" style="margin-bottom:10px;">
+                <p:panel id="modForm" header="#{bundle.ModalidadListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="5">
-                        <p:inputText value="#{mbTipoCapacitacion.selectParam}" />
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbTipoCapacitacion.prepareSelect()}" ajax="false"/>  
+                        <p:inputText value="#{mbModalidad.selectParam}" />
+                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbModalidad.prepareSelect()}" ajax="false"/>  
                         <p:outputLabel value="&ensp;"/>
-                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTipoCapacitacion.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoCapacitacion.prepareList}" update="tipoCapList"/>
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbModalidad.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbModalidad.prepareList}" update="modList"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <br/>           
 
-                <p:dataTable value="#{mbTipoCapacitacion.items}" var="e" id="tipoCapList" rows="5"
+                <p:dataTable value="#{mbModalidad.items}" var="e" id="modList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.TipoCapListado}
+                        Listado de #{bundle.ModListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" />
-                        <p:columnToggler datasource="tipoCapList" trigger="toggler" />
+                        <p:columnToggler datasource="modList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoCapacitacion.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoCapacitacion.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoCapacitacion.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbModalidad.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbModalidad.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbModalidad.prepareDestroy()}"/>
                     </p:column>                
            
                 </p:dataTable>

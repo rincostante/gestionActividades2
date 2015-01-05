@@ -7,22 +7,22 @@
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.TipoCapacitacionTitle}" />
+            <h:outputText value="#{bundle.TipoOrganismoTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/>
             <h:form id="frmTipoCapView">
-                <p:panel id="pnView" header="#{bundle.TipoCapacitacionViewTitle}" style="margin-bottom:10px;">
+                <p:panel id="pnView" header="#{bundle.TipoOrganismoViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
                     
                     <h:panelGrid columns="2">
-                        <h:outputLabel value="#{bundle.CreateTipoCapLabel_nombre}"/>
-                        <h:outputText value="#{mbTipoCapacitacion.selected.nombre}" title="#{bundle.CreateTipoCapTitle_nombre}"/>
+                        <h:outputLabel value="#{bundle.CreateTipoOrgLabel_nombre}"/>
+                        <h:outputText value="#{mbTipoOrganismo.selected.nombre}" title="#{bundle.CreateTipoOrgTitle_nombre}"/>
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>
                     <f:facet name="right">
-                        <p:commandButton icon="ui-icon-refresh" action="#{mbTipoCapacitacion.prepareList}" value="Volver" ajax="false"/>
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbTipoOrganismo.prepareList}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
 

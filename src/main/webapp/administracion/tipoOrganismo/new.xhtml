@@ -7,27 +7,27 @@
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.TipoCapacitacionTitle}" />
+            <h:outputText value="#{bundle.TipoOrganismoTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/>
             <h:form id="frmNew">
-                <p:panel id="pnNew" header="#{bundle.TipoCapacitacionNewTitle}" style="margin-bottom:10px;">
+                <p:panel id="pnNew" header="#{bundle.TipoOrganismoNewTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="3">
-                        <p:outputLabel value="#{bundle.CreateTipoCapLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre" value="#{mbTipoCapacitacion.selected.nombre}" requiredMessage="#{bundle.CreateTipoCapRequiredMessage_nombre}" required="true"/>
+                        <p:outputLabel value="#{bundle.CreateTipoOrgLabel_nombre}" for="nombre"/>
+                        <p:inputText id="nombre" value="#{mbTipoOrganismo.selected.nombre}" requiredMessage="#{bundle.CreateTipoOrgRequiredMessage_nombre}" required="true"/>
                         <p:message for="nombre" />
                     </h:panelGrid>
                 </p:panel>
                 <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbTipoCapacitacion.create}" update="pnNew"/>
+                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbTipoOrganismo.create}" update="pnNew"/>
                         <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
                             <p:ajax update="pnNew" resetValues="true" />
                         </p:commandButton>
                     </f:facet>
                     <f:facet name="right">
-                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" action="#{mbTipoCapacitacion.prepareList}" value="Volver" immediate="true"/>
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" action="#{mbTipoOrganismo.prepareList}" value="Volver" immediate="true"/>
                     </f:facet>
                 </p:toolbar>
 

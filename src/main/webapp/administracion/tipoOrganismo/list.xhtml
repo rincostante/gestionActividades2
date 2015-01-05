@@ -7,43 +7,43 @@
       xmlns:p="http://primefaces.org/ui">
       
     <h:head>
-        <title>#{bundle.TipoCapacitacionTitle}</title>
+        <title>#{bundle.TipoOrganismoTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.TipoCapacitacionTitle}" />
+            <h:outputText value="#{bundle.TipoOrganismoTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="tipoCapForm" header="#{bundle.TipoCapacitacionListTitle}" style="margin-bottom:10px;">
+                <p:panel id="tipoOrgForm" header="#{bundle.TipoOrganismoListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="5">
-                        <p:inputText value="#{mbTipoCapacitacion.selectParam}" />
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbTipoCapacitacion.prepareSelect()}" ajax="false"/>  
+                        <p:inputText value="#{mbTipoOrganismo.selectParam}" />
+                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbTipoOrganismo.prepareSelect()}" ajax="false"/>  
                         <p:outputLabel value="&ensp;"/>
-                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTipoCapacitacion.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoCapacitacion.prepareList}" update="tipoCapList"/>
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTipoOrganismo.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoOrganismo.prepareList}" update="tipoOrgList"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <br/>           
 
-                <p:dataTable value="#{mbTipoCapacitacion.items}" var="e" id="tipoCapList" rows="5"
+                <p:dataTable value="#{mbTipoOrganismo.items}" var="e" id="tipoOrgList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.TipoCapListado}
+                        Listado de #{bundle.TipoOrgListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" />
-                        <p:columnToggler datasource="tipoCapList" trigger="toggler" />
+                        <p:columnToggler datasource="tipoOrgList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoCapacitacion.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoCapacitacion.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoCapacitacion.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoOrganismo.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoOrganismo.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoOrganismo.prepareDestroy()}"/>
                     </p:column>                
            
                 </p:dataTable>
