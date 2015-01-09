@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/facelets/templates/indexTemplate.xhtml">
+    <ui:composition template="/WEB-INF/facelets/templates/#{mbLogin.rol}/indexTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.Aplicacion}" />
+            <h:outputText value="#{bundle.NombreAplicacion}" />
         </ui:define>
         <ui:define name="content">
             <h:form>
-                <h1>#{bundle.Aplicacion}</h1>
+                <h1>#{bundle.NombreAplicacion}</h1>
                 <h3>Sistema en desarrollo</h3>
             </h:form>
         </ui:define>

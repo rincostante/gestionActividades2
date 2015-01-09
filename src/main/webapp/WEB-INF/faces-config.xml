@@ -25,4 +25,29 @@
         <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbTipoOrganismo</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbLogin</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbEstadoActividad</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbEstadoActividad</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbLocalidad</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbLocalidad</managed-bean-class>
+    
+        <managed-bean-scope>session</managed-bean-scope></managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbTipoDocumento</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbTipoDocumento</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbEstudiosCursados</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbEstudiosCursados</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>

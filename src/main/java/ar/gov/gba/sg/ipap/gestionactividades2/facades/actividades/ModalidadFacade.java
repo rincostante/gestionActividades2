@@ -56,5 +56,28 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
         String queryString = "SELECT * FROM actividadplan WHERE modalidad_id = " + id;
         Query q = em.createNativeQuery(queryString, Modalidad.class);
         return q.getResultList().isEmpty();
+    } 
+    
+   /**
+     * Método uitilizado para verificar que el campo unique que se desea insertar no exista ya
+     * @param unique: string con el valor que se desea verificar
+     * @return 
+     */
+    public boolean noExiste(String unique){
+        em = getEntityManager();
+        String queryString = "SELECT * FROM modalidad WHERE nombre = '" + unique + "'";
+        Query q = em.createNativeQuery(queryString, Modalidad.class);
+        return q.getResultList().isEmpty();
+    }
+    
+    /**
+     * Metodo para el autocompletado de la búsqueda por nombre
+     * @return 
+     */
+    public List<String> getNombres(){
+        em = getEntityManager();
+        String queryString = "SELECT nombre FROM modalidad";
+        Query q = em.createNativeQuery(queryString);
+        return q.getResultList();
     }    
 }

@@ -9,7 +9,7 @@
     <h:head>
         <title>#{bundle.ModalidadTitle}</title>
     </h:head>
-    <ui:composition template="/WEB-INF/facelets/templates/entidadTemplate.xhtml">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
             <h:outputText value="#{bundle.ModalidadTitle}" />
         </ui:define>
@@ -17,8 +17,12 @@
             <br/> 
             <h:form>
                 <p:panel id="modForm" header="#{bundle.ModalidadListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="5">
-                        <p:inputText value="#{mbModalidad.selectParam}" />
+                    <h:panelGrid columns="6">
+                        <p:autoComplete value="#{mbModalidad.selectParam}" 
+                                        completeMethod="#{mbModalidad.completeNombres}" />
+                        <p:commandButton icon="ui-icon-close" style="float: right">
+                            <p:ajax update="modForm" resetValues="true" />
+                        </p:commandButton>                           
                         <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbModalidad.prepareSelect()}" ajax="false"/>  
                         <p:outputLabel value="&ensp;"/>
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbModalidad.prepareCreate}"/>
@@ -34,7 +38,7 @@
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.ModListado}
-                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" />
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:columnToggler datasource="modList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">

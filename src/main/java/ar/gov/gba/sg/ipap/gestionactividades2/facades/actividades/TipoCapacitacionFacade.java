@@ -58,4 +58,27 @@ public class TipoCapacitacionFacade extends AbstractFacade<TipoCapacitacion> {
         Query q = em.createNativeQuery(queryString, TipoCapacitacion.class);
         return q.getResultList().isEmpty();
     }
+    
+    /**
+     * Método uitilizado para verificar que el campo unique que se desea insertar no exista ya
+     * @param unique: string con el valor que se desea verificar
+     * @return 
+     */
+    public boolean noExiste(String unique){
+        em = getEntityManager();
+        String queryString = "SELECT * FROM tipocapacitacion WHERE nombre = '" + unique + "'";
+        Query q = em.createNativeQuery(queryString, TipoCapacitacion.class);
+        return q.getResultList().isEmpty();
+    }
+    
+    /**
+     * Metodo para el autocompletado de la búsqueda por nombre
+     * @return 
+     */
+    public List<String> getNombres(){
+        em = getEntityManager();
+        String queryString = "SELECT nombre FROM tipocapacitacion";
+        Query q = em.createNativeQuery(queryString);
+        return q.getResultList();
+    }
 }

@@ -4,19 +4,20 @@
  * and open the template in the editor.
  */
 
-package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
+package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstudiosCursadosFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -24,34 +25,46 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
 
 /**
  *
  * @author rincostante
  */
-public class MbTipoCapacitacion implements Serializable{
-    
-    private TipoCapacitacion current;
+public class MbEstudiosCursados implements Serializable{
+
+    private EstudiosCursados current;
     private DataModel items = null;
     
     @EJB
-    private TipoCapacitacionFacade tipoCapacitacionFacade;
+    private EstudiosCursadosFacade estudiosCursadosFacade;
     //private PaginationHelper pagination;
     private int selectedItemIndex;
-    private String selectParam;    
-    private List<String> listaNombres;
+    private String selectParam; 
+    private List<String> listaNombres;    
+    private Map<String,String> estados;
 
+    public Map<String, String> getEstados() {
+        return estados;
+    }
+
+    public void setEstados(Map<String, String> estados) {
+        this.estados = estados;
+    }
+    
     /**
-     * Creates a new instance of MbTipoCapacitacion
+     * Creates a new instance of MbEstudiosCursados
      */
-    public MbTipoCapacitacion() {   
+    public MbEstudiosCursados() {
     }
     
     @PostConstruct
     public void init(){
         listaNombres = getFacade().getNombres();
-    }    
+        estados  = new HashMap<>();
+        estados.put("Incompleto", "Incompleto");
+        estados.put("En Curso", "En Curso");
+        estados.put("Finalizado", "Finalizado");  
+    }  
     
     /********************************
      ** Métodos para la navegación **
@@ -59,13 +72,13 @@ public class MbTipoCapacitacion implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public TipoCapacitacion getSelected() {
+    public EstudiosCursados getSelected() {
         if (current == null) {
-            current = new TipoCapacitacion();
+            current = new EstudiosCursados();
             selectedItemIndex = -1;
         }
         return current;
-    }   
+    }    
     
     /**
      * @return el listado de entidades a mostrar en el list
@@ -77,8 +90,7 @@ public class MbTipoCapacitacion implements Serializable{
         }
         return items;
     }
-
-  
+    
     /*******************************
      ** Métodos de inicialización **
      *******************************/
@@ -90,23 +102,11 @@ public class MbTipoCapacitacion implements Serializable{
         return "list";
     }
     
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/tipoCapacitacion/list";
-        }
-        recreateModel();
-        return redirect;
-    }
-
     /**
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        current = (EstudiosCursados) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -115,7 +115,7 @@ public class MbTipoCapacitacion implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new TipoCapacitacion();
+        current = new EstudiosCursados();
         selectedItemIndex = -1;
         return "new";
     }
@@ -124,8 +124,7 @@ public class MbTipoCapacitacion implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        current = (EstudiosCursados) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -141,7 +140,7 @@ public class MbTipoCapacitacion implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarTipoCapacitacion();
+        buscarEstudiosCursados();
         return "list";
     }
     
@@ -150,7 +149,7 @@ public class MbTipoCapacitacion implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (TipoCapacitacion) getItems().getRowData();
+        current = (EstudiosCursados) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -160,38 +159,9 @@ public class MbTipoCapacitacion implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosNonDeletable"));
         }
         return "view";
-    }
-    
-    /**
-     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
-        validarExistente(arg2);
-    }
-    
-    /**
-     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     * @throws ValidatorException 
-     */
-    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
-        if(!current.getNombre().equals((String)arg2)){
-            validarExistente(arg2);
-        }
-    }
-    
-    private void validarExistente(Object arg2) throws ValidatorException{
-        if(!getFacade().noExiste((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateTipoCapNombreExistente")));
-        }
     }
     
     /**
@@ -202,21 +172,27 @@ public class MbTipoCapacitacion implements Serializable{
         if(selectParam != null){
             selectParam = null;
         }
-    }
-
+    }    
+   
+    
     /*************************
     ** Métodos de operación **
     **************************/
     /**
-     * @return 
+     * @return mensaje que notifica la inserción
      */
     public String create() {
         try {
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionCreated"));
-            return "view";
+            if(getFacade().noExiste(current.getNombre(), current.getEstado())){
+                getFacade().create(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreated"));
+                return "view";
+            }else{
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosExistentes"));
+                return null;
+            }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreatedErrorOccured"));
             return null;
         }
     }
@@ -227,10 +203,10 @@ public class MbTipoCapacitacion implements Serializable{
     public String update() {
         try {
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionUpdated"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdated"));
             return "view";
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdatedErrorOccured"));
             return null;
         }
     }
@@ -239,32 +215,12 @@ public class MbTipoCapacitacion implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        current = (EstudiosCursados) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
-        //recreatePagination();
         recreateModel();
         return "view";
-    }
-
-    /**
-     * @return mensaje que notifica la inserción
-     */
-    public String destroyAndView() {
-        performDestroy();
-        recreateModel();
-        updateCurrentItem();
-        if (selectedItemIndex >= 0) {
-            return "view";
-        } else {
-            // all items were removed - go back to list
-            recreateModel();
-            return "list";
-        }
     }    
-    
-  
     
     /*************************
     ** Métodos de selección **
@@ -273,22 +229,22 @@ public class MbTipoCapacitacion implements Serializable{
      * @return la totalidad de las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(tipoCapacitacionFacade.findAll(), false);
+        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), false);
     }
 
     /**
      * @return de a una las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(tipoCapacitacionFacade.findAll(), true);
+        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), true);
     }
 
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public TipoCapacitacion getTipoCapacitacion(java.lang.Long id) {
-        return tipoCapacitacionFacade.find(id);
+    public EstudiosCursados getEstudiosCursados(java.lang.Long id) {
+        return estudiosCursadosFacade.find(id);
     }    
     
     /*********************
@@ -297,8 +253,8 @@ public class MbTipoCapacitacion implements Serializable{
     /**
      * @return el Facade
      */
-    private TipoCapacitacionFacade getFacade() {
-        return tipoCapacitacionFacade;
+    private EstudiosCursadosFacade getFacade() {
+        return estudiosCursadosFacade;
     }
     
     /**
@@ -307,9 +263,9 @@ public class MbTipoCapacitacion implements Serializable{
     private void performDestroy() {
         try {
             getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosDeletedErrorOccured"));
         }
     }
 
@@ -321,12 +277,6 @@ public class MbTipoCapacitacion implements Serializable{
         if (selectedItemIndex >= count) {
             // selected index cannot be bigger than number of items:
             selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            /*
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
-            */
         }
         if (selectedItemIndex >= 0) {
             current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
@@ -345,9 +295,9 @@ public class MbTipoCapacitacion implements Serializable{
         this.selectParam = selectParam;
     }
     
-    private void buscarTipoCapacitacion(){
+    private void buscarEstudiosCursados(){
         items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }   
+    }  
     
     /**
      * Método para llegar la lista para el autocompletado de la búsqueda de nombres
@@ -364,23 +314,22 @@ public class MbTipoCapacitacion implements Serializable{
             }
         }
         return nombres;
-    }
-        
+    }    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = TipoCapacitacion.class)
-    public static class TipoCapacitacionControllerConverter implements Converter {
+    @FacesConverter(forClass = EstudiosCursados.class)
+    public static class EstudiosCursadosControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbTipoCapacitacion controller = (MbTipoCapacitacion) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbTipoCapacitacion");
-            return controller.getTipoCapacitacion(getKey(value));
+            MbEstudiosCursados controller = (MbEstudiosCursados) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbEstudiosCursados");
+            return controller.getEstudiosCursados(getKey(value));
         }
 
         
@@ -407,12 +356,12 @@ public class MbTipoCapacitacion implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof TipoCapacitacion) {
-                TipoCapacitacion o = (TipoCapacitacion) object;
+            if (object instanceof EstudiosCursados) {
+                EstudiosCursados o = (EstudiosCursados) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + TipoCapacitacion.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + EstudiosCursados.class.getName());
             }
         }
-    }    
+    }             
 }

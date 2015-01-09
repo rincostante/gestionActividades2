@@ -7,47 +7,47 @@
       xmlns:p="http://primefaces.org/ui">
       
     <h:head>
-        <title>#{bundle.TipoOrganismoTitle}</title>
+        <title>#{bundle.EstadoActividadTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.TipoOrganismoTitle}" />
+            <h:outputText value="#{bundle.EstadoActividadTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="tipoOrgForm" header="#{bundle.TipoOrganismoListTitle}" style="margin-bottom:10px;">
+                <p:panel id="estActForm" header="#{bundle.EstadoActividadListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbTipoOrganismo.selectParam}" 
-                                        completeMethod="#{mbTipoOrganismo.completeNombres}" />
+                        <p:autoComplete value="#{mbEstadoActividad.selectParam}" 
+                                        completeMethod="#{mbEstadoActividad.completeNombres}" />
                         <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="tipoOrgForm" resetValues="true" />
-                        </p:commandButton>                          
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbTipoOrganismo.prepareSelect()}" ajax="false"/>  
+                            <p:ajax update="estActForm" resetValues="true" />
+                        </p:commandButton>                           
+                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbEstadoActividad.prepareSelect()}" ajax="false"/>  
                         <p:outputLabel value="&ensp;"/>
-                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTipoOrganismo.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoOrganismo.prepareList}" update="tipoOrgList"/>
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbEstadoActividad.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbEstadoActividad.prepareList}" update="estActList"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <br/>           
 
-                <p:dataTable value="#{mbTipoOrganismo.items}" var="e" id="tipoOrgList" rows="5"
+                <p:dataTable value="#{mbEstadoActividad.items}" var="e" id="estActList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.TipoOrgListado}
+                        Listado de #{bundle.ModListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:columnToggler datasource="tipoOrgList" trigger="toggler" />
+                        <p:columnToggler datasource="estActList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoOrganismo.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoOrganismo.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoOrganismo.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbEstadoActividad.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbEstadoActividad.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbEstadoActividad.prepareDestroy()}"/>
                     </p:column>                
            
                 </p:dataTable>

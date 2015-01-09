@@ -35,7 +35,7 @@ public class EstudiosCursados implements Serializable {
     /**
      * Campo de texto que indica el nombre de los estudios cursados
      */        
-    @Column (nullable=false, length=50, unique=true)
+    @Column (nullable=false, length=50)
     @NotNull(message = "{entidades.fieldNotNullError}")
     @Size(message = "{endidades.stringSizeError}", min = 1, max = 50)
     private String nombre; 

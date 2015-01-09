@@ -7,9 +7,11 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.EstadoActividad;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -29,4 +31,53 @@ public class EstadoActividadFacade extends AbstractFacade<EstadoActividad> {
         super(EstadoActividad.class);
     }
     
+    /**
+     * Método que devuelve todos los Estados de Actividad que contienen la cadena recibida como parámetro 
+     * dentro de alguno de sus campos string, en este caso el nombre.
+     * @param stringParam: cadena que buscará en todos los campos de tipo varchar de la tabla correspondiente
+     * @return: El conjunto de resultados provenientes de la búsqueda. 
+     */      
+    public List<EstadoActividad> getXString(String stringParam){
+        em = getEntityManager();
+        List<EstadoActividad> result;
+        String queryString = "SELECT * FROM estadoactividad WHERE nombre LIKE '%" + stringParam + "%'";
+        Query q = em.createNativeQuery(queryString, EstadoActividad.class);
+        result = q.getResultList();
+        return result;
+    }     
+    
+    /**
+     * Método que verifica si el Estados de Actividad puede ser eliminado
+     * @param id: Id del Tipo de Capacitación que se desea verificar
+     * @return
+     */
+    public boolean getUtilizado(Long id){
+        em = getEntityManager();
+        String queryString = "SELECT * FROM actividadimplementada WHERE estadoactividad_id = " + id;
+        Query q = em.createNativeQuery(queryString, EstadoActividad.class);
+        return q.getResultList().isEmpty();
+    }   
+    
+    /**
+     * Método uitilizado para verificar que el campo unique que se desea insertar no exista ya
+     * @param unique: string con el valor que se desea verificar
+     * @return 
+     */
+    public boolean noExiste(String unique){
+        em = getEntityManager();
+        String queryString = "SELECT * FROM estadoactividad WHERE nombre = '" + unique + "'";
+        Query q = em.createNativeQuery(queryString, EstadoActividad.class);
+        return q.getResultList().isEmpty();
+    }
+    
+    /**
+     * Metodo para el autocompletado de la búsqueda por nombre
+     * @return 
+     */
+    public List<String> getNombres(){
+        em = getEntityManager();
+        String queryString = "SELECT nombre FROM estadoactividad";
+        Query q = em.createNativeQuery(queryString);
+        return q.getResultList();
+    }    
 }

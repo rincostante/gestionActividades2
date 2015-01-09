@@ -56,5 +56,28 @@ public class TipoOrganismoFacade extends AbstractFacade<TipoOrganismo> {
         String queryString = "SELECT * FROM organismo WHERE tipo_id = " + id;
         Query q = em.createNativeQuery(queryString, TipoOrganismo.class);
         return q.getResultList().isEmpty();
-    }        
+    }  
+    
+    /**
+     * Método uitilizado para verificar que el campo unique que se desea insertar no exista ya
+     * @param unique: string con el valor que se desea verificar
+     * @return 
+     */
+    public boolean noExiste(String unique){
+        em = getEntityManager();
+        String queryString = "SELECT * FROM tipoorganismo WHERE nombre = '" + unique + "'";
+        Query q = em.createNativeQuery(queryString, TipoOrganismo.class);
+        return q.getResultList().isEmpty();
+    }
+    
+    /**
+     * Metodo para el autocompletado de la búsqueda por nombre
+     * @return 
+     */
+    public List<String> getNombres(){
+        em = getEntityManager();
+        String queryString = "SELECT nombre FROM tipoorganismo";
+        Query q = em.createNativeQuery(queryString);
+        return q.getResultList();
+    }    
 }

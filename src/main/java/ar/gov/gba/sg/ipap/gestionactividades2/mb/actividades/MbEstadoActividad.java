@@ -6,8 +6,8 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.EstadoActividad;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.EstadoActividadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,28 +30,28 @@ import javax.faces.validator.ValidatorException;
  *
  * @author rincostante
  */
-public class MbTipoCapacitacion implements Serializable{
+public class MbEstadoActividad implements Serializable{
     
-    private TipoCapacitacion current;
+    private EstadoActividad current;
     private DataModel items = null;
     
     @EJB
-    private TipoCapacitacionFacade tipoCapacitacionFacade;
+    private EstadoActividadFacade estadoActividadFacade;
     //private PaginationHelper pagination;
     private int selectedItemIndex;
-    private String selectParam;    
-    private List<String> listaNombres;
+    private String selectParam; 
+    private List<String> listaNombres;    
 
     /**
-     * Creates a new instance of MbTipoCapacitacion
+     * Creates a new instance of MbEstadoActividad
      */
-    public MbTipoCapacitacion() {   
+    public MbEstadoActividad() {
     }
     
     @PostConstruct
     public void init(){
         listaNombres = getFacade().getNombres();
-    }    
+    }       
     
     /********************************
      ** Métodos para la navegación **
@@ -59,13 +59,13 @@ public class MbTipoCapacitacion implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public TipoCapacitacion getSelected() {
+    public EstadoActividad getSelected() {
         if (current == null) {
-            current = new TipoCapacitacion();
+            current = new EstadoActividad();
             selectedItemIndex = -1;
         }
         return current;
-    }   
+    }    
     
     /**
      * @return el listado de entidades a mostrar en el list
@@ -77,8 +77,7 @@ public class MbTipoCapacitacion implements Serializable{
         }
         return items;
     }
-
-  
+    
     /*******************************
      ** Métodos de inicialización **
      *******************************/
@@ -90,23 +89,11 @@ public class MbTipoCapacitacion implements Serializable{
         return "list";
     }
     
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/tipoCapacitacion/list";
-        }
-        recreateModel();
-        return redirect;
-    }
-
     /**
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        current = (EstadoActividad) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -115,7 +102,7 @@ public class MbTipoCapacitacion implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new TipoCapacitacion();
+        current = new EstadoActividad();
         selectedItemIndex = -1;
         return "new";
     }
@@ -124,8 +111,7 @@ public class MbTipoCapacitacion implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        current = (EstadoActividad) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -141,7 +127,7 @@ public class MbTipoCapacitacion implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarTipoCapacitacion();
+        buscarEstadoActividad();
         return "list";
     }
     
@@ -150,7 +136,7 @@ public class MbTipoCapacitacion implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (TipoCapacitacion) getItems().getRowData();
+        current = (EstadoActividad) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -160,10 +146,20 @@ public class MbTipoCapacitacion implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstadoActividadNonDeletable"));
         }
         return "view";
     }
+    
+    /**
+     * Restea la entidad
+     */
+    private void recreateModel() {
+        items = null;
+        if(selectParam != null){
+            selectParam = null;
+        }
+    }    
     
     /**
      * Método para validar que no exista ya una entidad con este nombre al momento de crearla
@@ -180,7 +176,6 @@ public class MbTipoCapacitacion implements Serializable{
      * @param arg0: vista jsf que llama al validador
      * @param arg1: objeto de la vista que hace el llamado
      * @param arg2: contenido del campo de texto a validar 
-     * @throws ValidatorException 
      */
     public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
         if(!current.getNombre().equals((String)arg2)){
@@ -190,33 +185,23 @@ public class MbTipoCapacitacion implements Serializable{
     
     private void validarExistente(Object arg2) throws ValidatorException{
         if(!getFacade().noExiste((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateTipoCapNombreExistente")));
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateEstadoActNombreExistente")));
         }
-    }
+    }    
     
-    /**
-     * Restea la entidad
-     */
-    private void recreateModel() {
-        items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
-    }
-
     /*************************
     ** Métodos de operación **
     **************************/
     /**
-     * @return 
+     * @return mensaje que notifica la inserción
      */
     public String create() {
         try {
             getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionCreated"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstadoActividadCreated"));
             return "view";
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstadoActividadCreatedErrorOccured"));
             return null;
         }
     }
@@ -227,10 +212,10 @@ public class MbTipoCapacitacion implements Serializable{
     public String update() {
         try {
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionUpdated"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstadoActividadUpdated"));
             return "view";
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstadoActividadUpdatedErrorOccured"));
             return null;
         }
     }
@@ -239,32 +224,12 @@ public class MbTipoCapacitacion implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        current = (EstadoActividad) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
-        //recreatePagination();
         recreateModel();
         return "view";
-    }
-
-    /**
-     * @return mensaje que notifica la inserción
-     */
-    public String destroyAndView() {
-        performDestroy();
-        recreateModel();
-        updateCurrentItem();
-        if (selectedItemIndex >= 0) {
-            return "view";
-        } else {
-            // all items were removed - go back to list
-            recreateModel();
-            return "list";
-        }
     }    
-    
-  
     
     /*************************
     ** Métodos de selección **
@@ -273,22 +238,22 @@ public class MbTipoCapacitacion implements Serializable{
      * @return la totalidad de las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(tipoCapacitacionFacade.findAll(), false);
+        return JsfUtil.getSelectItems(estadoActividadFacade.findAll(), false);
     }
 
     /**
      * @return de a una las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(tipoCapacitacionFacade.findAll(), true);
+        return JsfUtil.getSelectItems(estadoActividadFacade.findAll(), true);
     }
 
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public TipoCapacitacion getTipoCapacitacion(java.lang.Long id) {
-        return tipoCapacitacionFacade.find(id);
+    public EstadoActividad getEstadoActividad(java.lang.Long id) {
+        return estadoActividadFacade.find(id);
     }    
     
     /*********************
@@ -297,8 +262,8 @@ public class MbTipoCapacitacion implements Serializable{
     /**
      * @return el Facade
      */
-    private TipoCapacitacionFacade getFacade() {
-        return tipoCapacitacionFacade;
+    private EstadoActividadFacade getFacade() {
+        return estadoActividadFacade;
     }
     
     /**
@@ -307,9 +272,9 @@ public class MbTipoCapacitacion implements Serializable{
     private void performDestroy() {
         try {
             getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstadoActividadDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstadoActividadDeletedErrorOccured"));
         }
     }
 
@@ -321,12 +286,6 @@ public class MbTipoCapacitacion implements Serializable{
         if (selectedItemIndex >= count) {
             // selected index cannot be bigger than number of items:
             selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            /*
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
-            */
         }
         if (selectedItemIndex >= 0) {
             current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
@@ -345,9 +304,9 @@ public class MbTipoCapacitacion implements Serializable{
         this.selectParam = selectParam;
     }
     
-    private void buscarTipoCapacitacion(){
+    private void buscarEstadoActividad(){
         items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }   
+    }  
     
     /**
      * Método para llegar la lista para el autocompletado de la búsqueda de nombres
@@ -364,23 +323,22 @@ public class MbTipoCapacitacion implements Serializable{
             }
         }
         return nombres;
-    }
-        
+    }    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = TipoCapacitacion.class)
-    public static class TipoCapacitacionControllerConverter implements Converter {
+    @FacesConverter(forClass = EstadoActividad.class)
+    public static class EstadoActividadControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbTipoCapacitacion controller = (MbTipoCapacitacion) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbTipoCapacitacion");
-            return controller.getTipoCapacitacion(getKey(value));
+            MbEstadoActividad controller = (MbEstadoActividad) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbEstadoActividad");
+            return controller.getEstadoActividad(getKey(value));
         }
 
         
@@ -407,12 +365,12 @@ public class MbTipoCapacitacion implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof TipoCapacitacion) {
-                TipoCapacitacion o = (TipoCapacitacion) object;
+            if (object instanceof EstadoActividad) {
+                EstadoActividad o = (EstadoActividad) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + TipoCapacitacion.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + EstadoActividad.class.getName());
             }
         }
-    }    
+    }         
 }

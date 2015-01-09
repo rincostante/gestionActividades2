@@ -10,8 +10,13 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ModalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -19,6 +24,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 
 /**
  *
@@ -34,12 +40,18 @@ public class MbModalidad implements Serializable{
     //private PaginationHelper pagination;
     private int selectedItemIndex;
     private String selectParam; 
+    private List<String> listaNombres;
     
     /**
      * Creates a new instance of MbModalidad
      */
     public MbModalidad() {
     }
+    
+    @PostConstruct
+    public void init(){
+        listaNombres = getFacade().getNombres();
+    }        
     
     /********************************
      ** Métodos para la navegación **
@@ -146,6 +158,35 @@ public class MbModalidad implements Serializable{
         items = null;
         if(selectParam != null){
             selectParam = null;
+        }
+    }    
+    
+    /**
+     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */
+    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
+        validarExistente(arg2);
+    }
+    
+    /**
+     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     * @throws ValidatorException 
+     */
+    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
+        if(!current.getNombre().equals((String)arg2)){
+            validarExistente(arg2);
+        }
+    }
+    
+    private void validarExistente(Object arg2) throws ValidatorException{
+        if(!getFacade().noExiste((String)arg2)){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateModalidadNombreExistente")));
         }
     }    
     
@@ -267,6 +308,23 @@ public class MbModalidad implements Serializable{
     private void buscarModalidad(){
         items = new ListDataModel(getFacade().getXString(selectParam)); 
     }  
+    
+    /**
+     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
+     * @param query
+     * @return 
+     */
+    public List<String> completeNombres(String query){
+        List<String> nombres = new ArrayList();
+        Iterator itLista = listaNombres.listIterator();
+        while(itLista.hasNext()){
+            String nom = (String)itLista.next();
+            if(nom.contains(query)){
+                nombres.add(nom);
+            }
+        }
+        return nombres;
+    }    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
