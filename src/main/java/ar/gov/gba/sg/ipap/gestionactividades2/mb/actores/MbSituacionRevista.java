@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -45,12 +44,7 @@ public class MbSituacionRevista implements Serializable{
 
     /** Creates a new instance of MbSituacionRevista */
     public MbSituacionRevista() {
-    }
-
-    @PostConstruct
-    public void init(){
-        listaNombres = getFacade().getNombres();
-    }       
+    }   
     
     /********************************
      ** Métodos para la navegación **
@@ -131,7 +125,7 @@ public class MbSituacionRevista implements Serializable{
     }
     
     /**
-     * Método que verifica que el Tipo de Capacitación que se quiere eliminar no esté siento utilizado por otra entidad
+     * Método que verifica que la Situación de Revista que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
@@ -313,6 +307,7 @@ public class MbSituacionRevista implements Serializable{
      * @return 
      */
     public List<String> completeNombres(String query){
+        listaNombres = getFacade().getNombres();
         List<String> nombres = new ArrayList();
         Iterator itLista = listaNombres.listIterator();
         while(itLista.hasNext()){

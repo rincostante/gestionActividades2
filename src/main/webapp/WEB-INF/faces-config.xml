@@ -55,4 +55,29 @@
         <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbSituacionRevista</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbCargo</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbCargo</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbEstadoParticipante</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbEstadoParticipante</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbRol</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbRol</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbNivelIpap</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbNivelIpap</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbTitulo</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbTitulo</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>

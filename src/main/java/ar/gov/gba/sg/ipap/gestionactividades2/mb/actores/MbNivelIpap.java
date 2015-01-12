@@ -6,16 +6,18 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.LocalidadFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.NivelIpapFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -23,28 +25,44 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
 
 /**
  *
  * @author rincostante
  */
-public class MbLocalidad implements Serializable{
+public class MbNivelIpap implements Serializable{
 
-    private Localidad current;
+    private NivelIpap current;
     private DataModel items = null;
     
     @EJB
-    private LocalidadFacade localidadFacade;
+    private NivelIpapFacade estudiosCursadosFacade;
     //private PaginationHelper pagination;
     private int selectedItemIndex;
     private String selectParam; 
     private List<String> listaNombres;    
+    private Map<String,String> estados;    
     /**
-     * Creates a new instance of MbLocalidades
+     * Creates a new instance of MbNivelIpap
      */
-    public MbLocalidad() {
+    public MbNivelIpap() {
     }
+    
+    public Map<String, String> getEstados() {
+        return estados;
+    }
+
+    public void setEstados(Map<String, String> estados) {
+        this.estados = estados;
+    }    
+    
+   @PostConstruct
+    public void init(){
+        estados  = new HashMap<>();
+        estados.put("Incompleto", "Incompleto");
+        estados.put("En Curso", "En Curso");
+        estados.put("Finalizado", "Finalizado");  
+    }  
     
     /********************************
      ** Métodos para la navegación **
@@ -52,9 +70,9 @@ public class MbLocalidad implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public Localidad getSelected() {
+    public NivelIpap getSelected() {
         if (current == null) {
-            current = new Localidad();
+            current = new NivelIpap();
             selectedItemIndex = -1;
         }
         return current;
@@ -65,7 +83,6 @@ public class MbLocalidad implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
@@ -86,7 +103,7 @@ public class MbLocalidad implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Localidad) getItems().getRowData();
+        current = (NivelIpap) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -95,7 +112,7 @@ public class MbLocalidad implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new Localidad();
+        current = new NivelIpap();
         selectedItemIndex = -1;
         return "new";
     }
@@ -104,7 +121,7 @@ public class MbLocalidad implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Localidad) getItems().getRowData();
+        current = (NivelIpap) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -120,16 +137,16 @@ public class MbLocalidad implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarLocalidad();
+        buscarNivelIpap();
         return "list";
     }
     
     /**
-     * Método que verifica que la Localidad que se quiere eliminar no esté siento utilizado por otra entidad
+     * Método que verifica que el Nivel Ipap que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = (Localidad) getItems().getRowData();
+        current = (NivelIpap) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -139,7 +156,7 @@ public class MbLocalidad implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapNonDeletable"));
         }
         return "view";
     }
@@ -153,34 +170,7 @@ public class MbLocalidad implements Serializable{
             selectParam = null;
         }
     }    
-    
-    /**
-     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
-        validarExistente(arg2);
-    }
-    
-    /**
-     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
-        if(!current.getNombre().equals((String)arg2)){
-            validarExistente(arg2);
-        }
-    }
-    
-    private void validarExistente(Object arg2) throws ValidatorException{
-        if(!getFacade().noExiste((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateLocalidadNombreExistente")));
-        }
-    }    
+   
     
     /*************************
     ** Métodos de operación **
@@ -190,11 +180,16 @@ public class MbLocalidad implements Serializable{
      */
     public String create() {
         try {
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadCreated"));
-            return "view";
+            if(getFacade().noExiste(current.getNombre(), current.getEstado())){
+                getFacade().create(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapCreated"));
+                return "view";
+            }else{
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapExistentes"));
+                return null;
+            }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("NivelIpapCreatedErrorOccured"));
             return null;
         }
     }
@@ -203,12 +198,25 @@ public class MbLocalidad implements Serializable{
      * @return mensaje que notifica la actualización
      */
     public String update() {
+        NivelIpap nivIpap;
         try {
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdated"));
-            return "view";
+            nivIpap = getFacade().getExistente(current.getNombre(), current.getEstado());
+            if(nivIpap == null){
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdated"));
+                return "view";
+            }else{
+                if(nivIpap.getId().equals(current.getId())){
+                    getFacade().edit(current);
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreated"));
+                    return "view";                    
+                }else{
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosExistentes"));
+                    return null;
+                }
+            }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdatedErrorOccured"));
             return null;
         }
     }
@@ -217,7 +225,7 @@ public class MbLocalidad implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Localidad) getItems().getRowData();
+        current = (NivelIpap) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -231,22 +239,22 @@ public class MbLocalidad implements Serializable{
      * @return la totalidad de las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(localidadFacade.findAll(), false);
+        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), false);
     }
 
     /**
      * @return de a una las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(localidadFacade.findAll(), true);
+        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), true);
     }
 
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public Localidad getLocalidad(java.lang.Long id) {
-        return localidadFacade.find(id);
+    public NivelIpap getNivelIpap(java.lang.Long id) {
+        return estudiosCursadosFacade.find(id);
     }    
     
     /*********************
@@ -255,8 +263,8 @@ public class MbLocalidad implements Serializable{
     /**
      * @return el Facade
      */
-    private LocalidadFacade getFacade() {
-        return localidadFacade;
+    private NivelIpapFacade getFacade() {
+        return estudiosCursadosFacade;
     }
     
     /**
@@ -265,9 +273,9 @@ public class MbLocalidad implements Serializable{
     private void performDestroy() {
         try {
             getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("NivelIpapDeletedErrorOccured"));
         }
     }
 
@@ -297,7 +305,7 @@ public class MbLocalidad implements Serializable{
         this.selectParam = selectParam;
     }
     
-    private void buscarLocalidad(){
+    private void buscarNivelIpap(){
         items = new ListDataModel(getFacade().getXString(selectParam)); 
     }  
     
@@ -322,17 +330,17 @@ public class MbLocalidad implements Serializable{
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = Localidad.class)
-    public static class LocalidadControllerConverter implements Converter {
+    @FacesConverter(forClass = NivelIpap.class)
+    public static class NivelIpapControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbLocalidad controller = (MbLocalidad) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbLocalidad");
-            return controller.getLocalidad(getKey(value));
+            MbNivelIpap controller = (MbNivelIpap) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbNivelIpap");
+            return controller.getNivelIpap(getKey(value));
         }
 
         
@@ -359,12 +367,12 @@ public class MbLocalidad implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof Localidad) {
-                Localidad o = (Localidad) object;
+            if (object instanceof NivelIpap) {
+                NivelIpap o = (NivelIpap) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Localidad.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + NivelIpap.class.getName());
             }
         }
-    }         
+    }               
 }

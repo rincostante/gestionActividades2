@@ -40,8 +40,10 @@ public class EstadoActividadFacade extends AbstractFacade<EstadoActividad> {
     public List<EstadoActividad> getXString(String stringParam){
         em = getEntityManager();
         List<EstadoActividad> result;
-        String queryString = "SELECT * FROM estadoactividad WHERE nombre LIKE '%" + stringParam + "%'";
-        Query q = em.createNativeQuery(queryString, EstadoActividad.class);
+        String queryString = "SELECT estAct FROM EstadoActividad estAct "
+                + "WHERE estAct.nombre LIKE :sParam";
+        Query q = em.createQuery(queryString)
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
     }     
@@ -53,8 +55,10 @@ public class EstadoActividadFacade extends AbstractFacade<EstadoActividad> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT * FROM actividadimplementada WHERE estadoactividad_id = " + id;
-        Query q = em.createNativeQuery(queryString, EstadoActividad.class);
+        String queryString = "SELECT actImp.estado FROM ActividadImplementada actImp "
+                + "WHERE actImp.estado.id = :id";
+        Query q = em.createQuery(queryString)
+                .setParameter("id", id);
         return q.getResultList().isEmpty();
     }   
     
@@ -65,8 +69,9 @@ public class EstadoActividadFacade extends AbstractFacade<EstadoActividad> {
      */
     public boolean noExiste(String unique){
         em = getEntityManager();
-        String queryString = "SELECT * FROM estadoactividad WHERE nombre = '" + unique + "'";
-        Query q = em.createNativeQuery(queryString, EstadoActividad.class);
+        String queryString = "SELECT estAct FROM EstadoActividad estAct WHERE estAct.nombre = :unique";
+        Query q = em.createQuery(queryString)
+                .setParameter("unique", unique);
         return q.getResultList().isEmpty();
     }
     
@@ -76,8 +81,8 @@ public class EstadoActividadFacade extends AbstractFacade<EstadoActividad> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT nombre FROM estadoactividad";
-        Query q = em.createNativeQuery(queryString);
+        String queryString = "SELECT estAct.nombre FROM EstadoActividad estAct";
+        Query q = em.createQuery(queryString);
         return q.getResultList();
     }    
 }

@@ -32,7 +32,7 @@ public class SituacionRevistaFacade extends AbstractFacade<SituacionRevista> {
     }
  
     /**
-     * Método que devuelve todos los Estados de Actividad que contienen la cadena recibida como parámetro 
+     * Método que devuelve todas las Situaciones de Revista que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.
      * @param stringParam: cadena que buscará en todos los campos de tipo varchar de la tabla correspondiente
      * @return: El conjunto de resultados provenientes de la búsqueda. 
@@ -43,13 +43,13 @@ public class SituacionRevistaFacade extends AbstractFacade<SituacionRevista> {
         String queryString = "SELECT sitRev FROM SituacionRevista sitRev "
                 + "WHERE sitRev.nombre LIKE :sParam";
         Query q = em.createQuery(queryString)
-                .setParameter("sParam", stringParam);
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
     }     
     
     /**
-     * Método que verifica si el Estados de Actividad puede ser eliminado
+     * Método que verifica si la Situación de Revista puede ser eliminado
      * @param id: Id del Tipo de Capacitación que se desea verificar
      * @return
      */

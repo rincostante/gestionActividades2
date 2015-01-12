@@ -16,15 +16,22 @@
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}"/>
                         <p:submenu label="Administración">
+                            <p:menuitem value="Cargo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCargo}/list.xhtml"/>
                             <p:menuitem value="Estado de Actividad" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizEstadoAct}/list.xhtml"/>
+                            <p:menuitem value="Estado de Participante" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizEstadoParticipante}/list.xhtml"/>
                             <p:menuitem value="Estadudios Cursados" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizEstudiosCursados}/list.xhtml"/>
                             <p:menuitem value="Localidad" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizLocalidad}/list.xhtml"/>
                             <p:menuitem value="Modalidad de Actividad" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizMod}/list.xhtml"/>
+                            <p:menuitem value="Nivel IPAP" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizNivelIpap}/list.xhtml"/>
                             <p:menuitem value="Situación de Revista" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSituacionRevista}/list.xhtml"/>
                             <p:menuitem value="Tipo de Capacitación" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoCap}/list.xhtml"/>
                             <p:menuitem value="Tipo de Documento" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoDocumento}/list.xhtml"/>
                             <p:menuitem value="Tipo de Organismo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoOrg}/list.xhtml"/>
+                            <p:menuitem value="Título" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTitulo}/list.xhtml"/>
                         </p:submenu>
+                        <p:submenu label="Seguridad">
+                            <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>
+                        </p:submenu>                        
                         <p:submenu label="#{mbLogin.persona} | #{mbLogin.rol}" >
                             <p:menuitem value="Cerrar sesión" action="#{mbLogin.logout}" oncomplete="logout(xhr, status, args)"/>
                         </p:submenu>                        

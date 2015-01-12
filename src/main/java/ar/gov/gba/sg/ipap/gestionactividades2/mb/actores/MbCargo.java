@@ -6,8 +6,8 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.LocalidadFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.CargoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,22 +29,22 @@ import javax.faces.validator.ValidatorException;
  *
  * @author rincostante
  */
-public class MbLocalidad implements Serializable{
+public class MbCargo implements Serializable{
 
-    private Localidad current;
+    private Cargo current;
     private DataModel items = null;
     
     @EJB
-    private LocalidadFacade localidadFacade;
+    private CargoFacade situacionRevistaFacade;
     //private PaginationHelper pagination;
     private int selectedItemIndex;
     private String selectParam; 
-    private List<String> listaNombres;    
+    private List<String> listaNombres;  
     /**
-     * Creates a new instance of MbLocalidades
+     * Creates a new instance of MbCargo
      */
-    public MbLocalidad() {
-    }
+    public MbCargo() {
+    }     
     
     /********************************
      ** Métodos para la navegación **
@@ -52,9 +52,9 @@ public class MbLocalidad implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public Localidad getSelected() {
+    public Cargo getSelected() {
         if (current == null) {
-            current = new Localidad();
+            current = new Cargo();
             selectedItemIndex = -1;
         }
         return current;
@@ -86,7 +86,7 @@ public class MbLocalidad implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Localidad) getItems().getRowData();
+        current = (Cargo) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -95,7 +95,7 @@ public class MbLocalidad implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new Localidad();
+        current = new Cargo();
         selectedItemIndex = -1;
         return "new";
     }
@@ -104,7 +104,7 @@ public class MbLocalidad implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Localidad) getItems().getRowData();
+        current = (Cargo) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -120,16 +120,16 @@ public class MbLocalidad implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarLocalidad();
+        buscarCargo();
         return "list";
     }
     
     /**
-     * Método que verifica que la Localidad que se quiere eliminar no esté siento utilizado por otra entidad
+     * Método que verifica que el Cargo que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = (Localidad) getItems().getRowData();
+        current = (Cargo) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -139,7 +139,7 @@ public class MbLocalidad implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CargoNonDeletable"));
         }
         return "view";
     }
@@ -178,7 +178,7 @@ public class MbLocalidad implements Serializable{
     
     private void validarExistente(Object arg2) throws ValidatorException{
         if(!getFacade().noExiste((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateLocalidadNombreExistente")));
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateCargoNombreExistente")));
         }
     }    
     
@@ -191,10 +191,10 @@ public class MbLocalidad implements Serializable{
     public String create() {
         try {
             getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadCreated"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CargoCreated"));
             return "view";
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CargoCreatedErrorOccured"));
             return null;
         }
     }
@@ -205,10 +205,10 @@ public class MbLocalidad implements Serializable{
     public String update() {
         try {
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdated"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CargoUpdated"));
             return "view";
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CargoUpdatedErrorOccured"));
             return null;
         }
     }
@@ -217,7 +217,7 @@ public class MbLocalidad implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Localidad) getItems().getRowData();
+        current = (Cargo) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -231,22 +231,22 @@ public class MbLocalidad implements Serializable{
      * @return la totalidad de las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(localidadFacade.findAll(), false);
+        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), false);
     }
 
     /**
      * @return de a una las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(localidadFacade.findAll(), true);
+        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), true);
     }
 
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public Localidad getLocalidad(java.lang.Long id) {
-        return localidadFacade.find(id);
+    public Cargo getCargo(java.lang.Long id) {
+        return situacionRevistaFacade.find(id);
     }    
     
     /*********************
@@ -255,8 +255,8 @@ public class MbLocalidad implements Serializable{
     /**
      * @return el Facade
      */
-    private LocalidadFacade getFacade() {
-        return localidadFacade;
+    private CargoFacade getFacade() {
+        return situacionRevistaFacade;
     }
     
     /**
@@ -265,9 +265,9 @@ public class MbLocalidad implements Serializable{
     private void performDestroy() {
         try {
             getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CargoDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CargoDeletedErrorOccured"));
         }
     }
 
@@ -297,7 +297,7 @@ public class MbLocalidad implements Serializable{
         this.selectParam = selectParam;
     }
     
-    private void buscarLocalidad(){
+    private void buscarCargo(){
         items = new ListDataModel(getFacade().getXString(selectParam)); 
     }  
     
@@ -322,17 +322,17 @@ public class MbLocalidad implements Serializable{
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = Localidad.class)
-    public static class LocalidadControllerConverter implements Converter {
+    @FacesConverter(forClass = Cargo.class)
+    public static class CargoControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbLocalidad controller = (MbLocalidad) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbLocalidad");
-            return controller.getLocalidad(getKey(value));
+            MbCargo controller = (MbCargo) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbCargo");
+            return controller.getCargo(getKey(value));
         }
 
         
@@ -359,12 +359,12 @@ public class MbLocalidad implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof Localidad) {
-                Localidad o = (Localidad) object;
+            if (object instanceof Cargo) {
+                Cargo o = (Cargo) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Localidad.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Cargo.class.getName());
             }
         }
-    }         
+    }           
 }

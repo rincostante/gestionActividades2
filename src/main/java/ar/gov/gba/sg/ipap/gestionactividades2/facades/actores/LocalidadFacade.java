@@ -40,8 +40,10 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
     public List<Localidad> getXString(String stringParam){
         em = getEntityManager();
         List<Localidad> result;
-        String queryString = "SELECT * FROM localidad WHERE nombre LIKE '%" + stringParam + "%' OR codigopostal LIKE '%" + stringParam + "%'";
-        Query q = em.createNativeQuery(queryString, Localidad.class);
+        String queryString = "SELECT loc FROM Localidad loc "
+                + "WHERE loc.nombre LIKE :sParam OR loc.codigoPostal LIKE :sParam";
+        Query q = em.createQuery(queryString)
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
     }    
@@ -53,8 +55,10 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT * FROM persona WHERE localidad_id = " + id;
-        Query q = em.createNativeQuery(queryString, Localidad.class);
+        String queryString = "SELECT per.localidad FROM Persona per "
+                + "WHERE per.localidad.id = :id";
+        Query q = em.createQuery(queryString)
+                .setParameter("id", id);
         return q.getResultList().isEmpty();
     } 
     
@@ -65,8 +69,9 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
      */
     public boolean noExiste(String unique){
         em = getEntityManager();
-        String queryString = "SELECT * FROM localidad WHERE nombre = '" + unique + "'";
-        Query q = em.createNativeQuery(queryString, Localidad.class);
+        String queryString = "SELECT loc FROM Localidad loc WHERE loc.nombre = :unique";
+        Query q = em.createQuery(queryString)
+                .setParameter("unique", unique);
         return q.getResultList().isEmpty();
     }
     
@@ -76,8 +81,8 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT nombre FROM localidad";
-        Query q = em.createNativeQuery(queryString);
+        String queryString = "SELECT loc.nombre FROM Localidad loc";
+        Query q = em.createQuery(queryString);
         return q.getResultList();
     }     
 }

@@ -40,8 +40,10 @@ public class EstudiosCursadosFacade extends AbstractFacade<EstudiosCursados> {
     public List<EstudiosCursados> getXString(String stringParam){
         em = getEntityManager();
         List<EstudiosCursados> result;
-        String queryString = "SELECT * FROM estudioscursados WHERE nombre LIKE '%" + stringParam + "%'";
-        Query q = em.createNativeQuery(queryString, EstudiosCursados.class);
+        String queryString = "SELECT est FROM EstudiosCursados est "
+                + "WHERE est.nombre LIKE :sParam";
+        Query q = em.createQuery(queryString)
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
     }    
@@ -53,8 +55,10 @@ public class EstudiosCursadosFacade extends AbstractFacade<EstudiosCursados> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT * FROM agente WHERE estudioscursados_id = " + id;
-        Query q = em.createNativeQuery(queryString, EstudiosCursados.class);
+        String queryString = "SELECT ag.estudiosCursados FROM Agente ag "
+                + "WHERE ag.estudiosCursados.id = :id";
+        Query q = em.createQuery(queryString)
+                .setParameter("id", id);
         return q.getResultList().isEmpty();
     } 
     
@@ -64,15 +68,15 @@ public class EstudiosCursadosFacade extends AbstractFacade<EstudiosCursados> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT nombre FROM estudioscursados";
-        Query q = em.createNativeQuery(queryString);
+        String queryString = "SELECT est.nombre FROM EstudiosCursados est";
+        Query q = em.createQuery(queryString);
         return q.getResultList();
     }   
     
     /**
      * Método para validad que no exista un par estudio/estado ya ingresado
      * @param nombre: nombre del estudio
-     * @param estado: niver alcanzado
+     * @param estado: nivel alcanzado
      * @return 
      */
     public boolean noExiste(String nombre, String estado){
@@ -85,4 +89,21 @@ public class EstudiosCursadosFacade extends AbstractFacade<EstudiosCursados> {
                 .setParameter("estado", estado);
         return q.getResultList().isEmpty();
     }
+    
+    /**
+     * Método que obtiene un Título existente según los datos recibidos como parámetro
+     * @param nombre: nombre del título
+     * @param estado: nivel alcanzado
+     * @return 
+     */
+    public EstudiosCursados getExistente(String nombre, String estado){
+        em = getEntityManager();
+        String queryString = "SELECT estCur FROM EstudiosCursados estCur "
+                + "WHERE estCur.nombre = :nombre "
+                + "AND estCur.estado = :estado";
+        Query q = em.createQuery(queryString)
+                .setParameter("nombre", nombre)
+                .setParameter("estado", estado);
+        return (EstudiosCursados)q.getSingleResult();
+    }    
 }

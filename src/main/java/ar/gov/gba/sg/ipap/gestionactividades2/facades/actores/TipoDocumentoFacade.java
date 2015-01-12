@@ -40,8 +40,10 @@ public class TipoDocumentoFacade extends AbstractFacade<TipoDocumento> {
     public List<TipoDocumento> getXString(String stringParam){
         em = getEntityManager();
         List<TipoDocumento> result;
-        String queryString = "SELECT * FROM tipodocumento WHERE nombre LIKE '%" + stringParam + "%' OR sigla LIKE '%" + stringParam + "%'";
-        Query q = em.createNativeQuery(queryString, TipoDocumento.class);
+        String queryString = "SELECT tipoDoc FROM TipoDocumento tipoDoc "
+                + "WHERE tipoDoc.nombre LIKE :sParam";
+        Query q = em.createQuery(queryString)
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
     }    
@@ -53,8 +55,10 @@ public class TipoDocumentoFacade extends AbstractFacade<TipoDocumento> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT * FROM persona WHERE tipodocumento_id = " + id;
-        Query q = em.createNativeQuery(queryString, TipoDocumento.class);
+        String queryString = "SELECT per.tipoDocumento FROM Persona per "
+                + "WHERE per.tipoDocumento.id = :id";
+        Query q = em.createQuery(queryString)
+                .setParameter("id", id);
         return q.getResultList().isEmpty();
     } 
     
@@ -65,8 +69,9 @@ public class TipoDocumentoFacade extends AbstractFacade<TipoDocumento> {
      */
     public boolean noExiste(String unique){
         em = getEntityManager();
-        String queryString = "SELECT * FROM tipodocumento WHERE nombre = '" + unique + "'";
-        Query q = em.createNativeQuery(queryString, TipoDocumento.class);
+        String queryString = "SELECT tipoDoc FROM TipoDocumento tipoDoc WHERE tipoDoc.nombre = :unique";
+        Query q = em.createQuery(queryString)
+                .setParameter("unique", unique);
         return q.getResultList().isEmpty();
     }
     
@@ -76,8 +81,8 @@ public class TipoDocumentoFacade extends AbstractFacade<TipoDocumento> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT nombre FROM tipodocumento";
-        Query q = em.createNativeQuery(queryString);
+        String queryString = "SELECT tipoDoc.nombre FROM TipoDocumento tipoDoc";
+        Query q = em.createQuery(queryString);
         return q.getResultList();
     }      
 }

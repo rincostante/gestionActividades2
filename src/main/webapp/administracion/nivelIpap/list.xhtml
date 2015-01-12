@@ -7,47 +7,53 @@
       xmlns:p="http://primefaces.org/ui">
       
     <h:head>
-        <title>#{bundle.EstadoActividadTitle}</title>
+        <title>#{bundle.NivelIpapTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.EstadoActividadTitle}" />
+            <h:outputText value="#{bundle.NivelIpapTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="estActForm" header="#{bundle.EstadoActividadListTitle}" style="margin-bottom:10px;">
+                <p:panel id="nivIpapForm" header="#{bundle.NivelIpapListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbEstadoActividad.selectParam}" 
-                                        completeMethod="#{mbEstadoActividad.completeNombres}" />
+                        <p:autoComplete value="#{mbNivelIpap.selectParam}" 
+                                        completeMethod="#{mbNivelIpap.completeNombres}" />
                         <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="estActForm" resetValues="true" />
+                            <p:ajax update="nivIpapForm" resetValues="true" />
                         </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbEstadoActividad.prepareSelect()}" ajax="false"/>  
+                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbNivelIpap.prepareSelect()}" ajax="false"/>  
                         <p:outputLabel value="&ensp;"/>
-                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbEstadoActividad.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbEstadoActividad.prepareList}" update="estActList"/>
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbNivelIpap.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbNivelIpap.prepareList}" update="nivIpapList"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <br/>           
 
-                <p:dataTable value="#{mbEstadoActividad.items}" var="e" id="estActList" rows="5"
+                <p:dataTable value="#{mbNivelIpap.items}" var="e" id="nivIpapList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.EstadoActListado}
+                        Listado de #{bundle.NivelIpapListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:columnToggler datasource="estActList" trigger="toggler" />
+                        <p:columnToggler datasource="nivIpapList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
+                    
+                    <p:column headerText="#{bundle.CreateNivelIpapTitle_estado}" sortBy="#{e.estado}">
+                        <p:outputLabel value="#{e.estado}"/>
+                    </p:column>
+                    
+                    
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbEstadoActividad.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbEstadoActividad.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbEstadoActividad.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbNivelIpap.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbNivelIpap.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbNivelIpap.prepareDestroy()}"/>
                     </p:column>                
            
                 </p:dataTable>

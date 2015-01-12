@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -47,11 +46,6 @@ public class MbTipoCapacitacion implements Serializable{
      */
     public MbTipoCapacitacion() {   
     }
-    
-    @PostConstruct
-    public void init(){
-        listaNombres = getFacade().getNombres();
-    }    
     
     /********************************
      ** Métodos para la navegación **
@@ -355,6 +349,7 @@ public class MbTipoCapacitacion implements Serializable{
      * @return 
      */
     public List<String> completeNombres(String query){
+        listaNombres = getFacade().getNombres();
         List<String> nombres = new ArrayList();
         Iterator itLista = listaNombres.listIterator();
         while(itLista.hasNext()){

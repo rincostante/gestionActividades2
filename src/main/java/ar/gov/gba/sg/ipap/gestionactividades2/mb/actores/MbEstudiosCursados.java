@@ -59,7 +59,6 @@ public class MbEstudiosCursados implements Serializable{
     
     @PostConstruct
     public void init(){
-        listaNombres = getFacade().getNombres();
         estados  = new HashMap<>();
         estados.put("Incompleto", "Incompleto");
         estados.put("En Curso", "En Curso");
@@ -145,7 +144,7 @@ public class MbEstudiosCursados implements Serializable{
     }
     
     /**
-     * Método que verifica que el Tipo de Capacitación que se quiere eliminar no esté siento utilizado por otra entidad
+     * Método que verifica que el Estudio Cursado que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
@@ -201,14 +200,22 @@ public class MbEstudiosCursados implements Serializable{
      * @return mensaje que notifica la actualización
      */
     public String update() {
+        EstudiosCursados estCur;
         try {
-            if(getFacade().noExiste(current.getNombre(), current.getEstado())){
+            estCur = getFacade().getExistente(current.getNombre(), current.getEstado());
+            if(estCur == null){
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdated"));
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosExistentes"));
-                return null;
+                if(estCur.getId().equals(current.getId())){
+                    getFacade().edit(current);
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreated"));
+                    return "view";                    
+                }else{
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosExistentes"));
+                    return null;
+                }
             }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdatedErrorOccured"));
@@ -310,6 +317,7 @@ public class MbEstudiosCursados implements Serializable{
      * @return 
      */
     public List<String> completeNombres(String query){
+        listaNombres = getFacade().getNombres();
         List<String> nombres = new ArrayList();
         Iterator itLista = listaNombres.listIterator();
         while(itLista.hasNext()){

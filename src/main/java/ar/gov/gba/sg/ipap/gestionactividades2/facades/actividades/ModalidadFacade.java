@@ -40,8 +40,10 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
     public List<Modalidad> getXString(String stringParam){
         em = getEntityManager();
         List<Modalidad> result;
-        String queryString = "SELECT * FROM modalidad WHERE nombre LIKE '%" + stringParam + "%'";
-        Query q = em.createNativeQuery(queryString, Modalidad.class);
+        String queryString = "SELECT mod FROM Modalidad mod "
+                + "WHERE mod.nombre LIKE :sParam";
+        Query q = em.createQuery(queryString)
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
     }     
@@ -53,8 +55,10 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT * FROM actividadplan WHERE modalidad_id = " + id;
-        Query q = em.createNativeQuery(queryString, Modalidad.class);
+        String queryString = "SELECT actPlan.modalidad FROM ActividadPlan actPlan "
+                + "WHERE actPlan.modalidad.id = :id";
+        Query q = em.createQuery(queryString)
+                .setParameter("id", id);
         return q.getResultList().isEmpty();
     } 
     
@@ -65,8 +69,9 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
      */
     public boolean noExiste(String unique){
         em = getEntityManager();
-        String queryString = "SELECT * FROM modalidad WHERE nombre = '" + unique + "'";
-        Query q = em.createNativeQuery(queryString, Modalidad.class);
+        String queryString = "SELECT mod FROM Modalidad mod WHERE mod.nombre = :unique";
+        Query q = em.createQuery(queryString)
+                .setParameter("unique", unique);
         return q.getResultList().isEmpty();
     }
     
@@ -76,8 +81,8 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT nombre FROM modalidad";
-        Query q = em.createNativeQuery(queryString);
+        String queryString = "SELECT mod.nombre FROM Modalidad mod";
+        Query q = em.createQuery(queryString);
         return q.getResultList();
     }    
 }

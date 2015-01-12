@@ -40,8 +40,10 @@ public class TipoOrganismoFacade extends AbstractFacade<TipoOrganismo> {
     public List<TipoOrganismo> getXString(String stringParam){
         em = getEntityManager();
         List<TipoOrganismo> result;
-        String queryString = "SELECT * FROM tipoorganismo WHERE nombre LIKE '%" + stringParam + "%'";
-        Query q = em.createNativeQuery(queryString, TipoOrganismo.class);
+        String queryString = "SELECT tipo FROM TipoOrganismo tipo "
+                + "WHERE tipo.nombre LIKE :sParam";
+        Query q = em.createQuery(queryString)
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
     }     
@@ -53,8 +55,10 @@ public class TipoOrganismoFacade extends AbstractFacade<TipoOrganismo> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT * FROM organismo WHERE tipo_id = " + id;
-        Query q = em.createNativeQuery(queryString, TipoOrganismo.class);
+        String queryString = "SELECT org.tipoOrganismo FROM Organismo org "
+                + "WHERE org.tipoOrganismo.id = :id";
+        Query q = em.createQuery(queryString)
+                .setParameter("id", id);
         return q.getResultList().isEmpty();
     }  
     
@@ -65,8 +69,9 @@ public class TipoOrganismoFacade extends AbstractFacade<TipoOrganismo> {
      */
     public boolean noExiste(String unique){
         em = getEntityManager();
-        String queryString = "SELECT * FROM tipoorganismo WHERE nombre = '" + unique + "'";
-        Query q = em.createNativeQuery(queryString, TipoOrganismo.class);
+        String queryString = "SELECT tipo FROM TipoOrganismo tipo WHERE tipo.nombre = :unique";
+        Query q = em.createQuery(queryString)
+                .setParameter("unique", unique);
         return q.getResultList().isEmpty();
     }
     
@@ -76,8 +81,8 @@ public class TipoOrganismoFacade extends AbstractFacade<TipoOrganismo> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT nombre FROM tipoorganismo";
-        Query q = em.createNativeQuery(queryString);
+        String queryString = "SELECT tipo.nombre FROM TipoOrganismo tipo";
+        Query q = em.createQuery(queryString);
         return q.getResultList();
     }    
 }

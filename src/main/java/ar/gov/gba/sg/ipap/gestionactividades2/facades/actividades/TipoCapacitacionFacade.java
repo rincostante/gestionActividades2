@@ -40,8 +40,10 @@ public class TipoCapacitacionFacade extends AbstractFacade<TipoCapacitacion> {
     public List<TipoCapacitacion> getXString(String stringParam){
         em = getEntityManager();
         List<TipoCapacitacion> result;
-        String queryString = "SELECT * FROM tipocapacitacion WHERE nombre LIKE '%" + stringParam + "%'";
-        Query q = em.createNativeQuery(queryString, TipoCapacitacion.class);
+        String queryString = "SELECT tipoCap FROM TipoCapacitacion tipoCap "
+                + "WHERE tipoCap.nombre LIKE :sParam";
+        Query q = em.createQuery(queryString)
+                .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         //em.close();
         return result;
@@ -54,8 +56,10 @@ public class TipoCapacitacionFacade extends AbstractFacade<TipoCapacitacion> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT * FROM actividadplan WHERE tipocapacitacion_id = " + id;
-        Query q = em.createNativeQuery(queryString, TipoCapacitacion.class);
+        String queryString = "SELECT actPlan.tipoCapacitacion FROM ActividadPlan actPlan "
+                + "WHERE actPlan.tipoCapacitacion.id = :id";
+        Query q = em.createQuery(queryString)
+                .setParameter("id", id);
         return q.getResultList().isEmpty();
     }
     
@@ -66,8 +70,9 @@ public class TipoCapacitacionFacade extends AbstractFacade<TipoCapacitacion> {
      */
     public boolean noExiste(String unique){
         em = getEntityManager();
-        String queryString = "SELECT * FROM tipocapacitacion WHERE nombre = '" + unique + "'";
-        Query q = em.createNativeQuery(queryString, TipoCapacitacion.class);
+        String queryString = "SELECT tipoCap FROM TipoCapacitacion tipoCap WHERE tipoCap.nombre = :unique";
+        Query q = em.createQuery(queryString)
+                .setParameter("unique", unique);
         return q.getResultList().isEmpty();
     }
     
@@ -77,8 +82,8 @@ public class TipoCapacitacionFacade extends AbstractFacade<TipoCapacitacion> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT nombre FROM tipocapacitacion";
-        Query q = em.createNativeQuery(queryString);
+        String queryString = "SELECT tipoCap.nombre FROM TipoCapacitacion tipoCap";
+        Query q = em.createQuery(queryString);
         return q.getResultList();
     }
 }
