@@ -13,22 +13,21 @@
             <br/>
             <h:form id="frmNew">
                 <p:panel id="pnNew" header="#{bundle.EstudiosCursadosNewTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="3">
+                    <p:messages id="messages" />
+                    <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.CreateEstudiosCursadosLabel_nombre}" for="nombre"/>
                         <p:inputText id="nombre"
                                      value="#{mbEstudiosCursados.selected.nombre}" 
-                                     requiredMessage="#{bundle.CreateEstudiosCursadosRequiredMessage}" 
+                                     requiredMessage="#{bundle.EstudiosCursadosRequireMessage_nombre}" 
                                      required="true"/>
-                        <p:message for="nombre" />
                         
                         <p:outputLabel value="#{bundle.CreateEstudiosCursadosLabel_estado}" for="estado"/>
                         <p:selectOneMenu id="estado" value="#{mbEstudiosCursados.selected.estado}" 
-                                         requiredMessage="#{bundle.CreateEstudiosCursadosRequiredMessage}" 
+                                         requiredMessage="#{bundle.EstudiosCursadosRequireMessage_estado}" 
                                          required="true">
                             <f:selectItem itemLabel="Seleccione el estado" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbEstudiosCursados.estados}" />
                         </p:selectOneMenu>
-                        <p:message for="estado" />
                     </h:panelGrid>
                 </p:panel>
                 <p:toolbar>
