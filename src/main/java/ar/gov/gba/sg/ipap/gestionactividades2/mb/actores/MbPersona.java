@@ -6,8 +6,12 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.NivelIpapFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.LocalidadFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.PersonaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TipoDocumentoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,6 +22,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -25,43 +30,77 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 
 /**
  *
  * @author rincostante
  */
-public class MbNivelIpap implements Serializable{
+public class MbPersona implements Serializable{
 
-    private NivelIpap current;
+    private Persona current;
     private DataModel items = null;
     
     @EJB
-    private NivelIpapFacade estudiosCursadosFacade;
+    private PersonaFacade estudiosCursadosFacade;
+    @EJB
+    private TipoDocumentoFacade tipoDocFacade;
+    @EJB
+    private LocalidadFacade localidadFacade;
     private int selectedItemIndex;
     private String selectParam; 
-    private List<String> listaNombres;    
-    private Map<String,String> estados;    
-    /**
-     * Creates a new instance of MbNivelIpap
-     */
-    public MbNivelIpap() {
-    }
+    private List<String> listaNombres; 
+    private List<TipoDocumento> listaTipoDocs; 
+    private List<Localidad> listaLocalidades;
+    private Map<String,String> sexos;   
+    private int edad;
     
-    public Map<String, String> getEstados() {
-        return estados;
+    /**
+     * Creates a new instance of MbPersona
+     */
+    public MbPersona() {
     }
-
-    public void setEstados(Map<String, String> estados) {
-        this.estados = estados;
-    }    
     
    @PostConstruct
     public void init(){
-        estados  = new HashMap<>();
-        estados.put("Incompleto", "Incompleto");
-        estados.put("En Curso", "En Curso");
-        estados.put("Finalizado", "Finalizado");  
-    }  
+        listaTipoDocs = tipoDocFacade.findAll();
+        listaLocalidades = localidadFacade.findAll();
+        sexos  = new HashMap<>();
+        sexos.put("Femenino", "F");
+        sexos.put("Masculino", "M");         
+    }     
+
+    public Map<String, String> getSexos() {
+        return sexos;
+    }
+
+    public void setSexos(Map<String, String> sexos) {
+        this.sexos = sexos;
+    }
+    
+    public List<Localidad> getListaLocalidades() {
+        return listaLocalidades;
+    }
+
+    public void setListaLocalidades(List<Localidad> listaLocalidades) {
+        this.listaLocalidades = listaLocalidades;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    public List<TipoDocumento> getListaTipoDocs() {
+        return listaTipoDocs;
+    }
+
+    public void setListaTipoDocs(List<TipoDocumento> listaTipoDocs) {
+        this.listaTipoDocs = listaTipoDocs;
+    }
     
     /********************************
      ** Métodos para la navegación **
@@ -69,9 +108,9 @@ public class MbNivelIpap implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public NivelIpap getSelected() {
+    public Persona getSelected() {
         if (current == null) {
-            current = new NivelIpap();
+            current = new Persona();
             selectedItemIndex = -1;
         }
         return current;
@@ -102,7 +141,7 @@ public class MbNivelIpap implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (NivelIpap) getItems().getRowData();
+        current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -111,7 +150,7 @@ public class MbNivelIpap implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new NivelIpap();
+        current = new Persona();
         selectedItemIndex = -1;
         return "new";
     }
@@ -120,7 +159,7 @@ public class MbNivelIpap implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (NivelIpap) getItems().getRowData();
+        current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -136,7 +175,7 @@ public class MbNivelIpap implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarNivelIpap();
+        buscarPersonaXApYNom();
         return "list";
     }
     
@@ -145,7 +184,7 @@ public class MbNivelIpap implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (NivelIpap) getItems().getRowData();
+        current = (Persona) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -155,7 +194,7 @@ public class MbNivelIpap implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaNonDeletable"));
         }
         return "view";
     }
@@ -179,16 +218,16 @@ public class MbNivelIpap implements Serializable{
      */
     public String create() {
         try {
-            if(getFacade().noExiste(current.getNombre(), current.getEstado())){
-                getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapCreated"));
+            if(getFacade().noExiste(current.getTipoDocumento().getId(), current.getDocumento())){
+                //getFacade().create(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaCreated"));
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapExistentes"));
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaExistente"));
                 return null;
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("NivelIpapCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersonaCreatedErrorOccured"));
             return null;
         }
     }
@@ -197,15 +236,15 @@ public class MbNivelIpap implements Serializable{
      * @return mensaje que notifica la actualización
      */
     public String update() {
-        NivelIpap nivIpap;
+        Persona per;
         try {
-            nivIpap = getFacade().getExistente(current.getNombre(), current.getEstado());
-            if(nivIpap == null){
+            per = getFacade().getExistente(current.getTipoDocumento().getId(), current.getDocumento());
+            if(per == null){
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdated"));
                 return "view";
             }else{
-                if(nivIpap.getId().equals(current.getId())){
+                if(per.getId().equals(current.getId())){
                     getFacade().edit(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreated"));
                     return "view";                    
@@ -224,7 +263,7 @@ public class MbNivelIpap implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (NivelIpap) getItems().getRowData();
+        current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -252,7 +291,7 @@ public class MbNivelIpap implements Serializable{
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public NivelIpap getNivelIpap(java.lang.Long id) {
+    public Persona getPersona(java.lang.Long id) {
         return estudiosCursadosFacade.find(id);
     }    
     
@@ -262,7 +301,7 @@ public class MbNivelIpap implements Serializable{
     /**
      * @return el Facade
      */
-    private NivelIpapFacade getFacade() {
+    private PersonaFacade getFacade() {
         return estudiosCursadosFacade;
     }
     
@@ -272,9 +311,9 @@ public class MbNivelIpap implements Serializable{
     private void performDestroy() {
         try {
             getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("NivelIpapDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("NivelIpapDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersonaDeletedErrorOccured"));
         }
     }
 
@@ -304,8 +343,8 @@ public class MbNivelIpap implements Serializable{
         this.selectParam = selectParam;
     }
     
-    private void buscarNivelIpap(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
+    private void buscarPersonaXApYNom(){
+        items = new ListDataModel(getFacade().getXApYNom(selectParam)); 
     }  
     
     /**
@@ -326,20 +365,44 @@ public class MbNivelIpap implements Serializable{
         return nombres;
     }    
     
+    /**
+     * Método para validad cantidad de caracteres del número de documento
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */
+    public void validarLargoNumDoc(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        if(arg2.toString().length() < 7){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaLargoCaracteresNumDocMessage")));
+        }
+    }
+    
+    /**
+     * Método para validad cantidad de caracteres de los números de teléfono
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */    
+    public void validarLargoTel(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        if(arg2.toString().length() < 10){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaLargoTelefonosMessage")));
+        } 
+    }
+    
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = NivelIpap.class)
-    public static class NivelIpapControllerConverter implements Converter {
+    @FacesConverter(forClass = Persona.class)
+    public static class PersonaControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbNivelIpap controller = (MbNivelIpap) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbNivelIpap");
-            return controller.getNivelIpap(getKey(value));
+            MbPersona controller = (MbPersona) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbPersona");
+            return controller.getPersona(getKey(value));
         }
 
         
@@ -366,12 +429,12 @@ public class MbNivelIpap implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof NivelIpap) {
-                NivelIpap o = (NivelIpap) object;
+            if (object instanceof Persona) {
+                Persona o = (Persona) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + NivelIpap.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Persona.class.getName());
             }
         }
-    }               
+    }                 
 }

@@ -32,7 +32,8 @@
                             <p:menuitem value="Título" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTitulo}/list.xhtml"/>
                         </p:submenu>
                         <p:submenu label="Seguridad">
-                            <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>
+                            <p:menuitem value="Persona" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPersona}/list.xhtml"/>
+                            <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>                            
                         </p:submenu>                          
                         <p:submenu label="#{mbLogin.persona} | #{mbLogin.rol}" >
                             <p:menuitem value="Cerrar sesión" action="#{mbLogin.logout}" oncomplete="logout(xhr, status, args)"/>

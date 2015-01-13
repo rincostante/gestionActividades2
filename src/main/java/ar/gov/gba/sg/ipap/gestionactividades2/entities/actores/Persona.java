@@ -81,7 +81,7 @@ public class Persona implements Serializable {
     /**
      * Campo de texto que indica la fecha de nacimiento
      */      
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(nullable=false)
     @NotNull(message = "{entidades.fieldNotNullError}")
     private Date fechaNacimiento;

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+      
+    <h:head>
+        <title>#{bundle.PersonaTitle}</title>
+    </h:head>
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.PersonaTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/> 
+            <h:form>
+                <p:panel id="perForm" header="#{bundle.PersonaListTitle}" style="margin-bottom:10px;">
+                    <h:panelGrid columns="6">
+                        <p:autoComplete value="#{mbPersona.selectParam}" 
+                                        completeMethod="#{mbPersona.completeNombres}" />
+                        <p:commandButton icon="ui-icon-close" style="float: right">
+                            <p:ajax update="perForm" resetValues="true" />
+                        </p:commandButton>                           
+                        <p:commandButton icon="ui-icon-search" value="Búsqueda rápida por nombres" action="#{mbPersona.prepareSelect()}" ajax="false"/>  
+                        <p:outputLabel value="&ensp;"/>
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbPersona.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbPersona.prepareList}" update="perList"/>
+                    </h:panelGrid>
+                </p:panel>
+
+                <br/>           
+
+                <p:dataTable value="#{mbPersona.items}" var="e" id="perList" rows="5"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Listado de #{bundle.PersonaListado}
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:columnToggler datasource="perList" trigger="toggler" />
+                    </f:facet>
+                    <p:column headerText="#{bundle.PersonaLabel_apellidos}" sortBy="#{e.apellidos}">
+                        <p:outputLabel value="#{e.apellidos}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.PersonaLabel_nombres}" sortBy="#{e.nombres}">
+                        <p:outputLabel value="#{e.nombres}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.PersonaLabel_numDoc}" sortBy="#{e.documento}">
+                        <p:outputLabel value="#{e.documento}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.PersonaLabel_telefono}" sortBy="#{e.telefono}">
+                        <p:outputLabel value="#{e.telefono}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.PersonaLabel_celular}" sortBy="#{e.celular}">
+                        <p:outputLabel value="#{e.celular}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.PersonaLabel_email_1}" sortBy="#{e.email_1}">
+                        <p:outputLabel value="#{e.email_1}"/>
+                    </p:column>                    
+                    
+                    <p:column headerText="Acciones" style="width:135px">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbPersona.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbPersona.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbPersona.prepareDestroy()}"/>
+                    </p:column>                
+           
+                </p:dataTable>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
