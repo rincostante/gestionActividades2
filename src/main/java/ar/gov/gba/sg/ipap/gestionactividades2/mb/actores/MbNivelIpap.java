@@ -207,7 +207,7 @@ public class MbNivelIpap implements Serializable{
             }else{
                 if(nivIpap.getId().equals(current.getId())){
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreated"));
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdated"));
                     return "view";                    
                 }else{
                     JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosExistentes"));

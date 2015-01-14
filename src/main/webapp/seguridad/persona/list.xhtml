@@ -17,7 +17,7 @@
             <br/> 
             <h:form>
                 <p:panel id="perForm" header="#{bundle.PersonaListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
+                    <h:panelGrid columns="8">
                         <p:autoComplete value="#{mbPersona.selectParam}" 
                                         completeMethod="#{mbPersona.completeNombres}" />
                         <p:commandButton icon="ui-icon-close" style="float: right">
@@ -26,7 +26,9 @@
                         <p:commandButton icon="ui-icon-search" value="Búsqueda rápida por nombres" action="#{mbPersona.prepareSelect()}" ajax="false"/>  
                         <p:outputLabel value="&ensp;"/>
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbPersona.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbPersona.prepareList}" update="perList"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar Habilitadas" action="#{mbPersona.prepareList}" update="perList"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar Deshabilitadas" action="#{mbPersona.prepareList}" update="perList"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbPersona.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
 

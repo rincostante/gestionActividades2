@@ -85,4 +85,10 @@
         <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbPersona</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>inicio</from-outcome>
+            <to-view-id>/faces/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>

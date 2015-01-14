@@ -70,7 +70,7 @@ public class PersonaFacade extends AbstractFacade<Persona> {
     public List<String> getNombres(){
         em = getEntityManager();
         String queryString = "SELECT (apellidos || ', ' || nombres) FROM persona";
-        Query q = em.createNamedQuery(queryString);
+        Query q = em.createNativeQuery(queryString);
         return q.getResultList();
     }   
     
@@ -106,5 +106,29 @@ public class PersonaFacade extends AbstractFacade<Persona> {
                 .setParameter("idTipoDoc", idTipoDoc)
                 .setParameter("numDoc", numDoc);
         return (Persona)q.getSingleResult();
-    }        
+    }   
+    
+    /**
+     * Método que devuelve todas las Personas habilitadas
+     * @return 
+     */
+    public List<Persona> getHabilitadas(){
+        em = getEntityManager();
+        String queryString = "SELECT per FROM Persona per "
+                + "WHERE per.admin.habilitado = true";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }
+    
+    /**
+     * Método que devuelve todas las Personas deshabilitadas
+     * @return 
+     */
+    public List<Persona> getDeshabilitadas(){
+        em = getEntityManager();
+        String queryString = "SELECT per FROM Persona per "
+                + "WHERE per.admin.habilitado = false";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }    
 }

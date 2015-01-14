@@ -6,15 +6,18 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.LocalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.PersonaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TipoDocumentoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.Edad;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +25,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -30,7 +32,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -42,7 +44,7 @@ public class MbPersona implements Serializable{
     private DataModel items = null;
     
     @EJB
-    private PersonaFacade estudiosCursadosFacade;
+    private PersonaFacade personaFacade;
     @EJB
     private TipoDocumentoFacade tipoDocFacade;
     @EJB
@@ -53,7 +55,8 @@ public class MbPersona implements Serializable{
     private List<TipoDocumento> listaTipoDocs; 
     private List<Localidad> listaLocalidades;
     private Map<String,String> sexos;   
-    private int edad;
+    private Edad edad;
+    private boolean habilitadas;
     
     /**
      * Creates a new instance of MbPersona
@@ -67,8 +70,17 @@ public class MbPersona implements Serializable{
         listaLocalidades = localidadFacade.findAll();
         sexos  = new HashMap<>();
         sexos.put("Femenino", "F");
-        sexos.put("Masculino", "M");         
+        sexos.put("Masculino", "M");     
+        habilitadas = true;
     }     
+
+    public Edad getEdad() {
+        return edad;
+    }
+
+    public void setEdad(Edad edad) {
+        this.edad = edad;
+    }
 
     public Map<String, String> getSexos() {
         return sexos;
@@ -84,14 +96,6 @@ public class MbPersona implements Serializable{
 
     public void setListaLocalidades(List<Localidad> listaLocalidades) {
         this.listaLocalidades = listaLocalidades;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
     }
 
     public List<TipoDocumento> getListaTipoDocs() {
@@ -121,7 +125,11 @@ public class MbPersona implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            items = new ListDataModel(getFacade().findAll());
+            if(habilitadas){
+                items = new ListDataModel(getFacade().getHabilitadas());
+            }else{
+                items = new ListDataModel(getFacade().getDeshabilitadas());
+            }
         }
         return items;
     }
@@ -143,6 +151,11 @@ public class MbPersona implements Serializable{
     public String prepareView() {
         current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
+        
+        // seteo la edad de la persona
+        Edad edadUtil = new Edad();
+        edad = edadUtil.calcularEdad(current.getFechaNacimiento());
+        
         return "view";
     }
 
@@ -214,12 +227,23 @@ public class MbPersona implements Serializable{
     ** Métodos de operación **
     **************************/
     /**
+     * Méto que inserta una nueva Persona en la base de datos, previamente genera una entidad de administración
+     * con los datos necesarios y luego se la asigna a la persona
      * @return mensaje que notifica la inserción
      */
     public String create() {
         try {
             if(getFacade().noExiste(current.getTipoDocumento().getId(), current.getDocumento())){
-                //getFacade().create(current);
+                // Creación de la entidad de administración y asignación
+                Date date = new Date(System.currentTimeMillis());
+                AdmEntidad admEnt = new AdmEntidad();
+                admEnt.setFechaAlta(date);
+                admEnt.setHabilitado(true);
+                admEnt.setUsAlta(1);
+                current.setAdmin(admEnt);
+                
+                // Inserción
+                getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaCreated"));
                 return "view";
             }else{
@@ -233,6 +257,8 @@ public class MbPersona implements Serializable{
     }
 
     /**
+     * Méto que actualiza una nueva Persona en la base de datos.
+     * Previamente actualiza los datos de administración
      * @return mensaje que notifica la actualización
      */
     public String update() {
@@ -240,21 +266,33 @@ public class MbPersona implements Serializable{
         try {
             per = getFacade().getExistente(current.getTipoDocumento().getId(), current.getDocumento());
             if(per == null){
+                // Actualización de datos de administración de la entidad
+                Date date = new Date(System.currentTimeMillis());
+                current.getAdmin().setFechaModif(date);
+                current.getAdmin().setUsModif(1);
+                
+                // Actualizo
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaUpdated"));
                 return "view";
             }else{
                 if(per.getId().equals(current.getId())){
+                    // Actualización de datos de administración de la entidad
+                    Date date = new Date(System.currentTimeMillis());
+                    current.getAdmin().setFechaModif(date);
+                    current.getAdmin().setUsModif(1);
+
+                    // Actualizo
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosCreated"));
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaUpdated"));
                     return "view";                    
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosExistentes"));
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaExistente"));
                     return null;
                 }
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersonaUpdatedErrorOccured"));
             return null;
         }
     }
@@ -277,14 +315,14 @@ public class MbPersona implements Serializable{
      * @return la totalidad de las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), false);
+        return JsfUtil.getSelectItems(personaFacade.findAll(), false);
     }
 
     /**
      * @return de a una las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), true);
+        return JsfUtil.getSelectItems(personaFacade.findAll(), true);
     }
 
     /**
@@ -292,7 +330,7 @@ public class MbPersona implements Serializable{
      * @return la entidad correspondiente
      */
     public Persona getPersona(java.lang.Long id) {
-        return estudiosCursadosFacade.find(id);
+        return personaFacade.find(id);
     }    
     
     /*********************
@@ -302,7 +340,7 @@ public class MbPersona implements Serializable{
      * @return el Facade
      */
     private PersonaFacade getFacade() {
-        return estudiosCursadosFacade;
+        return personaFacade;
     }
     
     /**
@@ -366,27 +404,14 @@ public class MbPersona implements Serializable{
     }    
     
     /**
-     * Método para validad cantidad de caracteres del número de documento
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
+     * Método para revocar la sesión del MB
+     * @return 
      */
-    public void validarLargoNumDoc(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
-        if(arg2.toString().length() < 7){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaLargoCaracteresNumDocMessage")));
-        }
-    }
-    
-    /**
-     * Método para validad cantidad de caracteres de los números de teléfono
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */    
-    public void validarLargoTel(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
-        if(arg2.toString().length() < 10){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaLargoTelefonosMessage")));
-        } 
+    public String cleanUp(){
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+        session.removeAttribute("mbPersona");
+        return "inicio";
     }
     
     /********************************************************************
