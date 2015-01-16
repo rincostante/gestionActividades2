@@ -64,7 +64,7 @@ public class Usuario implements Serializable {
     /**
      * Campo de tipo Docente que contiene los datos del docente, en el caso que el usuario lo sea.
      */
-    @ManyToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="docente_id")
     private Docente docente;
     

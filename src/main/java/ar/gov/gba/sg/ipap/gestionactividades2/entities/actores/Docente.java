@@ -91,8 +91,7 @@ public class Docente implements Serializable {
      * Campo de tipo Persona que contiene los datos básicos de la persona del docente.
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="persona_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="persona_id", nullable=true)
     private Persona persona;  
     
     /**
@@ -114,7 +113,19 @@ public class Docente implements Serializable {
      * Campo que guarda las actividades que han tenido al docente como profesor
      */
     @OneToMany(mappedBy="docente")
-    private List<ActividadImplementada> actividades;    
+    private List<ActividadImplementada> actividades;   
+    
+    /**
+     * Campo que guarda las clases que han tenido al docente como profesor
+     */
+    @OneToMany(mappedBy="docente")
+    private List<Clase> clases;       
+    
+    /**
+     * Campo que guarda el usuario que lo toene al docente vinculado
+     */
+    @OneToOne(mappedBy="docente")
+    private Usuario usuario;        
     
     /**
      * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
@@ -128,6 +139,40 @@ public class Docente implements Serializable {
      */
     public Docente(){
         actividades = new ArrayList();
+    }
+
+    /**
+     *
+     * @return
+     */
+    @XmlTransient
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    /**
+     *
+     * @param usuario
+     */
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @XmlTransient
+    public List<Clase> getClases() {
+        return clases;
+    }
+
+    /**
+     *
+     * @param clases
+     */
+    public void setClases(List<Clase> clases) {
+        this.clases = clases;
     }
 
     /**

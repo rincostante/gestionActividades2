@@ -7,13 +7,14 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.LocalidadFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.PersonaFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TipoDocumentoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.util.Edad;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TituloFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,164 +35,116 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
+
 /**
  *
  * @author rincostante
  */
-public class MbPersona implements Serializable{
+public class MbDocente implements Serializable{
 
-    private Persona current;
+    private Docente current;
     private DataModel items = null;
     
     @EJB
+    private DocenteFacade docenteFacade;
+    @EJB
     private PersonaFacade personaFacade;
     @EJB
-    private TipoDocumentoFacade tipoDocFacade;
+    private AgenteFacade agenteFacade;  
     @EJB
-    private LocalidadFacade localidadFacade;
+    private TituloFacade tituloFacade;      
+    
     private int selectedItemIndex;
-    private String selectParam; 
-    private List<String> listaNombres; 
-    private List<TipoDocumento> listaTipoDocs; 
-    private List<Localidad> listaLocalidades;
-    private Map<String,String> sexos;   
-    private Edad edad;
+    private String selectParam;
+    private List<Persona> listaPersonas;
+    private List<Agente> listaAgentes;
+    private List<Titulo> listaTitulos;
     private boolean habilitadas;
-    private int selectIParam;
-    private Localidad localidad;
+    private Persona persona;
+    private Agente agente;
+    private Titulo titulo;
     
     /**
-     * Creates a new instance of MbPersona
+     * Creates a new instance of MbDocente
      */
-    public MbPersona() {
+    public MbDocente() {
     }
-
+    
     /**
      *
      */
     @PostConstruct
     public void init(){
-        listaTipoDocs = tipoDocFacade.findAll();
-        listaLocalidades = localidadFacade.findAll();
-        sexos  = new HashMap<>();
-        sexos.put("Femenino", "F");
-        sexos.put("Masculino", "M");     
+        listaTitulos = tituloFacade.findAll();
         habilitadas = true;
-    }     
+    }   
 
     /********************************
      ** Getters y Setters ***********
      ********************************/
-    /**
-     * 
-     * @return 
-     */
-    public Localidad getLocalidad() {
-        return localidad;
-    }
-
-    /**
-     *
-     * @param localidad
-     */
-    public void setLocalidad(Localidad localidad) {
-        this.localidad = localidad;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getSelectIParam() {
-        return selectIParam;
-    }
-
-    /**
-     *
-     * @param selectIParam
-     */
-    public void setSelectIParam(int selectIParam) {
-        this.selectIParam = selectIParam;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public boolean isHabilitadas() {
-        return habilitadas;
-    }
-
-    /**
-     *
-     * @param habilitadas
-     */
-    public void setHabilitadas(boolean habilitadas) {
-        this.habilitadas = habilitadas;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Edad getEdad() {
-        return edad;
-    }
-
-    /**
-     *
-     * @param edad
-     */
-    public void setEdad(Edad edad) {
-        this.edad = edad;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Map<String, String> getSexos() {
-        return sexos;
-    }
-
-    /**
-     *
-     * @param sexos
-     */
-    public void setSexos(Map<String, String> sexos) {
-        this.sexos = sexos;
-    }
     
-    /**
-     *
-     * @return
-     */
-    public List<Localidad> getListaLocalidades() {
-        return listaLocalidades;
+    public int getSelectedItemIndex() {
+        return selectedItemIndex;
     }
 
-    /**
-     *
-     * @param listaLocalidades
-     */
-    public void setListaLocalidades(List<Localidad> listaLocalidades) {
-        this.listaLocalidades = listaLocalidades;
+    public void setSelectedItemIndex(int selectedItemIndex) {
+        this.selectedItemIndex = selectedItemIndex;
     }
 
-    /**
-     *
-     * @return
-     */
-    public List<TipoDocumento> getListaTipoDocs() {
-        return listaTipoDocs;
+    public String getSelectParam() {
+        return selectParam;
     }
 
-    /**
-     *
-     * @param listaTipoDocs
-     */
-    public void setListaTipoDocs(List<TipoDocumento> listaTipoDocs) {
-        this.listaTipoDocs = listaTipoDocs;
+    public void setSelectParam(String selectParam) {
+        this.selectParam = selectParam;
+    }
+
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
+
+    public Agente getAgente() {
+        return agente;
+    }
+
+    public void setAgente(Agente agente) {
+        this.agente = agente;
+    }
+
+    public Titulo getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(Titulo titulo) {
+        this.titulo = titulo;
+    }
+
+    public List<Persona> getListaPersonas() {
+        return listaPersonas;
+    }
+
+    public void setListaPersonas(List<Persona> listaPersonas) {
+        this.listaPersonas = listaPersonas;
+    }
+
+    public List<Agente> getListaAgentes() {
+        return listaAgentes;
+    }
+
+    public void setListaAgentes(List<Agente> listaAgentes) {
+        this.listaAgentes = listaAgentes;
+    }
+
+    public List<Titulo> getListaTitulos() {
+        return listaTitulos;
+    }
+
+    public void setListaTitulos(List<Titulo> listaTitulos) {
+        this.listaTitulos = listaTitulos;
     }
     
     /********************************
@@ -200,9 +153,9 @@ public class MbPersona implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public Persona getSelected() {
+    public Docente getSelected() {
         if (current == null) {
-            current = new Persona();
+            current = new Docente();
             selectedItemIndex = -1;
         }
         return current;
@@ -249,13 +202,8 @@ public class MbPersona implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Persona) getItems().getRowData();
+        current = (Docente) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
-        
-        // seteo la edad de la persona
-        Edad edadUtil = new Edad();
-        edad = edadUtil.calcularEdad(current.getFechaNacimiento());
-        
         return "view";
     }
     
@@ -263,13 +211,8 @@ public class MbPersona implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (Persona) getItems().getRowData();
+        current = (Docente) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
-        
-        // seteo la edad de la persona
-        Edad edadUtil = new Edad();
-        edad = edadUtil.calcularEdad(current.getFechaNacimiento());
-        
         return "viewDes";
     }
 
@@ -277,7 +220,10 @@ public class MbPersona implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new Persona();
+        current = new Docente();
+        // cargo los list para los combos
+        listaPersonas = personaFacade.findAll();
+        listaAgentes = agenteFacade.findAll();
         selectedItemIndex = -1;
         return "new";
     }
@@ -286,7 +232,7 @@ public class MbPersona implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Persona) getItems().getRowData();
+        current = (Docente) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -305,7 +251,7 @@ public class MbPersona implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (Persona) getItems().getRowData();
+        current = (Docente) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -315,7 +261,7 @@ public class MbPersona implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteNonDeletable"));
         }
         return "view";
     }  
@@ -325,7 +271,7 @@ public class MbPersona implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        current = (Persona) getItems().getRowData();
+        current = (Docente) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -338,15 +284,15 @@ public class MbPersona implements Serializable{
 
             // Actualizo
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaHabilitada"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteHabilitada"));
             return "view";
         }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersonaHabilitadaErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteHabilitadaErrorOccured"));
             return null; 
         }
-    }
-
-    /*************************************************************
+    }    
+    
+   /*************************************************************
      ** Métodos de inicialización de búsquedas para habilitados **
      *************************************************************/
     
@@ -355,7 +301,7 @@ public class MbPersona implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectHab(){
-        buscarRapida();
+        //buscarRapida();
         return "list";
     }
     
@@ -364,7 +310,7 @@ public class MbPersona implements Serializable{
      * @return
      */
     public String prepareSelectXLoc(){
-        buscarXLocalidad();
+        //buscarXLocalidad();
         return "list";
     }
     
@@ -373,11 +319,11 @@ public class MbPersona implements Serializable{
      * @return 
      */
     public String prepareSelectXDoc(){
-        buscarRapidaXDoc();
+        //buscarRapidaXDoc();
         return "list";
     }
-      
-    /****************************************************************
+    
+   /****************************************************************
      ** Métodos de inicialización de búsquedas para DesHabilitados **
      ****************************************************************/   
     
@@ -386,7 +332,7 @@ public class MbPersona implements Serializable{
      * @return 
      */
     public String prepareSelectDes(){
-        buscarRapida();
+        //buscarRapida();
         return "listDes";
     }
 
@@ -395,7 +341,7 @@ public class MbPersona implements Serializable{
      * @return
      */
     public String prepareSelectDesXLoc(){
-        buscarXLocalidad();
+        //buscarXLocalidad();
         return "listDes";
     }
 
@@ -404,22 +350,30 @@ public class MbPersona implements Serializable{
      * @return
      */
     public String prepareDesSelectDesXDoc(){
-        buscarRapidaXDoc();
+        //buscarRapidaXDoc();
         return "listDes";
     }
     
-        
     /*************************
     ** Métodos de operación **
     **************************/
     /**
-     * Méto que inserta una nueva Persona en la base de datos, previamente genera una entidad de administración
+     * Méto que inserta uno nuevo Docente en la base de datos, previamente genera una entidad de administración
      * con los datos necesarios y luego se la asigna a la persona
      * @return mensaje que notifica la inserción
      */
     public String create() {
+        Long idAgente;
+        Long idPersona;
+        if(current.getAgente() == null){
+            idAgente = Long.valueOf(0);
+            idPersona = current.getPersona().getId();
+        }else{
+            idPersona = Long.valueOf(0);
+            idAgente = current.getAgente().getId();
+        }
         try {
-            if(getFacade().noExiste(current.getTipoDocumento().getId(), current.getDocumento())){
+            if(getFacade().noExiste(idAgente, idPersona)){
                 // Creación de la entidad de administración y asignación
                 Date date = new Date(System.currentTimeMillis());
                 AdmEntidad admEnt = new AdmEntidad();
@@ -430,28 +384,37 @@ public class MbPersona implements Serializable{
                 
                 // Inserción
                 getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaCreated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteCreated"));
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaExistente"));
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteExistente"));
                 return null;
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersonaCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteCreatedErrorOccured"));
             return null;
         }
     }
 
     /**
-     * Méto que actualiza una nueva Persona en la base de datos.
+     * Méto que actualiza un nuev Docente en la base de datos.
      * Previamente actualiza los datos de administración
      * @return mensaje que notifica la actualización
      */
     public String update() {
-        Persona per;
+        Docente doc;
+        Long idAgente;
+        Long idPersona;
+        if(current.getAgente() == null){
+            idAgente = Long.valueOf(0);
+            idPersona = current.getPersona().getId();
+        }else{
+            idPersona = Long.valueOf(0);
+            idAgente = current.getAgente().getId();
+        }        
         try {
-            per = getFacade().getExistente(current.getTipoDocumento().getId(), current.getDocumento());
-            if(per == null){
+            doc = getFacade().getExistente(idAgente, idPersona);
+            if(doc == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
@@ -459,10 +422,10 @@ public class MbPersona implements Serializable{
                 
                 // Actualizo
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaUpdated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteUpdated"));
                 return "view";
             }else{
-                if(per.getId().equals(current.getId())){
+                if(doc.getId().equals(current.getId())){
                     // Actualización de datos de administración de la entidad
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
@@ -470,15 +433,15 @@ public class MbPersona implements Serializable{
 
                     // Actualizo
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaUpdated"));
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteUpdated"));
                     return "view";                    
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaExistente"));
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteExistente"));
                     return null;
                 }
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersonaUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteUpdatedErrorOccured"));
             return null;
         }
     }
@@ -487,7 +450,7 @@ public class MbPersona implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Persona) getItems().getRowData();
+        current = (Docente) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -501,78 +464,73 @@ public class MbPersona implements Serializable{
      * @return la totalidad de las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(personaFacade.findAll(), false);
+        return JsfUtil.getSelectItems(getFacade().findAll(), false);
     }
 
     /**
      * @return de a una las entidades persistidas formateadas
      */
     public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(personaFacade.findAll(), true);
+        return JsfUtil.getSelectItems(getFacade().findAll(), true);
     }
 
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public Persona getPersona(java.lang.Long id) {
-        return personaFacade.find(id);
+    public Docente getDocente(java.lang.Long id) {
+        return getFacade().find(id);
     }    
     
     /*
      * Métodos de búsqueda
      */
 
-    /**
-     *
-     * @return
-     */
-    
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    /**
-     *
-     * @param selectParam
-     */
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
     
     /**
      * Método para llenar la lista para el autocompletado de la búsqueda de nombres
      * @param query
      * @return 
      */
+    /*
     public List<String> completeNombres(String query){
         List<String> nombres = new ArrayList();
         Iterator itRows = items.iterator();
         while(itRows.hasNext()){
-            Persona per = (Persona)itRows.next();
-            if(per.getApellidos().contains(query) || per.getNombres().contains(query)){
-                nombres.add(per.getApellidos() + ", " + per.getNombres());
+            Docente doc = (Docente)itRows.next();
+            if(doc.getPersona().getApellidos().contains(query) || doc.getPersona().getNombres().contains(query)){
+                nombres.add(doc.getPersona().getApellidos() + ", " + doc.getPersona().getNombres() + " - " + doc.getPersona().getDocumento() + " - " + doc.g);
+            }
+                    
+                    
+                    
+                    || doc.getAgente().getApellidos().contains(query) || doc.getAgente().getNombres().contains(query)){
+                
+                nombres.add(doc.getApellidos() + ", " + doc.getNombres());
             }
         }
         return nombres;
     }    
+    */
     
     /**
      * Método para llenar la lista de autocompletado de la búsqueda por documento
      * @param query
      * @return 
      */
+    /*
     public List<String> completeDocum(String query){
         List<String> docs = new ArrayList();
         Iterator itRows = items.iterator();
         while(itRows.hasNext()){
-            Persona per = (Persona)itRows.next();
-            if(Integer.toString(per.getDocumento()).contains(query)){
-                docs.add(Integer.toString(per.getDocumento()));
+            Docente doc = (Docente)itRows.next();
+            if(Integer.toString(doc.getDocumento()).contains(query)){
+                docs.add(Integer.toString(doc.getDocumento()));
             }
         }
         return docs;
     }
+    */
     
     /**
      * Método para revocar la sesión del MB
@@ -581,9 +539,9 @@ public class MbPersona implements Serializable{
     public String cleanUp(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
-        session.removeAttribute("mbPersona");
+        session.removeAttribute("mbDocente");
         return "inicio";
-    }
+    }  
     
     /*********************
     ** Métodos privados **
@@ -591,8 +549,8 @@ public class MbPersona implements Serializable{
     /**
      * @return el Facade
      */
-    private PersonaFacade getFacade() {
-        return personaFacade;
+    private DocenteFacade getFacade() {
+        return docenteFacade;
     }    
     
     /**
@@ -603,12 +561,18 @@ public class MbPersona implements Serializable{
         if(selectParam != null){
             selectParam = null;
         }
-        if(selectIParam != 0){
-            selectIParam = 0;
+        
+        if(persona != null){
+            persona = null;
         }
-        if(localidad != null){
-            localidad = null;
+        
+        if(agente != null){
+            agente = null;
         }
+        
+        if(titulo != null){
+            titulo = null;
+        }        
     }      
     
     
@@ -625,17 +589,18 @@ public class MbPersona implements Serializable{
             
             // Deshabilito la entidad
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersonaDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteDeletedErrorOccured"));
         }
     }    
     
     /*********************************************************
      **** métodos privados para la búsqueda de habiliados ****
      *********************************************************/
+    /*
     private void buscarRapida(){
-        List<Persona> personas = new ArrayList();
+        List<Docente> docentes = new ArrayList();
         Iterator itRows = items.iterator();
         String apellidos = "";
         String nombres = "";
@@ -692,13 +657,13 @@ public class MbPersona implements Serializable{
         items = null;
         items = new ListDataModel(personas);
     }
-    
+    */
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = Persona.class)
-    public static class PersonaControllerConverter implements Converter {
+    @FacesConverter(forClass = Docente.class)
+    public static class DocenteControllerConverter implements Converter {
 
         /**
          *
@@ -712,9 +677,9 @@ public class MbPersona implements Serializable{
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbPersona controller = (MbPersona) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbPersona");
-            return controller.getPersona(getKey(value));
+            MbDocente controller = (MbDocente) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbDocente");
+            return controller.getDocente(getKey(value));
         }
 
         
@@ -752,8 +717,8 @@ public class MbPersona implements Serializable{
                 Persona o = (Persona) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Persona.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Docente.class.getName());
             }
         }
-    }                 
+    }       
 }

@@ -29,25 +29,7 @@ public class PersonaFacade extends AbstractFacade<Persona> {
 
     public PersonaFacade() {
         super(Persona.class);
-    }
-    
-   /**
-     * Método que devuelve todos las Personas que contienen la cadena recibida como parámetro 
-     * dentro de sus nombres o apellidos.
-     * @param stringParam: cadena que buscará en todos los campos de tipo varchar de la tabla correspondiente
-     * @return: El conjunto de resultados provenientes de la búsqueda. 
-     */      
-    public List<Persona> getXApYNom(String stringParam){
-        em = getEntityManager();
-        List<Persona> result;
-        String queryString = "SELECT per FROM Persona per "
-                + "WHERE per.apellidos LIKE :sParam "
-                + "OR per.nombres LIKE :sParam";
-        Query q = em.createQuery(queryString)
-                .setParameter("sParam", "%" + stringParam + "%");
-        result = q.getResultList();
-        return result;
-    }    
+    }   
     
     /**
      * Método que verifica si la Personas puede ser eliminada
@@ -62,17 +44,6 @@ public class PersonaFacade extends AbstractFacade<Persona> {
                 .setParameter("id", id);
         return q.getResultList().isEmpty();
     } 
-    
-    /**
-     * Metodo para el autocompletado de la búsqueda por nombre y apellido
-     * @return 
-     */
-    public List<String> getNombres(){
-        em = getEntityManager();
-        String queryString = "SELECT (apellidos || ', ' || nombres) FROM persona";
-        Query q = em.createNativeQuery(queryString);
-        return q.getResultList();
-    }   
     
     /**
      * Método para validad que no exista una Persona con el tipo y número de documento recibidos como parámetros
@@ -130,5 +101,5 @@ public class PersonaFacade extends AbstractFacade<Persona> {
                 + "WHERE per.admin.habilitado = false";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }    
+    }
 }

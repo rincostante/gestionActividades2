@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      
+    <h:head>
+        <title>#{bundle.DocenteTitle}</title>
+    </h:head>
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.DocenteTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/> 
+            <h:form>
+                <p:panel id="docForm" header="#{bundle.DocenteListTitle} Habilitados" style="margin-bottom:10px;">
+                    <h:panelGroup>
+                        <h:panelGrid columns="3" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbDocente.prepareCreate}"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbDocente.prepareListDes}"/>
+                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbDocente.cleanUp}"/>
+                        </h:panelGrid>
+                        
+                        <br/> 
+                        
+                    </h:panelGroup>
+                </p:panel>      
+
+                <p:dataTable value="#{mbDocente.items}" var="e" id="docList" rows="5"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Listado de #{bundle.DocenteListado}
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbDocente.prepareList}" update="docList" style="margin-left: 10px"/>
+                        <p:columnToggler datasource="docList" trigger="toggler" />
+                    </f:facet>
+              
+                    <p:column headerText="Especialidad">
+                        <p:outputLabel value="#{e.especialidad}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Acciones" style="width:135px">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbDocente.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbDocente.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbDocente.prepareDestroy}"/>
+                    </p:column>                
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

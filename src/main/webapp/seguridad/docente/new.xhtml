@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.DocenteTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmNew">
+                <p:panel id="pnNew" header="#{bundle.DocenteNewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="#{bundle.DocenteLabel_persona}" for="persona"/>
+                        <p:selectOneMenu id="persona" value="#{mbDocente.selected.persona}">
+                            <f:selectItem itemLabel="Seleccione la Persona" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbDocente.listaPersonas}" var="persona" 
+                                           itemLabel="#{persona.apellidos}, #{persona.nombres} - #{persona.documento}" 
+                                           itemValue="#{persona}"/>
+                        </p:selectOneMenu>  
+
+                        <p:outputLabel value="#{bundle.DocenteLabel_agente}" for="agente"/>
+                        <p:selectOneMenu id="agente" value="#{mbDocente.selected.agente}">
+                            <f:selectItem itemLabel="Seleccione el Agente" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbDocente.listaAgentes}" var="agente" 
+                                           itemLabel="#{agente.persona.apellidos}, #{agente.persona.nombres} - #{agente.persona.documento}" 
+                                           itemValue="#{agente}"/>
+                        </p:selectOneMenu>                         
+                        
+                        <p:outputLabel value="#{bundle.DocenteLabel_telefonoLab}" for="telLab"/>
+                        <p:inputMask id="telLab" value="#{mbDocente.selected.telefonoLaboral}" mask="(9999) 999-9999"
+                                     required="true"
+                                     requiredMessage="#{bundle.DocenteTelefonoLabRequiredMessage}"   
+                                     />                         
+                        
+                        <p:outputLabel value="#{bundle.DocenteLabel_emailLab}" for="emailLab" />
+                        <p:inputText id="emailLab" value="#{mbDocente.selected.emailLaboral}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.DocenteEmailLabRequiredMessage}" 
+                                     validatorMessage="#{bundle.DocenteEmailLabValidateMessage}">
+                            <f:validateRegex
+                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        </p:inputText>  
+                        
+                        <p:outputLabel value="#{bundle.DocenteLabel_persona}" for="titulo"/>
+                        <p:selectOneMenu id="titulo" value="#{mbDocente.selected.titulo}">
+                            <f:selectItem itemLabel="Seleccione el Título" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbDocente.listaTitulos}" var="titulo" 
+                                           itemLabel="#{titulo.nombre} - #{titulo.epedidoPor}" 
+                                           itemValue="#{titulo}"/>
+                        </p:selectOneMenu>                          
+                        
+                        <p:outputLabel value="#{bundle.DocenteLabel_especialidad}" for="espec"/>
+                        <p:inputText id="espec"
+                                     value="#{mbDocente.selected.especialidad}" 
+                                     requiredMessage="#{bundle.DocenteEspecialidadRequiredMessage}" 
+                                     required="true"/>                        
+
+                        <p:outputLabel value="#{bundle.DocenteLable_antigMes}" for="antMeses"/>
+                        <p:inputText converter="#{Integer}" id="antMeses"
+                                     value="#{mbDocente.selected.antigMeses}" 
+                                     requiredMessage="#{bundle.DocenteAntigRequiredMessage}" 
+                                     validatorMessage="#{bundle.DocenteAntigValidateMessage}">
+                            <f:validateLength maximum="2" minimum="1" />
+                        </p:inputText>  
+                        
+                        <p:outputLabel value="#{bundle.DocenteLable_antigAnio}" for="antAnios"/>
+                        <p:inputText converter="#{Integer}" id="antAnios"
+                                     value="#{mbDocente.selected.antigAnios}" 
+                                     requiredMessage="#{bundle.DocenteAntigRequiredMessage}" 
+                                     validatorMessage="#{bundle.DocenteAntigValidateMessage}">
+                            <f:validateLength maximum="2" minimum="1" />
+                        </p:inputText>  
+                        
+                        <p:outputLabel value="#{bundle.DocenteLabel_fechaInico}" for="fechaInic"/>
+                        <p:inputMask id="fechaInic" value="#{mbDocente.selected.fechaInicioDocencia}" mask="99/99/9999" 
+                                     required="true"
+                                     requiredMessage="#{bundle.DocenteFechaInicioRequiredMessage}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                        </p:inputMask>                         
+                        
+                    </h:panelGrid>
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbDocente.create}" update="pnNew"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnNew" resetValues="true" />
+                        </p:commandButton>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
+                                         action="#{mbDocente.prepareList}" 
+                                         value="Volver" 
+                                         immediate="true"/>
+                    </f:facet>
+                </p:toolbar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

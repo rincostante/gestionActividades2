@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.DocenteTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmDocenteView">
+                <p:panel id="pnView" header="#{bundle.DocenteViewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    
+                    <h:panelGrid columns="2">
+			<h:outputLabel value="#{bundle.DocenteLabel_apellidos}" #{mbDocente.selected.agente.apellidos != ""}/>
+                        <h:outputText value="#{mbDocente.selected.agente.apellidos}" title="#{bundle.DocenteTitle_apellidos}" rendered="#{mbDocente.selected.agente.apellidos != ""}"/>       
+                        
+			<h:outputLabel value="#{bundle.DocenteLabel_nombres}"/>
+                        <h:outputText value="#{mbDocente.selected.agente.nombres}" title="#{bundle.DocenteTitle_nombres}"/>   
+                        
+			<h:outputLabel value="#{bundle.DocenteLabel_apellidos}"/>
+                        <h:outputText value="#{mbDocente.selected.persona.apellidos}" title="#{bundle.DocenteTitle_apellidos}"/>       
+                        
+			<h:outputLabel value="#{bundle.DocenteLabel_nombres}"/>
+                        <h:outputText value="#{mbDocente.selected.persona.nombres}" title="#{bundle.DocenteTitle_nombres}"/>                           
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_telefonoLab}"/>
+                        <h:outputText value="#{mbDocente.selected.telefonoLaboral}" title="#{bundle.DocenteTitle_telefonoLab}"/>   
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_emailLab}"/>
+                        <h:outputText value="#{mbDocente.selected.emailLaboral}" title="#{bundle.DocenteTitle_emailLab}"/> 
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_titulo}"/>
+                        <h:outputText value="#{mbDocente.selected.titulo.nombre}" title="#{bundle.DocenteTitle_titulo}"/>                           
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_especialidad}"/>
+                        <h:outputText value="#{mbDocente.selected.especialidad}" title="#{bundle.DocenteTitle_especialidad}"/>  
+                        
+                        <h:outputLabel value="#{bundle.DocenteLable_antigMes}"/>
+                        <h:outputText value="#{mbDocente.selected.antigMeses}" title="#{bundle.DocenteTitle_antigMes}" rendered="#{mbDocente.selected.antigMeses > 0}"/>   
+                        
+                        <h:outputLabel value="#{bundle.DocenteLable_antigAnio}" rendered="#{mbDocente.selected.antigAnios > 0}"/>
+                        <h:outputText value="#{mbDocente.selected.antigAnios}" title="#{bundle.DocenteTitle_antigAnio}" rendered="#{mbDocente.selected.antigAnios > 0}"/>   
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_fechaInicio}"/>
+                        <p:calendar id="fechaNac" value="#{mbDocente.selected.fechaInicioDocencia}" 
+                                    pattern="dd/MM/yyyy" 
+                                    disabled="true"
+                                    locale="es"/> 
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbDocente.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.DocenteLabel_usAlta}"/>
+                        <h:outputText value="#{mbDocente.selected.admin.usAlta}" title="#{bundle.DocenteTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbDocente.selected.admin.fechaModif}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.DocenteLabel_usMod}"/>
+                        <h:outputText value="#{mbDocente.selected.admin.usModif}" title="#{bundle.DocenteTitle_usMod}"/>                         
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbDocente.prepareList}" value="Volver" ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
