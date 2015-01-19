@@ -16,17 +16,11 @@
                     <p:messages id="messages" />
                     
                     <h:panelGrid columns="2">
-			<h:outputLabel value="#{bundle.DocenteLabel_apellidos}" #{mbDocente.selected.agente.apellidos != ""}/>
-                        <h:outputText value="#{mbDocente.selected.agente.apellidos}" title="#{bundle.DocenteTitle_apellidos}" rendered="#{mbDocente.selected.agente.apellidos != ""}"/>       
+                        <h:outputLabel value="#{bundle.DocenteLabel_apYNom}"/>
+                        <h:outputText value="#{mbDocente.selected.apYNom}" title="#{bundle.DocenteTitle_apYNom}"/>     
                         
-			<h:outputLabel value="#{bundle.DocenteLabel_nombres}"/>
-                        <h:outputText value="#{mbDocente.selected.agente.nombres}" title="#{bundle.DocenteTitle_nombres}"/>   
-                        
-			<h:outputLabel value="#{bundle.DocenteLabel_apellidos}"/>
-                        <h:outputText value="#{mbDocente.selected.persona.apellidos}" title="#{bundle.DocenteTitle_apellidos}"/>       
-                        
-			<h:outputLabel value="#{bundle.DocenteLabel_nombres}"/>
-                        <h:outputText value="#{mbDocente.selected.persona.nombres}" title="#{bundle.DocenteTitle_nombres}"/>                           
+                        <h:outputLabel value="#{bundle.DocenteLabel_documento}"/>
+                        <h:outputText value="#{mbDocente.selected.documento}" title="#{bundle.DocenteTitle_documento}"/>   
                         
                         <h:outputLabel value="#{bundle.DocenteLabel_telefonoLab}"/>
                         <h:outputText value="#{mbDocente.selected.telefonoLaboral}" title="#{bundle.DocenteTitle_telefonoLab}"/>   
@@ -40,7 +34,7 @@
                         <h:outputLabel value="#{bundle.DocenteLabel_especialidad}"/>
                         <h:outputText value="#{mbDocente.selected.especialidad}" title="#{bundle.DocenteTitle_especialidad}"/>  
                         
-                        <h:outputLabel value="#{bundle.DocenteLable_antigMes}"/>
+                        <h:outputLabel value="#{bundle.DocenteLable_antigMes}" rendered="#{mbDocente.selected.antigMeses > 0}"/>
                         <h:outputText value="#{mbDocente.selected.antigMeses}" title="#{bundle.DocenteTitle_antigMes}" rendered="#{mbDocente.selected.antigMeses > 0}"/>   
                         
                         <h:outputLabel value="#{bundle.DocenteLable_antigAnio}" rendered="#{mbDocente.selected.antigAnios > 0}"/>

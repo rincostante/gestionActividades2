@@ -8,6 +8,7 @@ package ar.gov.gba.sg.ipap.gestionactividades2.entities.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.Edad;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +26,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -33,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * Entidad que encapsula la información de los docentes vinculados a las actividades formativas del IPAP
  * Se vincula con:
  *      Persona,
+ *      Agente,
  *      Usuario,
  *      Titulo,
  *      Clase,
@@ -45,6 +48,18 @@ public class Docente implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    /**
+     * Campo que muestra los Apellidos y nombres personales del docente
+     */
+    @Transient
+    String apYNom;
+    
+    /**
+     * Campo que muestra el número de documento personal del docente
+     */
+    @Transient
+    String documento;
     
     /**
      * Campo de texto que indica el teléfono labural del docente
@@ -70,13 +85,13 @@ public class Docente implements Serializable {
     /**
      * Campo entero que indica la antigüedad en meses del docente, en el caso en que no llegue a un año
      */
-    @Column (nullable=true)
+    @Transient
     private int antigMeses;
     
     /**
      * Campo entero que indica la antigüedad en años del docente
      */
-    @Column (nullable=true)
+    @Transient
     private int antigAnios;
     
     /**
@@ -99,7 +114,7 @@ public class Docente implements Serializable {
      */
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="agente_id", nullable=true)
-    private Persona agente;  
+    private Agente agente;  
     
     /**
      * Campo de tipo Titulo que contiene el título de educación formal alcanzado por el docente.
@@ -139,6 +154,32 @@ public class Docente implements Serializable {
      */
     public Docente(){
         actividades = new ArrayList();
+    }
+
+    public String getApYNom() {
+        if(persona != null){
+            apYNom = persona.getApellidos() + ", " + persona.getNombres();
+        }else{
+            apYNom = agente.getPersona().getApellidos() + ", " + agente.getPersona().getNombres();
+        }
+        return apYNom;
+    }
+
+    public void setApYNom(String apYNom) {
+        this.apYNom = apYNom;
+    }
+
+    public String getDocumento() {
+        if(persona != null){
+            documento = String.valueOf(persona.getDocumento());
+        }else{
+            documento = String.valueOf(agente.getPersona().getDocumento());
+        }        
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 
     /**
@@ -245,6 +286,13 @@ public class Docente implements Serializable {
      * @return
      */
     public int getAntigMeses() {
+        Edad edadUtil = new Edad();
+        antigAnios = edadUtil.calcularEdad(fechaInicioDocencia).getYear();
+        if(antigAnios < 1){
+            antigMeses = edadUtil.calcularEdad(fechaInicioDocencia).getMonth();
+        }else{
+            antigMeses = 0;
+        }
         return antigMeses;
     }
 
@@ -261,6 +309,11 @@ public class Docente implements Serializable {
      * @return
      */
     public int getAntigAnios() {
+        Edad edadUtil = new Edad();
+        antigAnios = edadUtil.calcularEdad(fechaInicioDocencia).getYear();
+        if(antigAnios < 0){
+            antigAnios = 0;
+        }     
         return antigAnios;
     }
 
@@ -308,7 +361,7 @@ public class Docente implements Serializable {
      *
      * @return
      */
-    public Persona getAgente() {
+    public Agente getAgente() {
         return agente;
     }
 
@@ -316,7 +369,7 @@ public class Docente implements Serializable {
      *
      * @param agente
      */
-    public void setAgente(Persona agente) {
+    public void setAgente(Agente agente) {
         this.agente = agente;
     }
 

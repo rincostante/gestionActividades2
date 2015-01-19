@@ -38,11 +38,11 @@ public class DocenteFacade extends AbstractFacade<Docente> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT doc.nombre FROM Docente doc "
+        String queryString = "SELECT doc.id FROM Docente doc "
                 + "INNER JOIN doc.usuario us "
                 + "INNER JOIN doc.clases cls "
-                + "INNER JOIN doc.actividades act"
-                + "WHERE tit.id = :id ";
+                + "INNER JOIN doc.actividades act "
+                + "WHERE doc.id = :id ";
         Query q = em.createQuery(queryString)
                 .setParameter("id", id);
         return q.getResultList().isEmpty();
@@ -75,7 +75,7 @@ public class DocenteFacade extends AbstractFacade<Docente> {
         em = getEntityManager();
         String queryString = "SELECT doc FROM Docente doc "
                 + "WHERE doc.persona.id = :idPersona "
-                + "OR per.agente.id = :idAgente";
+                + "OR doc.agente.id = :idAgente";
         Query q = em.createQuery(queryString)
                 .setParameter("idPersona", idPersona)
                 .setParameter("idAgente", idAgente);

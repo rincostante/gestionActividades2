@@ -19,10 +19,8 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -60,9 +58,14 @@ public class MbDocente implements Serializable{
     private List<Agente> listaAgentes;
     private List<Titulo> listaTitulos;
     private boolean habilitadas;
-    private Persona persona;
-    private Agente agente;
-    private Titulo titulo;
+    //private Persona persona;
+    //private Agente agente;
+    //private Titulo titulo;
+    private Docente docSelected;
+    private int antigAnios;
+    private int antigMeses;
+    private Date fDespuesDe;
+    private Date fAntesDe;
     
     /**
      * Creates a new instance of MbDocente
@@ -80,8 +83,53 @@ public class MbDocente implements Serializable{
     }   
 
     /********************************
-     ** Getters y Setters ***********
+     ** Getters y Setters *********** 
      ********************************/
+    /**
+     *
+     */
+    
+    public Date getfDespuesDe() {
+        return fDespuesDe;
+    }
+
+    public void setfDespuesDe(Date fDespuesDe) {
+        this.fDespuesDe = fDespuesDe;
+    }
+
+    public Date getfAntesDe() {
+        return fAntesDe;
+    }
+
+    public void setfAntesDe(Date fAntesDe) {
+        this.fAntesDe = fAntesDe;
+    }
+
+    
+    public int getAntigAnios() {
+        return antigAnios;
+    }
+
+    public void setAntigAnios(int antigAnios) {
+        this.antigAnios = antigAnios;
+    }
+
+    public int getAntigMeses() {
+        return antigMeses;
+    }
+
+    public void setAntigMeses(int antigMeses) {
+        this.antigMeses = antigMeses;
+    }
+
+    public Docente getDocSelected() {
+        return docSelected;
+    }
+
+    public void setDocSelected(Docente docSelected) {
+        this.docSelected = docSelected;
+    }
+
     
     public int getSelectedItemIndex() {
         return selectedItemIndex;
@@ -97,30 +145,6 @@ public class MbDocente implements Serializable{
 
     public void setSelectParam(String selectParam) {
         this.selectParam = selectParam;
-    }
-
-    public Persona getPersona() {
-        return persona;
-    }
-
-    public void setPersona(Persona persona) {
-        this.persona = persona;
-    }
-
-    public Agente getAgente() {
-        return agente;
-    }
-
-    public void setAgente(Agente agente) {
-        this.agente = agente;
-    }
-
-    public Titulo getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(Titulo titulo) {
-        this.titulo = titulo;
     }
 
     public List<Persona> getListaPersonas() {
@@ -202,7 +226,7 @@ public class MbDocente implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Docente) getItems().getRowData();
+        current = docSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -232,7 +256,10 @@ public class MbDocente implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Docente) getItems().getRowData();
+        current = docSelected;
+        // cargo los list para los combos
+        listaPersonas = personaFacade.findAll();
+        listaAgentes = agenteFacade.findAll();        
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -251,7 +278,7 @@ public class MbDocente implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (Docente) getItems().getRowData();
+        current = docSelected;
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -271,7 +298,8 @@ public class MbDocente implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        current = (Docente) getItems().getRowData();
+        //current = (Docente) getItems().getRowData();
+        current = docSelected;
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -292,6 +320,14 @@ public class MbDocente implements Serializable{
         }
     }    
     
+    /**
+     * 
+     */
+    public void resetFechas(){
+        fDespuesDe = null;
+        fAntesDe = null;
+    }
+    
    /*************************************************************
      ** Métodos de inicialización de búsquedas para habilitados **
      *************************************************************/
@@ -301,27 +337,10 @@ public class MbDocente implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectHab(){
-        //buscarRapida();
+        buscarEntreFechas();
         return "list";
     }
     
-    /**
-     *
-     * @return
-     */
-    public String prepareSelectXLoc(){
-        //buscarXLocalidad();
-        return "list";
-    }
-    
-    /**
-     * 
-     * @return 
-     */
-    public String prepareSelectXDoc(){
-        //buscarRapidaXDoc();
-        return "list";
-    }
     
    /****************************************************************
      ** Métodos de inicialización de búsquedas para DesHabilitados **
@@ -332,27 +351,10 @@ public class MbDocente implements Serializable{
      * @return 
      */
     public String prepareSelectDes(){
-        //buscarRapida();
+        buscarEntreFechas();
         return "listDes";
     }
 
-    /**
-     *
-     * @return
-     */
-    public String prepareSelectDesXLoc(){
-        //buscarXLocalidad();
-        return "listDes";
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String prepareDesSelectDesXDoc(){
-        //buscarRapidaXDoc();
-        return "listDes";
-    }
     
     /*************************
     ** Métodos de operación **
@@ -397,7 +399,7 @@ public class MbDocente implements Serializable{
     }
 
     /**
-     * Méto que actualiza un nuev Docente en la base de datos.
+     * Método que actualiza un nuevo Docente en la base de datos.
      * Previamente actualiza los datos de administración
      * @return mensaje que notifica la actualización
      */
@@ -450,7 +452,8 @@ public class MbDocente implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Docente) getItems().getRowData();
+        //current = (Docente) getItems().getRowData();
+        current = docSelected;
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -492,45 +495,24 @@ public class MbDocente implements Serializable{
      * @param query
      * @return 
      */
-    /*
+
     public List<String> completeNombres(String query){
         List<String> nombres = new ArrayList();
         Iterator itRows = items.iterator();
         while(itRows.hasNext()){
             Docente doc = (Docente)itRows.next();
-            if(doc.getPersona().getApellidos().contains(query) || doc.getPersona().getNombres().contains(query)){
-                nombres.add(doc.getPersona().getApellidos() + ", " + doc.getPersona().getNombres() + " - " + doc.getPersona().getDocumento() + " - " + doc.g);
-            }
-                    
-                    
-                    
-                    || doc.getAgente().getApellidos().contains(query) || doc.getAgente().getNombres().contains(query)){
-                
-                nombres.add(doc.getApellidos() + ", " + doc.getNombres());
+            if(doc.getPersona() != null){
+                if(doc.getPersona().getApellidos().contains(query) || doc.getPersona().getNombres().contains(query)){
+                    nombres.add(doc.getPersona().getApellidos() + ", " + doc.getPersona().getNombres() + " - " + doc.getId());
+                }
+            }else{
+                if(doc.getAgente().getPersona().getApellidos().contains(query) || doc.getAgente().getPersona().getNombres().contains(query)){
+                    nombres.add(doc.getAgente().getPersona().getApellidos() + ", " + doc.getAgente().getPersona().getNombres() + " - " + doc.getId());
+                }
             }
         }
         return nombres;
     }    
-    */
-    
-    /**
-     * Método para llenar la lista de autocompletado de la búsqueda por documento
-     * @param query
-     * @return 
-     */
-    /*
-    public List<String> completeDocum(String query){
-        List<String> docs = new ArrayList();
-        Iterator itRows = items.iterator();
-        while(itRows.hasNext()){
-            Docente doc = (Docente)itRows.next();
-            if(Integer.toString(doc.getDocumento()).contains(query)){
-                docs.add(Integer.toString(doc.getDocumento()));
-            }
-        }
-        return docs;
-    }
-    */
     
     /**
      * Método para revocar la sesión del MB
@@ -561,7 +543,7 @@ public class MbDocente implements Serializable{
         if(selectParam != null){
             selectParam = null;
         }
-        
+/*        
         if(persona != null){
             persona = null;
         }
@@ -572,7 +554,8 @@ public class MbDocente implements Serializable{
         
         if(titulo != null){
             titulo = null;
-        }        
+        }   
+*/
     }      
     
     
@@ -584,7 +567,7 @@ public class MbDocente implements Serializable{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
             current.getAdmin().setFechaBaja(date);
-            current.getAdmin().setUsBaja(selectedItemIndex);
+            current.getAdmin().setUsBaja(2);
             current.getAdmin().setHabilitado(false);
             
             // Deshabilito la entidad
@@ -595,69 +578,24 @@ public class MbDocente implements Serializable{
         }
     }    
     
-    /*********************************************************
-     **** métodos privados para la búsqueda de habiliados ****
-     *********************************************************/
-    /*
-    private void buscarRapida(){
+    /*****************************************************************************
+     **** métodos privados para la búsqueda de habiliados por fecha de inicio ****
+     *****************************************************************************/
+
+    private void buscarEntreFechas(){
         List<Docente> docentes = new ArrayList();
         Iterator itRows = items.iterator();
-        String apellidos = "";
-        String nombres = "";
-        
-        // verifico de qué búsqueda se trata, si es completa busco en apellido y en nombre y si no, en uno o en otro
-        boolean completa;
-        if(selectParam.indexOf(",") > 0){
-            apellidos = selectParam.substring(0, selectParam.indexOf(","));
-            nombres = selectParam.substring(selectParam.indexOf(",") + 1, selectParam.length());
-            completa = true;
-        }else{
-            completa = false;
-        }
         
         // recorro el dadamodel
         while(itRows.hasNext()){
-            Persona per = (Persona)itRows.next();
-            if(completa){
-                if(per.getApellidos().contains(apellidos.trim()) && per.getNombres().contains(nombres.trim())){
-                    personas.add(per);
-                }
-            }else{
-                if(per.getApellidos().contains(selectParam) || per.getNombres().contains(selectParam)){
-                    personas.add(per);
-                }
-            }           
+            Docente doc = (Docente)itRows.next();
+            if(doc.getFechaInicioDocencia().after(fDespuesDe) && doc.getFechaInicioDocencia().before(fAntesDe)){
+                docentes.add(doc);
+            }          
         }        
         items = null;
-        items = new ListDataModel(personas); 
+        items = new ListDataModel(docentes); 
     } 
-    
-    private void buscarXLocalidad(){
-        List<Persona> personas = new ArrayList();
-        Iterator itRows = items.iterator();
-        while(itRows.hasNext()){
-            Persona per = (Persona)itRows.next();
-            if(per.getLocalidad().equals(localidad)){
-                personas.add(per);
-            }
-        items = null;
-        items = new ListDataModel(personas);            
-        }
-    }
-    
-    private void buscarRapidaXDoc(){
-        List<Persona> personas = new ArrayList();
-        Iterator itRows = items.iterator();
-        while(itRows.hasNext()){
-            Persona per = (Persona)itRows.next();
-            if(per.getDocumento() == selectIParam){
-                personas.add(per);
-            }
-        }
-        items = null;
-        items = new ListDataModel(personas);
-    }
-    */
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

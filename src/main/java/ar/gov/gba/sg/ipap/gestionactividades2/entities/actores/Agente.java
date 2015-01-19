@@ -329,22 +329,6 @@ public class Agente implements Serializable {
      *
      * @return
      */
-    public Persona getPersonas() {
-        return persona;
-    }
-
-    /**
-     *
-     * @param persona
-     */
-    public void setPersonas(Persona persona) {
-        this.persona = persona;
-    }
-
-    /**
-     *
-     * @return
-     */
     public EstudiosCursados getEstudiosCursados() {
         return estudiosCursados;
     }
