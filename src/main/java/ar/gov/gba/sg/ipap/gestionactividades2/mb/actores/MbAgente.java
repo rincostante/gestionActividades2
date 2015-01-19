@@ -7,13 +7,20 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.CargoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstudiosCursadosFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.NivelIpapFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.PersonaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.SituacionRevistaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TituloFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
@@ -33,44 +40,51 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
-
 /**
  *
  * @author rincostante
  */
-public class MbDocente implements Serializable{
+public class MbAgente implements Serializable{
 
-    private Docente current;
+    private Agente current;
     private DataModel items = null;
+    private Agente agSelected;
     
     @EJB
-    private DocenteFacade docenteFacade;
+    private AgenteFacade agenteFacade; 
+    @EJB
+    private EstudiosCursadosFacade estCurFacade;
+    @EJB
+    private OrganismoFacade organismoFacade;
+    @EJB
+    private NivelIpapFacade nivelIpapFacade;
+    @EJB
+    private CargoFacade cargoFacade;
+    @EJB
+    private TituloFacade tituloFacade;
     @EJB
     private PersonaFacade personaFacade;
     @EJB
-    private AgenteFacade agenteFacade;  
-    @EJB
-    private TituloFacade tituloFacade;      
+    private SituacionRevistaFacade sitRevFacade;
     
     private int selectedItemIndex;
-    private String selectParam;
-    private List<Persona> listaPersonas;
-    private List<Agente> listaAgentes;
-    private List<Titulo> listaTitulos;
+    private String selectParam;    
     private boolean habilitadas;
-    //private Persona persona;
-    //private Agente agente;
-    //private Titulo titulo;
-    private Docente docSelected;
+    private List<EstudiosCursados> listaEstudios;
+    private List<NivelIpap> listaNivelIpap;
+    private List<Titulo> listaTitulos;
+    private List<Persona> listaPersonas;
+    private List<Organismo> listaOrganismos;
+    private List<SituacionRevista> listaSitRev;
+    private List<Agente> listaReferentes;
     private int antigAnios;
     private int antigMeses;
     private Date fDespuesDe;
-    private Date fAntesDe;
-    
+    private Date fAntesDe;    
     /**
-     * Creates a new instance of MbDocente
+     * Creates a new instance of MbAgente
      */
-    public MbDocente() {
+    public MbAgente() {
     }
     
     /**
@@ -78,34 +92,42 @@ public class MbDocente implements Serializable{
      */
     @PostConstruct
     public void init(){
+        listaEstudios = estCurFacade.findAll();
+        listaNivelIpap = nivelIpapFacade.findAll();
         listaTitulos = tituloFacade.findAll();
+        listaSitRev = sitRevFacade.findAll();
         habilitadas = true;
-    }   
+    }
 
     /********************************
      ** Getters y Setters *********** 
      ********************************/
-    /**
-     *
-     */
     
-    public Date getfDespuesDe() {
-        return fDespuesDe;
+    public List<Agente> getListaReferentes() {
+        return listaReferentes;
     }
 
-    public void setfDespuesDe(Date fDespuesDe) {
-        this.fDespuesDe = fDespuesDe;
-    }
-
-    public Date getfAntesDe() {
-        return fAntesDe;
-    }
-
-    public void setfAntesDe(Date fAntesDe) {
-        this.fAntesDe = fAntesDe;
+    public void setListaReferentes(List<Agente> listaReferentes) {
+        this.listaReferentes = listaReferentes;
     }
 
     
+    public Agente getAgSelected() {
+        return agSelected;
+    }
+
+    public void setAgSelected(Agente agSelected) {
+        this.agSelected = agSelected;
+    }
+
+    public List<SituacionRevista> getListaSitRev() {
+        return listaSitRev;
+    }
+
+    public void setListaSitRev(List<SituacionRevista> listaSitRev) {
+        this.listaSitRev = listaSitRev;
+    }
+
     public int getAntigAnios() {
         return antigAnios;
     }
@@ -122,29 +144,52 @@ public class MbDocente implements Serializable{
         this.antigMeses = antigMeses;
     }
 
-    public Docente getDocSelected() {
-        return docSelected;
+    public Date getfDespuesDe() {
+        return fDespuesDe;
     }
 
-    public void setDocSelected(Docente docSelected) {
-        this.docSelected = docSelected;
+    public void setfDespuesDe(Date fDespuesDe) {
+        this.fDespuesDe = fDespuesDe;
     }
 
+    public Date getfAntesDe() {
+        return fAntesDe;
+    }
+
+    public void setfAntesDe(Date fAntesDe) {
+        this.fAntesDe = fAntesDe;
+    }
     
-    public int getSelectedItemIndex() {
-        return selectedItemIndex;
+    public boolean isHabilitadas() {
+        return habilitadas;
     }
 
-    public void setSelectedItemIndex(int selectedItemIndex) {
-        this.selectedItemIndex = selectedItemIndex;
+    public void setHabilitadas(boolean habilitadas) {
+        this.habilitadas = habilitadas;
     }
 
-    public String getSelectParam() {
-        return selectParam;
+    public List<EstudiosCursados> getListaEstudios() {
+        return listaEstudios;
     }
 
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
+    public void setListaEstudios(List<EstudiosCursados> listaEstudios) {
+        this.listaEstudios = listaEstudios;
+    }
+
+    public List<NivelIpap> getListaNivelIpap() {
+        return listaNivelIpap;
+    }
+
+    public void setListaNivelIpap(List<NivelIpap> listaNivelIpap) {
+        this.listaNivelIpap = listaNivelIpap;
+    }
+
+    public List<Titulo> getListaTitulos() {
+        return listaTitulos;
+    }
+
+    public void setListaTitulos(List<Titulo> listaTitulos) {
+        this.listaTitulos = listaTitulos;
     }
 
     public List<Persona> getListaPersonas() {
@@ -155,21 +200,14 @@ public class MbDocente implements Serializable{
         this.listaPersonas = listaPersonas;
     }
 
-    public List<Agente> getListaAgentes() {
-        return listaAgentes;
+    public List<Organismo> getListaOrganismos() {
+        return listaOrganismos;
     }
 
-    public void setListaAgentes(List<Agente> listaAgentes) {
-        this.listaAgentes = listaAgentes;
+    public void setListaOrganismos(List<Organismo> listaOrganismos) {
+        this.listaOrganismos = listaOrganismos;
     }
 
-    public List<Titulo> getListaTitulos() {
-        return listaTitulos;
-    }
-
-    public void setListaTitulos(List<Titulo> listaTitulos) {
-        this.listaTitulos = listaTitulos;
-    }
     
     /********************************
      ** Métodos para el datamodel ***
@@ -177,9 +215,9 @@ public class MbDocente implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public Docente getSelected() {
+    public Agente getSelected() {
         if (current == null) {
-            current = new Docente();
+            current = new Agente();
             selectedItemIndex = -1;
         }
         return current;
@@ -191,14 +229,14 @@ public class MbDocente implements Serializable{
     public DataModel getItems() {
         if (items == null) {
             if(habilitadas){
-                items = new ListDataModel(getFacade().getHabilitadas());
+                items = new ListDataModel(getFacade().getHabilitados());
             }else{
-                items = new ListDataModel(getFacade().getDeshabilitadas());
+                items = new ListDataModel(getFacade().getDeshabilitados());
             }
         }
         return items;
     }
-    
+
     /*******************************
      ** Métodos de inicialización **
      *******************************/
@@ -226,7 +264,7 @@ public class MbDocente implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = docSelected;
+        current = agSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -235,7 +273,7 @@ public class MbDocente implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (Docente) getItems().getRowData();
+        current = (Agente) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
@@ -244,10 +282,11 @@ public class MbDocente implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new Docente();
-        // cargo los list para los combos
+        current = new Agente();
+        // cargo los list pesados para los combos
         listaPersonas = personaFacade.findAll();
-        listaAgentes = agenteFacade.findAll();
+        listaOrganismos = organismoFacade.findAll();
+        listaReferentes = agenteFacade.findAll();
         selectedItemIndex = -1;
         return "new";
     }
@@ -256,10 +295,10 @@ public class MbDocente implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = docSelected;
-        // cargo los list para los combos
+        current = agSelected;
+        // cargo los list pesados para los combos
         listaPersonas = personaFacade.findAll();
-        listaAgentes = agenteFacade.findAll();        
+        listaOrganismos = organismoFacade.findAll();      
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -278,7 +317,7 @@ public class MbDocente implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = docSelected;
+        current = agSelected;
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -288,7 +327,7 @@ public class MbDocente implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteNonDeletable"));
         }
         return "view";
     }  
@@ -298,8 +337,7 @@ public class MbDocente implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        //current = (Docente) getItems().getRowData();
-        current = docSelected;
+        current = agSelected;
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -312,14 +350,14 @@ public class MbDocente implements Serializable{
 
             // Actualizo
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteHabilitada"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteHabilitada"));
             return "view";
         }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteHabilitadaErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("AgenteHabilitadaErrorOccured"));
             return null; 
         }
     }    
-    
+
     /**
      * 
      */
@@ -354,28 +392,20 @@ public class MbDocente implements Serializable{
         buscarEntreFechas();
         return "listDes";
     }
-
+    
     
     /*************************
     ** Métodos de operación **
     **************************/
     /**
-     * Méto que inserta uno nuevo Docente en la base de datos, previamente genera una entidad de administración
+     * Méto que inserta uno nuevo Agente en la base de datos, previamente genera una entidad de administración
      * con los datos necesarios y luego se la asigna a la persona
      * @return mensaje que notifica la inserción
      */
     public String create() {
-        Long idAgente;
-        Long idPersona;
-        if(current.getAgente() == null){
-            idAgente = Long.valueOf(0);
-            idPersona = current.getPersona().getId();
-        }else{
-            idPersona = Long.valueOf(0);
-            idAgente = current.getAgente().getId();
-        }
+        Long idPersona = current.getPersona().getId();
         try {
-            if(getFacade().noExiste(idAgente, idPersona)){
+            if(getFacade().noExiste(idPersona)){
                 // Creación de la entidad de administración y asignación
                 Date date = new Date(System.currentTimeMillis());
                 AdmEntidad admEnt = new AdmEntidad();
@@ -386,14 +416,14 @@ public class MbDocente implements Serializable{
                 
                 // Inserción
                 getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteCreated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteCreated"));
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteExistente"));
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteExistente"));
                 return null;
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("AgenteCreatedErrorOccured"));
             return null;
         }
     }
@@ -404,19 +434,11 @@ public class MbDocente implements Serializable{
      * @return mensaje que notifica la actualización
      */
     public String update() {
-        Docente doc;
-        Long idAgente;
-        Long idPersona;
-        if(current.getAgente() == null){
-            idAgente = Long.valueOf(0);
-            idPersona = current.getPersona().getId();
-        }else{
-            idPersona = Long.valueOf(0);
-            idAgente = current.getAgente().getId();
-        }        
+        Agente ag;
+        Long idPersona = current.getPersona().getId();        
         try {
-            doc = getFacade().getExistente(idAgente, idPersona);
-            if(doc == null){
+            ag = getFacade().getExistente(idPersona);
+            if(ag == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
@@ -424,10 +446,10 @@ public class MbDocente implements Serializable{
                 
                 // Actualizo
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteUpdated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteUpdated"));
                 return "view";
             }else{
-                if(doc.getId().equals(current.getId())){
+                if(ag.getId().equals(current.getId())){
                     // Actualización de datos de administración de la entidad
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
@@ -435,15 +457,15 @@ public class MbDocente implements Serializable{
 
                     // Actualizo
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteUpdated"));
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteUpdated"));
                     return "view";                    
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteExistente"));
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteExistente"));
                     return null;
                 }
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("AgenteUpdatedErrorOccured"));
             return null;
         }
     }
@@ -453,7 +475,7 @@ public class MbDocente implements Serializable{
      */    
     public String destroy() {
         //current = (Docente) getItems().getRowData();
-        current = docSelected;
+        current = agSelected;
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -481,7 +503,7 @@ public class MbDocente implements Serializable{
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public Docente getDocente(java.lang.Long id) {
+    public Agente getAgente(java.lang.Long id) {
         return getFacade().find(id);
     }    
     
@@ -492,9 +514,10 @@ public class MbDocente implements Serializable{
     public String cleanUp(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
-        session.removeAttribute("mbDocente");
+        session.removeAttribute("mbAgente");
         return "inicio";
     }  
+    
     
     /*********************
     ** Métodos privados **
@@ -502,8 +525,8 @@ public class MbDocente implements Serializable{
     /**
      * @return el Facade
      */
-    private DocenteFacade getFacade() {
-        return docenteFacade;
+    private AgenteFacade getFacade() {
+        return agenteFacade;
     }    
     
     /**
@@ -530,36 +553,36 @@ public class MbDocente implements Serializable{
             
             // Deshabilito la entidad
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("DocenteDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("DocenteDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("AgenteDeletedErrorOccured"));
         }
-    }    
+    }   
     
     /*****************************************************************************
      **** métodos privados para la búsqueda de habiliados por fecha de inicio ****
      *****************************************************************************/
 
     private void buscarEntreFechas(){
-        List<Docente> docentes = new ArrayList();
+        List<Agente> docentes = new ArrayList();
         Iterator itRows = items.iterator();
         
         // recorro el dadamodel
         while(itRows.hasNext()){
-            Docente doc = (Docente)itRows.next();
-            if(doc.getFechaInicioDocencia().after(fDespuesDe) && doc.getFechaInicioDocencia().before(fAntesDe)){
-                docentes.add(doc);
+            Agente ag = (Agente)itRows.next();
+            if(ag.getFechaInicioActividades().after(fDespuesDe) && ag.getFechaInicioActividades().before(fAntesDe)){
+                docentes.add(ag);
             }          
         }        
         items = null;
         items = new ListDataModel(docentes); 
-    } 
+    }     
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = Docente.class)
-    public static class DocenteControllerConverter implements Converter {
+    @FacesConverter(forClass = Agente.class)
+    public static class AgenteControllerConverter implements Converter {
 
         /**
          *
@@ -573,9 +596,9 @@ public class MbDocente implements Serializable{
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbDocente controller = (MbDocente) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbDocente");
-            return controller.getDocente(getKey(value));
+            MbAgente controller = (MbAgente) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbAgente");
+            return controller.getAgente(getKey(value));
         }
 
         
@@ -609,12 +632,12 @@ public class MbDocente implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof Docente) {
-                Docente o = (Docente) object;
+            if (object instanceof Agente) {
+                Agente o = (Agente) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Docente.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Agente.class.getName());
             }
         }
-    }       
+    }           
 }

@@ -8,8 +8,10 @@ package ar.gov.gba.sg.ipap.gestionactividades2.entities.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.Edad;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,6 +24,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -90,11 +95,6 @@ public class Agente implements Serializable {
     @Size(message = "{endidades.stringSizeError}", min = 1, max = 500)
     private String cursosRealizados;  
     
-    /**
-     * Campo entero que indica los años de antigüedad del agente en su lugar de trabajo
-     */
-    @Column (nullable=true)
-    private int antiguedad;
     
     /**
      * Campo de tipo Persona que contiene los datos básicos de la persona del agente.
@@ -161,6 +161,38 @@ public class Agente implements Serializable {
     private SituacionRevista situacionRevista; 
     
     /**
+     * Campo entero que indica la antigüedad en años del docente
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable=false)
+    @NotNull(message = "{entidades.fieldNotNullError}")
+    private Date fechaInicioActividades;
+    
+    /**
+     * Campo entero que indica la antigüedad en meses del agente, en el caso en que no llegue a un año
+     */
+    @Transient
+    private int antigMeses;
+    
+    /**
+     * Campo entero que indica la antigüedad en años del agente
+     */
+    @Transient
+    private int antigAnios;    
+    
+    /**
+     * Campo que muestra los Apellidos y nombres personales del agente
+     */
+    @Transient
+    String apYNom;
+    
+    /**
+     * Campo que muestra el número de documento personal del agente
+     */
+    @Transient
+    String documento;    
+    
+    /**
      * Campo que guarda las participaciones que ha tenido el agente
      */
     @OneToMany(mappedBy="agente")
@@ -174,10 +206,76 @@ public class Agente implements Serializable {
     private AdmEntidad admin; 
     
     /**
+     * Campo que guarda el docente en el caso que el agente lo sea
+     */
+    @OneToOne(mappedBy="agente")
+    private Docente docente;    
+    
+    /**
      * Constructor
      */
     public Agente(){
         participaciones = new ArrayList();
+    }
+
+    public String getApYNom() {
+        return persona.getApellidos() + ", " + persona.getNombres();
+    }
+
+    public void setApYNom(String apYNom) {
+        this.apYNom = apYNom;
+    }
+
+    public String getDocumento() {    
+        return String.valueOf(persona.getDocumento());
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public Date getFechaInicioActividades() {
+        return fechaInicioActividades;
+    }
+
+    public void setFechaInicioActividades(Date fechaInicioActividades) {
+        this.fechaInicioActividades = fechaInicioActividades;
+    }
+
+    public int getAntigMeses() {
+        Edad edadUtil = new Edad();
+        antigAnios = edadUtil.calcularEdad(fechaInicioActividades).getYear();
+        if(antigAnios < 1){
+            antigMeses = edadUtil.calcularEdad(fechaInicioActividades).getMonth();
+        }else{
+            antigMeses = 0;
+        }
+        return antigMeses;        
+    }
+
+    public void setAntigMeses(int antigMeses) {
+        this.antigMeses = antigMeses;
+    }
+
+    public int getAntigAnios() {
+        Edad edadUtil = new Edad();
+        antigAnios = edadUtil.calcularEdad(fechaInicioActividades).getYear();
+        if(antigAnios < 0){
+            antigAnios = 0;
+        }     
+        return antigAnios;
+    }
+
+    public void setAntigAnios(int antigAnios) {
+        this.antigAnios = antigAnios;
+    }
+
+    public Docente getDocente() {
+        return docente;
+    }
+
+    public void setDocente(Docente docente) {
+        this.docente = docente;
     }
 
     /**
@@ -307,22 +405,6 @@ public class Agente implements Serializable {
      */
     public void setCursosRealizados(String cursosRealizados) {
         this.cursosRealizados = cursosRealizados;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getAntiguedad() {
-        return antiguedad;
-    }
-
-    /**
-     *
-     * @param antiguedad
-     */
-    public void setAntiguedad(int antiguedad) {
-        this.antiguedad = antiguedad;
     }
 
     /**

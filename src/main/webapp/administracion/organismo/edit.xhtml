@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.OrganismoTitle}" />
+        </ui:define>
+        <ui:define name="content">
+        <br/>
+            <h:form>
+                <p:panel id="pnEdit" header="#{bundle.OrganismoEditTitle}" style="margin-bottom:10px;">
+                    <h:inputHidden id="id" value="#{mbOrganismo.selected.id}" />
+                    <p:messages id="messages" />
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="#{bundle.OrganismoLabel_nombre}" for="nombre"/>
+                        <p:inputText id="nombre"
+                                     value="#{mbOrganismo.selected.nombre}" 
+                                     requiredMessage="#{bundle.OrganismoRequire_nombre}" 
+                                     required="true"/>                        
+
+                        <p:outputLabel value="#{bundle.OrganismoLebel_tipo}" for="tipoOrg"/>
+                        <p:selectOneMenu id="tipoOrg" value="#{mbOrganismo.selected.tipoOrganismo}" required="true" requiredMessage="#{bundle.OrganismoRequire_tipo}" >
+                            <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbOrganismo.listaTipoOrg}" var="tipoOrg" 
+                                           itemLabel="#{tipoOrg.nombre}" 
+                                           itemValue="#{tipoOrg}"/>
+                        </p:selectOneMenu>  
+                    </h:panelGrid>
+                </p:panel>
+                
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-pencil" 
+                                         action="#{mbOrganismo.update}" 
+                                         value="Guardar" 
+                                         style="margin-right:10px;" 
+                                         update="pnEdit"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>                        
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
+                                         action="#{mbOrganismo.prepareList}" 
+                                         value="Volver" 
+                                         immediate="true"/>
+                    </f:facet>                    
+                </p:toolbar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
