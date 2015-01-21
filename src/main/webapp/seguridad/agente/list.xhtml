@@ -16,7 +16,7 @@
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="agForm" header="#{bundle.AgenteListTitle} Habilitados" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar">
+                <p:panel id="agForm" header="#{bundle.AgenteListTitle} Habilitados" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
                     <h:panelGroup>
                         <h:panelGrid columns="3" id="pnBotones">
                             <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbAgente.prepareCreate}"/>
@@ -36,12 +36,59 @@
                                 <f:attribute name="finicial" value="#{mbAgente.fDespuesDe}"/>
                                 <f:validator validatorId="primeDateRangeValidator" />
                             </p:calendar>
+
+                            <p:outputLabel value="#{bundle.AgenteLabel_organismo}" for="organismo" />
+                            <p:selectOneMenu id="organismo" value="#{mbAgente.selectOrg}" 
+                                             valueChangeListener="#{mbAgente.organismoChangeListener}">
+                                <f:selectItem itemLabel="Seleccione el Organismo" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbAgente.listaOrganismos}" var="organismo" 
+                                               itemLabel="#{organismo.nombre}" 
+                                               itemValue="#{organismo}"/>
+                                <p:ajax event="change" update="referente"/>
+                            </p:selectOneMenu> 
+                            
+                            <p:outputLabel value="Es Referente: " />
+                            <p:selectBooleanButton id="esReferente" value="#{mbAgente.esReferente}" 
+                                               onLabel="No" 
+                                               offLabel="Sí" 
+                                               valueChangeListener="#{mbAgente.referenteChangeListener}" >
+                                <p:ajax update="referente" event="change" />         
+                            </p:selectBooleanButton>
+                            
+                            <p:outputLabel value="#{bundle.AgenteLabel_referente}" for="referente" />
+                            <p:selectOneMenu id="referente" value="#{mbAgente.selecReferente}" disabled="#{not mbAgente.esReferente}" >
+                                <f:selectItem itemLabel="Seleccione el Referente" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbAgente.listaReferentes}" var="ref" 
+                                               itemLabel="#{ref.apYNom} - #{ref.cargo.nombre}" 
+                                               itemValue="#{ref}"/>
+                            </p:selectOneMenu>  
+                            
+                            <p:outputLabel value="#{bundle.AgenteLabel_sitRevista}" for="sitRev" />
+                            <p:selectOneMenu id="sitRev" value="#{mbAgente.selectSitRev}" >
+                                <f:selectItem itemLabel="Seleccione la Situación de Revista" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbAgente.listaSitRev}" var="sitRev" 
+                                               itemLabel="#{sitRev.nombre}" 
+                                               itemValue="#{sitRev}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="#{bundle.AgenteLabel_cargo}" for="cargo" />
+                            <p:selectOneMenu id="cargo" value="#{mbAgente.selectCargo}" >
+                                <f:selectItem itemLabel="Seleccione el Cargo" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbAgente.listaCargo}" var="cargo" 
+                                               itemLabel="#{cargo.nombre}" 
+                                               itemValue="#{cargo}"/>
+                            </p:selectOneMenu>        
                         </h:panelGrid>
                         <h:panelGrid columns="2"> 
-                             <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha de incio" action="#{mbAgente.prepareSelectHab}" ajax="false"/> 
-                            <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbAgente.resetFechas}">
+                             <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbAgente.prepareSelectHab}" ajax="false"/> 
+                            <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbAgente.resetSelect}">
                                 <p:ajax update="fDespDe" resetValues="true" />
                                 <p:ajax update="fAntesDe" resetValues="true" />
+                                <p:ajax update="organismo" resetValues="true" />
+                                <p:ajax update="referente" resetValues="true" />
+                                <p:ajax update="sitRev" resetValues="true" />
+                                <p:ajax update="cargo" resetValues="true" />
+                                <p:ajax update="esReferente" resetValues="true" />
                             </p:commandButton>                        
                         </h:panelGrid>
                     </h:panelGroup>
@@ -94,7 +141,7 @@
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" action="#{mbAgente.prepareDestroy}" update="messages">
                             <f:setPropertyActionListener value="#{e}" target="#{mbAgente.agSelected}" />
-                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Agente?" icon="ui-icon-alert" />
+                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Agente?" />
                         </p:commandButton>
                         
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

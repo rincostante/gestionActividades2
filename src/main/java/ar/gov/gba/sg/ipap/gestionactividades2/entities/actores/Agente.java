@@ -57,21 +57,21 @@ public class Agente implements Serializable {
      * Campo de texto que indica el nombre de la calle del lugar de trabajo del agente
      */        
     @Column (nullable=true, length=30)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 30)
+    @Size(message = "{endidades.stringSizeError}", max = 30)
     private String domCalle;    
     
     /**
      * Campo de texto que indica el nombre del número de puerta del lugar de trabajo del agente
      */        
     @Column (nullable=true, length=10)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 10)
+    @Size(message = "{endidades.stringSizeError}", max = 10)
     private String domNumero;        
     
     /**
      * Campo de texto que indica el teléfono del lugar de trabajo del agente
      */        
     @Column (nullable=true, length=20)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 20)
+    @Size(message = "{endidades.stringSizeError}", max = 20)
     private String telefono;    
     
     /**
@@ -92,7 +92,7 @@ public class Agente implements Serializable {
      * Campo de texto que indica los cursos realizados por el agente en el IPAP
      */        
     @Column (nullable=true, length=500)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 500)
+    @Size(message = "{endidades.stringSizeError}", max = 500)
     private String cursosRealizados;  
     
     
@@ -140,8 +140,7 @@ public class Agente implements Serializable {
      * Campo de tipo Agente que contiene al agente referente del actual.
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="agente_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="agente_id")
     private Agente referente;    
     
     /**

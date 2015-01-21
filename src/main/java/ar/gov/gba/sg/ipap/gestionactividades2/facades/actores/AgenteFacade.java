@@ -40,7 +40,7 @@ public class AgenteFacade extends AbstractFacade<Agente> {
         em = getEntityManager();
         String queryString = "SELECT ag.id FROM Agente ag "
                 + "INNER JOIN ag.docente doc "
-                + "INNER JOIN ag.participante part "
+                + "INNER JOIN ag.participaciones part "
                 + "WHERE ag.id = :id ";
         Query q = em.createQuery(queryString)
                 .setParameter("id", id);

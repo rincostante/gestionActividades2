@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.AgenteTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmAgenteView">
+                <p:panel id="pnView" header="#{bundle.AgenteViewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{bundle.AgenteLabel_apYNom}"/>
+                        <h:outputText value="#{mbAgente.selected.apYNom}" title="#{bundle.AgenteTitle_apYNom}"/>     
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_documento}"/>
+                        <h:outputText value="#{mbAgente.selected.documento}" title="#{bundle.AgenteTitle_documento}"/>   
+                        
+                        
+                        
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_organismo}"/>
+                        <h:outputText value="#{mbAgente.selected.organismo.nombre}, #{mbAgente.selected.organismo.tipoOrganismo.nombre}" title="#{bundle.AgenteTitle_organismo}"/>  
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_sitRevista}"/>
+                        <h:outputText value="#{mbAgente.selected.situacionRevista.nombre}" title="#{bundle.AgenteTitle_sitRevista}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_cargo}"/>
+                        <h:outputText value="#{mbAgente.selected.cargo.nombre}" title="#{bundle.AgenteTitle_cargo}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_nivelIpap}"/>
+                        <h:outputText value="#{mbAgente.selected.nivelIpap.nombre}, #{mbAgente.selected.nivelIpap.estado}" title="#{bundle.AgenteTitle_nivelIpap}"/>
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_estCursados}"/>
+                        <h:outputText value="#{mbAgente.selected.estudiosCursados.nombre} - #{mbAgente.selected.estudiosCursados.estado}" title="#{bundle.AgenteTitle_estCursados}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_titulo}"/>
+                        <h:outputText value="#{mbAgente.selected.titulo.nombre}, #{mbAgente.selected.titulo.epedidoPor}" title="#{bundle.AgenteTitle_titulo}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_curReal}"/>
+                        <h:outputText value="#{mbAgente.selected.cursosRealizados}" title="#{bundle.AgenteTitle_curReal}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_domCalle}"/>
+                        <h:outputText value="#{mbAgente.selected.domCalle}" title="#{bundle.AgenteTitle_domCalle}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_domNumero}"/>
+                        <h:outputText value="#{mbAgente.selected.domNumero}" title="#{bundle.AgenteTitle_domNumero}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_telefono}"/>
+                        <h:outputText value="#{mbAgente.selected.telefono}" title="#{bundle.AgenteTitle_telefono}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_emal}"/>
+                        <h:outputText value="#{mbAgente.selected.email}" title="#{bundle.AgenteTitle_emal}"/> 
+                        
+                        <h:outputLabel value="Es Referente"/>
+                        <h:outputText value="#{mbAgente.selected.esReferente}" title="Es Referente" /> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_referente}" rendered="#{not empty mbAgente.selected.referente}"/>
+                        <h:outputText value="#{mbAgente.selected.referente.apYNom}, #{mbAgente.selected.referente.cargo.nombre}" 
+                                      title="#{bundle.AgenteTitle_referente}" rendered="#{not empty mbAgente.selected.referente}"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_fechaInicAct}"/>
+                        <p:calendar id="fechaNac" value="#{mbAgente.selected.fechaInicioActividades}" 
+                                    pattern="dd/MM/yyyy" 
+                                    disabled="true"
+                                    locale="es"/> 
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbAgente.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.AgenteLabel_usAlta}"/>
+                        <h:outputText value="#{mbAgente.selected.admin.usAlta}" title="#{bundle.AgenteTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbAgente.selected.admin.fechaModif}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.AgenteLabel_usMod}"/>
+                        <h:outputText value="#{mbAgente.selected.admin.usModif}" title="#{bundle.AgenteTitle_usMod}"/>                         
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbAgente.prepareList}" value="Volver" ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

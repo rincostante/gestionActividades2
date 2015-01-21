@@ -9,6 +9,7 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
@@ -35,6 +36,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
@@ -77,10 +79,16 @@ public class MbAgente implements Serializable{
     private List<Organismo> listaOrganismos;
     private List<SituacionRevista> listaSitRev;
     private List<Agente> listaReferentes;
+    private List<Cargo> listaCargo;
     private int antigAnios;
     private int antigMeses;
     private Date fDespuesDe;
     private Date fAntesDe;    
+    private Organismo selectOrg;
+    private Agente selecReferente;
+    private Cargo selectCargo;
+    private SituacionRevista selectSitRev;
+    private boolean esReferente;
     /**
      * Creates a new instance of MbAgente
      */
@@ -96,12 +104,66 @@ public class MbAgente implements Serializable{
         listaNivelIpap = nivelIpapFacade.findAll();
         listaTitulos = tituloFacade.findAll();
         listaSitRev = sitRevFacade.findAll();
+        listaCargo = cargoFacade.findAll();
+        listaOrganismos = organismoFacade.findAll();
         habilitadas = true;
     }
 
     /********************************
      ** Getters y Setters *********** 
      ********************************/
+    
+    public boolean isEsReferente() {
+        return esReferente;
+    }
+
+    public void setEsReferente(boolean esReferente) {
+        this.esReferente = esReferente;
+    }
+
+    
+    public Agente getSelecReferente() {
+        return selecReferente;
+    }
+
+    public void setSelecReferente(Agente selecReferente) {
+        this.selecReferente = selecReferente;
+    }
+
+    public Cargo getSelectCargo() {
+        return selectCargo;
+    }
+
+    public void setSelectCargo(Cargo selectCargo) {
+        this.selectCargo = selectCargo;
+    }
+
+    public SituacionRevista getSelectSitRev() {
+        return selectSitRev;
+    }
+
+    public void setSelectSitRev(SituacionRevista selectSitRev) {
+        this.selectSitRev = selectSitRev;
+    }
+
+    
+    public List<Cargo> getListaCargo() {
+        return listaCargo;
+    }
+
+    public void setListaCargo(List<Cargo> listaCargo) {
+        this.listaCargo = listaCargo;
+    }
+
+    
+    public Organismo getSelectOrg() {
+        return selectOrg;
+    }
+
+    public void setSelectOrg(Organismo selectOrg) {
+        this.selectOrg = selectOrg;
+    }
+
     
     public List<Agente> getListaReferentes() {
         return listaReferentes;
@@ -246,6 +308,7 @@ public class MbAgente implements Serializable{
      */
     public String prepareList() {
         habilitadas = true;
+        esReferente = false;
         recreateModel();
         return "list";
     } 
@@ -255,6 +318,7 @@ public class MbAgente implements Serializable{
      * @return 
      */
     public String prepareListDes() {
+        esReferente = false;
         habilitadas = false;
         recreateModel();
         return "listDes";
@@ -282,11 +346,10 @@ public class MbAgente implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
+        esReferente = false;
         current = new Agente();
         // cargo los list pesados para los combos
         listaPersonas = personaFacade.findAll();
-        listaOrganismos = organismoFacade.findAll();
-        listaReferentes = agenteFacade.findAll();
         selectedItemIndex = -1;
         return "new";
     }
@@ -361,9 +424,28 @@ public class MbAgente implements Serializable{
     /**
      * 
      */
-    public void resetFechas(){
-        fDespuesDe = null;
-        fAntesDe = null;
+    public void resetSelect(){
+        if(fDespuesDe != null){
+            fDespuesDe = null;
+        }
+        if(fAntesDe != null){
+            fAntesDe = null;
+        }
+        if(selectOrg != null){
+            selectOrg = null;
+        }
+        if(selecReferente != null){
+            selecReferente = null;
+        }
+        if(selectCargo != null){
+            selectCargo = null;
+        }
+        if(selectSitRev != null){
+            selectSitRev = null;
+        }  
+        if(!listaReferentes.isEmpty()){
+            listaReferentes.clear();
+        }
     }
     
    /*************************************************************
@@ -375,7 +457,83 @@ public class MbAgente implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectHab(){
-        buscarEntreFechas();
+        List<Agente> agentes = new ArrayList();
+        Iterator itRows = items.iterator();
+        boolean valida = false;
+        boolean entro = false;
+        
+        // recorro el dadamodel
+        while(itRows.hasNext()){
+            boolean sale = false;
+            Agente ag = (Agente)itRows.next();
+            if(fDespuesDe != null && fAntesDe != null){
+                entro = true;
+                if(estaEntreFechas(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }else{
+                if(fDespuesDe != null){
+                    entro = true;
+                    if(esPosteriorA(ag)){
+                        valida = true;
+                    }else{
+                        sale = true;
+                    }
+                }else{
+                    if(fAntesDe != null){
+                        entro = true;
+                        if(esAnteriorA(ag)){
+                            valida = true;
+                        }else{
+                            sale = true;
+                        }
+                    }
+                }
+            }
+            if(selectOrg != null && !sale){
+                entro = true;
+                if(estaOrganismo(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }
+            if(selecReferente != null && !sale){
+                entro = true;
+                if(estaReferente(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }    
+            if(selectCargo != null && !sale){
+                entro = true;
+                if(estaCargo(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            } 
+            if(selectSitRev != null && !sale){
+                entro = true;
+                if(estaSitRev(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }    
+            if(!sale && ag.isEsReferente() != esReferente){
+                entro = true;
+                agentes.add(ag);
+            }
+        }    
+        if(entro){
+            items = null;
+            items = new ListDataModel(agentes); 
+        }
+        
         return "list";
     }
     
@@ -389,7 +547,80 @@ public class MbAgente implements Serializable{
      * @return 
      */
     public String prepareSelectDes(){
-        buscarEntreFechas();
+        List<Agente> agentes = new ArrayList();
+        Iterator itRows = items.iterator();
+        boolean valida = false;
+        boolean entro = false;
+        
+        // recorro el dadamodel
+        while(itRows.hasNext()){
+            boolean sale = false;
+            Agente ag = (Agente)itRows.next();
+            if(fDespuesDe != null && fAntesDe != null){
+                entro = true;
+                if(estaEntreFechas(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }else{
+                if(fDespuesDe != null){
+                    entro = true;
+                    if(esPosteriorA(ag)){
+                        valida = true;
+                    }else{
+                        sale = true;
+                    }
+                }else{
+                    if(fAntesDe != null){
+                        entro = true;
+                        if(esAnteriorA(ag)){
+                            valida = true;
+                        }else{
+                            sale = true;
+                        }
+                    }
+                }
+            }
+            if(selectOrg != null && !sale){
+                entro = true;
+                if(estaOrganismo(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }
+            if(selecReferente != null && !sale){
+                entro = true;
+                if(estaReferente(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }    
+            if(selectCargo != null && !sale){
+                entro = true;
+                if(estaCargo(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            } 
+            if(selectSitRev != null && !sale){
+                entro = true;
+                if(estaSitRev(ag)){
+                    valida = true;
+                }else{
+                    sale = true;
+                }
+            }    
+            if(!sale && ag.isEsReferente() != esReferente){
+                entro = true;
+                agentes.add(ag);
+            }
+        }    
+        items = null;
+        items = new ListDataModel(agentes); 
         return "listDes";
     }
     
@@ -518,6 +749,32 @@ public class MbAgente implements Serializable{
         return "inicio";
     }  
     
+    /*********************
+    ** Desencadenadores **
+    **********************/    
+    
+    /**
+     * 
+     * @param event
+     */
+    public void organismoChangeListener(ValueChangeEvent event) {
+        selectOrg = (Organismo)event.getNewValue();
+        
+        listaReferentes = new ArrayList();
+        Iterator itRows = items.iterator();
+        
+        // recorro el dadamodel
+        while(itRows.hasNext()){
+            Agente ag = (Agente)itRows.next();
+            if(ag.getOrganismo().equals(selectOrg) && ag.isEsReferente()){
+                listaReferentes.add(ag);
+            }          
+        }        
+    }    
+    
+    public void referenteChangeListener(ValueChangeEvent event){
+        esReferente = !(boolean)event.getNewValue();
+    }
     
     /*********************
     ** Métodos privados **
@@ -536,6 +793,29 @@ public class MbAgente implements Serializable{
         items = null;
         if(selectParam != null){
             selectParam = null;
+        }
+        if(fDespuesDe != null){
+            fDespuesDe = null;
+        }
+        if(fAntesDe != null){
+            fAntesDe = null;
+        }
+        if(selectOrg != null){
+            selectOrg = null;
+        }
+        if(selecReferente != null){
+            selecReferente = null;
+        }
+        if(selectCargo != null){
+            selectCargo = null;
+        }
+        if(selectSitRev != null){
+            selectSitRev = null;
+        }   
+        if(listaReferentes != null){
+            if(!listaReferentes.isEmpty()){
+                listaReferentes.clear();
+            }
         }
     }      
     
@@ -559,24 +839,42 @@ public class MbAgente implements Serializable{
         }
     }   
     
-    /*****************************************************************************
-     **** métodos privados para la búsqueda de habiliados por fecha de inicio ****
-     *****************************************************************************/
+    /*********************************************
+     **** métodos privados para las búsquedas ****
+     *********************************************/
 
-    private void buscarEntreFechas(){
-        List<Agente> docentes = new ArrayList();
-        Iterator itRows = items.iterator();
+    private boolean estaEntreFechas(Agente ag){
+        return ag.getFechaInicioActividades().after(fDespuesDe) && ag.getFechaInicioActividades().before(fAntesDe);
+    }   
+    
+    private boolean esPosteriorA(Agente ag){
+        return ag.getFechaInicioActividades().after(fDespuesDe);
+    }
+    
+    private boolean esAnteriorA(Agente ag){
+        return ag.getFechaInicioActividades().before(fAntesDe);
+    }
+    
+    private boolean estaOrganismo(Agente ag){
+        return ag.getOrganismo().equals(selectOrg);
+    }
+    
+    private boolean estaReferente(Agente ag){
+        if(ag.getReferente() != null){
+            return ag.getReferente().equals(selecReferente);
+        }else{
+            return false;
+        }
         
-        // recorro el dadamodel
-        while(itRows.hasNext()){
-            Agente ag = (Agente)itRows.next();
-            if(ag.getFechaInicioActividades().after(fDespuesDe) && ag.getFechaInicioActividades().before(fAntesDe)){
-                docentes.add(ag);
-            }          
-        }        
-        items = null;
-        items = new ListDataModel(docentes); 
-    }     
+    }
+    
+    private boolean estaCargo(Agente ag){
+        return ag.getCargo().equals(selectCargo);
+    }
+    
+    private boolean estaSitRev(Agente ag){
+        return ag.getSituacionRevista().equals(selectSitRev);
+    }
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
