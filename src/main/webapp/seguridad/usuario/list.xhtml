@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+      
+    <h:head>
+        <title>#{bundle.UsuarioTitle}</title>
+    </h:head>
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.UsuarioTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/> 
+            <h:form>
+                <p:panel id="usForm" header="#{bundle.UsuarioListTitle} Habilitados" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
+                    <h:panelGroup>
+                        <h:panelGrid columns="3" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbUsuario.prepareCreate}"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Deshabilitados" action="#{mbUsuario.prepareListDes}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbUsuario.cleanUp}"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:panel>      
+                
+                <p:dataTable value="#{mbUsuario.items}" var="e" id="usList" rows="5"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Listado de #{bundle.UsuarioListado}
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbUsuario.prepareList}" update="usList" style="margin-left: 10px"/>
+                        <p:columnToggler datasource="usList" trigger="toggler" />
+                    </f:facet>
+                    <p:column headerText="#{bundle.UsuarioLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}">
+                        <p:outputLabel value="#{e.apYNom}"/>
+                    </p:column> 
+                    <p:column headerText="#{bundle.UsuarioLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}">
+                        <p:outputLabel value="#{e.documento}"/>
+                    </p:column>   
+                    <p:column headerText="#{bundle.UsuarioLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                        <p:outputLabel value="#{e.nombre}"/>
+                    </p:column>  
+                    <p:column headerText="#{bundle.UsuarioLable_rol}" sortBy="#{e.rol.nombre}" filterBy="#{e.rol.nombre}">
+                        <p:outputLabel value="#{e.rol.nombre}"/>
+                    </p:column>    
+                   
+                    <p:column headerText="Acciones" style="width:135px">
+                        <p:growl id="messages" showDetail="true" />
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbUsuario.prepareView}">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbUsuario.prepareEdit}">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbUsuario.destroy}" update="messages">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
+                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Usuario?" />
+                        </p:commandButton>
+                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                           <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                           <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                       </p:confirmDialog>                       
+                    </p:column>                
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -81,6 +82,44 @@ public class Usuario implements Serializable {
     @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     @NotNull(message = "{enitdades.objectNotNullError}") 
     private AdmEntidad admin;
+    
+    /**
+     * Campo que muestra los Apellidos y nombres personales del docente
+     */
+    @Transient
+    String apYNom;
+    
+    /**
+     * Campo que muestra el número de documento personal del docente
+     */
+    @Transient
+    String documento;    
+
+    public String getApYNom() {
+        if(agente != null){
+            apYNom = agente.getPersona().getApellidos() + ", " + agente.getPersona().getNombres();
+        }else{
+            apYNom = docente.getPersona().getApellidos() + ", " + docente.getPersona().getNombres();
+        }
+        return apYNom;
+    }
+
+    public void setApYNom(String apYNom) {
+        this.apYNom = apYNom;
+    }
+
+    public String getDocumento() {
+        if(agente != null){
+            documento = String.valueOf(agente.getPersona().getDocumento());
+        }else{
+            documento = String.valueOf(docente.getPersona().getDocumento());
+        }   
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
 
     /**
      *

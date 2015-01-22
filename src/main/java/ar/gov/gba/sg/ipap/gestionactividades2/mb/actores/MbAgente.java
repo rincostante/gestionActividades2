@@ -303,7 +303,7 @@ public class MbAgente implements Serializable{
      ** Métodos de inicialización **
      *******************************/
     /**
-     * Método para inicializar el listado de los Docentes habilitados
+     * Método para inicializar el listado de los Agentes habilitados
      * @return acción para el listado de entidades
      */
     public String prepareList() {
