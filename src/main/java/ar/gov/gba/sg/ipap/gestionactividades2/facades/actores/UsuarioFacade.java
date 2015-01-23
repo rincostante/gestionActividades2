@@ -33,6 +33,7 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
     
     /**
      * Método para validad que no exista un Usuario con el Agente o el Docente cuyos id es recibidos como parámetro
+     * @param idDocente
      * @param idAgente
      * @return 
      */
@@ -86,5 +87,19 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
                 + "WHERE us.admin.habilitado = false";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }          
+    }  
+    
+    /**
+     * Método que valida si una contraseña ya está en uso
+     * @param clave: contraseña encriptada
+     * @return 
+     */
+    public boolean verificarContrasenia(String clave){
+        em = getEntityManager();
+        String queryString = "SELECT us FROM Usuario us "
+                + "WHERE us.calve = :clave";
+        Query q = em.createQuery(queryString)
+                .setParameter("clave", clave);
+        return q.getResultList().isEmpty();
+    }
 }

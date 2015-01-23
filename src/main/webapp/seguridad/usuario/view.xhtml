@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.UsuarioTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmUsuarioView">
+                <p:panel id="pnView" header="#{bundle.UsuarioViewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{bundle.UsuarioLabel_apYNom}"/>
+                        <h:outputText value="#{mbUsuario.selected.apYNom}" title="#{bundle.UsuarioTitle_apYNom}"/>     
+                        
+                        <h:outputLabel value="#{bundle.UsuarioLabel_documento}"/>
+                        <h:outputText value="#{mbUsuario.selected.documento}" title="#{bundle.UsuarioTitle_documento}"/>   
+                        
+                        <h:outputLabel value="#{bundle.UsuarioLable_rol}"/>
+                        <h:outputText value="#{mbUsuario.selected.rol.nombre}" title="#{bundle.UsuarioTitle_rol}"/> 
+                        
+                        <h:outputLabel value="#{bundle.UsuarioLabel_nombre}"/>
+                        <h:outputText value="#{mbUsuario.selected.nombre}" title="#{bundle.UsuarioTitle_nombre}"/> 
+                        
+                        <h:outputLabel value="#{bundle.UsuarioLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbUsuario.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.UsuarioLabel_usAlta}"/>
+                        <h:outputText value="#{mbUsuario.selected.admin.usAlta}" title="#{bundle.UsuarioTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.UsuarioLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbUsuario.selected.admin.fechaModif}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.UsuarioLabel_usMod}"/>
+                        <h:outputText value="#{mbUsuario.selected.admin.usModif}" title="#{bundle.UsuarioTitle_usMod}"/>                         
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbUsuario.prepareList}" value="Volver" ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

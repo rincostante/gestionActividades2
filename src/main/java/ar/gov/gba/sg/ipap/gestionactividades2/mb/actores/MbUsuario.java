@@ -9,10 +9,13 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.CriptPass;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
@@ -46,6 +50,7 @@ public class MbUsuario implements Serializable{
     private List<Usuario> listaUsuarios;
     private List<Agente> listaAgentes;
     private List<Docente> listaDocentes;
+    private List<Rol> listaRoles;
     
     @EJB
     private UsuarioFacade usuarioFacade;   
@@ -53,6 +58,11 @@ public class MbUsuario implements Serializable{
     private AgenteFacade agenteFacade;
     @EJB
     private DocenteFacade docenteFacade;
+    @EJB
+    private RolFacade rolFacade;
+    
+    boolean esAgente;
+    boolean esDocente;    
 
     /**
      * Creates a new instance of MbUsuario
@@ -65,13 +75,39 @@ public class MbUsuario implements Serializable{
      */
     @PostConstruct
     public void init(){
-        
+        listaRoles = rolFacade.findAll();
+        habilitadas = true;
     }
 
     /********************************
      ** Getters y Setters *********** 
      ********************************/
     
+    public boolean isEsAgente() {
+        return esAgente;
+    }
+
+    public void setEsAgente(boolean esAgente) {
+        this.esAgente = esAgente;
+    }
+
+    public boolean isEsDocente() {
+        return esDocente;
+    }
+
+    public void setEsDocente(boolean esDocente) {
+        this.esDocente = esDocente;
+    }
+
+    
+    public List<Rol> getListaRoles() {
+        return listaRoles;
+    }
+
+    public void setListaRoles(List<Rol> listaRoles) {
+        this.listaRoles = listaRoles;
+    }
+
     public List<Usuario> getListaUsuarios() {
         return listaUsuarios;
     }
@@ -188,6 +224,8 @@ public class MbUsuario implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
+        esAgente = true;
+        esDocente = true;
         current = new Usuario();
         // cargo los list pesados para los combos
         listaAgentes = agenteFacade.getHabilitados();
@@ -201,6 +239,13 @@ public class MbUsuario implements Serializable{
      */
     public String prepareEdit() {
         current = usSelected;
+        if(current.getAdmin() != null){
+            esAgente = true;
+            esDocente = false;
+        }else{
+            esAgente = false;
+            esDocente = true;
+        }
         // cargo los list pesados para los combos
         listaAgentes = agenteFacade.getHabilitados();
         listaDocentes = docenteFacade.getHabilitadas();
@@ -313,8 +358,17 @@ public class MbUsuario implements Serializable{
      * @return mensaje que notifica la inserción
      */
     public String create() {
-        Long idDocente = current.getDocente().getId();
-        Long idAgente = current.getAgente().getId();
+        Long idDocente;
+        Long idAgente;
+        if(current.getAgente() != null){
+            idAgente = current.getAgente().getId();
+            idDocente = Long.valueOf(0);
+        }else{
+            idDocente = current.getDocente().getId();
+            idAgente = Long.valueOf(0);
+        }
+        String clave = "";
+        String claveEncriptada = "";
         try {
             if(getFacade().noExiste(idDocente, idAgente)){
                 // Creación de la entidad de administración y asignación
@@ -325,9 +379,30 @@ public class MbUsuario implements Serializable{
                 admEnt.setUsAlta(1);
                 current.setAdmin(admEnt);
                 
+                // Generación de clave
+                clave = CriptPass.generar();
+                
+                // la enccripto
+                claveEncriptada = CriptPass.encriptar(clave);
+                
+                // verifico que no esté siendo usada por otro usuario
+                while(!usuarioFacade.verificarContrasenia(claveEncriptada)){
+                    clave = CriptPass.generar();
+                    claveEncriptada = CriptPass.encriptar(clave);
+                }
+                
+                // la asigno
+                current.setCalve(claveEncriptada);
+                
                 // Inserción
                 getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated"));
+                
+                /********************************************************************************
+                 * Aquí debería enviar el correo al usuario notificando el suceso, **************
+                 * remitiendo la nueva contraseña y el procedimiento de incicio por primera vez *
+                 ********************************************************************************/
+                
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated") + "La clave asignada es: " + clave);
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioExistente"));
@@ -429,6 +504,41 @@ public class MbUsuario implements Serializable{
         return "inicio";
     }  
     
+    
+    /*********************
+    ** Desencadenadores **
+    **********************/    
+    
+    /**
+     * 
+     * @param event
+     */
+    public void agenteChangeListener(ValueChangeEvent event){
+        Agente ag = (Agente)event.getNewValue();
+        if(ag != null){
+            esAgente = true;
+            esDocente = false;
+        }else{
+            esAgente = false;
+            esDocente = true;
+        }
+    }
+    
+    /**
+     * 
+     * @param event
+     */
+    public void docenteChangeListener(ValueChangeEvent event){
+        Docente doc = (Docente)event.getNewValue();
+        if(doc != null){
+            esDocente = true;
+            esAgente = false;
+        }else{
+            esDocente = false;
+            esAgente = true;
+        }
+    }
+
     
     /*********************
     ** Métodos privados **
