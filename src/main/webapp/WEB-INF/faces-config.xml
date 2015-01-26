@@ -111,4 +111,9 @@
         <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actores.MbUsuario</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbCambioPass</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbCambioPass</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
 </faces-config>

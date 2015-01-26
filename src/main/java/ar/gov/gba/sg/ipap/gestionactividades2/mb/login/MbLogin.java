@@ -29,7 +29,10 @@ public class MbLogin implements Serializable{
     private String clave;
     private boolean logeado = false;   
     private String rol;
-    private Usuario usLogeado;
+    Usuario usLogeado;
+    private String claveAnterior_1;
+    private String claveAnterior_2;
+    private String claveNueva;
     @EJB
     private UsuarioFacade usuarioFacade;
     
@@ -37,6 +40,30 @@ public class MbLogin implements Serializable{
      * Creates a new instance of MbLogin
      */
     public MbLogin() {
+    }
+
+    public String getClaveAnterior_1() {
+        return claveAnterior_1;
+    }
+
+    public void setClaveAnterior_1(String claveAnterior_1) {
+        this.claveAnterior_1 = claveAnterior_1;
+    }
+
+    public String getClaveAnterior_2() {
+        return claveAnterior_2;
+    }
+
+    public void setClaveAnterior_2(String claveAnterior_2) {
+        this.claveAnterior_2 = claveAnterior_2;
+    }
+
+    public String getClaveNueva() {
+        return claveNueva;
+    }
+
+    public void setClaveNueva(String claveNueva) {
+        this.claveNueva = claveNueva;
     }
 
     public Usuario getUsLogeado() {
@@ -87,6 +114,7 @@ public class MbLogin implements Serializable{
             // valido las credenciales recibidas
             if(validar()){
                 logeado = true;
+
                 if(usLogeado.getRol().getNombre().equals("Administrador")){
                     rol = "admin";
                 }else{
@@ -112,11 +140,16 @@ public class MbLogin implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         session.invalidate();
         logeado = false;
-    }    
+    }  
     
     private boolean validar(){
         String claveEnc = CriptPass.encriptar(clave);
         usLogeado = usuarioFacade.validar(nombre, claveEnc);
         return usLogeado.getId() != null;
     }
+    
+    private boolean validarInt(){
+        return "admin".equals(nombre) && "admin".equals(clave);
+    }
+
 }
