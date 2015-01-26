@@ -6,8 +6,12 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.login;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.CriptPass;
 import java.io.Serializable;
 import java.util.ResourceBundle;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -22,15 +26,25 @@ public class MbLogin implements Serializable{
     
     private static final long serialVersionUID = -2152389656664659476L;
     private String nombre;
-    private static final String persona = "Rubén Incostante";
     private String clave;
     private boolean logeado = false;   
     private String rol;
+    private Usuario usLogeado;
+    @EJB
+    private UsuarioFacade usuarioFacade;
     
     /**
      * Creates a new instance of MbLogin
      */
     public MbLogin() {
+    }
+
+    public Usuario getUsLogeado() {
+        return usLogeado;
+    }
+
+    public void setUsLogeado(Usuario usLogeado) {
+        this.usLogeado = usLogeado;
     }
 
     public String getNombre() {
@@ -57,10 +71,6 @@ public class MbLogin implements Serializable{
         this.logeado = logeado;
     }
 
-    public String getPersona() {
-        return persona;
-    }
-
     public String getRol() {
         return rol;
     }
@@ -72,17 +82,17 @@ public class MbLogin implements Serializable{
     public void login(ActionEvent actionEvent){
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg = null;
-        
+
         if (nombre != null && clave != null){
-            if (nombre.equals(clave)){
+            // valido las credenciales recibidas
+            if(validar()){
                 logeado = true;
-                if ("admin".equals(nombre)){
+                if(usLogeado.getRol().getNombre().equals("Administrador")){
                     rol = "admin";
-                }
-                else{
+                }else{
                     rol = "usuario";
                 }
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenid@", nombre);
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenid@", usLogeado.getApYNom());
             }else{
                 logeado = false;
                 msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error de inicio de sesión", "Usuario y/o contraseña invalidos");
@@ -91,6 +101,7 @@ public class MbLogin implements Serializable{
         
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("estaLogeado", logeado);
+        clave = "";
         
         if (logeado){
             context.addCallbackParam("view", ResourceBundle.getBundle("/Bundle").getString("RutaAplicacion"));
@@ -102,4 +113,10 @@ public class MbLogin implements Serializable{
         session.invalidate();
         logeado = false;
     }    
+    
+    private boolean validar(){
+        String claveEnc = CriptPass.encriptar(clave);
+        usLogeado = usuarioFacade.validar(nombre, claveEnc);
+        return usLogeado.getId() != null;
+    }
 }

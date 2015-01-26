@@ -83,9 +83,9 @@
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbDocente.prepareView}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbDocente.docSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbDocente.prepareHabilitar}" update="messages">
+                        <p:commandButton icon="ui-icon-unlocked" action="#{mbDocente.prepareHabilitar}" update="messages">
                             <f:setPropertyActionListener value="#{e}" target="#{mbDocente.docSelected}" />
-                            <p:confirm header="Confirmar" message="¿Desea volver a habilitar el registro de este Docente?" icon="ui-icon-alert" />
+                            <p:confirm header="Confirmar" message="¿Desea volver a habilitar el registro de este Docente?" />
                         </p:commandButton>
                         
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

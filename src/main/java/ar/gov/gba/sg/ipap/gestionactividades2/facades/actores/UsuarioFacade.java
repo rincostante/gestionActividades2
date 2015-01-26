@@ -102,4 +102,29 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
                 .setParameter("clave", clave);
         return q.getResultList().isEmpty();
     }
+    
+    /**
+     * Método que valida un usuario según su nombre y contraseña
+     * @param nombre
+     * @param clave
+     * @return 
+     */
+    public Usuario validar(String nombre, String clave){
+        List<Usuario> usuarios;
+        Usuario us;
+        em = getEntityManager();
+        String queryString = "SELECT us FROM Usuario us "
+                + "WHERE us.nombre = :nombre "
+                + "AND us.calve = :clave";
+        Query q = em.createQuery(queryString)
+                .setParameter("nombre", nombre)
+                .setParameter("clave", clave);
+        usuarios = q.getResultList();
+        if(usuarios.isEmpty()){
+            us = new Usuario();
+        }else{
+            us = usuarios.get(0);
+        }
+        return us;
+    }
 }

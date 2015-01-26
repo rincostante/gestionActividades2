@@ -16,19 +16,25 @@
                     <p:growl id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.DocenteLabel_persona}" for="persona"/>
-                        <p:selectOneMenu id="persona" value="#{mbDocente.selected.persona}">
+                        <p:selectOneMenu id="persona" value="#{mbDocente.selected.persona}" 
+                                         disabled="#{not mbDocente.esPersona}" 
+                                         valueChangeListener="#{mbDocente.personaChangeListener}">
                             <f:selectItem itemLabel="Seleccione la Persona" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbDocente.listaPersonas}" var="persona" 
                                            itemLabel="#{persona.apellidos}, #{persona.nombres} - #{persona.documento}" 
                                            itemValue="#{persona}"/>
+                            <p:ajax event="change" update="agente"/>
                         </p:selectOneMenu>  
 
                         <p:outputLabel value="#{bundle.DocenteLabel_agente}" for="agente"/>
-                        <p:selectOneMenu id="agente" value="#{mbDocente.selected.agente}">
+                        <p:selectOneMenu id="agente" value="#{mbDocente.selected.agente}" 
+                                         disabled="#{not mbDocente.esAgente}" 
+                                         valueChangeListener="#{mbDocente.agenteChangeListener}" >
                             <f:selectItem itemLabel="Seleccione el Agente" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbDocente.listaAgentes}" var="agente" 
                                            itemLabel="#{agente.persona.apellidos}, #{agente.persona.nombres} - #{agente.persona.documento}" 
                                            itemValue="#{agente}"/>
+                            <p:ajax event="change" update="persona"/>
                         </p:selectOneMenu>                         
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_telefonoLab}" for="telLab"/>

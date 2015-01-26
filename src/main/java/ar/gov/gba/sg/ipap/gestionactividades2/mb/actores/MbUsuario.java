@@ -239,7 +239,7 @@ public class MbUsuario implements Serializable{
      */
     public String prepareEdit() {
         current = usSelected;
-        if(current.getAdmin() != null){
+        if(current.getAgente() != null){
             esAgente = true;
             esDocente = false;
         }else{

@@ -28,6 +28,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
@@ -58,14 +59,13 @@ public class MbDocente implements Serializable{
     private List<Agente> listaAgentes;
     private List<Titulo> listaTitulos;
     private boolean habilitadas;
-    //private Persona persona;
-    //private Agente agente;
-    //private Titulo titulo;
     private Docente docSelected;
     private int antigAnios;
     private int antigMeses;
     private Date fDespuesDe;
     private Date fAntesDe;
+    boolean esAgente;
+    boolean esPersona;        
     
     /**
      * Creates a new instance of MbDocente
@@ -88,6 +88,23 @@ public class MbDocente implements Serializable{
     /**
      *
      */
+    
+    public boolean isEsAgente() {
+        return esAgente;
+    }
+
+    public void setEsAgente(boolean esAgente) {
+        this.esAgente = esAgente;
+    }
+
+    public boolean isEsPersona() {
+        return esPersona;
+    }
+
+    public void setEsPersona(boolean esPersona) {
+        this.esPersona = esPersona;
+    }
+
     
     public Date getfDespuesDe() {
         return fDespuesDe;
@@ -245,6 +262,8 @@ public class MbDocente implements Serializable{
      */
     public String prepareCreate() {
         current = new Docente();
+        esAgente = true;
+        esPersona = true;
         // cargo los list para los combos
         listaPersonas = personaFacade.findAll();
         listaAgentes = agenteFacade.findAll();
@@ -257,6 +276,13 @@ public class MbDocente implements Serializable{
      */
     public String prepareEdit() {
         current = docSelected;
+        if(current.getAgente() != null){
+            esAgente = true;
+            esPersona = false;
+        }else{
+            esAgente = false;
+            esPersona = true;
+        }        
         // cargo los list para los combos
         listaPersonas = personaFacade.findAll();
         listaAgentes = agenteFacade.findAll();        
@@ -495,6 +521,41 @@ public class MbDocente implements Serializable{
         session.removeAttribute("mbDocente");
         return "inicio";
     }  
+    
+    
+    /*********************
+    ** Desencadenadores **
+    **********************/    
+    
+    /**
+     * 
+     * @param event
+     */
+    public void agenteChangeListener(ValueChangeEvent event){
+        Agente ag = (Agente)event.getNewValue();
+        if(ag != null){
+            esAgente = true;
+            esPersona = false;
+        }else{
+            esAgente = false;
+            esPersona = true;
+        }
+    }
+    
+    /**
+     * 
+     * @param event
+     */
+    public void personaChangeListener(ValueChangeEvent event){
+        Persona doc = (Persona)event.getNewValue();
+        if(doc != null){
+            esPersona = true;
+            esAgente = false;
+        }else{
+            esPersona = false;
+            esAgente = true;
+        }
+    }
     
     /*********************
     ** Métodos privados **
