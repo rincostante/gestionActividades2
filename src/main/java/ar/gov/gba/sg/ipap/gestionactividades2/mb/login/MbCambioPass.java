@@ -82,8 +82,8 @@ public class MbCambioPass implements Serializable{
     public String update(){
         String claveEncriptada = CriptPass.encriptar(claveNueva);
         try {
-            //usLogeado.setCalve(claveEncriptada);
-            //usuarioFacade.edit(usLogeado);
+            usLogeado.setCalve(claveEncriptada);
+            usuarioFacade.edit(usLogeado);
             JsfUtil.addSuccessMessage("Contraseña actualizada con exito");
             return "viewDatos";            
         }catch (Exception e) {
