@@ -29,7 +29,7 @@ public class MbLogin implements Serializable{
     private String clave;
     private boolean logeado = false;   
     private String rol;
-    Usuario usLogeado;
+    private Usuario usLogeado;
     private String claveAnterior_1;
     private String claveAnterior_2;
     private String claveNueva;

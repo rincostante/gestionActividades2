@@ -16,7 +16,7 @@
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}"/>
                         <p:submenu label="#{mbLogin.usLogeado.apYNom} | #{mbLogin.usLogeado.rol.nombre}" >
-                            <p:menuitem value="Cambiar contraseña" action="#{mbLogin.prepareCambioClave}" />
+                            <p:menuitem value="Cambiar contraseña" action="#{mbCambioPass.prepareCambioClave}" />
                             <p:menuitem value="Cerrar sesión" action="#{mbLogin.logout}" oncomplete="logout(xhr, status, args)"/>
                         </p:submenu>                       
                     </p:menubar>

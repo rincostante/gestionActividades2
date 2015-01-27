@@ -11,10 +11,12 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.PersonaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TituloFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -65,7 +68,8 @@ public class MbDocente implements Serializable{
     private Date fDespuesDe;
     private Date fAntesDe;
     boolean esAgente;
-    boolean esPersona;        
+    boolean esPersona;   
+    private Usuario usLogeado;
     
     /**
      * Creates a new instance of MbDocente
@@ -80,6 +84,9 @@ public class MbDocente implements Serializable{
     public void init(){
         listaTitulos = tituloFacade.findAll();
         habilitadas = true;
+        ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
+        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        usLogeado = login.getUsLogeado();
     }   
 
     /********************************
@@ -88,6 +95,14 @@ public class MbDocente implements Serializable{
     /**
      *
      */
+    
+    public Usuario getUsLogeado() {
+        return usLogeado;
+    }
+
+    public void setUsLogeado(Usuario usLogeado) {
+        this.usLogeado = usLogeado;
+    }
     
     public boolean isEsAgente() {
         return esAgente;
@@ -331,9 +346,9 @@ public class MbDocente implements Serializable{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
             current.getAdmin().setFechaModif(date);
-            current.getAdmin().setUsModif(1);
+            current.getAdmin().setUsModif(usLogeado);
             current.getAdmin().setHabilitado(true);
-            current.getAdmin().setUsBaja(0);
+            current.getAdmin().setUsBaja(null);
             current.getAdmin().setFechaBaja(null);
 
             // Actualizo
@@ -407,7 +422,7 @@ public class MbDocente implements Serializable{
                 AdmEntidad admEnt = new AdmEntidad();
                 admEnt.setFechaAlta(date);
                 admEnt.setHabilitado(true);
-                admEnt.setUsAlta(1);
+                admEnt.setUsAlta(usLogeado);
                 current.setAdmin(admEnt);
                 
                 // Inserción
@@ -446,7 +461,7 @@ public class MbDocente implements Serializable{
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
-                current.getAdmin().setUsModif(1);
+                current.getAdmin().setUsModif(usLogeado);
                 
                 // Actualizo
                 getFacade().edit(current);
@@ -457,7 +472,7 @@ public class MbDocente implements Serializable{
                     // Actualización de datos de administración de la entidad
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
-                    current.getAdmin().setUsModif(1);
+                    current.getAdmin().setUsModif(usLogeado);
 
                     // Actualizo
                     getFacade().edit(current);
@@ -586,7 +601,7 @@ public class MbDocente implements Serializable{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
             current.getAdmin().setFechaBaja(date);
-            current.getAdmin().setUsBaja(2);
+            current.getAdmin().setUsBaja(usLogeado);
             current.getAdmin().setHabilitado(false);
             
             // Deshabilito la entidad

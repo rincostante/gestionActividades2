@@ -36,7 +36,7 @@ public class PrimeDateRangeValidator implements Validator{
         Date startDate = (Date)startDateValue;
         Date endDate = (Date)value;
         if (endDate.before(startDate)){
-            FacesMessage message = new FacesMessage("La fecha 'Antes de' no puede ser anterior a la fecha 'Después de'.");
+            FacesMessage message = new FacesMessage("La fecha final no puede ser anterior a la fecha inicial.");
             message.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ValidatorException(message);
         }         

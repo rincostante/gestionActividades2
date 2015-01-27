@@ -7,16 +7,13 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.CampoTematicoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -34,27 +31,22 @@ import javax.servlet.http.HttpSession;
  *
  * @author rincostante
  */
-public class MbOrganismo implements Serializable{
+public class MbCampoTematico implements Serializable{
     
-    private Organismo current;
-    private DataModel items = null;    
-    
-    @EJB
-    private OrganismoFacade organismoFacade;
-    @EJB
-    private TipoOrganismoFacade tipoOrgFacade;
-    
+    private CampoTematico current;
+    private DataModel items = null; 
     private int selectedItemIndex;
-    private String selectParam;
     private boolean habilitadas;
-    private Organismo orgSelected;
-    private List<TipoOrganismo> listaTipoOrg;
+    private CampoTematico campoSelected;
     private Usuario usLogeado;
+    
+    @EJB
+    private CampoTematicoFacade campoTematicoFacade;
 
     /**
-     * Creates a new instance of MbOrganismo
+     * Creates a new instance of MbCampoTematico
      */
-    public MbOrganismo() {
+    public MbCampoTematico() {
     }
     
     /**
@@ -62,25 +54,24 @@ public class MbOrganismo implements Serializable{
      */
     @PostConstruct
     public void init(){
-        listaTipoOrg = tipoOrgFacade.findAll();
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
-        usLogeado = login.getUsLogeado();
-    }      
-
+        usLogeado = login.getUsLogeado();        
+    }
+    
     /********************************
-     ** Getters y Setters *********** 
-     ********************************/    
+     ** Getters y Setters ***********
+     ********************************/ 
     
-    public Usuario getUsLogeado() {
-        return usLogeado;
+    public CampoTematico getCampoSelected() {
+        return campoSelected;
     }
 
-    public void setUsLogeado(Usuario usLogeado) {
-        this.usLogeado = usLogeado;
+    public void setCampoSelected(CampoTematico campoSelected) {
+        this.campoSelected = campoSelected;
     }
-    
+ 
     
     public boolean isHabilitadas() {
         return habilitadas;
@@ -90,31 +81,24 @@ public class MbOrganismo implements Serializable{
         this.habilitadas = habilitadas;
     }
 
-    public Organismo getOrgSelected() {
-        return orgSelected;
+    public Usuario getUsLogeado() {
+        return usLogeado;
     }
 
-    public void setOrgSelected(Organismo orgSelected) {
-        this.orgSelected = orgSelected;
-    }
-
-    public List<TipoOrganismo> getListaTipoOrg() {
-        return listaTipoOrg;
-    }
-
-    public void setListaTipoOrg(List<TipoOrganismo> listaTipoOrg) {
-        this.listaTipoOrg = listaTipoOrg;
+    public void setUsLogeado(Usuario usLogeado) {
+        this.usLogeado = usLogeado;
     }
     
+
     /********************************
      ** Métodos para el datamodel **
      ********************************/
     /**
      * @return La entidad gestionada
      */
-    public Organismo getSelected() {
+    public CampoTematico getSelected() {
         if (current == null) {
-            current = new Organismo();
+            current = new CampoTematico();
             selectedItemIndex = -1;
         }
         return current;
@@ -134,11 +118,12 @@ public class MbOrganismo implements Serializable{
         return items;
     }    
     
+  
     /*******************************
      ** Métodos de inicialización **
      *******************************/
     /**
-     * Método para inicializar el listado de los Organismos habilitados
+     * Método para inicializar el listado de los Campos Tematicos habilitados
      * @return acción para el listado de entidades
      */
     public String prepareList() {
@@ -161,7 +146,7 @@ public class MbOrganismo implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = orgSelected;
+        current = campoSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -170,7 +155,7 @@ public class MbOrganismo implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (Organismo) getItems().getRowData();
+        current = (CampoTematico) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
@@ -179,7 +164,7 @@ public class MbOrganismo implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new Organismo();
+        current = new CampoTematico();
         selectedItemIndex = -1;
         return "new";
     }
@@ -188,7 +173,7 @@ public class MbOrganismo implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = orgSelected;
+        current = campoSelected;
         // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
@@ -204,11 +189,11 @@ public class MbOrganismo implements Serializable{
     }
     
     /**
-     * Método que verifica que el Nivel Ipap que se quiere eliminar no esté siento utilizado por otra entidad
+     * Método que verifica que el Campo Temático que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = orgSelected;
+        current = campoSelected;
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -218,7 +203,7 @@ public class MbOrganismo implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoNonDeletable"));
         }
         return "view";
     }  
@@ -228,7 +213,7 @@ public class MbOrganismo implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        current = orgSelected;
+        current = campoSelected;
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -241,25 +226,26 @@ public class MbOrganismo implements Serializable{
 
             // Actualizo
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoHabilitado"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoHabilitado"));
             return "view";
         }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("OrganismoHabilitadaErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoHabilitadaErrorOccured"));
             return null; 
         }
-    }  
+    }      
+    
     
     /*************************
     ** Métodos de operación **
     **************************/
     /**
-     * Méto que inserta uno nuevo Organismo en la base de datos, previamente genera una entidad de administración
+     * Méto que inserta uno nuevo Campo Tematico en la base de datos, previamente genera una entidad de administración
      * con los datos necesarios y luego se la asigna a la persona
      * @return mensaje que notifica la inserción
      */
     public String create() {
         try {
-            if(getFacade().noExiste(current.getNombre(), current.getTipoOrganismo().getId())){
+            if(getFacade().noExiste(current.getNombre())){
                 // Creación de la entidad de administración y asignación
                 Date date = new Date(System.currentTimeMillis());
                 AdmEntidad admEnt = new AdmEntidad();
@@ -270,28 +256,28 @@ public class MbOrganismo implements Serializable{
                 
                 // Inserción
                 getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoCreated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoCreated"));
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoExistente"));
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoExistente"));
                 return null;
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("OrganismoCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoCreatedErrorOccured"));
             return null;
         }
     }
 
     /**
-     * Método que actualiza un nuevo Organismo en la base de datos.
+     * Método que actualiza un nuevo Campo Tematico en la base de datos.
      * Previamente actualiza los datos de administración
      * @return mensaje que notifica la actualización
      */
     public String update() {    
-        Organismo org;
+        CampoTematico campo;
         try {
-            org = getFacade().getExistente(current.getNombre(), current.getTipoOrganismo().getId());
-            if(org == null){
+            campo = getFacade().getExistente(current.getNombre());
+            if(campo == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
@@ -299,10 +285,10 @@ public class MbOrganismo implements Serializable{
                 
                 // Actualizo
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoUpdated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoUpdated"));
                 return "view";
             }else{
-                if(org.getId().equals(current.getId())){
+                if(campo.getId().equals(current.getId())){
                     // Actualización de datos de administración de la entidad
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
@@ -310,15 +296,15 @@ public class MbOrganismo implements Serializable{
 
                     // Actualizo
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoUpdated"));
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoUpdated"));
                     return "view";                    
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoExistente"));
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoExistente"));
                     return null;
                 }
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("OrganismoUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoUpdatedErrorOccured"));
             return null;
         }
     }
@@ -327,12 +313,13 @@ public class MbOrganismo implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = orgSelected;
+        current = campoSelected;
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
-    }    
+    }     
+    
     
     /*************************
     ** Métodos de selección **
@@ -355,7 +342,7 @@ public class MbOrganismo implements Serializable{
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public Organismo getOrganismo(java.lang.Long id) {
+    public CampoTematico getCampoTematico(java.lang.Long id) {
         return getFacade().find(id);
     }  
     
@@ -366,10 +353,9 @@ public class MbOrganismo implements Serializable{
     public String cleanUp(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
-        session.removeAttribute("mbOrganismo");
+        session.removeAttribute("mbCampoTematico");
         return "inicio";
     }  
-    
     
     /*********************
     ** Métodos privados **
@@ -377,8 +363,8 @@ public class MbOrganismo implements Serializable{
     /**
      * @return el Facade
      */
-    private OrganismoFacade getFacade() {
-        return organismoFacade;
+    private CampoTematicoFacade getFacade() {
+        return campoTematicoFacade;
     }    
     
     /**
@@ -386,9 +372,6 @@ public class MbOrganismo implements Serializable{
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }      
     
     
@@ -405,17 +388,19 @@ public class MbOrganismo implements Serializable{
             
             // Deshabilito la entidad
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("OrganismoDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("OrganismoDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoDeletedErrorOccured"));
         }
-    }    
- 
+    }        
+    
+    
+    
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = Organismo.class)
-    public static class OrganismoControllerConverter implements Converter {
+    @FacesConverter(forClass = CampoTematico.class)
+    public static class CampoTematicoControllerConverter implements Converter {
 
         /**
          *
@@ -429,9 +414,9 @@ public class MbOrganismo implements Serializable{
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbOrganismo controller = (MbOrganismo) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbOrganismo");
-            return controller.getOrganismo(getKey(value));
+            MbCampoTematico controller = (MbCampoTematico) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbCampoTematico");
+            return controller.getCampoTematico(getKey(value));
         }
 
         
@@ -465,11 +450,11 @@ public class MbOrganismo implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof Organismo) {
-                Organismo o = (Organismo) object;
+            if (object instanceof CampoTematico) {
+                CampoTematico o = (CampoTematico) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Organismo.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + CampoTematico.class.getName());
             }
         }
     }           

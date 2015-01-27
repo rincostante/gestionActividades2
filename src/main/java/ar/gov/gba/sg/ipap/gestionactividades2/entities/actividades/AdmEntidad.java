@@ -6,13 +6,17 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -31,23 +35,25 @@ public class AdmEntidad implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable=false)
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="usalta_id", nullable=false)
     @NotNull(message = "{entidades.fieldNotNullError}")
-    private int usAlta;
+    private Usuario usAlta;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable=false)
     @NotNull(message = "{entidades.fieldNotNullError}")
     private Date fechaAlta;
     
-    @Column(nullable=true)
-    private int usModif;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="usmodif_id", nullable=true)
+    private Usuario usModif;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModif = null;
     
-    @Column(nullable=true)
-    private int usBaja;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="usbaja_id", nullable=true)
+    private Usuario usBaja;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaBaja = null;
@@ -60,7 +66,7 @@ public class AdmEntidad implements Serializable {
      *
      * @return
      */
-    public int getUsAlta() {
+    public Usuario getUsAlta() {
         return usAlta;
     }
 
@@ -68,7 +74,7 @@ public class AdmEntidad implements Serializable {
      *
      * @param usAlta
      */
-    public void setUsAlta(int usAlta) {
+    public void setUsAlta(Usuario usAlta) {
         this.usAlta = usAlta;
     }
 
@@ -92,7 +98,7 @@ public class AdmEntidad implements Serializable {
      *
      * @return
      */
-    public int getUsModif() {
+    public Usuario getUsModif() {
         return usModif;
     }
 
@@ -100,7 +106,7 @@ public class AdmEntidad implements Serializable {
      *
      * @param usModif
      */
-    public void setUsModif(int usModif) {
+    public void setUsModif(Usuario usModif) {
         this.usModif = usModif;
     }
 
@@ -124,7 +130,7 @@ public class AdmEntidad implements Serializable {
      *
      * @return
      */
-    public int getUsBaja() {
+    public Usuario getUsBaja() {
         return usBaja;
     }
 
@@ -132,7 +138,7 @@ public class AdmEntidad implements Serializable {
      *
      * @param usBaja
      */
-    public void setUsBaja(int usBaja) {
+    public void setUsBaja(Usuario usBaja) {
         this.usBaja = usBaja;
     }
 

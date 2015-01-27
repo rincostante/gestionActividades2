@@ -40,7 +40,7 @@ public class MbCambioPass implements Serializable{
     public void init(){
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
-        usLogeado = login.usLogeado;
+        usLogeado = login.getUsLogeado();
     }
 
     public String getClaveNueva() {

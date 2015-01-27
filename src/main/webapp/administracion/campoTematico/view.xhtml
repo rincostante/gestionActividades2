@@ -17,33 +17,37 @@
                     
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.OrganismoLabel_nombre}"/>
-                        <h:outputText value="#{mbOrganismo.selected.nombre}" title="#{bundle.OrganismoTitle_nombre}"/>     
+                        <h:outputText value="#{mbCampoTematico.selected.nombre}" title="#{bundle.OrganismoTitle_nombre}"/>   
                         
-                        <h:outputLabel value="#{bundle.OrganismoLebel_tipo}"/>
-                        <h:outputText value="#{mbOrganismo.selected.tipoOrganismo.nombre}" title="#{bundle.OrganismoTitle_tipo}"/>      
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_fechaInicioVig}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.strFechaIniVig}" title="#{bundle.CampoTematicoTitle_fechaInicioVig}"/>
+                        
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_fechaFinVig}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.strFechaFinVig}" title="#{bundle.CampoTematicoTitle_fechaFinVig}"/>
                         
                         <h:outputLabel value="#{bundle.OrganismoLabel_fechaAlta}"/>
-                        <p:calendar id="fechaAlta" value="#{mbOrganismo.selected.admin.fechaAlta}" 
+                        <p:calendar id="fechaAlta" value="#{mbCampoTematico.selected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 
                                     disabled="true"
                                     locale="es"/>
 
                         <h:outputLabel value="#{bundle.OrganismoLabel_usAlta}"/>
-                        <h:outputText value="#{mbOrganismo.selected.admin.usAlta.apYNom}" title="#{bundle.OrganismoTitle_usAlta}"/>     
+                        <h:outputText value="#{mbCampoTematico.selected.admin.usAlta.apYNom}" title="#{bundle.OrganismoTitle_usAlta}"/>     
                         
-                        <h:outputLabel value="#{bundle.OrganismoLabel_fachaBaja}"/>
-                        <p:calendar id="fechaMod" value="#{mbOrganismo.selected.admin.fechaBaja}" 
+                        <h:outputLabel value="#{bundle.OrganismoLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbCampoTematico.selected.admin.fechaModif}" 
                                     pattern="dd/MM/yyyy HH:mm" 
                                     disabled="true"
                                     locale="es"/>
                         
-                        <h:outputLabel value="#{bundle.OrganismoLabel_usBaja}"/>
-                        <h:outputText value="#{mbOrganismo.selected.admin.usBaja.apYNom}" title="#{bundle.OrganismoTitle_usBaja}"/>                           
+                        <h:outputLabel value="#{bundle.OrganismoLabel_usMod}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.admin.usModif.apYNom}" title="#{bundle.OrganismoTitle_usMod}"/>                         
+                        
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>
                     <f:facet name="right">
-                        <p:commandButton icon="ui-icon-refresh" action="#{mbOrganismo.prepareListDes}" value="Volver" ajax="false"/>
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbCampoTematico.prepareList}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
 
