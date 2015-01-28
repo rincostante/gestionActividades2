@@ -13,7 +13,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.CampoTematicoF
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -36,9 +39,11 @@ public class MbCampoTematico implements Serializable{
     private CampoTematico current;
     private DataModel items = null; 
     private int selectedItemIndex;
-    private boolean habilitadas;
+    private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
     private CampoTematico campoSelected;
     private Usuario usLogeado;
+    private Date fAntesDe;
+    private Date fDespuesDe;
     
     @EJB
     private CampoTematicoFacade campoTematicoFacade;
@@ -54,7 +59,7 @@ public class MbCampoTematico implements Serializable{
      */
     @PostConstruct
     public void init(){
-        habilitadas = true;
+        tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();        
@@ -64,21 +69,38 @@ public class MbCampoTematico implements Serializable{
      ** Getters y Setters ***********
      ********************************/ 
     
+    public Date getfAntesDe() {
+        return fAntesDe;
+    }
+
+    public void setfAntesDe(Date fAntesDe) {
+        this.fAntesDe = fAntesDe;
+    }
+
+    public Date getfDespuesDe() {
+        return fDespuesDe;
+    }
+
+    public void setfDespuesDe(Date fDespuesDe) {
+        this.fDespuesDe = fDespuesDe;
+    }
+ 
+    
+    public int getTipoList() {
+        return tipoList;
+    }
+
+    public void setTipoList(int tipoList) {
+        this.tipoList = tipoList;
+    }
+ 
+    
     public CampoTematico getCampoSelected() {
         return campoSelected;
     }
 
     public void setCampoSelected(CampoTematico campoSelected) {
         this.campoSelected = campoSelected;
-    }
- 
-    
-    public boolean isHabilitadas() {
-        return habilitadas;
-    }
-
-    public void setHabilitadas(boolean habilitadas) {
-        this.habilitadas = habilitadas;
     }
 
     public Usuario getUsLogeado() {
@@ -108,11 +130,13 @@ public class MbCampoTematico implements Serializable{
      * @return el listado de entidades a mostrar en el list
      */
     public DataModel getItems() {
-        if (items == null) {
-            if(habilitadas){
-                items = new ListDataModel(getFacade().getHabilitados());
-            }else{
-                items = new ListDataModel(getFacade().getDeshabilitados());
+	if (items == null) {
+            switch(tipoList){
+                case 1: items = new ListDataModel(getFacade().getHabilitados());
+                    break;
+                case 2: items = new ListDataModel(getFacade().getVencidos());
+                    break;
+                default: items = new ListDataModel(getFacade().getDeshabilitados());
             }
         }
         return items;
@@ -127,23 +151,33 @@ public class MbCampoTematico implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
-        habilitadas = true;
+        tipoList = 1;
         recreateModel();
         return "list";
     } 
     
     /**
-     * 
+     * Método para inicializar el listado de los Campos Tematicos vencidos
+     * @return acción para el listado de entidades
+     */
+    public String prepareListVenc() {
+        tipoList = 2;
+        recreateModel();
+        return "listVenc";
+    }     
+    
+    /**
+     * Método para inicializar el listado de los Campos Temáticos deshabilitados
      * @return 
      */
     public String prepareListDes() {
-        habilitadas = false;
+        tipoList = 3;
         recreateModel();
         return "listDes";
     }     
     
     /**
-     * @return acción para el detalle de la entidad
+     * @return acción para el detalle de la entidad habiliada
      */
     public String prepareView() {
         current = campoSelected;
@@ -152,7 +186,16 @@ public class MbCampoTematico implements Serializable{
     }
     
     /**
-     * @return acción para el detalle de la entidad
+     * @return acción para el detalle de la entidad vencida
+     */
+    public String prepareViewVenc() {
+        current = campoSelected;
+        selectedItemIndex = getItems().getRowIndex();
+        return "viewVenc";
+    }    
+    
+    /**
+     * @return acción para el detalle de la entidad deshabilitada
      */
     public String prepareViewDes() {
         current = (CampoTematico) getItems().getRowData();
@@ -170,7 +213,7 @@ public class MbCampoTematico implements Serializable{
     }
 
     /**
-     * @return acción para la edición de la entidad
+     * @return acción para la edición de la entidad habilitada
      */
     public String prepareEdit() {
         current = campoSelected;
@@ -178,6 +221,16 @@ public class MbCampoTematico implements Serializable{
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
+    
+    /**
+     * @return acción para la edición de la entidad vencida
+     */
+    public String prepareEditVenc() {
+        current = campoSelected;
+        // cargo los list para los combos     
+        selectedItemIndex = getItems().getRowIndex();
+        return "editVenc";
+    }    
     
     /**
      *
@@ -235,6 +288,46 @@ public class MbCampoTematico implements Serializable{
     }      
     
     
+    /**
+     * 
+     */
+    public void resetFechas(){
+        fDespuesDe = null;
+        fAntesDe = null;
+    }
+    
+   /*********************************************
+     ** Métodos de inicialización de búsquedas **
+     ********************************************/
+    
+    /**
+     * Método para preparar la búsqueda
+     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
+     */
+    public String prepareSelectHab(){
+        buscarEntreFechas();
+        return "list";
+    }
+    
+    /**
+     * Método para preparar la búsqueda
+     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
+     */
+    public String prepareSelectVenc(){
+        buscarEntreFechas();
+        return "listVenc";
+    }    
+    
+    /**
+     * 
+     * @return 
+     */
+    public String prepareSelectDes(){
+        buscarEntreFechas();
+        return "listDes";
+    }    
+    
+    
     /*************************
     ** Métodos de operación **
     **************************/
@@ -275,6 +368,7 @@ public class MbCampoTematico implements Serializable{
      */
     public String update() {    
         CampoTematico campo;
+        String retorno = "";
         try {
             campo = getFacade().getExistente(current.getNombre());
             if(campo == null){
@@ -297,7 +391,13 @@ public class MbCampoTematico implements Serializable{
                     // Actualizo
                     getFacade().edit(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoUpdated"));
-                    return "view";                    
+                    if(tipoList == 1){
+                        retorno = "view";  
+                    }
+                    if(tipoList == 2){
+                        retorno = "viewVenc";  
+                    }     
+                    return retorno;
                 }else{
                     JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoExistente"));
                     return null;
@@ -394,6 +494,25 @@ public class MbCampoTematico implements Serializable{
         }
     }        
     
+    
+    /*****************************************************************************
+     **** métodos privados para la búsqueda de habiliados por fecha de inicio ****
+     *****************************************************************************/
+
+    private void buscarEntreFechas(){
+        List<CampoTematico> campos = new ArrayList();
+        Iterator itRows = items.iterator();
+        
+        // recorro el dadamodel
+        while(itRows.hasNext()){
+            CampoTematico campo = (CampoTematico)itRows.next();
+            if(campo.getFechaFinVigencia().after(fDespuesDe) && campo.getFechaFinVigencia().before(fAntesDe)){
+                campos.add(campo);
+            }          
+        }        
+        items = null;
+        items = new ListDataModel(campos); 
+    }    
     
     
     /********************************************************************

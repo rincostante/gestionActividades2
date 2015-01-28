@@ -16,11 +16,10 @@
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="campoForm" header="#{bundle.CampoTematicoListTitle} Habilitados" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
+                <p:panel id="campoForm" header="#{bundle.CampoTematicoListTitle} Vencidos" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
                     <h:panelGroup>
-                        <h:panelGrid columns="4" id="pnBotones">
-                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbCampoTematico.prepareCreate}"/>
-                            <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbCampoTematico.prepareListVenc}" ajax="false"/>
+                        <h:panelGrid columns="3" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Habilitados" action="#{mbCampoTematico.prepareList}"/>
                             <p:commandButton icon="ui-icon-refresh" value="Deshabilitados" action="#{mbCampoTematico.prepareListDes}" ajax="false"/>
                             <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbCampoTematico.cleanUp}"/>
                         </h:panelGrid>
@@ -39,7 +38,7 @@
                             </p:calendar>
                         </h:panelGrid>
                         <h:panelGrid columns="2"> 
-                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de vigencia" action="#{mbCampoTematico.prepareSelectHab}" ajax="false"/> 
+                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de vigencia" action="#{mbCampoTematico.prepareSelectVenc}" ajax="false"/> 
                             <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbCampoTematico.resetFechas}">
                                 <p:ajax update="fDespDe" resetValues="true" />
                                 <p:ajax update="fAntesDe" resetValues="true" />
@@ -73,10 +72,10 @@
                     
                     <p:column headerText="Acciones" style="width:135px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbCampoTematico.prepareView}">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbCampoTematico.prepareViewVenc}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbCampoTematico.campoSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbCampoTematico.prepareEdit}">
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbCampoTematico.prepareEditVenc}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbCampoTematico.campoSelected}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" action="#{mbCampoTematico.prepareDestroy}" update="messages" >

@@ -80,7 +80,7 @@
                     </p:column>
                     <p:column headerText="Acciones" style="width:90px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbDocente.prepareView}">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbDocente.prepareViewDes}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbDocente.docSelected}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-unlocked" action="#{mbDocente.prepareHabilitar}" update="messages">

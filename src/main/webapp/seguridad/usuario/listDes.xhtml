@@ -54,7 +54,7 @@
                     
                     <p:column headerText="Acciones" style="width:90px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbUsuario.prepareView}">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbUsuario.prepareViewDes}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-unlocked" action="#{mbUsuario.prepareHabilitar}" update="messages">

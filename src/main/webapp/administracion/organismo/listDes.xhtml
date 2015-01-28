@@ -43,7 +43,7 @@
                     </p:column>
                     <p:column headerText="Acciones" style="width:90px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbOrganismo.prepareView}">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbOrganismo.prepareViewDes}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbOrganismo.orgSelected}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-unlocked" action="#{mbOrganismo.prepareHabilitar}" update="messages">

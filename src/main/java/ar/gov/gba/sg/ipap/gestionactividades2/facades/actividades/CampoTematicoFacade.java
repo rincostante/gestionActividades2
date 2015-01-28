@@ -7,6 +7,7 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -29,6 +30,8 @@ public class CampoTematicoFacade extends AbstractFacade<CampoTematico> {
 
     public CampoTematicoFacade() {
         super(CampoTematico.class);
+        //ñaokndfño
+          //      añsdknf
     }
  
     /**
@@ -75,13 +78,27 @@ public class CampoTematicoFacade extends AbstractFacade<CampoTematico> {
     }    
     
     /**
-     * Método que devuelve todas los Campos Tematicos habilitadas
+     * Método que devuelve todas los Campos Tematicos habilitados y vigentes
      * @return 
      */
     public List<CampoTematico> getHabilitados(){
         em = getEntityManager();
         String queryString = "SELECT campo FROM CampoTematico campo "
-                + "WHERE campo.admin.habilitado = true";
+                + "WHERE campo.admin.habilitado = true "
+                + "AND campo.fechaFinVigencia >= CURRENT_DATE";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }
+    
+    /**
+     * Método que devuelve los Campos Temáticos habilitados vencidos
+     * @return 
+     */
+    public List<CampoTematico> getVencidos(){
+        em = getEntityManager();
+        String queryString = "SELECT campo FROM CampoTematico campo "
+                + "WHERE campo.admin.habilitado = true "
+                + "AND campo.fechaFinVigencia < CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -96,5 +113,9 @@ public class CampoTematicoFacade extends AbstractFacade<CampoTematico> {
                 + "WHERE campo.admin.habilitado = false";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }           
+    }  
+    
+    /**
+     * Método que devuelve los Campos temáticos
+     */
 }

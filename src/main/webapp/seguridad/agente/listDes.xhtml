@@ -132,7 +132,7 @@
                     </p:column>
                     <p:column headerText="Acciones" style="width:90px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbAgente.prepareView}">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbAgente.prepareViewDes}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbAgente.agSelected}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" action="#{mbAgente.prepareHabilitar}" update="messages">

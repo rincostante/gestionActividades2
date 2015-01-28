@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.OrganismoTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmOrganismoView">
+                <p:panel id="pnView" header="#{bundle.OrganismoViewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{bundle.OrganismoLabel_nombre}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.nombre}" title="#{bundle.OrganismoTitle_nombre}"/>   
+                        
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_fechaInicioVig}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.strFechaIniVig}" title="#{bundle.CampoTematicoTitle_fechaInicioVig}"/>
+                        
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_fechaFinVig}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.strFechaFinVig}" title="#{bundle.CampoTematicoTitle_fechaFinVig}"/>
+                        
+                        <h:outputLabel value="#{bundle.OrganismoLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbCampoTematico.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.OrganismoLabel_usAlta}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.admin.usAlta.apYNom}" title="#{bundle.OrganismoTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.OrganismoLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbCampoTematico.selected.admin.fechaModif}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.OrganismoLabel_usMod}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.admin.usModif.apYNom}" title="#{bundle.OrganismoTitle_usMod}"/>                         
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbCampoTematico.prepareListVenc}" value="Volver" ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
