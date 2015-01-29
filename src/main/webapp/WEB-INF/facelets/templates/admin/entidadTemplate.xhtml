@@ -15,6 +15,9 @@
                 <h:form>
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}"/>
+                        <p:submenu label="Actividades">
+                            <p:menuitem value="Resolución" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizResolucion}/list.xhtml"/>
+                        </p:submenu>
                         <p:submenu label="Administración">
                             <p:menuitem value="Campo Temático" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCampoTematico}/list.xhtml"/>
                             <p:menuitem value="Cargo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCargo}/list.xhtml"/>
@@ -25,6 +28,7 @@
                             <p:menuitem value="Modalidad de Actividad" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizMod}/list.xhtml"/>
                             <p:menuitem value="Nivel IPAP" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizNivelIpap}/list.xhtml"/>
                             <p:menuitem value="Organismo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizOrganismo}/list.xhtml"/>
+                            <p:menuitem value="Sede" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSede}/list.xhtml"/>
                             <p:menuitem value="Situación de Revista" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSituacionRevista}/list.xhtml"/>
                             <p:menuitem value="Tipo de Capacitación" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoCap}/list.xhtml"/>
                             <p:menuitem value="Tipo de Documento" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoDocumento}/list.xhtml"/>
