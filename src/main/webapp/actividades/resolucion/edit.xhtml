@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ResolucionTitle}" />
+        </ui:define>
+        <ui:define name="content">
+        <br/>
+            <h:form>
+                <p:panel id="pnEdit" header="#{bundle.ResolucionEditTitle}" style="margin-bottom:10px;">
+                    <h:inputHidden id="id" value="#{mbResolucion.selected.id}" />
+                    <p:messages id="messages" />
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="#{bundle.ResolucionLabel_nombre}" for="nombre"/>
+                        <p:inputText id="nombre"
+                                     value="#{mbResolucion.selected.resolucion}" 
+                                     requiredMessage="#{bundle.ResolucionRequire_nombre}" 
+                                     required="true"/>                        
+
+                         <p:outputLabel value="#{bundle.ResolucionLabel_anio}" for="anio"/>
+                        <p:inputText id="anio"
+                                     value="#{mbResolucion.selected.anio}" validator="#{mbResolucion.validarAnio}"
+                                     requiredMessage="#{bundle.ResolucionTitle_anio}" 
+                                     required="true"/>  
+                        
+                        <p:outputLabel value="#{bundle.ResolucionLabel_libro}" for="libro"/>
+                        <p:inputText id="libro"
+                                     value="#{mbResolucion.selected.libro}" 
+                                     requiredMessage="#{bundle.ResolucionTitle_libro}" 
+                                     required="true"/>  
+                        
+                        <p:outputLabel value="#{bundle.ResolucionLabel_acta}" for="acta"/>
+                        <p:inputText id="acta"
+                                     value="#{mbResolucion.selected.acta}" 
+                                     requiredMessage="#{bundle.ResolucionTitle_acta}" 
+                                     required="true"/> 
+                        
+                        <p:outputLabel value="#{bundle.ResolucionLabel_foja}" for="foja"/>
+                        <p:inputText id="foja"
+                                     value="#{mbResolucion.selected.foja}" 
+                                     requiredMessage="#{bundle.ResolucionTitle_foja}" 
+                                     required="true"/> 
+                    </h:panelGrid>
+                </p:panel>
+                
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-pencil" 
+                                         action="#{mbResolucion.update}" 
+                                         value="Guardar" 
+                                         style="margin-right:10px;" 
+                                         update="pnEdit"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>                        
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
+                                         action="#{mbResolucion.prepareList}" 
+                                         value="Volver" 
+                                         immediate="true"/>
+                    </f:facet>                    
+                </p:toolbar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

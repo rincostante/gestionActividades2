@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ResolucionTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmResolucionView">
+                <p:panel id="pnView" header="#{bundle.ResolucionViewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{bundle.ResolucionLabel_nombre}"/>
+                        <h:outputText value="#{mbResolucion.selected.resolucion}" title="#{bundle.ResolucionTitle_nombre}"/>     
+                        
+                        <h:outputLabel value="#{bundle.ResolucionLabel_anio}"/>
+                        <h:outputText value="#{mbResolucion.selected.anio}" title="#{bundle.ResolucionTitle_anio}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ResolucionLabel_libro}"/>
+                        <h:outputText value="#{mbResolucion.selected.libro}" title="#{bundle.ResolucionTitle_libro}"/>    
+                        
+                        <h:outputLabel value="#{bundle.ResolucionLabel_acta}"/>
+                        <h:outputText value="#{mbResolucion.selected.acta}" title="#{bundle.ResolucionTitle_acta}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ResolucionLabel_foja}"/>
+                        <h:outputText value="#{mbResolucion.selected.foja}" title="#{bundle.ResolucionTitle_foja}"/>   
+                        
+                        
+                        <h:outputLabel value="#{bundle.ResolucionLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbResolucion.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.ResolucionLabel_usAlta}"/>
+                        <h:outputText value="#{mbResolucion.selected.admin.usAlta.apYNom}" title="#{bundle.ResolucionTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.ResolucionLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbResolucion.selected.admin.fechaModif}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.ResolucionLabel_usMod}"/>
+                        <h:outputText value="#{mbResolucion.selected.admin.usModif.apYNom}" title="#{bundle.ResolucionTitle_usMod}"/>                         
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbResolucion.prepareList}" value="Volver" ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

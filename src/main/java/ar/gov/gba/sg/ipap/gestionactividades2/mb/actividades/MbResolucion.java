@@ -13,10 +13,12 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFaca
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -25,6 +27,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
 
@@ -232,6 +235,23 @@ public class MbResolucion implements Serializable{
         }
     }      
     
+    /**
+     * Método para validar que el año ingresado tenga un formato válido
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */
+    public void validarAnio(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        int anioActual = Calendar.getInstance().get(Calendar.YEAR);
+        if((int)arg2 > anioActual){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("ResolucionValadationAnioMayor")));
+        }else{
+            if((int)arg2 < (anioActual - 20)){
+                throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("ResolucionValadationAnioMenor")));
+            }
+        }
+    }    
+    
     
     /*************************
     ** Métodos de operación **
@@ -272,10 +292,10 @@ public class MbResolucion implements Serializable{
      * @return mensaje que notifica la actualización
      */
     public String update() {    
-        Resolucion org;
+        Resolucion res;
         try {
-            org = getFacade().getExistente(current.getResolucion(), current.getAnio());
-            if(org == null){
+            res = getFacade().getExistente(current.getResolucion(), current.getAnio());
+            if(res == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
@@ -286,7 +306,7 @@ public class MbResolucion implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ResolucionUpdated"));
                 return "view";
             }else{
-                if(org.getId().equals(current.getId())){
+                if(res.getId().equals(current.getId())){
                     // Actualización de datos de administración de la entidad
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);

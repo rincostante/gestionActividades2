@@ -42,6 +42,15 @@
                     <p:column headerText="#{bundle.ResolucionLabel_anio}" sortBy="#{e.anio}" filterBy="#{e.anio}">
                         <p:outputLabel value="#{e.anio}"/>
                     </p:column>
+                    <p:column headerText="#{bundle.ResolucionLabel_libro}" sortBy="#{e.libro}" filterBy="#{e.libro}">
+                        <p:outputLabel value="#{e.libro}"/>
+                    </p:column>
+                    <p:column headerText="#{bundle.ResolucionLabel_acta}" sortBy="#{e.acta}" filterBy="#{e.acta}">
+                        <p:outputLabel value="#{e.acta}"/>
+                    </p:column>
+                    <p:column headerText="#{bundle.ResolucionLabel_foja}" sortBy="#{e.foja}" filterBy="#{e.foja}">
+                        <p:outputLabel value="#{e.foja}"/>
+                    </p:column>
                     <p:column headerText="Acciones" style="width:135px">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbResolucion.prepareView}">
@@ -52,7 +61,7 @@
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" action="#{mbResolucion.prepareDestroy}" update="messages" >
                             <f:setPropertyActionListener value="#{e}" target="#{mbResolucion.resSelected}" />
-                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Resolucion?" />
+                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de esta Resolucion?" />
                         </p:commandButton>
                         
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

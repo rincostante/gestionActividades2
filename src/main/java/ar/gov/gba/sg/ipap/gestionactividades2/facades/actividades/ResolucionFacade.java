@@ -38,7 +38,7 @@ public class ResolucionFacade extends AbstractFacade<Resolucion> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT actImp.nombre FROM ActividadImplementada actImp "
+        String queryString = "SELECT actImp.id FROM ActividadImplementada actImp "
                 + "INNER JOIN actImp.actividadPlan actPlan "
                 + "INNER JOIN actPlan.subprogramas sub "
                 + "INNER JOIN sub.programa prog "
@@ -61,7 +61,7 @@ public class ResolucionFacade extends AbstractFacade<Resolucion> {
         em = getEntityManager();
         String queryString = "SELECT res FROM Resolucion res "
                 + "WHERE res.resolucion = :res "
-                + "res.anio = :anio";
+                + "AND res.anio = :anio";
         Query q = em.createQuery(queryString)
                 .setParameter("res", res)
                 .setParameter("anio", anio);
@@ -75,14 +75,20 @@ public class ResolucionFacade extends AbstractFacade<Resolucion> {
      * @return 
      */
     public Resolucion getExistente(String res, int anio){
+        List<Resolucion> lRes;
         em = getEntityManager();
         String queryString = "SELECT res FROM Resolucion res "
                 + "WHERE res.resolucion = :res "
-                + "res.anio = :anio";
+                + "AND res.anio = :anio";
         Query q = em.createQuery(queryString)
                 .setParameter("res", res)
                 .setParameter("anio", anio);
-        return (Resolucion)q.getSingleResult();
+        lRes = q.getResultList();
+        if(!lRes.isEmpty()){
+            return lRes.get(0);
+        }else{
+            return null;
+        }
     }    
     
     /**

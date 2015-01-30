@@ -114,12 +114,20 @@ public class ActividadImplementada implements Serializable {
     private String observaciones;    
     
     /**
-     * Campo de tipo Organismo que registra el Organismo destinatario de la ACtividad
+     * Campo de tipo Organismo que registra el Organismo destinatario de la Actividad
      */
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="organismo_id", nullable=false)
     @NotNull(message = "{entidades.objectNotNullError}")
     private Organismo organismo;
+    
+    /**
+     * Campo de tipo Resolucion que contiene la resolución que da marco institucional a la Actividad.
+     */
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="resolucion_id", nullable=false)
+    @NotNull(message = "{entidades.objectNotNullError}")
+    private Resolucion resolucion;     
     
     /**
      * Campo de tipo Sede que registra la Sede en la cual se llevará a cabo la Actividad
@@ -179,6 +187,22 @@ public class ActividadImplementada implements Serializable {
      */
     public ActividadImplementada(){
         participantes = new ArrayList();
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Resolucion getResolucion() {
+        return resolucion;
+    }
+
+    /**
+     * 
+     * @param resolucion 
+     */
+    public void setResolucion(Resolucion resolucion) {
+        this.resolucion = resolucion;
     }
 
     /**

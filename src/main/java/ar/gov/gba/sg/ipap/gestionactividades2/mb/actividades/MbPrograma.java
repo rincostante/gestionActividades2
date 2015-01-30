@@ -7,9 +7,11 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Programa;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.CampoTematicoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ProgramaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
@@ -34,24 +36,28 @@ import javax.servlet.http.HttpSession;
  *
  * @author rincostante
  */
-public class MbCampoTematico implements Serializable{
+public class MbPrograma implements Serializable{
     
-    private CampoTematico current;
-    private DataModel items = null; 
-    private int selectedItemIndex;
-    private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
-    private CampoTematico campoSelected;
-    private Usuario usLogeado;
-    private Date fAntesDe;
-    private Date fDespuesDe;
+    private Programa current;
+    private DataModel items = null;    
     
     @EJB
-    private CampoTematicoFacade campoTematicoFacade;
+    private ProgramaFacade programaFacade;
+    @EJB
+    private ResolucionFacade resolucionFacade;
+    
+    private int selectedItemIndex;
+    private Programa progSelected;
+    private Usuario usLogeado;     
+    private List<Resolucion> listResoluciones;
+    private Date fAntesDe;
+    private Date fDespuesDe;
+    private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
 
     /**
-     * Creates a new instance of MbCampoTematico
+     * Creates a new instance of MbPrograma
      */
-    public MbCampoTematico() {
+    public MbPrograma() {
     }
     
     /**
@@ -62,12 +68,20 @@ public class MbCampoTematico implements Serializable{
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
-        usLogeado = login.getUsLogeado();        
+        usLogeado = login.getUsLogeado();
     }
     
     /********************************
      ** Getters y Setters ***********
-     ********************************/ 
+     ********************************/   
+    
+    public int getTipoList() {
+        return tipoList;
+    }
+
+    public void setTipoList(int tipoList) {
+        this.tipoList = tipoList;
+    }
     
     public Date getfAntesDe() {
         return fAntesDe;
@@ -84,23 +98,13 @@ public class MbCampoTematico implements Serializable{
     public void setfDespuesDe(Date fDespuesDe) {
         this.fDespuesDe = fDespuesDe;
     }
- 
-    
-    public int getTipoList() {
-        return tipoList;
+
+    public Programa getProgSelected() {
+        return progSelected;
     }
 
-    public void setTipoList(int tipoList) {
-        this.tipoList = tipoList;
-    }
- 
-    
-    public CampoTematico getCampoSelected() {
-        return campoSelected;
-    }
-
-    public void setCampoSelected(CampoTematico campoSelected) {
-        this.campoSelected = campoSelected;
+    public void setProgSelected(Programa progSelected) {
+        this.progSelected = progSelected;
     }
 
     public Usuario getUsLogeado() {
@@ -110,17 +114,25 @@ public class MbCampoTematico implements Serializable{
     public void setUsLogeado(Usuario usLogeado) {
         this.usLogeado = usLogeado;
     }
-    
 
+    public List<Resolucion> getListResoluciones() {
+        return listResoluciones;
+    }
+
+    public void setListResoluciones(List<Resolucion> listResoluciones) {
+        this.listResoluciones = listResoluciones;
+    }
+   
+    
     /********************************
      ** Métodos para el datamodel **
      ********************************/
     /**
      * @return La entidad gestionada
      */
-    public CampoTematico getSelected() {
+    public Programa getSelected() {
         if (current == null) {
-            current = new CampoTematico();
+            current = new Programa();
             selectedItemIndex = -1;
         }
         return current;
@@ -130,24 +142,23 @@ public class MbCampoTematico implements Serializable{
      * @return el listado de entidades a mostrar en el list
      */
     public DataModel getItems() {
-	if (items == null) {
+        if (items == null) {
             switch(tipoList){
-                case 1: items = new ListDataModel(getFacade().getHabilitados());
+                case 1: items = new ListDataModel(getFacade().getHabilitadas());
                     break;
                 case 2: items = new ListDataModel(getFacade().getVencidos());
                     break;
-                default: items = new ListDataModel(getFacade().getDeshabilitados());
+                default: items = new ListDataModel(getFacade().getDeshabilitadas());
             }
         }
         return items;
     }    
     
-  
     /*******************************
      ** Métodos de inicialización **
      *******************************/
     /**
-     * Método para inicializar el listado de los Campos Tematicos habilitados
+     * Método para inicializar el listado de los Programas habilitadas
      * @return acción para el listado de entidades
      */
     public String prepareList() {
@@ -157,17 +168,17 @@ public class MbCampoTematico implements Serializable{
     } 
     
     /**
-     * Método para inicializar el listado de los Campos Tematicos vencidos
+     * Método para inicializar el listado de los Programas vencidos
      * @return acción para el listado de entidades
      */
     public String prepareListVenc() {
         tipoList = 2;
         recreateModel();
         return "listVenc";
-    }     
+    }       
     
     /**
-     * Método para inicializar el listado de los Campos Temáticos deshabilitados
+     * 
      * @return 
      */
     public String prepareListDes() {
@@ -177,10 +188,10 @@ public class MbCampoTematico implements Serializable{
     }     
     
     /**
-     * @return acción para el detalle de la entidad habiliada
+     * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = campoSelected;
+        current = progSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -189,16 +200,16 @@ public class MbCampoTematico implements Serializable{
      * @return acción para el detalle de la entidad vencida
      */
     public String prepareViewVenc() {
-        current = campoSelected;
+        current = progSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "viewVenc";
     }    
     
     /**
-     * @return acción para el detalle de la entidad deshabilitada
+     * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (CampoTematico) getItems().getRowData();
+        current = (Programa) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
@@ -207,17 +218,20 @@ public class MbCampoTematico implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
-        current = new CampoTematico();
+        //cargo los list para los combos
+        listResoluciones = resolucionFacade.getHabilitadas();
+        current = new Programa();
         selectedItemIndex = -1;
         return "new";
     }
 
     /**
-     * @return acción para la edición de la entidad habilitada
+     * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = campoSelected;
-        // cargo los list para los combos     
+        //cargo los list para los combos
+        listResoluciones = resolucionFacade.getHabilitadas();
+        current = progSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -226,11 +240,13 @@ public class MbCampoTematico implements Serializable{
      * @return acción para la edición de la entidad vencida
      */
     public String prepareEditVenc() {
-        current = campoSelected;
+        //cargo los list para los combos
+        listResoluciones = resolucionFacade.getHabilitadas();        
+        current = progSelected;
         // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
         return "editVenc";
-    }    
+    }        
     
     /**
      *
@@ -242,11 +258,11 @@ public class MbCampoTematico implements Serializable{
     }
     
     /**
-     * Método que verifica que el Campo Temático que se quiere eliminar no esté siento utilizado por otra entidad
+     * Método que verifica que la Resolución que se quiere eliminar no esté siento utilizada por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = campoSelected;
+        current = progSelected;
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -256,7 +272,7 @@ public class MbCampoTematico implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaNonDeletable"));
         }
         return "view";
     }  
@@ -266,7 +282,7 @@ public class MbCampoTematico implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        current = campoSelected;
+        current = progSelected;
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -279,14 +295,13 @@ public class MbCampoTematico implements Serializable{
 
             // Actualizo
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoHabilitado"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaHabilitado"));
             return "view";
         }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoHabilitadaErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ProgramaHabilitadaErrorOccured"));
             return null; 
         }
-    }      
-    
+    }         
     
     /**
      * 
@@ -294,8 +309,9 @@ public class MbCampoTematico implements Serializable{
     public void resetFechas(){
         fDespuesDe = null;
         fAntesDe = null;
-    }
+    }    
     
+  
    /*********************************************
      ** Métodos de inicialización de búsquedas **
      ********************************************/
@@ -325,14 +341,14 @@ public class MbCampoTematico implements Serializable{
     public String prepareSelectDes(){
         buscarEntreFechas();
         return "listDes";
-    }    
+    }     
     
     
     /*************************
     ** Métodos de operación **
     **************************/
     /**
-     * Méto que inserta uno nuevo Campo Tematico en la base de datos, previamente genera una entidad de administración
+     * Méto que inserta una nueva Programa en la base de datos, previamente genera una entidad de administración
      * con los datos necesarios y luego se la asigna a la persona
      * @return mensaje que notifica la inserción
      */
@@ -349,29 +365,30 @@ public class MbCampoTematico implements Serializable{
                 
                 // Inserción
                 getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoCreated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaCreated"));
+                listResoluciones.clear();
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoExistente"));
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaExistente"));
                 return null;
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ProgramaCreatedErrorOccured"));
             return null;
         }
     }
 
     /**
-     * Método que actualiza un nuevo Campo Tematico en la base de datos.
+     * Método que actualiza una nueva Programa en la base de datos.
      * Previamente actualiza los datos de administración
      * @return mensaje que notifica la actualización
      */
     public String update() {    
-        CampoTematico campo;
+        Programa res;
         String retorno = "";
         try {
-            campo = getFacade().getExistente(current.getNombre());
-            if(campo == null){
+            res = getFacade().getExistente(current.getNombre());
+            if(res == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
@@ -379,7 +396,7 @@ public class MbCampoTematico implements Serializable{
                 
                 // Actualizo
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoUpdated"));
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaUpdated"));
                 if(tipoList == 1){
                     retorno = "view";  
                 }
@@ -388,7 +405,7 @@ public class MbCampoTematico implements Serializable{
                 }     
                 return retorno;
             }else{
-                if(campo.getId().equals(current.getId())){
+                if(res.getId().equals(current.getId())){
                     // Actualización de datos de administración de la entidad
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
@@ -396,21 +413,22 @@ public class MbCampoTematico implements Serializable{
 
                     // Actualizo
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoUpdated"));
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaUpdated"));
+                    listResoluciones.clear();
                     if(tipoList == 1){
                         retorno = "view";  
                     }
                     if(tipoList == 2){
                         retorno = "viewVenc";  
                     }     
-                    return retorno;
+                    return retorno;                   
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoExistente"));
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaExistente"));
                     return null;
                 }
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ProgramaUpdatedErrorOccured"));
             return null;
         }
     }
@@ -419,13 +437,12 @@ public class MbCampoTematico implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = campoSelected;
+        current = progSelected;
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
-    }     
-    
+    }    
     
     /*************************
     ** Métodos de selección **
@@ -448,7 +465,7 @@ public class MbCampoTematico implements Serializable{
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public CampoTematico getCampoTematico(java.lang.Long id) {
+    public Programa getPrograma(java.lang.Long id) {
         return getFacade().find(id);
     }  
     
@@ -459,9 +476,10 @@ public class MbCampoTematico implements Serializable{
     public String cleanUp(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
-        session.removeAttribute("mbCampoTematico");
+        session.removeAttribute("mbPrograma");
         return "inicio";
-    }  
+    }      
+    
     
     /*********************
     ** Métodos privados **
@@ -469,8 +487,8 @@ public class MbCampoTematico implements Serializable{
     /**
      * @return el Facade
      */
-    private CampoTematicoFacade getFacade() {
-        return campoTematicoFacade;
+    private ProgramaFacade getFacade() {
+        return programaFacade;
     }    
     
     /**
@@ -494,9 +512,9 @@ public class MbCampoTematico implements Serializable{
             
             // Deshabilito la entidad
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("CampoTematicoDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ProgramaDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CampoTematicoDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ProgramaDeletedErrorOccured"));
         }
     }        
     
@@ -506,26 +524,26 @@ public class MbCampoTematico implements Serializable{
      *****************************************************************************/
 
     private void buscarEntreFechas(){
-        List<CampoTematico> campos = new ArrayList();
+        List<Programa> campos = new ArrayList();
         Iterator itRows = items.iterator();
         
         // recorro el dadamodel
         while(itRows.hasNext()){
-            CampoTematico campo = (CampoTematico)itRows.next();
+            Programa campo = (Programa)itRows.next();
             if(campo.getFechaFinVigencia().after(fDespuesDe) && campo.getFechaFinVigencia().before(fAntesDe)){
                 campos.add(campo);
             }          
         }        
         items = null;
         items = new ListDataModel(campos); 
-    }    
+    }     
     
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = CampoTematico.class)
-    public static class CampoTematicoControllerConverter implements Converter {
+    @FacesConverter(forClass = Programa.class)
+    public static class ProgramaControllerConverter implements Converter {
 
         /**
          *
@@ -539,9 +557,9 @@ public class MbCampoTematico implements Serializable{
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbCampoTematico controller = (MbCampoTematico) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbCampoTematico");
-            return controller.getCampoTematico(getKey(value));
+            MbPrograma controller = (MbPrograma) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbPrograma");
+            return controller.getPrograma(getKey(value));
         }
 
         
@@ -575,12 +593,12 @@ public class MbCampoTematico implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof CampoTematico) {
-                CampoTematico o = (CampoTematico) object;
+            if (object instanceof Programa) {
+                Programa o = (Programa) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + CampoTematico.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Programa.class.getName());
             }
         }
-    }           
+    }         
 }
