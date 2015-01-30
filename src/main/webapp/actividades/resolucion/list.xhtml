@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+      
+    <h:head>
+        <title>#{bundle.ResolucionTitle}</title>
+    </h:head>
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ResolucionTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/> 
+            <h:form>
+                <p:panel id="resForm" header="#{bundle.ResolucionListTitle} Habilitadas" style="margin-bottom:10px;" >
+                    <h:panelGroup>
+                        <h:panelGrid columns="3" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbResolucion.prepareCreate}"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbResolucion.prepareListDes}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbResolucion.cleanUp}"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:panel>      
+                
+                <p:dataTable value="#{mbResolucion.items}" var="e" id="resList" rows="5"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Listado de #{bundle.ResolucionListado}
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbResolucion.prepareList}" update="resList" style="margin-left: 10px"/>
+                        <p:columnToggler datasource="resList" trigger="toggler" />
+                    </f:facet>
+                    <p:column headerText="#{bundle.ResolucionLabel_nombre}" sortBy="#{e.resolucion}" filterBy="#{e.resolucion}">
+                        <p:outputLabel value="#{e.resolucion}"/>
+                    </p:column>   
+                    <p:column headerText="#{bundle.ResolucionLabel_anio}" sortBy="#{e.anio}" filterBy="#{e.anio}">
+                        <p:outputLabel value="#{e.anio}"/>
+                    </p:column>
+                    <p:column headerText="Acciones" style="width:135px">
+                        <p:growl id="messages" showDetail="true" />
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbResolucion.prepareView}">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbResolucion.resSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbResolucion.prepareEdit}">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbResolucion.resSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbResolucion.prepareDestroy}" update="messages" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbResolucion.resSelected}" />
+                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Resolucion?" />
+                        </p:commandButton>
+                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                           <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                           <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                       </p:confirmDialog>                       
+                    </p:column>                
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+
