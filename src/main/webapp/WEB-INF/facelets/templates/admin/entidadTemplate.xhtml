@@ -16,8 +16,10 @@
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}"/>
                         <p:submenu label="Actividades">
+                            <p:menuitem value="Actividad Planificada" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadPlan}/list.xhtml"/>
                             <p:menuitem value="Programa" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPrograma}/list.xhtml"/>
                             <p:menuitem value="Resolución" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizResolucion}/list.xhtml"/>
+                            <p:menuitem value="Sub Programa" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSubPrograma}/list.xhtml"/>
                         </p:submenu>
                         <p:submenu label="Administración">
                             <p:menuitem value="Campo Temático" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCampoTematico}/list.xhtml"/>

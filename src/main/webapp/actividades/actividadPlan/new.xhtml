@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ActividadPlanTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmNew">
+                <p:panel id="pnNew" header="#{bundle.ActividadPlanNewTitle}" style="margin-bottom:10px;">
+                    <p:growl id="messages" />
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_nombre}" for="nombre"/>
+                        <p:inputText id="nombre"
+                                     value="#{mbActividadPlan.selected.nombre}" 
+                                     requiredMessage="#{bundle.ActividadPlanRequire_nombre}" 
+                                     required="true"/>   
+
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_modalidad}" for="modalidad"/>
+                        <p:selectOneMenu id="modalidad" value="#{mbActividadPlan.selected.modalidad}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_modalidad}">
+                            <f:selectItem itemLabel="Seleccione la Modalidad" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadPlan.listModalidades}" var="modal" 
+                                           itemLabel="#{modal.nombre}, #{modal.nombre}" 
+                                           itemValue="#{modal}"/>
+                        </p:selectOneMenu>  
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_tipoCapacitacion}" for="tipoCap"/>
+                        <p:selectOneMenu id="tipoCap" value="#{mbActividadPlan.selected.tipoCapacitacion}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_tipoCap}">
+                            <f:selectItem itemLabel="Seleccione el Tipo de Capacitacón" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadPlan.listTipoCapacitaciones}" var="tipoCap" 
+                                           itemLabel="#{tipoCap.nombre}, #{tipoCap.nombre}" 
+                                           itemValue="#{tipoCap}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_campoTematico}" for="campoTemat"/>
+                        <p:selectOneMenu id="campoTemat" value="#{mbActividadPlan.selected.campoTematico}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_campoTematico}">
+                            <f:selectItem itemLabel="Seleccione el Campo Temático" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadPlan.listCamposTematicos}" var="campoTemat" 
+                                           itemLabel="#{campoTemat.nombre}, #{campoTemat.nombre}" 
+                                           itemValue="#{campoTemat}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_organismo}" for="organismo"/>
+                        <p:selectOneMenu id="organismo" value="#{mbActividadPlan.selected.organismo}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_organismo}">
+                            <f:selectItem itemLabel="Seleccione el Organismo" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadPlan.listOrganismos}" var="organismo" 
+                                           itemLabel="#{organismo.nombre}, #{organismo.nombre}" 
+                                           itemValue="#{organismo}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_resolucion}" for="resolucion"/>
+                        <p:selectOneMenu id="resolucion" value="#{mbActividadPlan.selected.resolucion}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_resolucion}">
+                            <f:selectItem itemLabel="Seleccione la Resolución" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadPlan.listResoluciones}" var="res" 
+                                           itemLabel="#{res.resolucion}, #{res.anio}" 
+                                           itemValue="#{res}"/>
+                        </p:selectOneMenu>  
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_cargaHoraria}" for="cargaHoraria"/>
+                        <p:inputText id="cargaHoraria"
+                                     value="#{mbActividadPlan.selected.cargaHoraria}" 
+                                     requiredMessage="#{bundle.ActividadPlanRequire_cargaHoraria}" 
+                                     required="true" 
+                                     validator="#{mbActividadPlan.validarCargaHoraria}" >
+                            <f:convertNumber integerOnly="true" type="number" />
+                        </p:inputText>  
+                        
+                        <p:outputLabel value="Evalúa: " />
+                        <p:selectBooleanButton id="evalua" value="#{mbActividadPlan.selected.evalua}" 
+                                               onLabel="Sí" 
+                                               offLabel="No" />
+                        
+                        <p:outputLabel value="Certifica: " />
+                        <p:selectBooleanButton id="certifica" value="#{mbActividadPlan.selected.certifica}" 
+                                               onLabel="Sí" 
+                                               offLabel="No" />
+                        
+                        <p:outputLabel value="Observaciones: " />
+                        <p:inputTextarea value="#{mbActividadPlan.selected.observaciones}" rows="5" cols="50" 
+                                         counter="display" maxlength="250" 
+                                         counterTemplate="{0} Caracteres restantes." autoResize="false" />
+                        <h:outputText id="display" />
+                    </h:panelGrid>
+                </p:panel>
+                
+                <p:panel id="pnSubProgramas" 
+                         header="Seleccione los Sub Programas para la Actividad Planificada" 
+                         toggleable="true" toggleTitle="Ver/Ocultar"
+                         style="width:800px;">
+                    <p:dataTable value="#{mbActividadPlan.listSubProgDisp}" var="e" id="subProgList" rows="5" 
+                                 rowKey="#{e.id}"
+                                 selection="#{mbActividadPlan.selected.subprogramas}"
+                                 paginator="true"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15">
+                        <f:facet name="header">
+                            Listado de #{bundle.SubProgramaListado}
+                            <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                            <p:commandButton icon="ui-icon-refresh" value="Listar" 
+                                             actionListener="#{mbActividadPlan.prepareListSubProg}" 
+                                             update="subProgList" style="margin-left: 10px"/>
+                            <p:columnToggler datasource="subProgList" trigger="toggler" />
+                        </f:facet>
+                        <p:column selectionMode="multiple" style="width: 20px"  />  
+                        
+                        <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                            <p:outputLabel value="#{e.nombre}"/>
+                        </p:column>
+
+                        <p:column headerText="#{bundle.SubProgramaLabel_programa}" sortBy="#{e.programa.nombre}" filterBy="#{e.programa.nombre}">
+                            <p:outputLabel value="#{e.programa.nombre}"/>
+                        </p:column>  
+
+                        <p:column headerText="#{bundle.SubProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}">
+                            <p:outputLabel value="#{e.strFechaIniVig}"/>
+                        </p:column>  
+
+                        <p:column headerText="#{bundle.SubProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}">
+                            <p:outputLabel value="#{e.strFechaFinVig}"/>
+                        </p:column>           
+                    </p:dataTable>
+                </p:panel>
+                
+                <br/>
+                
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbActividadPlan.create}" update="pnNew"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnNew" resetValues="true" />
+                        </p:commandButton>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
+                                         action="#{mbActividadPlan.prepareList}" 
+                                         value="Volver" 
+                                         immediate="true" 
+                                         ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

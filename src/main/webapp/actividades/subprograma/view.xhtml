@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.SubProgramaTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmSubProgramaView">
+                <p:panel id="pnView" header="#{bundle.SubProgramaViewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_nombre}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.nombre}" title="#{bundle.SubProgramaTitle_nombre}"/>     
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_programa}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.programa.nombre}" title="#{bundle.SubProgramaTitle_programa}"/>
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_fechaInicioVig}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.strFechaIniVig}" title="#{bundle.SubProgramaTitle_fechaInicioVig}"/>  
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_fechaFinVig}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.strFechaFinVig}" title="#{bundle.SubProgramaTitle_fechaFinVig}"/>  
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_resolucion}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.resolucion.resolucion}" title="#{bundle.SubProgramaTitle_resolucion}"/>  
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbSubPrograma.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_usAlta}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.admin.usAlta.apYNom}" title="#{bundle.SubProgramaTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbSubPrograma.selected.admin.fechaModif}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_usMod}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.admin.usModif.apYNom}" title="#{bundle.SubProgramaTitle_usMod}"/>                         
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbSubPrograma.prepareList}" value="Volver" ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

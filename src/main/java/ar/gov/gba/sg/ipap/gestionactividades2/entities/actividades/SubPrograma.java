@@ -7,9 +7,11 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -94,11 +97,43 @@ public class SubPrograma implements Serializable {
     private AdmEntidad admin; 
     
     /**
+     * Campo que muestra la fecha de inicio de vigencia como string
+     */
+    @Transient
+    String strFechaIniVig;    
+    
+    /**
+     * Campo que muestra la fecha de fin de vigencia como string
+     */
+    @Transient
+    String strFechaFinVig;        
+    
+    /**
      * Constructor
      */
     public SubPrograma(){
         actividadesPlan = new ArrayList();
     }    
+
+    public String getStrFechaIniVig() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaIniVig = formateador.format(fechaInicioVigencia);
+        return strFechaIniVig;
+    }
+
+    public void setStrFechaIniVig(String strFechaIniVig) {
+        this.strFechaIniVig = strFechaIniVig;
+    }
+
+    public String getStrFechaFinVig() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaFinVig = formateador.format(fechaFinVigencia);
+        return strFechaFinVig;
+    }
+
+    public void setStrFechaFinVig(String strFechaFinVig) {
+        this.strFechaFinVig = strFechaFinVig;
+    }
 
     /**
      *

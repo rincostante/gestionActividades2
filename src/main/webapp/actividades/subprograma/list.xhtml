@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+      
+    <h:head>
+        <title>#{bundle.SubProgramaTitle}</title>
+    </h:head>
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.SubProgramaTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/> 
+            <h:form>
+                <p:panel id="subProgForm" header="#{bundle.SubProgramaListTitle} Habilitadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
+                    <h:panelGroup>
+                        <h:panelGrid columns="4" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbSubPrograma.prepareCreate}"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbSubPrograma.prepareListVenc}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbSubPrograma.prepareListDes}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbSubPrograma.cleanUp}"/>
+                        </h:panelGrid>
+                        <br/>
+                        <h:panelGrid columns="2" id="pnBusqueda">
+                            <p:outputLabel for="fDespDe" value="Después de:" />
+                            <p:calendar id="fDespDe" value="#{mbSubPrograma.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
+                                <p:ajax event="dateSelect" update="fAntesDe" />
+                            </p:calendar>
+                            
+                            <p:outputLabel for="fAntesDe" value="Antes de:" />
+                            <p:calendar id="fAntesDe" value="#{mbSubPrograma.fAntesDe}" pattern="dd/MM/yyyy" mask="true" 
+                                        mindate="#{mbSubPrograma.fDespuesDe}" >
+                                <f:attribute name="finicial" value="#{mbSubPrograma.fDespuesDe}"/>
+                                <f:validator validatorId="primeDateRangeValidator" />
+                            </p:calendar>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2"> 
+                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de vigencia" action="#{mbSubPrograma.prepareSelectHab}" ajax="false"/> 
+                            <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbSubPrograma.resetFechas}">
+                                <p:ajax update="fDespDe" resetValues="true" />
+                                <p:ajax update="fAntesDe" resetValues="true" />
+                            </p:commandButton>                        
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:panel>      
+                
+                <p:dataTable value="#{mbSubPrograma.items}" var="e" id="subProgList" rows="5"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Listado de #{bundle.SubProgramaListado}
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSubPrograma.prepareList}" update="subProgList" style="margin-left: 10px"/>
+                        <p:columnToggler datasource="subProgList" trigger="toggler" />
+                    </f:facet>
+                    <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                        <p:outputLabel value="#{e.nombre}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.SubProgramaLabel_programa}" sortBy="#{e.programa.nombre}" filterBy="#{e.programa.nombre}">
+                        <p:outputLabel value="#{e.programa.nombre}"/>
+                    </p:column>  
+                    
+                    <p:column headerText="#{bundle.SubProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}">
+                        <p:outputLabel value="#{e.strFechaIniVig}"/>
+                    </p:column>  
+                    
+                    <p:column headerText="#{bundle.SubProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}">
+                        <p:outputLabel value="#{e.strFechaFinVig}"/>
+                    </p:column>  
+                    
+                    <p:column headerText="#{bundle.SubProgramaLabel_resolucion}" sortBy="#{e.resolucion.resolucion}" filterBy="#{e.resolucion.resolucion}">
+                        <p:outputLabel value="#{e.resolucion.resolucion} / #{e.resolucion.anio}"/>
+                    </p:column>  
+
+                    <p:column headerText="Acciones" style="width:135px">
+                        <p:growl id="messages" showDetail="true" />
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbSubPrograma.prepareView}">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbSubPrograma.subProgSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbSubPrograma.prepareEdit}">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbSubPrograma.subProgSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbSubPrograma.prepareDestroy}" update="messages" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbSubPrograma.subProgSelected}" />
+                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Sub Programa?" />
+                        </p:commandButton>
+                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                           <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                           <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                       </p:confirmDialog>                       
+                    </p:column>                
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

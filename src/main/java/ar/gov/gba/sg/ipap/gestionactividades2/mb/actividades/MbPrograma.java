@@ -258,7 +258,7 @@ public class MbPrograma implements Serializable{
     }
     
     /**
-     * Método que verifica que la Resolución que se quiere eliminar no esté siento utilizada por otra entidad
+     * Método que verifica que el Programa que se quiere eliminar no esté siento utilizada por otra entidad
      * @return 
      */
     public String prepareDestroy(){

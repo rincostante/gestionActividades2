@@ -81,7 +81,7 @@ public class ProgramaFacade extends AbstractFacade<Programa> {
     }    
     
     /**
-     * Método que devuelve todas los Programas habilitados
+     * Método que devuelve todas los Programas habilitados y vigentes
      * @return 
      */
     public List<Programa> getHabilitadas(){

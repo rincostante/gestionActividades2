@@ -136,4 +136,14 @@
         <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbPrograma</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbSubPrograma</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbSubPrograma</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbActividadPlan</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades.MbActividadPlan</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>
