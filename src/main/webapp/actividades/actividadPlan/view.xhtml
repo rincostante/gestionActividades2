@@ -14,10 +14,13 @@
             <h:form id="frmActividadPlanView">
                 <p:panel id="pnView" header="#{bundle.ActividadPlanViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
-                    
+                    <p:dialog id="dlg" resizable="false" />
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_nombre}"/>
                         <h:outputText value="#{mbActividadPlan.selected.nombre}" title="#{bundle.ActividadPlanTitle_nombre}"/>     
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_SubProgramas}"/>
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadPlan.verSubProgramas}" />
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_modalidad}"/>
                         <h:outputText value="#{mbActividadPlan.selected.modalidad.nombre}" title="#{bundle.ActividadPlanTitle_modalidad}"/>    

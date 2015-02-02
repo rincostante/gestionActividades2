@@ -41,8 +41,8 @@
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ActividadPlanLabel_cargaHoraria}" sortBy="#{e.cargaHoraria}" filterBy="#{e.organismo.cargaHoraria}">
-                        <p:outputLabel value="#{e.organismo.cargaHoraria}"/>
+                    <p:column headerText="#{bundle.ActividadPlanLabel_cargaHoraria}" sortBy="#{e.cargaHoraria}" filterBy="#{e.cargaHoraria}">
+                        <p:outputLabel value="#{e.cargaHoraria}"/>
                     </p:column> 
                     
                     <p:column headerText="#{bundle.ActividadPlanLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}">

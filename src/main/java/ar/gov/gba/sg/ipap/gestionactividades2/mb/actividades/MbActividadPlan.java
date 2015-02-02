@@ -43,6 +43,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 
 /**
@@ -54,6 +55,7 @@ public class MbActividadPlan implements Serializable{
     private ActividadPlan current;
     private DataModel items = null;
     private DataModel listSubProgDisp = null;
+    private DataModel listSubProgVinc = null;
     
     @EJB
     private ActividadPlanFacade actividadPlanFacade;
@@ -98,6 +100,15 @@ public class MbActividadPlan implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+ 
+    public DataModel getListSubProgVinc() {
+        return listSubProgVinc;
+    }
+
+    public void setListSubProgVinc(DataModel listSubProgVinc) {
+        this.listSubProgVinc = listSubProgVinc;
+    }
+ 
  
     public DataModel getListSubProgDisp() {
         cargarSubProgramasDisponibles();
@@ -214,6 +225,7 @@ public class MbActividadPlan implements Serializable{
     public String prepareList() {
         tipoList = 1;
         recreateModel();
+        listSubProgVinc = null;
         return "list";
     } 
     
@@ -249,6 +261,7 @@ public class MbActividadPlan implements Serializable{
      */
     public String prepareView() {
         current = actPlanSelected;
+        listSubProgVinc = new ListDataModel(current.getSubprogramas());
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -300,6 +313,7 @@ public class MbActividadPlan implements Serializable{
         listOrganismos = organismoFacade.getHabilitados();
         current = actPlanSelected;
         selectedItemIndex = getItems().getRowIndex();
+        listSubProgVinc = new ListDataModel(current.getSubprogramas());
         return "edit";
     }
     
@@ -412,7 +426,7 @@ public class MbActividadPlan implements Serializable{
                     current.setAdmin(admEnt);
 
                     // Inserción
-                    //getFacade().create(current);
+                    getFacade().create(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanCreated"));
                     listResoluciones.clear();
                     listSubProgDisp = null;
@@ -438,19 +452,31 @@ public class MbActividadPlan implements Serializable{
      * @return mensaje que notifica la actualización
      */
     public String update() {    
+        boolean edito;
         ActividadPlan sub;
         String retorno = "";
         try {
             sub = getFacade().getExistente(current.getNombre());
             if(sub == null){
+                edito = true;  
+            }else{
+                edito = sub.getId().equals(current.getId());
+            }
+            if(edito){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
                 current.getAdmin().setUsModif(usLogeado);
-                
+
                 // Actualizo
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanUpdated"));
+                listResoluciones.clear();
+                listSubProgDisp = null;
+                listModalidades.clear();
+                listTipoCapacitaciones.clear();
+                listCamposTematicos.clear();
+                listOrganismos.clear();
                 if(tipoList == 1){
                     retorno = "view";  
                 }
@@ -459,32 +485,8 @@ public class MbActividadPlan implements Serializable{
                 }     
                 return retorno;
             }else{
-                if(sub.getId().equals(current.getId())){
-                    // Actualización de datos de administración de la entidad
-                    Date date = new Date(System.currentTimeMillis());
-                    current.getAdmin().setFechaModif(date);
-                    current.getAdmin().setUsModif(usLogeado);
-
-                    // Actualizo
-                    getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanUpdated"));
-                    listResoluciones.clear();
-                    listSubProgDisp = null;
-                    listModalidades.clear();
-                    listTipoCapacitaciones.clear();
-                    listCamposTematicos.clear();
-                    listOrganismos.clear();
-                    if(tipoList == 1){
-                        retorno = "view";  
-                    }
-                    if(tipoList == 2){
-                        retorno = "viewVenc";  
-                    }     
-                    return retorno;                   
-                }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanExistente"));
-                    return null;
-                }
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanExistente"));
+                return null; 
             }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadPlanUpdatedErrorOccured"));
@@ -537,7 +539,14 @@ public class MbActividadPlan implements Serializable{
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbActividadPlan");
         return "inicio";
-    }      
+    }   
+    
+    /**
+     * Método para mostrar los Sub Programas de una Actividad
+     */
+    public void verSubProgramas(){
+        RequestContext.getCurrentInstance().openDialog("dlgSubProg");
+    }
     
     
     /*********************
