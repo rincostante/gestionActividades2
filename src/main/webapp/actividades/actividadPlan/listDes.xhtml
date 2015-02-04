@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+      
+    <h:head>
+        <title>#{bundle.ActividadPlanTitle}</title>
+    </h:head>
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ActividadPlanTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/> 
+            <h:form>
+                <p:panel id="progForm" header="#{bundle.ActividadPlanListTitle} Deshabilitados" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
+                    <h:panelGroup>
+                        <h:panelGrid columns="3" id="pnBotones">
+                            <p:commandButton icon="ui-icon-refresh" value="Habilitados" action="#{mbActividadPlan.prepareList}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbActividadPlan.cleanUp}"/>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </p:panel>      
+                
+                <p:dataTable value="#{mbActividadPlan.items}" var="e" id="progList" rows="5"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Listado de #{bundle.ActividadPlanListado}
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareListDes}" update="progList" style="margin-left: 10px"/>
+                        <p:columnToggler datasource="progList" trigger="toggler" />
+                    </f:facet>
+                    <p:column headerText="#{bundle.ActividadPlanLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                        <p:outputLabel value="#{e.nombre}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.ActividadPlanLabel_cargaHoraria}" sortBy="#{e.cargaHoraria}" filterBy="#{e.cargaHoraria}" style="width: 150px">
+                        <p:outputLabel value="#{e.cargaHoraria}"/>
+                    </p:column> 
+                    
+                    <p:column headerText="#{bundle.ActividadPlanLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}">
+                        <p:outputLabel value="#{e.modalidad.nombre}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.ActividadPlanLabel_tipoCapacitacion}" sortBy="#{e.tipoCapacitacion.nombre}" filterBy="#{e.tipoCapacitacion.nombre}">
+                        <p:outputLabel value="#{e.tipoCapacitacion.nombre}"/>
+                    </p:column> 
+                    
+                    <p:column headerText="#{bundle.ActividadPlanLabel_campoTematico}" sortBy="#{e.campoTematico.nombre}" filterBy="#{e.campoTematico.nombre}">
+                        <p:outputLabel value="#{e.campoTematico.nombre}"/>
+                    </p:column> 
+                    
+                    <p:column headerText="#{bundle.ActividadPlanLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}">
+                        <p:outputLabel value="#{e.organismo.nombre}"/>
+                    </p:column> 
+                    <p:column headerText="Acciones" style="width:90px">
+                        <p:growl id="messages" showDetail="true" />
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadPlan.prepareViewDes}" title="Ver Detalle">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-unlocked" action="#{mbActividadPlan.prepareHabilitar}" update="messages" title="Habilitar">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />
+                            <p:confirm header="Confirmar" message="¿Desea volver a habilitar el registro de esta Actividad Planificada?" />
+                        </p:commandButton>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                           <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                           <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                       </p:confirmDialog>                       
+                    </p:column>                
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

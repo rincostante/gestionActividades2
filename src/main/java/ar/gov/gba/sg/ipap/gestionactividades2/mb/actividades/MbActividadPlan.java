@@ -56,6 +56,10 @@ public class MbActividadPlan implements Serializable{
     private DataModel items = null;
     private DataModel listSubProgDisp = null;
     private DataModel listSubProgVinc = null;
+    private DataModel listSubProgramas = null;
+    private List<SubPrograma> subVinc;
+    private List<SubPrograma> subDisp;
+    private boolean asignaSub; 
     
     @EJB
     private ActividadPlanFacade actividadPlanFacade;
@@ -101,6 +105,24 @@ public class MbActividadPlan implements Serializable{
      ** Getters y Setters ***********
      ********************************/ 
  
+    public DataModel getListSubProgramas() {
+        return listSubProgramas;
+    }
+
+    public void setListSubProgramas(DataModel listSubProgramas) {
+        this.listSubProgramas = listSubProgramas;
+    }
+ 
+ 
+    public boolean isAsignaSub() {
+        return asignaSub;
+    }
+
+    public void setAsignaSub(boolean asignaSub) {
+        this.asignaSub = asignaSub;
+    }
+ 
+ 
     public DataModel getListSubProgVinc() {
         return listSubProgVinc;
     }
@@ -111,7 +133,6 @@ public class MbActividadPlan implements Serializable{
  
  
     public DataModel getListSubProgDisp() {
-        cargarSubProgramasDisponibles();
         return listSubProgDisp;
     }
 
@@ -223,18 +244,19 @@ public class MbActividadPlan implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        asignaSub = false;
         tipoList = 1;
         recreateModel();
         listSubProgVinc = null;
+        listSubProgDisp = null;
+        if(subVinc != null){
+            subVinc.clear();
+        }
+        if(subDisp != null){
+            subDisp.clear();
+        }
         return "list";
     } 
-    
-    /**
-     * Método para inicializar la selección de SubProgramas
-     */
-    public void prepareListSubProg(){
-        listSubProgDisp = null;
-    }
     
     /**
      * Método para inicializar el listado de los Actividades Planificadass suspendidas
@@ -243,7 +265,16 @@ public class MbActividadPlan implements Serializable{
     public String prepareListSusp() {
         tipoList = 2;
         recreateModel();
-        return "listVenc";
+        asignaSub = false;
+        listSubProgVinc = null;
+        listSubProgDisp = null;
+        if(subVinc != null){
+            subVinc.clear();
+        }
+        if(subDisp != null){
+            subDisp.clear();
+        }
+        return "listSusp";
     }       
     
     /**
@@ -253,6 +284,15 @@ public class MbActividadPlan implements Serializable{
     public String prepareListDes() {
         tipoList = 3;
         recreateModel();
+        asignaSub = false;
+        listSubProgVinc = null;
+        listSubProgDisp = null;
+        if(subVinc != null){
+            subVinc.clear();
+        }
+        if(subDisp != null){
+            subDisp.clear();
+        }
         return "listDes";
     }     
     
@@ -260,8 +300,9 @@ public class MbActividadPlan implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
+        asignaSub = false;
         current = actPlanSelected;
-        listSubProgVinc = new ListDataModel(current.getSubprogramas());
+        subVinc = current.getSubprogramas();
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -270,16 +311,20 @@ public class MbActividadPlan implements Serializable{
      * @return acción para el detalle de la entidad vencida
      */
     public String prepareViewSusp() {
+        asignaSub = false;
         current = actPlanSelected;
+        subVinc = current.getSubprogramas();
         selectedItemIndex = getItems().getRowIndex();
-        return "viewVenc";
+        return "viewSusp";
     }    
     
     /**
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (ActividadPlan) getItems().getRowData();
+        asignaSub = false;
+        current = actPlanSelected;
+        subVinc = current.getSubprogramas();
         selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
@@ -295,6 +340,8 @@ public class MbActividadPlan implements Serializable{
         listCamposTematicos = campoTematicoFacade.getHabilitados();
         listOrganismos = organismoFacade.getHabilitados();
         
+        // cargo la tabla de subProgramas
+        listSubProgramas = new ListDataModel(subProgramaFacade.getHabilitadas());
 
         current = new ActividadPlan();
         selectedItemIndex = -1;
@@ -312,8 +359,10 @@ public class MbActividadPlan implements Serializable{
         listCamposTematicos = campoTematicoFacade.getHabilitados();
         listOrganismos = organismoFacade.getHabilitados();
         current = actPlanSelected;
+        asignaSub = true;
+        subVinc = current.getSubprogramas();
+        subDisp = cargarSubProgramasDisponibles();
         selectedItemIndex = getItems().getRowIndex();
-        listSubProgVinc = new ListDataModel(current.getSubprogramas());
         return "edit";
     }
     
@@ -328,9 +377,11 @@ public class MbActividadPlan implements Serializable{
         listCamposTematicos = campoTematicoFacade.getHabilitados();
         listOrganismos = organismoFacade.getHabilitados();
         current = actPlanSelected;
-        // cargo los list para los combos     
+        asignaSub = true;
+        subVinc = current.getSubprogramas();
+        subDisp = cargarSubProgramasDisponibles();  
         selectedItemIndex = getItems().getRowIndex();
-        return "editVenc";
+        return "editSusp";
     }        
     
     /**
@@ -359,6 +410,7 @@ public class MbActividadPlan implements Serializable{
             //No Elimina 
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanNonDeletable"));
         }
+        subVinc = current.getSubprogramas();
         return "view";
     }  
     
@@ -381,12 +433,62 @@ public class MbActividadPlan implements Serializable{
             // Actualizo
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanHabilitado"));
+            subVinc = current.getSubprogramas();
             return "view";
         }catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadPlanHabilitadaErrorOccured"));
             return null; 
         }
     }     
+    
+    /**
+     * Método para suspender Actividades
+     */
+    public String preparSuspender(){
+        current = actPlanSelected;
+        selectedItemIndex = getItems().getRowIndex();
+        try{
+            // Actualización de datos de administración de la entidad
+            Date date = new Date(System.currentTimeMillis());
+            current.getAdmin().setFechaModif(date);
+            current.getAdmin().setUsModif(usLogeado);
+            current.setSuspendido(true);
+            
+            // Actualizo
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanSuspendida"));
+            subVinc = current.getSubprogramas();
+            return "view";
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadPlanSuspendidaErrorOccured"));
+            return null; 
+        }
+    }
+    
+    /**
+     * Método para activar Actividades suspendidas
+     * @return 
+     */
+    public String prepareActivar(){
+        current = actPlanSelected;
+        selectedItemIndex = getItems().getRowIndex();
+        try{
+            // Actualización de datos de administración de la entidad
+            Date date = new Date(System.currentTimeMillis());
+            current.getAdmin().setFechaModif(date);
+            current.getAdmin().setUsModif(usLogeado);
+            current.setSuspendido(false);
+            
+            // Actualizo
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanActivada"));
+            subVinc = current.getSubprogramas();
+            return "view";
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadPlanActivadaErrorOccured"));
+            return null; 
+        }
+    }
     
     /**
      * Método para validar que la carga horaria sea entre 1 y 500
@@ -429,11 +531,11 @@ public class MbActividadPlan implements Serializable{
                     getFacade().create(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanCreated"));
                     listResoluciones.clear();
-                    listSubProgDisp = null;
                     listModalidades.clear();
                     listTipoCapacitaciones.clear();
                     listCamposTematicos.clear();
                     listOrganismos.clear();
+                    subVinc = current.getSubprogramas();
                     return "view";
                 }else{
                     JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanExistente"));
@@ -473,6 +575,9 @@ public class MbActividadPlan implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanUpdated"));
                 listResoluciones.clear();
                 listSubProgDisp = null;
+                asignaSub = false;
+                subDisp.clear();
+                listSubProgVinc = null;
                 listModalidades.clear();
                 listTipoCapacitaciones.clear();
                 listCamposTematicos.clear();
@@ -481,7 +586,7 @@ public class MbActividadPlan implements Serializable{
                     retorno = "view";  
                 }
                 if(tipoList == 2){
-                    retorno = "viewVenc";  
+                    retorno = "viewSusp";  
                 }     
                 return retorno;
             }else{
@@ -542,10 +647,37 @@ public class MbActividadPlan implements Serializable{
     }   
     
     /**
-     * Método para mostrar los Sub Programas de una Actividad
+     * Método para manipular los Sub Programas de una Actividad
      */
     public void verSubProgramas(){
-        RequestContext.getCurrentInstance().openDialog("dlgSubProg");
+        listSubProgVinc = new ListDataModel(subVinc);
+        RequestContext.getCurrentInstance().openDialog("dlgSubProgVinc");
+    }
+    
+    public void verSubProgamasDisp(){
+        listSubProgDisp = new ListDataModel(subDisp);
+        RequestContext.getCurrentInstance().openDialog("dlgSubProgDisp");
+    }
+
+    public void asignarSubPrograma(SubPrograma sub){
+        subVinc.add(sub);
+        subDisp.remove(sub);
+        listSubProgDisp = null;
+        RequestContext.getCurrentInstance().closeDialog("dlgSubProgDisp");
+    }
+    
+    public void quitarSubPrograma(SubPrograma sub){
+        subVinc.remove(sub);
+        subDisp.add(sub);
+        listSubProgVinc = null;
+        RequestContext.getCurrentInstance().closeDialog("dlgSubProgVinc");
+    }
+    
+    public void limpiarSubProg(){
+        listSubProgDisp = null;
+        listSubProgVinc = null;      
+        subVinc = current.getSubprogramas();
+        subDisp = cargarSubProgramasDisponibles();
     }
     
     
@@ -589,17 +721,17 @@ public class MbActividadPlan implements Serializable{
     /**
      * 
      */
-    private void cargarSubProgramasDisponibles(){
+    private List<SubPrograma> cargarSubProgramasDisponibles(){
         List<SubPrograma> subs = subProgramaFacade.getHabilitadas();
         List<SubPrograma> subsSelect = new ArrayList();
         Iterator itSubs = subs.listIterator();
         while(itSubs.hasNext()){
             SubPrograma sub = (SubPrograma)itSubs.next();
-            if(!current.getSubprogramas().contains(sub)){
+            if(!subVinc.contains(sub)){
                 subsSelect.add(sub);
             }
         }
-        listSubProgDisp = new ListDataModel(subsSelect);
+        return subsSelect;
     }
     
     /********************************************************************

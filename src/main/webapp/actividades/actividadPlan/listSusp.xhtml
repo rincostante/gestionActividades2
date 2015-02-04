@@ -16,27 +16,27 @@
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="actPlanForm" header="#{bundle.ActividadPlanListTitle} Habilitadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
+                <p:panel id="progForm" header="#{bundle.ActividadPlanListTitle} Vencidos" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
                     <h:panelGroup>
-                        <h:panelGrid columns="4" id="pnBotones">
-                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbActividadPlan.prepareCreate}"/>
-                            <p:commandButton icon="ui-icon-refresh" value="Suspendidas" action="#{mbActividadPlan.prepareListSusp}" ajax="false"/>
+                        <h:panelGrid columns="3" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Habilitadas" action="#{mbActividadPlan.prepareList}"/>
                             <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbActividadPlan.prepareListDes}" ajax="false"/>
                             <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbActividadPlan.cleanUp}"/>
                         </h:panelGrid>
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbActividadPlan.items}" var="e" id="actPlanList" rows="5"
+                <p:dataTable value="#{mbActividadPlan.items}" var="e" id="campoList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.ActividadPlanListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareList}" update="actPlanList" style="margin-left: 10px"/>
-                        <p:columnToggler datasource="actPlanList" trigger="toggler" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareListSusp}" update="campoList" style="margin-left: 10px"/>
+                        <p:columnToggler datasource="campoList" trigger="toggler" />
                     </f:facet>
+
                     <p:column headerText="#{bundle.ActividadPlanLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
@@ -59,23 +59,23 @@
                     
                     <p:column headerText="#{bundle.ActividadPlanLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}">
                         <p:outputLabel value="#{e.organismo.nombre}"/>
-                    </p:column> 
+                    </p:column>  
 
                     <p:column headerText="Acciones" style="width:180px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadPlan.prepareView}" title="Ver detalle">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadPlan.prepareViewSusp}" title="Ver detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbActividadPlan.prepareEdit}" title="Editar">
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbActividadPlan.prepareEditSusp}" title="Editar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-cancel" action="#{mbActividadPlan.preparSuspender}" update="messages" title="Suspender" >
+                        <p:commandButton icon="ui-icon-power" action="#{mbActividadPlan.prepareActivar}" update="messages" title="Activar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />
-                            <p:confirm header="Confirmar" message="¿Desea suspender esta Actividad Planificada?" />
+                            <p:confirm header="Confirmar" message="¿Desea activar esta Actividad Planificada?" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" action="#{mbActividadPlan.prepareDestroy}" update="messages" title="Deshabilitar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />
-                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de esta Actividad Planificada?" />
+                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este ActividadPlan?" />
                         </p:commandButton>
                         
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

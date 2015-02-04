@@ -10,16 +10,25 @@
             <h:outputText value="#{bundle.ActividadPlanTitle}" />
         </ui:define>
         <ui:define name="content">
-            <br/>
-            <h:form id="frmNew">
-                <p:panel id="pnNew" header="#{bundle.ActividadPlanNewTitle}" style="margin-bottom:10px;">
-                    <p:growl id="messages" />
+        <br/>
+            <h:form>
+                <p:panel id="pnEdit" header="#{bundle.ActividadPlanEditTitle}" style="margin-bottom:10px;">
+                    <h:inputHidden id="id" value="#{mbActividadPlan.selected.id}" />
+                    <p:messages id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre"
+                        <p:inputText id="nombre" style="width: 500px"
                                      value="#{mbActividadPlan.selected.nombre}" 
                                      requiredMessage="#{bundle.ActividadPlanRequire_nombre}" 
-                                     required="true" style="width: 500px"/>   
+                                     required="true"/>   
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_SubProgramas}"/>
+                        <h:panelGrid id="btnVerSub" columns="2">
+                            <p:commandButton value="Ver/Quitar Asignados" icon="ui-icon-extlink"  
+                                             actionListener="#{mbActividadPlan.verSubProgramas}" />
+                            <p:commandButton value="Ver/Asignar Disponibles" icon="ui-icon-extlink"  
+                                             actionListener="#{mbActividadPlan.verSubProgamasDisp}" />
+                        </h:panelGrid>
 
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_modalidad}" for="modalidad"/>
                         <p:selectOneMenu id="modalidad" value="#{mbActividadPlan.selected.modalidad}"
@@ -92,66 +101,31 @@
                         
                         <p:outputLabel value="Observaciones: " />
                         <p:inputTextarea value="#{mbActividadPlan.selected.observaciones}" rows="5" cols="50" 
+                                         style="width: 500px" 
                                          counter="display" maxlength="250" 
-                                         counterTemplate="{0} Caracteres restantes." autoResize="false" style="width: 500px" />
+                                         counterTemplate="{0} Caracteres restantes." autoResize="false" />
                         <h:outputText id="display" />
                     </h:panelGrid>
                 </p:panel>
                 
-                <p:panel id="pnSubProgramas" 
-                         header="Seleccione los Sub Programas para la Actividad Planificada" 
-                         toggleable="true" toggleTitle="Ver/Ocultar"
-                         style="width:800px;">
-                    <p:dataTable value="#{mbActividadPlan.listSubProgramas}" var="e" id="subProgList" rows="5" 
-                                 rowKey="#{e.id}"
-                                 selection="#{mbActividadPlan.selected.subprogramas}"
-                                 paginator="true"
-                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="5,10,15">
-                        <f:facet name="header">
-                            Listado de #{bundle.SubProgramaListado}
-                            <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                            <p:commandButton icon="ui-icon-refresh" value="Listar" 
-                                             actionListener="#{mbActividadPlan.prepareListSubProg}" 
-                                             update="subProgList" style="margin-left: 10px"/>
-                            <p:columnToggler datasource="subProgList" trigger="toggler" />
-                        </f:facet>
-                        <p:column selectionMode="multiple" style="width: 20px"  />  
-                        
-                        <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
-                            <p:outputLabel value="#{e.nombre}"/>
-                        </p:column>
-
-                        <p:column headerText="#{bundle.SubProgramaLabel_programa}" sortBy="#{e.programa.nombre}" filterBy="#{e.programa.nombre}">
-                            <p:outputLabel value="#{e.programa.nombre}"/>
-                        </p:column>  
-
-                        <p:column headerText="#{bundle.SubProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}">
-                            <p:outputLabel value="#{e.strFechaIniVig}"/>
-                        </p:column>  
-
-                        <p:column headerText="#{bundle.SubProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}">
-                            <p:outputLabel value="#{e.strFechaFinVig}"/>
-                        </p:column>           
-                    </p:dataTable>
-                </p:panel>
-                
-                <br/>
-                
                 <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbActividadPlan.create}" update="pnNew"/>
+                        <p:commandButton icon="ui-icon-pencil" 
+                                         action="#{mbActividadPlan.update}" 
+                                         value="Guardar" 
+                                         style="margin-right:10px;" 
+                                         update="pnEdit"/>
                         <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
-                            <p:ajax update="pnNew" resetValues="true" />
-                        </p:commandButton>
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>                        
                     </f:facet>
                     <f:facet name="right">
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
-                                         action="#{mbActividadPlan.prepareList}" 
+                                         action="#{mbActividadPlan.prepareListSusp}" 
                                          value="Volver" 
                                          immediate="true" 
                                          ajax="false"/>
-                    </f:facet>
+                    </f:facet>                    
                 </p:toolbar>
             </h:form>
         </ui:define>

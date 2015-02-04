@@ -39,7 +39,7 @@ public class ActividadPlanFacade extends AbstractFacade<ActividadPlan> {
     public boolean getUtilizado(Long id){
         em = getEntityManager();
         String queryString = "SELECT sub.id FROM SubPrograma sub "
-                + "INNER JOIN sub.actividades actPlan "
+                + "INNER JOIN sub.actividadesPlan actPlan "
                 + "INNER JOIN actPlan.actividadesImplementadas actImp "
                 + "WHERE actPlan.id = :id";
         Query q = em.createQuery(queryString)
@@ -112,8 +112,8 @@ public class ActividadPlanFacade extends AbstractFacade<ActividadPlan> {
      */
     public List<ActividadPlan> getSuspendidas(){
         em = getEntityManager();
-        String queryString = "SELECT  FROM ActividadPlan actPlan "
-                + "WHERE actPlan.adminactPlan.habilitado = true "
+        String queryString = "SELECT actPlan FROM ActividadPlan actPlan "
+                + "WHERE actPlan.admin.habilitado = true "
                 + "AND actPlan.suspendido = true";
         Query q = em.createQuery(queryString);
         return q.getResultList();

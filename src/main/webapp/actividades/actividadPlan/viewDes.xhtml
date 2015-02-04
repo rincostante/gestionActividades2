@@ -14,8 +14,8 @@
             <h:form id="frmActividadPlanView">
                 <p:panel id="pnView" header="#{bundle.ActividadPlanViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
-                    <p:dialog id="dlg" resizable="false" />
-                    <h:panelGrid columns="2">
+                    
+                    <h:panelGrid columns="2">      
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_nombre}"/>
                         <h:outputText value="#{mbActividadPlan.selected.nombre}" title="#{bundle.ActividadPlanTitle_nombre}"/>     
                         
@@ -47,7 +47,7 @@
                         <h:outputText value="#{mbActividadPlan.selected.certifica}" title="#{bundle.ActividadPlanTitle_certifica}"/> 
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_observaciones}"/>
-                        <h:outputText value="#{mbActividadPlan.selected.observaciones}" title="#{bundle.ActividadPlanTitle_observaciones}"/>   
+                        <h:outputText value="#{mbActividadPlan.selected.observaciones}" title="#{bundle.ActividadPlanTitle_observaciones}"/> 
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbActividadPlan.selected.admin.fechaAlta}" 
@@ -58,20 +58,19 @@
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_usAlta}"/>
                         <h:outputText value="#{mbActividadPlan.selected.admin.usAlta.apYNom}" title="#{bundle.ActividadPlanTitle_usAlta}"/>     
                         
-                        <h:outputLabel value="#{bundle.ActividadPlanLabel_fachaMod}"/>
-                        <p:calendar id="fechaMod" value="#{mbActividadPlan.selected.admin.fechaModif}" 
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_fachaBaja}"/>
+                        <p:calendar id="fechaMod" value="#{mbActividadPlan.selected.admin.fechaBaja}" 
                                     pattern="dd/MM/yyyy HH:mm" 
                                     disabled="true"
                                     locale="es"/>
                         
-                        <h:outputLabel value="#{bundle.ActividadPlanLabel_usMod}"/>
-                        <h:outputText value="#{mbActividadPlan.selected.admin.usModif.apYNom}" title="#{bundle.ActividadPlanTitle_usMod}"/>                         
-                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_usBaja}"/>
+                        <h:outputText value="#{mbActividadPlan.selected.admin.usBaja.apYNom}" title="#{bundle.ActividadPlanTitle_usBaja}"/>                           
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>
                     <f:facet name="right">
-                        <p:commandButton icon="ui-icon-refresh" action="#{mbActividadPlan.prepareList}" value="Volver" ajax="false"/>
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbActividadPlan.prepareListDes}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
 

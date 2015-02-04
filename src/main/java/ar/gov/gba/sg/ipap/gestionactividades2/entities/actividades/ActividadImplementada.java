@@ -6,9 +6,9 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +26,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -50,13 +51,6 @@ public class ActividadImplementada implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    /**
-     * Campo solo utilizables para actividades que no sean cursos
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable=true)
-    private Date fecha;  
     
     /**
      * Campo solo utilizables para actividades de tipo curso cursos
@@ -159,7 +153,7 @@ public class ActividadImplementada implements Serializable {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="coordinador_id", nullable=false)
     @NotNull(message = "{entidades.objectNotNullError}")
-    private Agente coordinador;
+    private Usuario coordinador;
     
     /**
      * Campo que indica el docente de la actividad
@@ -183,10 +177,39 @@ public class ActividadImplementada implements Serializable {
     private AdmEntidad admin;    
     
     /**
+     * Campo que muestra la fecha de inicio de vigencia como string
+     */
+    @Transient
+    String strFechaIniVig;    
+    
+    /**
+     * Campo que muestra la fecha de fin de vigencia como string
+     */
+    @Transient
+    String strFechaFinVig;     
+    
+    /**
      * Constructor 
      */
     public ActividadImplementada(){
         participantes = new ArrayList();
+    }
+
+    
+    public String getStrFechaIniVig() {
+        return strFechaIniVig;
+    }
+
+    public void setStrFechaIniVig(String strFechaIniVig) {
+        this.strFechaIniVig = strFechaIniVig;
+    }
+
+    public String getStrFechaFinVig() {
+        return strFechaFinVig;
+    }
+
+    public void setStrFechaFinVig(String strFechaFinVig) {
+        this.strFechaFinVig = strFechaFinVig;
     }
 
     /**
@@ -242,7 +265,7 @@ public class ActividadImplementada implements Serializable {
      *
      * @return
      */
-    public Agente getCoordinador() {
+    public Usuario getCoordinador() {
         return coordinador;
     }
 
@@ -250,7 +273,7 @@ public class ActividadImplementada implements Serializable {
      *
      * @param coordinador
      */
-    public void setCoordinador(Agente coordinador) {
+    public void setCoordinador(Usuario coordinador) {
         this.coordinador = coordinador;
     }
 
@@ -332,22 +355,6 @@ public class ActividadImplementada implements Serializable {
      */
     public void setOrganismo(Organismo organismo) {
         this.organismo = organismo;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Date getFecha() {
-        return fecha;
-    }
-
-    /**
-     *
-     * @param fecha
-     */
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
     }
 
     /**
