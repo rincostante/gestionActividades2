@@ -17,6 +17,9 @@
                 <h:form>
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}" />
+                        <p:submenu label="Gestión">
+                            <p:menuitem value="Participaciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/list.xhtml"/>
+                        </p:submenu>
                         <p:submenu label="Actividades">
                             <p:menuitem value="Actividad Planificada" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadPlan}/list.xhtml"/>
                             <p:menuitem value="Implementaciones de Actividades" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>

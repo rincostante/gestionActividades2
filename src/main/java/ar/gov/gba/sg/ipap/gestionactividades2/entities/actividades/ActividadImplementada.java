@@ -10,9 +10,11 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -78,7 +80,7 @@ public class ActividadImplementada implements Serializable {
      */
     @Column(nullable=false)
     @NotNull(message = "{entidades.fieldNotNullError}")
-    private boolean publicado = true;
+    private boolean publicado = false;
     
     /**
      * Campo entero que indica el tamaño de archvos (heredado para migrar)
@@ -132,14 +134,6 @@ public class ActividadImplementada implements Serializable {
     private Sede sede;
     
     /**
-     * Campo que indica el estado de la Actividad, en caso que la misma esté suspendida o similar
-     */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="estadoActividad_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
-    private EstadoActividad estadoActividad;
-    
-    /**
      * Campo que indica la actividad que implementa
      */
     @ManyToOne(fetch=FetchType.LAZY)
@@ -186,7 +180,15 @@ public class ActividadImplementada implements Serializable {
      * Campo que muestra la fecha de fin de vigencia como string
      */
     @Transient
-    String strFechaFinVig;     
+    String strFechaFinVig;   
+    
+    /**
+     * Campo binario que indica si la actividad está o no suspendida
+     */
+    @Column (nullable=false)
+    @NotNull(message = "{entidades.fieldNotNullError}")
+    private boolean suspendido = false;   
+    
     
     /**
      * Constructor 
@@ -194,9 +196,19 @@ public class ActividadImplementada implements Serializable {
     public ActividadImplementada(){
         participantes = new ArrayList();
     }
+    
 
+    public boolean isSuspendido() {
+        return suspendido;
+    }
+
+    public void setSuspendido(boolean suspendido) {
+        this.suspendido = suspendido;
+    }    
     
     public String getStrFechaIniVig() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaIniVig = formateador.format(fechaInicio);
         return strFechaIniVig;
     }
 
@@ -205,6 +217,8 @@ public class ActividadImplementada implements Serializable {
     }
 
     public String getStrFechaFinVig() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaFinVig = formateador.format(fechaFin);
         return strFechaFinVig;
     }
 
@@ -307,22 +321,6 @@ public class ActividadImplementada implements Serializable {
      */
     public void setActividadPlan(ActividadPlan actividadPlan) {
         this.actividadPlan = actividadPlan;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public EstadoActividad getEstadoActividad() {
-        return estadoActividad;
-    }
-
-    /**
-     *
-     * @param estadoActividad
-     */
-    public void setEstadoActividad(EstadoActividad estadoActividad) {
-        this.estadoActividad = estadoActividad;
     }
 
     /**

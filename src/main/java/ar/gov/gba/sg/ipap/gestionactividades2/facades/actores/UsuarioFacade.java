@@ -127,4 +127,18 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
         }
         return us;
     }
+    
+    /**
+     * Método para obtener todos los Uusuarios Coordinadores
+     * @param idRol
+     * @return 
+     */
+    public List<Usuario> getUsuarioXRol(Long idRol){
+        em = getEntityManager();
+        String queryString = "SELECT us FROM Usuario us "
+                + "WHERE us.rol.id = :idRol";
+        Query q = em.createQuery(queryString)
+                .setParameter("idRol", idRol);
+        return q.getResultList();
+    }
 }

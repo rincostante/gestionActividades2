@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ActividadImplTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmActividadImplView">
+                <p:panel id="pnView" header="#{bundle.ActividadImplViewTitle} Deshabilitadas" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    
+                    <h:panelGrid columns="2">      
+
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_ActividadPlanificada}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.actividadPlan.nombre}" title="#{bundle.ActividadImplTitle_ActividadPlanificada}"/>    
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_organismo}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.organismo.nombre}" title="#{bundle.ActividadImplTitle_organismo}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_resolucion}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.resolucion.resolucion}/#{mbActividadImpl.selected.resolucion.anio}" title="#{bundle.ActividadImplTitle_resolucion}"/>   
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_sede}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.sede.nombre}" title="#{bundle.ActividadImplTitle_sede}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_docente}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.docente.apYNom} - #{mbActividadImpl.selected.docente.titulo.nombre}" title="#{bundle.ActividadImplTitle_docente}"/>   
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_coordinador}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.coordinador.apYNom}" title="#{bundle.ActividadImplTitle_coordinador}"/>   
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_fechaInicio}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.strFechaIniVig}" title="#{bundle.ActividadImplTitle_fechaInicio}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_fechaFin}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.strFechaFinVig}" title="#{bundle.ActividadImplTitle_fechaFin}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_aula}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.aula}" title="#{bundle.ActividadImplTitle_aula}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_tamanioArchivo}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.fileSize}" title="#{bundle.ActividadImplTitle_tamanioArchivo}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_mime}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.mime}" title="#{bundle.ActividadImplTitle_mime}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.dirigidoa}" title="#{bundle.ActividadImplTitle_dirigidoA}"/> 
+
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_observaciones}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.observaciones}" title="#{bundle.ActividadImplTitle_observaciones}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbActividadImpl.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_usAlta}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.admin.usAlta.apYNom}" title="#{bundle.ActividadImplTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_fachaBaja}"/>
+                        <p:calendar id="fechaMod" value="#{mbActividadImpl.selected.admin.fechaBaja}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_usBaja}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.admin.usBaja.apYNom}" title="#{bundle.ActividadImplTitle_usBaja}"/>                           
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbActividadImpl.prepareListDes}" value="Volver" ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

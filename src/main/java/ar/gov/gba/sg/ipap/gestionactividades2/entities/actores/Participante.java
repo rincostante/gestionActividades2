@@ -9,9 +9,13 @@ package ar.gov.gba.sg.ipap.gestionactividades2.entities.actores;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,6 +26,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -65,6 +72,8 @@ public class Participante implements Serializable {
     @NotNull(message = "{entidades.objectNotNullError}")
     private EstadoParticipante estado;
     
+    private String autorizacion;
+    
     /**
      * Campo que indica las clases del participante
      */    
@@ -74,7 +83,13 @@ public class Participante implements Serializable {
             joinColumns = @JoinColumn(name = "participante_fk"),
             inverseJoinColumns = @JoinColumn(name = "clase_fk")
     )
-    private List<Clase> clases;    
+    private List<Clase> clases;  
+    
+    /**
+     * Campo entero que indica la fecha de la autorización
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaAutorizacion;    
     
     /**
      * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
@@ -84,10 +99,74 @@ public class Participante implements Serializable {
     private AdmEntidad admin;
     
     /**
+     * Campo que muestra la fecha de inicio de vigencia de la actividad de la que participa, como string
+     */
+    @Transient
+    String strFechaIniVig;    
+    
+    /**
+     * Campo que muestra la fecha de fin de vigencia de la actividad de la que participa, como string
+     */
+    @Transient
+    String strFechaFinVig;  
+    
+    /**
+     * Campo que muestra la fecha de fin de autorización, como string
+     */
+    @Transient
+    String strFechaAutoriz;          
+    
+    /**
      * Constructor
      */
     public Participante(){
         clases = new ArrayList();
+    }
+
+    public String getStrFechaAutoriz() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaIniVig = formateador.format(fechaAutorizacion);
+        return strFechaAutoriz;
+    }
+
+    public void setStrFechaAutoriz(String strFechaAutoriz) {
+        this.strFechaAutoriz = strFechaAutoriz;
+    }
+
+    public Date getFechaAutorizacion() {
+        return fechaAutorizacion;
+    }
+
+    public void setFechaAutorizacion(Date fechaAutorizacion) {
+        this.fechaAutorizacion = fechaAutorizacion;
+    }
+
+    public String getStrFechaIniVig() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaIniVig = formateador.format(actividad.getFechaInicio());
+        return strFechaIniVig;
+    }
+
+    public void setStrFechaIniVig(String strFechaIniVig) {
+        this.strFechaIniVig = strFechaIniVig;
+    }
+
+    public String getStrFechaFinVig() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaFinVig = formateador.format(actividad.getFechaFin());
+        return strFechaFinVig;
+    }
+
+    public void setStrFechaFinVig(String strFechaFinVig) {
+        this.strFechaFinVig = strFechaFinVig;
+    }
+
+    public String getAutorizacion() {
+        return autorizacion;
+    }
+
+    public void setAutorizacion(String autorizacion) {
+        this.autorizacion = autorizacion;
     }
 
     /**

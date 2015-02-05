@@ -39,35 +39,12 @@ public class EstadoActividad implements Serializable {
     @NotNull(message = "{entidades.fieldNotNullError}")
     @Size(message = "{endidades.stringSizeError}", min = 1, max = 50)
     private String nombre;
-    
-    /**
-     * Campo de tipo Array que contiene el conjunto de Actividades implementadas correspondientes a este Estado
-     */
-    @OneToMany(mappedBy="estadoActividad")
-    private List<ActividadImplementada> actividades;  
+
     
     /**
      * Constructor
      */
     public EstadoActividad(){
-        actividades = new ArrayList();
-    }
-
-    /**
-     * 
-     * @return 
-     */
-    @XmlTransient
-    public List<ActividadImplementada> getActividades() {
-        return actividades;
-    }
-
-    /**
-     *
-     * @param actividades
-     */
-    public void setActividades(List<ActividadImplementada> actividades) {
-        this.actividades = actividades;
     }
 
     /**

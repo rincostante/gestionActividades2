@@ -10,10 +10,11 @@
             <h:outputText value="#{bundle.ActividadImplTitle}" />
         </ui:define>
         <ui:define name="content">
-            <br/>
-            <h:form id="frmNew">
-                <p:panel id="pnNew" header="#{bundle.ActividadImplNewTitle}" style="margin-bottom:10px;">
-                    <p:growl id="messages" />
+        <br/>
+            <h:form>
+                <p:panel id="pnEdit" header="#{bundle.ActividadImplEditTitle} Suspendida" style="margin-bottom:10px;">
+                    <h:inputHidden id="id" value="#{mbActividadImpl.selected.id}" />
+                    <p:messages id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.ActividadImplLabel_ActividadPlanificada}" for="actPlan"/>
                         <p:selectOneMenu id="actPlan" value="#{mbActividadImpl.selected.actividadPlan}"
@@ -114,23 +115,27 @@
                                          counter="display" maxlength="250" 
                                          counterTemplate="{0} Caracteres restantes." autoResize="false" style="width: 500px" />
                         <h:outputText id="display" />
-                        
                     </h:panelGrid>
                 </p:panel>
+                
                 <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbActividadImpl.create}" update="pnNew"/>
+                        <p:commandButton icon="ui-icon-pencil" 
+                                         action="#{mbActividadImpl.update}" 
+                                         value="Guardar" 
+                                         style="margin-right:10px;" 
+                                         update="pnEdit"/>
                         <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
-                            <p:ajax update="pnNew" resetValues="true" />
-                        </p:commandButton>
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>                        
                     </f:facet>
                     <f:facet name="right">
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
-                                         action="#{mbActividadImpl.prepareList}" 
+                                         action="#{mbActividadImpl.prepareListSusp}" 
                                          value="Volver" 
                                          immediate="true" 
                                          ajax="false"/>
-                    </f:facet>
+                    </f:facet>                    
                 </p:toolbar>
             </h:form>
         </ui:define>

@@ -61,7 +61,7 @@ public class AdmEntidad implements Serializable {
     @Column(nullable=false)
     @NotNull(message = "{entidades.fieldNotNullError}")
     private boolean habilitado = true;
-
+    
     /**
      *
      * @return

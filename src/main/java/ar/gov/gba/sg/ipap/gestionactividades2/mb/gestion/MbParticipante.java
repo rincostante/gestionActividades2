@@ -4,25 +4,18 @@
  * and open the template in the editor.
  */
 
-package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
+package ar.gov.gba.sg.ipap.gestionactividades2.mb.gestion;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstadoParticipante;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SedeFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstadoParticipanteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ParticipanteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
@@ -47,48 +40,36 @@ import javax.servlet.http.HttpSession;
  *
  * @author rincostante
  */
-public class MbActividadImpl implements Serializable{
+public class MbParticipante implements Serializable{
     
-    private ActividadImplementada current;
+    private Participante current;
     private DataModel items = null;   
-
+    
+    @EJB
+    private ParticipanteFacade participanteFacade;
+    @EJB
+    private AgenteFacade agenteFacade;
     @EJB
     private ActividadImplementadaFacade actImpFacade;
     @EJB
-    private ActividadPlanFacade actPlanFacade;
-    @EJB
-    private OrganismoFacade organismoFacade;
-    @EJB
-    private ResolucionFacade resFacade;
-    @EJB
-    private SedeFacade sedeFacade;
-    @EJB
-    private UsuarioFacade usuarioFacade;
-    @EJB
-    private DocenteFacade docenteFacade;
-    @EJB
-    private RolFacade rolFacade;
+    private EstadoParticipanteFacade estPartFacade;
     
     private int selectedItemIndex;
-    private ActividadImplementada actImpSelected;
-    private Usuario usLogeado;        
-    private List<ActividadPlan> listActPlan;
-    private List<Organismo> listOrganismos;
-    private List<Resolucion> listResoluciones;
-    private List<Sede> listSedes;
-    private List<Usuario> listCoordinadores;
-    private List<Docente> listDocentes;
+    private Participante partSelected;
+    private Usuario usLogeado;     
+    private EstadoParticipante estPart;
+    private List<Agente> listAgentes;
+    private List<ActividadImplementada> listActImp;
     private Date fAntesDe;
     private Date fDespuesDe;
-    private int tipoList; //1=habilitadas | 2=finalizadas | 3=suspendidas | 4=deshabilitadas 
-    
-    
+    private int tipoList; //1=autorizados | 2=provisorios | 3=vencidos | 4=deshabilitados     
+
     /**
-     * Creates a new instance of MbActividadImpl
+     * Creates a new instance of MbParticipante
      */
-    public MbActividadImpl() {
+    public MbParticipante() {
     }
-    
+ 
     /**
      *
      */
@@ -102,16 +83,8 @@ public class MbActividadImpl implements Serializable{
     
     /********************************
      ** Getters y Setters ***********
-     ********************************/   
+     ********************************/ 
     
-    public ActividadImplementada getActImpSelected() {
-        return actImpSelected;
-    }
-
-    public void setActImpSelected(ActividadImplementada actImpSelected) {
-        this.actImpSelected = actImpSelected;
-    }
-
     public Usuario getUsLogeado() {
         return usLogeado;
     }
@@ -119,53 +92,29 @@ public class MbActividadImpl implements Serializable{
     public void setUsLogeado(Usuario usLogeado) {
         this.usLogeado = usLogeado;
     }
-
-    public List<ActividadPlan> getListActPlan() {
-        return listActPlan;
+    
+    public Participante getPartSelected() {
+        return partSelected;
     }
 
-    public void setListActPlan(List<ActividadPlan> listActPlan) {
-        this.listActPlan = listActPlan;
+    public void setPartSelected(Participante partSelected) {
+        this.partSelected = partSelected;
     }
 
-    public List<Organismo> getListOrganismos() {
-        return listOrganismos;
+    public List<Agente> getListAgentes() {
+        return listAgentes;
     }
 
-    public void setListOrganismos(List<Organismo> listOrganismos) {
-        this.listOrganismos = listOrganismos;
+    public void setListAgentes(List<Agente> listAgentes) {
+        this.listAgentes = listAgentes;
     }
 
-    public List<Resolucion> getListResoluciones() {
-        return listResoluciones;
+    public List<ActividadImplementada> getListActImp() {
+        return listActImp;
     }
 
-    public void setListResoluciones(List<Resolucion> listResoluciones) {
-        this.listResoluciones = listResoluciones;
-    }
-
-    public List<Sede> getListSedes() {
-        return listSedes;
-    }
-
-    public void setListSedes(List<Sede> listSedes) {
-        this.listSedes = listSedes;
-    }
-
-    public List<Usuario> getListCoordinadores() {
-        return listCoordinadores;
-    }
-
-    public void setListCoordinadores(List<Usuario> listCoordinadores) {
-        this.listCoordinadores = listCoordinadores;
-    }
-
-    public List<Docente> getListDocentes() {
-        return listDocentes;
-    }
-
-    public void setListDocentes(List<Docente> listDocentes) {
-        this.listDocentes = listDocentes;
+    public void setListActImp(List<ActividadImplementada> listActImp) {
+        this.listActImp = listActImp;
     }
 
     public Date getfAntesDe() {
@@ -191,7 +140,7 @@ public class MbActividadImpl implements Serializable{
     public void setTipoList(int tipoList) {
         this.tipoList = tipoList;
     }
-   
+ 
     
     /********************************
      ** Métodos para el datamodel **
@@ -199,9 +148,9 @@ public class MbActividadImpl implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public ActividadImplementada getSelected() {
+    public Participante getSelected() {
         if (current == null) {
-            current = new ActividadImplementada();
+            current = new Participante();
             selectedItemIndex = -1;
         }
         return current;
@@ -213,24 +162,23 @@ public class MbActividadImpl implements Serializable{
     public DataModel getItems() {
         if (items == null) {
             switch(tipoList){
-                case 1: items = new ListDataModel(getFacade().getHabilitadas());
+                case 1: items = new ListDataModel(getFacade().getAutorizados());
                     break;
-                case 2: items = new ListDataModel(getFacade().getFinalizadas());
+                case 2: items = new ListDataModel(getFacade().getProvisiorios());
                     break;
-                case 3: items = new ListDataModel(getFacade().getSuspendidas());
+                case 3: items = new ListDataModel(getFacade().getVencidos());
                     break;
                 default: items = new ListDataModel(getFacade().getDeshabilitadas());
             }
         }
         return items;
-    }        
-    
+    }    
     
     /*******************************
      ** Métodos de inicialización **
      *******************************/
     /**
-     * Método para inicializar el listado de las Actividad Implementadas habilitadas
+     * Método para inicializar el listado de los Participantes autorizados
      * @return acción para el listado de entidades
      */
     public String prepareList() {
@@ -240,23 +188,23 @@ public class MbActividadImpl implements Serializable{
     } 
     
     /**
-     * Método para inicializar el listado de las Actividad Implementadas finalizadas
+     * Método para inicializar el listado de las Inscripciones vencidas
      * @return acción para el listado de entidades
      */
-    public String prepareListFin() {
-        tipoList = 2;
-        recreateModel();
-        return "listFin";
-    }    
-    
-    /**
-     * Método para inicializar el listado de las Actividad Implementadas suspendidas
-     * @return acción para el listado de entidades
-     */
-    public String prepareListSusp() {
+    public String prepareListVenc() {
         tipoList = 3;
         recreateModel();
-        return "listSusp";
+        return "listVenc";
+    }       
+    
+    /**
+     * Método para inicializar el listado de las Inscripciones provisorias
+     * @return acción para el listado de entidades
+     */
+    public String prepareListProv() {
+        tipoList = 2;
+        recreateModel();
+        return "listProv";
     }    
     
     /**
@@ -273,34 +221,34 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = actImpSelected;
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
     /**
-     * @return acción para el detalle de la entidad finalizada
+     * @return acción para el detalle de la entidad vencida
      */
-    public String prepareViewFin() {
-        current = actImpSelected;
+    public String prepareViewVenc() {
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
-        return "viewFin";
-    }    
+        return "viewVenc";
+    }  
     
     /**
-     * @return acción para el detalle de la entidad suspendida
+     * @return acción para el detalle de la entidad vencida
      */
-    public String prepareViewSusp() {
-        current = actImpSelected;
+    public String prepareViewProv() {
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
-        return "viewSusp";
-    }    
+        return "viewProv";
+    }        
     
     /**
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (ActividadImplementada) getItems().getRowData();
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
@@ -310,17 +258,9 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareCreate() {
         //cargo los list para los combos
-        listResoluciones = resFacade.getHabilitadas();
-        listActPlan = actPlanFacade.getHabilitadas();
-        listOrganismos = organismoFacade.getHabilitados();
-        listSedes = sedeFacade.getHabilitados();
-        listDocentes = docenteFacade.getHabilitadas();
-        
-        //identifico el rol para la selección del Coordinador
-        List<Rol> roles = rolFacade.getXString("Coordinador");
-        listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());
-        
-        current = new ActividadImplementada();
+        listAgentes = agenteFacade.getHabilitados();
+        listActImp = actImpFacade.getHabilitadas();
+        current = new Participante();
         selectedItemIndex = -1;
         return "new";
     }
@@ -330,39 +270,37 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareEdit() {
         //cargo los list para los combos
-        listResoluciones = resFacade.getHabilitadas();
-        listActPlan = actPlanFacade.getHabilitadas();
-        listOrganismos = organismoFacade.getHabilitados();
-        listSedes = sedeFacade.getHabilitados();
-        listDocentes = docenteFacade.getHabilitadas();
-        
-        //identifico el rol para la selección del Coordinador
-        List<Rol> roles = rolFacade.getXString("Coordinador");
-        listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());
-        
-        current = actImpSelected;
+        listAgentes = agenteFacade.getHabilitados();
+        listActImp = actImpFacade.getHabilitadas();
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
-    }   
+    }
     
     /**
-     * @return acción para la edición de la entidad suspendida
+     * @return acción para la edición de la entidad vencida
      */
-    public String prepareEditSusp() {
+    public String prepareEditVenc() {
         //cargo los list para los combos
-        listResoluciones = resFacade.getHabilitadas();
-        listActPlan = actPlanFacade.getHabilitadas();
-        listOrganismos = organismoFacade.getHabilitados();
-        listSedes = sedeFacade.getHabilitados();
-        listDocentes = docenteFacade.getHabilitadas();
-        
-        //identifico el rol para la selección del Coordinador
-        List<Rol> roles = rolFacade.getXString("Coordinador");
-        listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());
-        
-        current = actImpSelected;   
+        listAgentes = agenteFacade.getHabilitados();
+        listActImp = actImpFacade.getHabilitadas();      
+        current = partSelected;
+        // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
-        return "editSusp";
+        return "editVenc";
+    }     
+    
+    /**
+     * @return acción para la edición de la entidad vencida
+     */
+    public String prepareEditProv() {
+        //cargo los list para los combos
+        listAgentes = agenteFacade.getHabilitados();
+        listActImp = actImpFacade.getHabilitadas();      
+        current = partSelected;
+        // cargo los list para los combos     
+        selectedItemIndex = getItems().getRowIndex();
+        return "editProv";
     }     
     
     /**
@@ -375,11 +313,11 @@ public class MbActividadImpl implements Serializable{
     }
     
     /**
-     * Método que verifica que el Actividad Implementada que se quiere eliminar no esté siento utilizada por otra entidad
+     * Método que verifica que el Participante que se quiere eliminar no esté siento utilizada por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = actImpSelected;
+        current = partSelected;
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -389,7 +327,7 @@ public class MbActividadImpl implements Serializable{
             recreateModel();
         }else{
             //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplNonDeletable"));
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteNonDeletable"));
         }
         return "view";
     }  
@@ -399,7 +337,7 @@ public class MbActividadImpl implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        current = actImpSelected;
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -412,61 +350,38 @@ public class MbActividadImpl implements Serializable{
 
             // Actualizo
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplHabilitado"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitado"));
             return "view";
         }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadImplHabilitadaErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitadaErrorOccured"));
             return null; 
         }
-    }        
+    }         
     
     /**
-     * Método para suspender Implementaciones
+     * 
      * @return 
      */
-    public String prepareSuspender(){
-        current = actImpSelected;
+    public String prepareAutorizar(){
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
+        List<EstadoParticipante> estParts = estPartFacade.getXString("Autorizado");
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
             current.getAdmin().setFechaModif(date);
             current.getAdmin().setUsModif(usLogeado);
-            current.setSuspendido(true);
+            current.setEstado(estParts.get(0));
 
             // Actualizo
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplSuspendida"));
-            return "viewSusp";
-        }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadImplSuspendidaErrorOccured"));
-            return null; 
-        }
-    }
-    
-    /**
-     * Método para activar Implementaciones suspendidas
-     * @return 
-     */
-    public String prepareActivar(){
-        current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
-        try{
-            // Actualización de datos de administración de la entidad
-            Date date = new Date(System.currentTimeMillis());
-            current.getAdmin().setFechaModif(date);
-            current.getAdmin().setUsModif(usLogeado);
-            current.setSuspendido(false);
-            
-            // Actualizo
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplActivada"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitado"));
             return "view";
-        }catch(Exception e){
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadImplActivadaErrorOccured"));
+        }catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitadaErrorOccured"));
             return null; 
         }
-    }
+    }        
     
     /**
      * 
@@ -474,7 +389,8 @@ public class MbActividadImpl implements Serializable{
     public void resetFechas(){
         fDespuesDe = null;
         fAntesDe = null;
-    }       
+    }    
+    
     
    /*********************************************
      ** Métodos de inicialización de búsquedas **
@@ -493,19 +409,19 @@ public class MbActividadImpl implements Serializable{
      * Método para preparar la búsqueda
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
-    public String prepareSelectFin(){
+    public String prepareSelectVenc(){
         buscarEntreFechas();
-        return "listFin";
-    }    
+        return "listVenc";
+    } 
     
     /**
      * Método para preparar la búsqueda
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
-    public String prepareSelectSusp(){
+    public String prepareSelectProv(){
         buscarEntreFechas();
-        return "listSusp";
-    }        
+        return "listProv";
+    }     
     
     /**
      * 
@@ -516,18 +432,18 @@ public class MbActividadImpl implements Serializable{
         return "listDes";
     }     
     
-
+    
     /*************************
     ** Métodos de operación **
     **************************/
     /**
-     * Méto que inserta una nueva Actividad Implementada en la base de datos, previamente genera una entidad de administración
+     * Méto que inserta un nuevo Participante en la base de datos, previamente genera una entidad de administración
      * con los datos necesarios y luego se la asigna a la persona
      * @return mensaje que notifica la inserción
      */
     public String create() {
         try {
-            if(getFacade().noExiste(current.getActividadPlan().getNombre(), current.getFechaInicio(), current.getFechaFin(), current.getSede().getId())){
+            if(getFacade().noExiste(current.getAgente(), current.getActividad())){
                 // Creación de la entidad de administración y asignación
                 Date date = new Date(System.currentTimeMillis());
                 AdmEntidad admEnt = new AdmEntidad();
@@ -538,33 +454,30 @@ public class MbActividadImpl implements Serializable{
                 
                 // Inserción
                 getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplCreated"));
-                listResoluciones.clear();
-                listActPlan.clear();
-                listOrganismos.clear();
-                listSedes.clear();
-                listDocentes.clear();
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
+                listAgentes.clear();
+                listActImp.clear();
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
                 return null;
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadImplCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreatedErrorOccured"));
             return null;
         }
     }
 
     /**
-     * Método que actualiza una nueva Actividad Implementada en la base de datos.
+     * Método que actualiza un nuevo Participante en la base de datos.
      * Previamente actualiza los datos de administración
      * @return mensaje que notifica la actualización
      */
     public String update() {    
-        ActividadImplementada res;
+        Participante res;
         String retorno = "";
         try {
-            res = getFacade().getExistente(current.getActividadPlan().getNombre(), current.getFechaInicio(), current.getFechaFin(), current.getSede().getId());
+            res = getFacade().getExistente(current.getAgente(), current.getActividad());
             if(res == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
@@ -573,18 +486,16 @@ public class MbActividadImpl implements Serializable{
                 
                 // Actualizo
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdated"));
-                listResoluciones.clear();
-                listActPlan.clear();
-                listOrganismos.clear();
-                listSedes.clear();
-                listDocentes.clear();
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdated"));
                 if(tipoList == 1){
                     retorno = "view";  
-                }   
+                }
                 if(tipoList == 3){
-                    retorno = "viewSusp";  
-                }      
+                    retorno = "viewVenc";  
+                }     
+                if(tipoList == 2){
+                    retorno = "viewProv";  
+                }   
                 return retorno;
             }else{
                 if(res.getId().equals(current.getId())){
@@ -595,22 +506,26 @@ public class MbActividadImpl implements Serializable{
 
                     // Actualizo
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdated"));
-                    listResoluciones.clear();
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdated"));
+                    listAgentes.clear();
+                    listActImp.clear();
                     if(tipoList == 1){
                         retorno = "view";  
-                    }   
+                    }
                     if(tipoList == 3){
-                        retorno = "viewSusp";  
-                    }                         
+                        retorno = "viewVenc";  
+                    }  
+                    if(tipoList == 2){
+                        retorno = "viewProv";  
+                    }   
                     return retorno;                   
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
                     return null;
                 }
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdatedErrorOccured"));
             return null;
         }
     }
@@ -619,7 +534,7 @@ public class MbActividadImpl implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = actImpSelected;
+        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -647,7 +562,7 @@ public class MbActividadImpl implements Serializable{
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public ActividadImplementada getActividadImplementada(java.lang.Long id) {
+    public Participante getParticipante(java.lang.Long id) {
         return getFacade().find(id);
     }  
     
@@ -658,10 +573,10 @@ public class MbActividadImpl implements Serializable{
     public String cleanUp(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
-        session.removeAttribute("mbActividadImpl");
+        session.removeAttribute("mbParticipante");
         return "inicio";
     }      
-    
+
     
     /*********************
     ** Métodos privados **
@@ -669,8 +584,8 @@ public class MbActividadImpl implements Serializable{
     /**
      * @return el Facade
      */
-    private ActividadImplementadaFacade getFacade() {
-        return actImpFacade;
+    private ParticipanteFacade getFacade() {
+        return participanteFacade;
     }    
     
     /**
@@ -694,9 +609,9 @@ public class MbActividadImpl implements Serializable{
             
             // Deshabilito la entidad
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ActividadImplDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteDeletedErrorOccured"));
         }
     }        
     
@@ -706,26 +621,26 @@ public class MbActividadImpl implements Serializable{
      *****************************************************************************/
 
     private void buscarEntreFechas(){
-        List<ActividadImplementada> actImpls = new ArrayList();
+        List<Participante> parts = new ArrayList();
         Iterator itRows = items.iterator();
         
         // recorro el dadamodel
         while(itRows.hasNext()){
-            ActividadImplementada actImp = (ActividadImplementada)itRows.next();
-            if(actImp.getFechaInicio().after(fDespuesDe) && actImp.getFechaInicio().before(fAntesDe)){
-                actImpls.add(actImp);
+            Participante part = (Participante)itRows.next();
+            if(part.getActividad().getFechaFin().after(fDespuesDe) && part.getActividad().getFechaFin().before(fAntesDe)){
+                parts.add(part);
             }          
         }        
         items = null;
-        items = new ListDataModel(actImpls); 
+        items = new ListDataModel(parts); 
     }     
     
- 
+    
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = ActividadImplementada.class)
-    public static class ActividadImplementadaControllerConverter implements Converter {
+    @FacesConverter(forClass = Participante.class)
+    public static class ParticipanteControllerConverter implements Converter {
 
         /**
          *
@@ -739,9 +654,9 @@ public class MbActividadImpl implements Serializable{
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbActividadImpl controller = (MbActividadImpl) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbActividadImpl");
-            return controller.getActividadImplementada(getKey(value));
+            MbParticipante controller = (MbParticipante) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbParticipante");
+            return controller.getParticipante(getKey(value));
         }
 
         
@@ -775,11 +690,11 @@ public class MbActividadImpl implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof ActividadImplementada) {
-                ActividadImplementada o = (ActividadImplementada) object;
+            if (object instanceof Participante) {
+                Participante o = (Participante) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + ActividadImplementada.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Participante.class.getName());
             }
         }
     }             
