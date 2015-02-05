@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ActividadImplTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmNew">
+                <p:panel id="pnNew" header="#{bundle.ActividadImplNewTitle}" style="margin-bottom:10px;">
+                    <p:growl id="messages" />
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="#{bundle.ActividadImplLabel_ActividadPlanificada}" for="actImpl"/>
+                        <p:selectOneMenu id="actImpl" value="#{mbActividadImpl.selected.resolucion}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadImplRequire_resolucion}">
+                            <f:selectItem itemLabel="Seleccione la Actividad Formativa" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadImpl.listActPlan}" var="act" 
+                                           itemLabel="#{act.resolucion}, #{res.anio}" 
+                                           itemValue="#{res}"/>
+                        </p:selectOneMenu>                         
+
+                        <p:outputLabel for="fechaInic" value="#{bundle.ActividadImplLabel_fechaInicio}" />
+                        <p:calendar id="fechaInic" value="#{mbActividadImpl.selected.fechaInicio}" pattern="dd/MM/yyyy" mask="true" 
+                                    required="true" 
+                                    requiredMessage="#{bundle.ActividadImplRequire_fechaFin}">
+                            <p:ajax event="dateSelect" update="fechaFin" />
+                        </p:calendar>    
+                        
+                        <p:outputLabel for="fechaFin" value="#{bundle.ActividadImplLabel_fechaFin}" />
+                        <p:calendar id="fechaFin" value="#{mbActividadImpl.selected.fechaFin}" pattern="dd/MM/yyyy" mask="true" 
+                                    required="true" 
+                                    requiredMessage="#{bundle.ActividadImplRequire_fechaFin}"
+                                    mindate="#{mbActividadImpl.selected.fechaInicio}" >
+                            <f:attribute name="finicial" value="#{mbActividadImpl.selected.fechaInicio}"/>
+                            <f:validator validatorId="primeDateRangeValidator" />
+                        </p:calendar>
+                        
+                        <p:outputLabel value="#{bundle.ActividadImplLabel_resolucion}" for="resolucion"/>
+                        <p:selectOneMenu id="resolucion" value="#{mbActividadImpl.selected.resolucion}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadImplRequire_resolucion}">
+                            <f:selectItem itemLabel="Seleccione la Resolución" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadImpl.listResoluciones}" var="res" 
+                                           itemLabel="#{res.resolucion}, #{res.anio}" 
+                                           itemValue="#{res}"/>
+                        </p:selectOneMenu>  
+                    </h:panelGrid>
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbActividadImpl.create}" update="pnNew"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnNew" resetValues="true" />
+                        </p:commandButton>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
+                                         action="#{mbActividadImpl.prepareList}" 
+                                         value="Volver" 
+                                         immediate="true" 
+                                         ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

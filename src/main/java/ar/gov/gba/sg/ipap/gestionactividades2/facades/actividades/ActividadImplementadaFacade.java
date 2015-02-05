@@ -107,8 +107,7 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = true "
-                + "AND actImp.fechaFin >= CURRENT_DATE"
-                + "AND actImp.suspendido = false";
+                + "AND actImp.fechaFin >= CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
