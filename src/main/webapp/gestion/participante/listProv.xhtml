@@ -16,11 +16,11 @@
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="particForm" header="#{bundle.ParticipanteListTitle} Autorizadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
+                <p:panel id="partForm" header="#{bundle.ParticipanteListTitle} Provisorias" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
                     <h:panelGroup>
                         <h:panelGrid columns="4" id="pnBotones">
-                            <p:commandButton icon="ui-icon-refresh" value="Provisorios" action="#{mbParticipante.prepareListProv}" ajax="false"/>
-                            <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbParticipante.prepareListVenc}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbParticipante.prepareCreate}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-newwin" value="Autorizadas" action="#{mbParticipante.prepareList}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbParticipante.prepareListDes}" ajax="false"/>
                             <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbParticipante.cleanUp}"/>
                         </h:panelGrid>
@@ -39,7 +39,7 @@
                             </p:calendar>
                         </h:panelGrid>
                         <h:panelGrid columns="2"> 
-                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de incio Actividad" action="#{mbParticipante.prepareSelectHab}" ajax="false"/> 
+                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de incio" action="#{mbParticipante.prepareSelectHab}" ajax="false"/> 
                             <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbParticipante.resetFechas}">
                                 <p:ajax update="fDespDe" resetValues="true" />
                                 <p:ajax update="fAntesDe" resetValues="true" />
@@ -48,15 +48,15 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbParticipante.items}" var="e" id="particList" rows="5"
+                <p:dataTable value="#{mbParticipante.items}" var="e" id="partList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.ParticipanteListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbParticipante.prepareList}" update="particList" style="margin-left: 10px"/>
-                        <p:columnToggler datasource="particList" trigger="toggler" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbParticipante.prepareListProv}" update="partList" style="margin-left: 10px"/>
+                        <p:columnToggler datasource="partList" trigger="toggler" />
                     </f:facet>
 
                     <p:column headerText="#{bundle.ParticipanteLabel_Agente}" sortBy="#{e.agente.apYNom}" filterBy="#{e.agente.apYNom}">
@@ -74,16 +74,20 @@
                     <p:column headerText="#{bundle.ParticipanteLable_FechaAutorizacion}" sortBy="#{e.strFechaAutoriz}" filterBy="#{e.strFechaAutoriz}">
                         <p:outputLabel value="#{e.strFechaAutoriz}"/>
                     </p:column>     
-                    
-                    <p:column headerText="Acciones" style="width:135px">
+
+                    <p:column headerText="Acciones" style="width:180px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbParticipante.prepareView}" title="Ver Detalle">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbParticipante.prepareViewProv}" title="Ver detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbParticipante.prepareEdit}" title="Editar">
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbParticipante.prepareEditProv}" title="Editar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbParticipante.prepareDestroy}" update="messages" title="Deshabilitar" >
+                        <p:commandButton icon="ui-icon-check" action="#{mbParticipante.prepareAutorizar}" update="messages" title="Autorizar">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
+                            <p:confirm header="Confirmar" message="¿Desea Autorizar esta Inscripción?" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbParticipante.prepareDestroy}" update="messages" title="Deshabilitar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
                             <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de esta Inscripción?" />
                         </p:commandButton>

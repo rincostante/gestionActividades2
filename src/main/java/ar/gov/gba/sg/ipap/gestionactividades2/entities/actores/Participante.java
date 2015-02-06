@@ -125,7 +125,7 @@ public class Participante implements Serializable {
 
     public String getStrFechaAutoriz() {
         SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
-        strFechaIniVig = formateador.format(fechaAutorizacion);
+        strFechaAutoriz = formateador.format(fechaAutorizacion);
         return strFechaAutoriz;
     }
 

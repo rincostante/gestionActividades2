@@ -452,6 +452,10 @@ public class MbParticipante implements Serializable{
                 admEnt.setUsAlta(usLogeado);
                 current.setAdmin(admEnt);
                 
+                // inserto el estado por defecto: Provisorio
+                List<EstadoParticipante> estParts = estPartFacade.getXString("Provisorio");
+                current.setEstado(estParts.get(0));
+                
                 // Inserción
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
