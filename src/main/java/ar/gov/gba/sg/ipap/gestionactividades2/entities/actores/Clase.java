@@ -7,9 +7,15 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +25,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -44,6 +53,56 @@ public class Clase implements Serializable {
     private int numOrden;    
     
     /**
+     * Campo de tipo Date que indica la fecha en que se realizará la clase
+     */
+    @Column (nullable=false)
+    @NotNull(message = "La clase debe tener una fecha de realización")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fechaRealizacion;
+    
+    /**
+     * Campo no persistible que muestra la fecha formateada como un string
+     */
+    @Transient
+    private String strFechaRealizacion;
+    
+    /**
+     * Campo de tipo Date indica la hora de inicio de la clase
+     */
+    @Column (nullable=false)
+    @NotNull(message = "La clase debe tener una hora de inicio")
+    @Temporal(javax.persistence.TemporalType.TIME)
+    private Date horaInicio;
+    
+    /**
+     * Campo no persistible que muestra la hora de inicio de la clase formateada como un string
+     */
+    @Transient
+    private String strHoraInicio;
+    
+    /**
+     * Campo de tipo Date indica la hora de fin de la clase
+     */
+    @Column (nullable=false)
+    @NotNull(message = "La clase debe tener una hora de finalización")
+    @Temporal(javax.persistence.TemporalType.TIME)
+    private Date horaFin;
+    
+    /**
+     * Campo no persistible que muestra la hora de inicio de la clase formateada como un string
+     */
+    @Transient
+    private String strHoraFin;    
+    
+    /**
+     * Campo que indica la modalidad de la clase
+     */
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="modalidad_id", nullable=false)
+    @NotNull(message = "La clase debe tener una Modalidad")
+    private Modalidad modalidad;
+    
+    /**
      * Campo que indica el docente asociado a la clase
      */
     @ManyToOne(fetch=FetchType.LAZY)
@@ -60,6 +119,12 @@ public class Clase implements Serializable {
     private ActividadImplementada actividad;   
     
     /**
+     * Campo de tipo AdmEntidad que encapsula los datos de administración y trazabilidad de la Clase
+     */   
+    @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    private AdmEntidad admin; 
+    
+    /**
      * Campo que indica la actividad que compone
      */    
     @ManyToMany(mappedBy = "clases")
@@ -70,6 +135,76 @@ public class Clase implements Serializable {
      */
     public Clase(){
         participantes = new ArrayList();
+    }
+
+    public AdmEntidad getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(AdmEntidad admin) {
+        this.admin = admin;
+    }
+
+    public String getStrFechaRealizacion() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaRealizacion = formateador.format(fechaRealizacion);
+        return strFechaRealizacion;
+    }
+
+    public void setStrFechaRealizacion(String strFechaRealizacion) {
+        this.strFechaRealizacion = strFechaRealizacion;
+    }
+
+    public String getStrHoraInicio() {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", new Locale("es_ES"));        
+        strHoraInicio = timeFormat.format(horaInicio);
+        return strHoraInicio;
+    }
+
+    public void setStrHoraInicio(String strHoraInicio) {
+        this.strHoraInicio = strHoraInicio;
+    }
+
+    public String getStrHoraFin() {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", new Locale("es_ES"));        
+        strHoraFin = timeFormat.format(horaFin);
+        return strHoraFin;
+    }
+
+    public void setStrHoraFin(String strHoraFin) {
+        this.strHoraFin = strHoraFin;
+    }
+
+    public Date getFechaRealizacion() {
+        return fechaRealizacion;
+    }
+
+    public void setFechaRealizacion(Date fechaRealizacion) {
+        this.fechaRealizacion = fechaRealizacion;
+    }
+
+    public Date getHoraInicio() {
+        return horaInicio;
+    }
+
+    public void setHoraInicio(Date horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public Date getHoraFin() {
+        return horaFin;
+    }
+
+    public void setHoraFin(Date horaFin) {
+        this.horaFin = horaFin;
+    }
+
+    public Modalidad getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(Modalidad modalidad) {
+        this.modalidad = modalidad;
     }
 
     /**

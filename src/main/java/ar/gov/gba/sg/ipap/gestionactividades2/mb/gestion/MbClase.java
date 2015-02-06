@@ -8,13 +8,15 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.gestion;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstadoParticipante;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstadoParticipanteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ModalidadFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ClaseFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ParticipanteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
@@ -40,38 +42,40 @@ import javax.servlet.http.HttpSession;
  *
  * @author rincostante
  */
-public class MbParticipante implements Serializable{
+public class MbClase implements Serializable{
     
-    private Participante current;
+    private Clase current;
     private DataModel items = null;   
     
     @EJB
+    private ClaseFacade claseFacade;
+    @EJB
+    private DocenteFacade docenteFacade;
+    @EJB
+    private ActividadImplementadaFacade cursoFacade;
+    @EJB
+    private ModalidadFacade modalidadFacade;
+    @EJB
     private ParticipanteFacade participanteFacade;
-    @EJB
-    private AgenteFacade agenteFacade;
-    @EJB
-    private ActividadImplementadaFacade actImpFacade;
-    @EJB
-    private EstadoParticipanteFacade estPartFacade;
     
     private int selectedItemIndex;
-    private Participante partSelected;
     private Usuario usLogeado;     
-    private EstadoParticipante estPart;
-    private List<Agente> listAgentes;
+    private List<Docente> listDocentes;
     private List<ActividadImplementada> listActImp;
+    private List<Modalidad> listModalidades;
+    private List<Participante> listParticipantes;
     private Date fAntesDe;
     private Date fDespuesDe;
-    private int tipoList; //1=autorizados | 2=provisorios | 3=vencidos | 4=deshabilitados     
+    private int tipoList; //1=vigentes | 3=finalizadas | 4=deshabilitados   
 
     /**
-     * Creates a new instance of MbParticipante
+     * Creates a new instance of MbClase
      */
-    public MbParticipante() {
+    public MbClase(){
     }
- 
+    
     /**
-     *
+     * Método que se ejecuta luego de instanciada la clase e inicializa los datos del usuario
      */
     @PostConstruct
     public void init(){
@@ -80,11 +84,18 @@ public class MbParticipante implements Serializable{
         MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
     }
-    
+
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
-    
+    public Clase getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Clase current) {
+        this.current = current;
+    }
+
     public Usuario getUsLogeado() {
         return usLogeado;
     }
@@ -92,21 +103,13 @@ public class MbParticipante implements Serializable{
     public void setUsLogeado(Usuario usLogeado) {
         this.usLogeado = usLogeado;
     }
-    
-    public Participante getPartSelected() {
-        return partSelected;
+
+    public List<Docente> getListDocentes() {
+        return listDocentes;
     }
 
-    public void setPartSelected(Participante partSelected) {
-        this.partSelected = partSelected;
-    }
-
-    public List<Agente> getListAgentes() {
-        return listAgentes;
-    }
-
-    public void setListAgentes(List<Agente> listAgentes) {
-        this.listAgentes = listAgentes;
+    public void setListDocentes(List<Docente> listDocentes) {
+        this.listDocentes = listDocentes;
     }
 
     public List<ActividadImplementada> getListActImp() {
@@ -115,6 +118,22 @@ public class MbParticipante implements Serializable{
 
     public void setListActImp(List<ActividadImplementada> listActImp) {
         this.listActImp = listActImp;
+    }
+
+    public List<Modalidad> getListModalidades() {
+        return listModalidades;
+    }
+
+    public void setListModalidades(List<Modalidad> listModalidades) {
+        this.listModalidades = listModalidades;
+    }
+
+    public List<Participante> getListParticipantes() {
+        return listParticipantes;
+    }
+
+    public void setListParticipantes(List<Participante> listParticipantes) {
+        this.listParticipantes = listParticipantes;
     }
 
     public Date getfAntesDe() {
@@ -148,9 +167,9 @@ public class MbParticipante implements Serializable{
     /**
      * @return La entidad gestionada
      */
-    public Participante getSelected() {
+    public Clase getSelected() {
         if (current == null) {
-            current = new Participante();
+            current = new Clase();
             selectedItemIndex = -1;
         }
         return current;
@@ -162,11 +181,9 @@ public class MbParticipante implements Serializable{
     public DataModel getItems() {
         if (items == null) {
             switch(tipoList){
-                case 1: items = new ListDataModel(getFacade().getAutorizados());
+                case 1: items = new ListDataModel(getFacade().getHabilitadas());
                     break;
-                case 2: items = new ListDataModel(getFacade().getProvisiorios());
-                    break;
-                case 3: items = new ListDataModel(getFacade().getVencidos());
+                case 2: items = new ListDataModel(getFacade().getFinalizadas());
                     break;
                 default: items = new ListDataModel(getFacade().getDeshabilitadas());
             }
@@ -178,7 +195,7 @@ public class MbParticipante implements Serializable{
      ** Métodos de inicialización **
      *******************************/
     /**
-     * Método para inicializar el listado de los Participantes autorizados
+     * Método para inicializar el listado de las Clases habilitadas y vigentes
      * @return acción para el listado de entidades
      */
     public String prepareList() {
@@ -188,31 +205,21 @@ public class MbParticipante implements Serializable{
     } 
     
     /**
-     * Método para inicializar el listado de las Inscripciones vencidas
+     * Método para inicializar el listado de las Clases finalizadas
      * @return acción para el listado de entidades
      */
-    public String prepareListVenc() {
-        tipoList = 3;
-        recreateModel();
-        return "listVenc";
-    }       
-    
-    /**
-     * Método para inicializar el listado de las Inscripciones provisorias
-     * @return acción para el listado de entidades
-     */
-    public String prepareListProv() {
+    public String prepareListFin() {
         tipoList = 2;
         recreateModel();
-        return "listProv";
-    }    
+        return "listFin";
+    }          
     
     /**
-     * 
+     * Método para inicializar el listado de las Clases deshabilitadas
      * @return 
      */
     public String prepareListDes() {
-        tipoList = 4;
+        tipoList = 3;
         recreateModel();
         return "listDes";
     }     
@@ -221,7 +228,6 @@ public class MbParticipante implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -229,17 +235,15 @@ public class MbParticipante implements Serializable{
     /**
      * @return acción para el detalle de la entidad vencida
      */
-    public String prepareViewVenc() {
-        current = partSelected;
+    public String prepareViewFin() {
         selectedItemIndex = getItems().getRowIndex();
-        return "viewVenc";
+        return "viewFin";
     }  
     
     /**
      * @return acción para el detalle de la entidad vencida
      */
     public String prepareViewProv() {
-        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "viewProv";
     }        
@@ -248,19 +252,20 @@ public class MbParticipante implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
 
-    /** (Probablemente haya que embeberlo con el listado para una misma vista)
+    /**
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
         //cargo los list para los combos
-        listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();
-        current = new Participante();
+        listDocentes = docenteFacade.getHabilitadas();
+        listActImp = cursoFacade.getHabilitadas();
+        listModalidades = modalidadFacade.findAll();
+        listParticipantes = participanteFacade.getAutorizados();
+        current = new Clase();
         selectedItemIndex = -1;
         return "new";
     }
@@ -270,34 +275,37 @@ public class MbParticipante implements Serializable{
      */
     public String prepareEdit() {
         //cargo los list para los combos
-        listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();
-        current = partSelected;
+        listDocentes = docenteFacade.getHabilitadas();
+        listActImp = cursoFacade.getHabilitadas();
+        listModalidades = modalidadFacade.findAll();
+        listParticipantes = participanteFacade.getAutorizados();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
     /**
-     * @return acción para la edición de la entidad vencida
+     * @return acción para la edición de la entidad finalizada
      */
-    public String prepareEditVenc() {
+    public String prepareEditFin() {
         //cargo los list para los combos
-        listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();      
-        current = partSelected;
+        listDocentes = docenteFacade.getHabilitadas();
+        listActImp = cursoFacade.getHabilitadas();
+        listModalidades = modalidadFacade.findAll();
+        listParticipantes = participanteFacade.getAutorizados();
         // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
-        return "editVenc";
+        return "editFin";
     }     
     
     /**
-     * @return acción para la edición de la entidad vencida
+     * @return acción para la edición de la entidad finalizada
      */
     public String prepareEditProv() {
         //cargo los list para los combos
-        listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();      
-        current = partSelected;
+        listDocentes = docenteFacade.getHabilitadas();
+        listActImp = cursoFacade.getHabilitadas();
+        listModalidades = modalidadFacade.findAll();
+        listParticipantes = participanteFacade.getAutorizados();
         // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
         return "editProv";
@@ -313,11 +321,10 @@ public class MbParticipante implements Serializable{
     }
     
     /**
-     * Método que verifica que el Participante que se quiere eliminar no esté siento utilizada por otra entidad
+     * Método que verifica que el Clase que se quiere eliminar no esté siento utilizada por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = partSelected;
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -326,8 +333,8 @@ public class MbParticipante implements Serializable{
             performDestroy();
             recreateModel();
         }else{
-            //No Elimina 
-            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteNonDeletable"));
+            // No Elimina 
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseNonDeletable"));
         }
         return "view";
     }  
@@ -337,7 +344,6 @@ public class MbParticipante implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -350,38 +356,13 @@ public class MbParticipante implements Serializable{
 
             // Actualizo
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitado"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseHabilitado"));
             return "view";
         }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitadaErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseHabilitadaErrorOccured"));
             return null; 
         }
-    }         
-    
-    /**
-     * 
-     * @return 
-     */
-    public String prepareAutorizar(){
-        current = partSelected;
-        selectedItemIndex = getItems().getRowIndex();
-        List<EstadoParticipante> estParts = estPartFacade.getXString("Autorizado");
-        try{
-            // Actualización de datos de administración de la entidad
-            Date date = new Date(System.currentTimeMillis());
-            current.getAdmin().setFechaModif(date);
-            current.getAdmin().setUsModif(usLogeado);
-            current.setEstado(estParts.get(0));
-
-            // Actualizo
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitado"));
-            return "view";
-        }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitadaErrorOccured"));
-            return null; 
-        }
-    }        
+    }             
     
     /**
      * 
@@ -389,7 +370,7 @@ public class MbParticipante implements Serializable{
     public void resetFechas(){
         fDespuesDe = null;
         fAntesDe = null;
-    }    
+    }        
     
     
    /*********************************************
@@ -409,19 +390,10 @@ public class MbParticipante implements Serializable{
      * Método para preparar la búsqueda
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
-    public String prepareSelectVenc(){
+    public String prepareSelectFin(){
         buscarEntreFechas();
-        return "listVenc";
-    } 
-    
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelectProv(){
-        buscarEntreFechas();
-        return "listProv";
-    }     
+        return "listFin";
+    }   
     
     /**
      * 
@@ -437,13 +409,13 @@ public class MbParticipante implements Serializable{
     ** Métodos de operación **
     **************************/
     /**
-     * Méto que inserta un nuevo Participante en la base de datos, previamente genera una entidad de administración
+     * Méto que inserta un nuevo Clase en la base de datos, previamente genera una entidad de administración
      * con los datos necesarios y luego se la asigna a la persona
      * @return mensaje que notifica la inserción
      */
     public String create() {
         try {
-            if(getFacade().noExiste(current.getAgente(), current.getActividad())){
+            if(getFacade().noExiste(current.getActividad(), current.getNumOrden())){
                 // Creación de la entidad de administración y asignación
                 Date date = new Date(System.currentTimeMillis());
                 AdmEntidad admEnt = new AdmEntidad();
@@ -451,37 +423,35 @@ public class MbParticipante implements Serializable{
                 admEnt.setHabilitado(true);
                 admEnt.setUsAlta(usLogeado);
                 current.setAdmin(admEnt);
-                
-                // inserto el estado por defecto: Provisorio
-                List<EstadoParticipante> estParts = estPartFacade.getXString("Provisorio");
-                current.setEstado(estParts.get(0));
-                
+
                 // Inserción
                 getFacade().create(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
-                listAgentes.clear();
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseCreated"));
+                listDocentes.clear();
                 listActImp.clear();
+                listModalidades.clear();
+                listParticipantes.clear();
                 return "view";
             }else{
-                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseExistente"));
                 return null;
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseCreatedErrorOccured"));
             return null;
         }
     }
 
     /**
-     * Método que actualiza un nuevo Participante en la base de datos.
+     * Método que actualiza una nueva Clase en la base de datos.
      * Previamente actualiza los datos de administración
      * @return mensaje que notifica la actualización
      */
     public String update() {    
-        Participante res;
+        Clase res;
         String retorno = "";
         try {
-            res = getFacade().getExistente(current.getAgente(), current.getActividad());
+            res = getFacade().getExistente(current.getActividad(), current.getNumOrden());
             if(res == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
@@ -490,18 +460,17 @@ public class MbParticipante implements Serializable{
                 
                 // Actualizo
                 getFacade().edit(current);
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdated"));
-                listAgentes.clear();
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseUpdated"));
+                listDocentes.clear();
                 listActImp.clear();
+                listModalidades.clear();
+                listParticipantes.clear();
                 if(tipoList == 1){
                     retorno = "view";  
                 }
-                if(tipoList == 3){
-                    retorno = "viewVenc";  
-                }     
                 if(tipoList == 2){
-                    retorno = "viewProv";  
-                }   
+                    retorno = "viewFin";  
+                }     
                 return retorno;
             }else{
                 if(res.getId().equals(current.getId())){
@@ -512,26 +481,25 @@ public class MbParticipante implements Serializable{
 
                     // Actualizo
                     getFacade().edit(current);
-                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdated"));
-                    listAgentes.clear();
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseUpdated"));
+                    listDocentes.clear();
                     listActImp.clear();
+                    listModalidades.clear();
+                    listParticipantes.clear();
                     if(tipoList == 1){
                         retorno = "view";  
                     }
-                    if(tipoList == 3){
-                        retorno = "viewVenc";  
-                    }  
                     if(tipoList == 2){
-                        retorno = "viewProv";  
-                    }   
+                        retorno = "viewFin";  
+                    }  
                     return retorno;                   
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseExistente"));
                     return null;
                 }
             }
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdatedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseUpdatedErrorOccured"));
             return null;
         }
     }
@@ -540,7 +508,6 @@ public class MbParticipante implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
@@ -568,7 +535,7 @@ public class MbParticipante implements Serializable{
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
-    public Participante getParticipante(java.lang.Long id) {
+    public Clase getClase(java.lang.Long id) {
         return getFacade().find(id);
     }  
     
@@ -579,9 +546,23 @@ public class MbParticipante implements Serializable{
     public String cleanUp(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
-        session.removeAttribute("mbParticipante");
+        session.removeAttribute("mbClase");
         return "inicio";
-    }      
+    }    
+    
+    
+    /*********************
+     *** Validaciones ****
+     *********************/
+    
+    /**
+     * Método para validad el número de orden
+     */
+    /*
+    if (horaInicial().after(horaFinal())) {  
+           FacesContext context = FacesContext.getCurrentInstance();  
+           context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Hora de início precisa ser menor que hora final."));  
+    */
 
     
     /*********************
@@ -590,8 +571,8 @@ public class MbParticipante implements Serializable{
     /**
      * @return el Facade
      */
-    private ParticipanteFacade getFacade() {
-        return participanteFacade;
+    private ClaseFacade getFacade() {
+        return claseFacade;
     }    
     
     /**
@@ -615,9 +596,9 @@ public class MbParticipante implements Serializable{
             
             // Deshabilito la entidad
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseDeleted"));
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteDeletedErrorOccured"));
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseDeletedErrorOccured"));
         }
     }        
     
@@ -627,12 +608,12 @@ public class MbParticipante implements Serializable{
      *****************************************************************************/
 
     private void buscarEntreFechas(){
-        List<Participante> parts = new ArrayList();
+        List<Clase> parts = new ArrayList();
         Iterator itRows = items.iterator();
         
         // recorro el dadamodel
         while(itRows.hasNext()){
-            Participante part = (Participante)itRows.next();
+            Clase part = (Clase)itRows.next();
             if(part.getActividad().getFechaFin().after(fDespuesDe) && part.getActividad().getFechaFin().before(fAntesDe)){
                 parts.add(part);
             }          
@@ -645,8 +626,8 @@ public class MbParticipante implements Serializable{
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
-    @FacesConverter(forClass = Participante.class)
-    public static class ParticipanteControllerConverter implements Converter {
+    @FacesConverter(forClass = Clase.class)
+    public static class ClaseControllerConverter implements Converter {
 
         /**
          *
@@ -660,9 +641,9 @@ public class MbParticipante implements Serializable{
             if (value == null || value.length() == 0) {
                 return null;
             }
-            MbParticipante controller = (MbParticipante) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "mbParticipante");
-            return controller.getParticipante(getKey(value));
+            MbClase controller = (MbClase) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "mbClase");
+            return controller.getClase(getKey(value));
         }
 
         
@@ -696,12 +677,12 @@ public class MbParticipante implements Serializable{
             if (object == null) {
                 return null;
             }
-            if (object instanceof Participante) {
-                Participante o = (Participante) object;
+            if (object instanceof Clase) {
+                Clase o = (Clase) object;
                 return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Participante.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Clase.class.getName());
             }
         }
-    }             
+    }                 
 }
