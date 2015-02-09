@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Participantes que asistieron a la clase</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmAsistVinc">
+            <p:dataTable var="part" value="#{mbClase.listPartVinc}">
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{part.agente.apYNom}" />
+                </p:column>
+                <p:column headerText="Documento">
+                    <h:outputText value="#{part.agente.documento}" />
+                </p:column>
+                <p:column headerText="Organismo">
+                    <h:outputText value="#{part.agente.organismo.nombre}" />
+                </p:column>
+                <p:column headerText="Cargo">
+                    <h:outputText value="#{part.agente.cargo}" />
+                </p:column>
+                <p:column headerText="Quitar" style="width :45px;" rendered="#{mbClase.asignaPart}">
+                    <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbClase.asignaPart}" 
+                                         actionListener="#{mbClase.quitarAsistencia(part)}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

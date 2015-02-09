@@ -10,10 +10,11 @@
             <h:outputText value="#{bundle.ClaseTitle}" />
         </ui:define>
         <ui:define name="content">
-            <br/>
-            <h:form id="frmNew">
-                <p:panel id="pnNew" header="#{bundle.ClaseNewTitle}" style="margin-bottom:10px;">
-                    <p:growl id="messages" />
+        <br/>
+            <h:form>
+                <p:panel id="pnEdit" header="#{bundle.ClaseEditTitle}" style="margin-bottom:10px;">
+                    <h:inputHidden id="id" value="#{mbClase.selected.id}" />
+                    <p:messages id="messages" />
                     <h:panelGrid columns="2">
 
                         <p:outputLabel value="#{bundle.ClaseLabel_curso}" for="curso"/>
@@ -27,19 +28,12 @@
                                            itemValue="#{curso}"/>
                         </p:selectOneMenu> 
                         
-                        <p:outputLabel value="#{bundle.ClaseLabel_numOrden}" for="numOrden"/>
-                        <p:inputText id="numOrden"
-                                     value="#{mbClase.selected.numOrden}" 
-                                     requiredMessage="#{bundle.ClaseRequire_numOrden}" 
-                                     validator="#{mbClase.validarNumeroDeOrden}"
-                                     required="true" >
-                            <f:convertNumber integerOnly="true" type="number" />
-                        </p:inputText>  
+                        <p:outputLabel value="#{bundle.ClaseLabel_numOrden}" />
+                        <p:outputLabel value="#{mbClase.selected.numOrden}" />
                         
                         <p:outputLabel value="#{bundle.ClaseLable_FechaRealizacion}" for="fechaRealiz"/>
                         <p:calendar id="fechaRealiz" value="#{mbClase.selected.fechaRealizacion}" 
                                     pattern="dd/MM/yyyy" mask="true" 
-                                    validator="#{mbClase.validarFechaRelizacion}"
                                     required="true" 
                                     requiredMessage="ClaseRequire_fechaRealizaccion" />
                         
@@ -82,12 +76,17 @@
                         
                     </h:panelGrid>
                 </p:panel>
+                
                 <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbClase.create}" update="pnNew"/>
-                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right" action="#{mbClase.resetFechas}" >
-                            <p:ajax update="pnNew" resetValues="true" />
-                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" 
+                                         action="#{mbClase.update}" 
+                                         value="Guardar" 
+                                         style="margin-right:10px;" 
+                                         update="pnEdit"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>                        
                     </f:facet>
                     <f:facet name="right">
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
@@ -95,7 +94,7 @@
                                          value="Volver" 
                                          immediate="true" 
                                          ajax="false"/>
-                    </f:facet>
+                    </f:facet>                    
                 </p:toolbar>
             </h:form>
         </ui:define>

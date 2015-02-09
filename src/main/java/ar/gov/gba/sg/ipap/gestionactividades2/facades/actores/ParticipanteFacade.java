@@ -139,5 +139,20 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
                 + "AND part.actividad.fechaFin < CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }        
+    } 
+    
+    /**
+     * Método que obtiene todos los participantes de un curso
+     * @param curso
+     * @return 
+     */    
+    public List<Participante> getParticipantesXCurso(ActividadImplementada curso){
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.actividad = :curso "
+                + "ORDER BY part.agente.apYNom";
+        Query q = em.createQuery(queryString)
+                .setParameter("curso", curso);
+        return q.getResultList();
+    }
 }

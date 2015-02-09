@@ -151,4 +151,57 @@ public class ClaseFacade extends AbstractFacade<Clase> {
                 .setParameter("horaFinal", horaFinal);
         return q.getResultList().isEmpty();
     }
+    
+    /**
+     * Método que devuelve el último número de orden asignado para una clase de un mismo curso
+     * @param curso
+     * @return 
+     */
+    public int getUltimoNumeroDeOrden(ActividadImplementada curso){
+        List<Clase> lClases;
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "WHERE clase.actividad = :curso "
+                + "ORDER BY clase.numOrden";
+        Query q = em.createQuery(queryString)
+                .setParameter("curso", curso);
+        lClases = q.getResultList();
+        if(!lClases.isEmpty()){
+            return lClases.get(lClases.size() - 1).getNumOrden();
+        }else{
+            return 0;
+        }
+    }
+    
+    /**
+     * Método para saber si un curso tiene clases habilitadas registradas
+     * @param curso
+     * @return 
+     */
+    public boolean isClasesEmpty(ActividadImplementada curso){
+        em = getEntityManager();
+        String queryString = "SELECT clase.id FROM Clase clase "
+                + "WHERE clase.actividad = :curso";
+        Query q = em.createQuery(queryString)
+                .setParameter("curso", curso);
+        return q.getResultList().isEmpty();
+    }
+    
+    /**
+     * Método para obtener la fecha de realización de la última clase registrada para un mismo curso
+     * @param curso
+     * @return 
+     */
+    public Date getLastFechaRelizacion(ActividadImplementada curso){
+        em = getEntityManager();
+        List<Clase> listClases;
+        String queryString = "SELECT clase FROM Clase clase "
+                + "WHERE clase.actividad = :curso "
+                + "ORDER BY clase.fechaRealizacion";
+        Query q = em.createQuery(queryString)
+                .setParameter("curso", curso);
+        listClases = q.getResultList();
+        Date fecha = listClases.get(listClases.size() - 1).getFechaRealizacion();
+        return fecha;
+    }
 }

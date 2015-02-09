@@ -7,6 +7,7 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -32,7 +33,7 @@ public class DocenteFacade extends AbstractFacade<Docente> {
     }
     
    /**
-     * Método que verifica si la Docentes puede ser eliminada
+     * Método que verifica si el Docente puede ser eliminado
      * @param id: Id de la Docente que se desea verificar
      * @return
      */
@@ -105,4 +106,28 @@ public class DocenteFacade extends AbstractFacade<Docente> {
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }    
+    
+    /**
+     * Método que devuelve true si el docente está disponible en esa fecha y horarios
+     * y devuelve false si no lo está
+     * @param doc
+     * @param fecha
+     * @param horaInicio
+     * @param horaFin
+     * @return 
+     */
+    public boolean isDisponible(Docente doc, Date fecha, Date horaInicio, Date horaFin){
+        em = getEntityManager();
+        String queryString = "SELECT clase.id FROM Clase clase "
+                + "WHERE clase.docente = :doc "
+                + "AND clase.fechaRealizacion = :fecha "
+                + "AND clase.horaInicio >= :horaInicio "
+                + "AND clase.horaFin <= :horaFin";
+        Query q = em.createQuery(queryString)
+                .setParameter("doc", doc)
+                .setParameter("fecha", fecha)
+                .setParameter("horaInicio", horaInicio)
+                .setParameter("horaFin", horaFin);
+        return q.getResultList().isEmpty();
+    }
 }

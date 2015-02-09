@@ -21,13 +21,16 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ParticipanteFacade
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -36,7 +39,9 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -46,6 +51,8 @@ public class MbClase implements Serializable{
     
     private Clase current;
     private DataModel items = null;   
+    private DataModel listParticipantesDisp = null;
+    private DataModel listParticipantesVinc = null;
     
     @EJB
     private ClaseFacade claseFacade;
@@ -63,10 +70,14 @@ public class MbClase implements Serializable{
     private List<Docente> listDocentes;
     private List<ActividadImplementada> listActImp;
     private List<Modalidad> listModalidades;
-    private List<Participante> listParticipantes;
+    private List<Participante> listPartVinc;
+    private List<Participante> listPartDisp;
+    private ActividadImplementada cursoSelected;
+    private int ultimoNumOrdenAsignado;
     private Date fAntesDe;
     private Date fDespuesDe;
-    private int tipoList; //1=vigentes | 3=finalizadas | 4=deshabilitados   
+    private boolean asignaPart; 
+    private int tipoList; //1=vigentes | 2=finalizadas | 3=deshabilitados   
 
     /**
      * Creates a new instance of MbClase
@@ -88,6 +99,60 @@ public class MbClase implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+    
+    public DataModel getListParticipantesVinc() {
+        return listParticipantesVinc;
+    }
+
+    public void setListParticipantesVinc(DataModel listParticipantesVinc) {
+        this.listParticipantesVinc = listParticipantesVinc;
+    }
+ 
+    
+    public boolean isAsignaPart() {
+        return asignaPart;
+    }
+
+    public void setAsignaPart(boolean asignaPart) {
+        this.asignaPart = asignaPart;
+    }
+ 
+    
+    public List<Participante> getListPartVinc() {
+        return listPartVinc;
+    }
+
+    public void setListPartVinc(List<Participante> listPartVinc) {
+        this.listPartVinc = listPartVinc;
+    }
+
+    public List<Participante> getListPartDisp() {
+        return listPartDisp;
+    }
+
+    public void setListPartDisp(List<Participante> listPartDisp) {
+        this.listPartDisp = listPartDisp;
+    }
+ 
+    
+    public DataModel getListParticipantesDisp() {
+        return listParticipantesDisp;
+    }
+
+    public void setListParticipantesDisp(DataModel listParticipantesDisp) {
+        this.listParticipantesDisp = listParticipantesDisp;
+    }
+ 
+    
+    public ActividadImplementada getCursoSelected() {
+        return cursoSelected;
+    }
+
+    public void setCursoSelected(ActividadImplementada cursoSelected) {
+        this.cursoSelected = cursoSelected;
+    }
+ 
+    
     public Clase getCurrent() {
         return current;
     }
@@ -126,14 +191,6 @@ public class MbClase implements Serializable{
 
     public void setListModalidades(List<Modalidad> listModalidades) {
         this.listModalidades = listModalidades;
-    }
-
-    public List<Participante> getListParticipantes() {
-        return listParticipantes;
-    }
-
-    public void setListParticipantes(List<Participante> listParticipantes) {
-        this.listParticipantes = listParticipantes;
     }
 
     public Date getfAntesDe() {
@@ -199,6 +256,8 @@ public class MbClase implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        asignaPart = false;
+        listParticipantesVinc = null;
         tipoList = 1;
         recreateModel();
         return "list";
@@ -210,6 +269,8 @@ public class MbClase implements Serializable{
      */
     public String prepareListFin() {
         tipoList = 2;
+        listParticipantesVinc = null;
+        asignaPart = false;
         recreateModel();
         return "listFin";
     }          
@@ -220,6 +281,8 @@ public class MbClase implements Serializable{
      */
     public String prepareListDes() {
         tipoList = 3;
+        listParticipantesVinc = null;
+        asignaPart = false;
         recreateModel();
         return "listDes";
     }     
@@ -228,6 +291,7 @@ public class MbClase implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
+        asignaPart = false;
         selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
@@ -236,6 +300,7 @@ public class MbClase implements Serializable{
      * @return acción para el detalle de la entidad vencida
      */
     public String prepareViewFin() {
+        asignaPart = false;
         selectedItemIndex = getItems().getRowIndex();
         return "viewFin";
     }  
@@ -243,7 +308,8 @@ public class MbClase implements Serializable{
     /**
      * @return acción para el detalle de la entidad vencida
      */
-    public String prepareViewProv() {
+    public String prepareViewProv() { 
+        asignaPart = false;
         selectedItemIndex = getItems().getRowIndex();
         return "viewProv";
     }        
@@ -252,6 +318,7 @@ public class MbClase implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
+        asignaPart = false;
         selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
@@ -264,9 +331,9 @@ public class MbClase implements Serializable{
         listDocentes = docenteFacade.getHabilitadas();
         listActImp = cursoFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
-        listParticipantes = participanteFacade.getAutorizados();
         current = new Clase();
         selectedItemIndex = -1;
+        ultimoNumOrdenAsignado = 0;
         return "new";
     }
 
@@ -278,8 +345,8 @@ public class MbClase implements Serializable{
         listDocentes = docenteFacade.getHabilitadas();
         listActImp = cursoFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
-        listParticipantes = participanteFacade.getAutorizados();
         selectedItemIndex = getItems().getRowIndex();
+        asignaPart = true;
         return "edit";
     }
     
@@ -291,9 +358,8 @@ public class MbClase implements Serializable{
         listDocentes = docenteFacade.getHabilitadas();
         listActImp = cursoFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
-        listParticipantes = participanteFacade.getAutorizados();
-        // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
+        asignaPart = true;
         return "editFin";
     }     
     
@@ -305,11 +371,18 @@ public class MbClase implements Serializable{
         listDocentes = docenteFacade.getHabilitadas();
         listActImp = cursoFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
-        listParticipantes = participanteFacade.getAutorizados();
-        // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
+        asignaPart = true;
         return "editProv";
-    }     
+    }    
+    
+    /**
+     * Método para preparar la asistencia a las clases
+     * @return 
+     */
+    public String prepareAddAsistencia(){
+        return "addAsistencia";
+    }
     
     /**
      *
@@ -414,6 +487,10 @@ public class MbClase implements Serializable{
      * @return mensaje que notifica la inserción
      */
     public String create() {
+        if(!validarDocente(current.getDocente(), current.getFechaRealizacion(), current.getHoraInicio(), current.getHoraFin())){
+            JsfUtil.addErrorMessage("El docente asignado tiene cubierta esta fecha y rango horario con otra clase, por favor, seleccione otro docente.");
+            return null;
+        }
         try {
             if(getFacade().noExiste(current.getActividad(), current.getNumOrden())){
                 // Creación de la entidad de administración y asignación
@@ -430,7 +507,6 @@ public class MbClase implements Serializable{
                 listDocentes.clear();
                 listActImp.clear();
                 listModalidades.clear();
-                listParticipantes.clear();
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseExistente"));
@@ -464,7 +540,7 @@ public class MbClase implements Serializable{
                 listDocentes.clear();
                 listActImp.clear();
                 listModalidades.clear();
-                listParticipantes.clear();
+                asignaPart = false;
                 if(tipoList == 1){
                     retorno = "view";  
                 }
@@ -485,7 +561,8 @@ public class MbClase implements Serializable{
                     listDocentes.clear();
                     listActImp.clear();
                     listModalidades.clear();
-                    listParticipantes.clear();
+                    asignaPart = false;
+                    listParticipantesVinc = null;
                     if(tipoList == 1){
                         retorno = "view";  
                     }
@@ -550,19 +627,118 @@ public class MbClase implements Serializable{
         return "inicio";
     }    
     
+    /**
+     * Método para ver los Participantes del curso disponebles para asgnarles asistencia
+     */
+    public void verParticipantesDisp(){
+        listParticipantesDisp = new ListDataModel(listPartDisp);
+        RequestContext.getCurrentInstance().openDialog("dlgAsistDisp");
+    }
+    
+    public void verAsistentes(){
+        listParticipantesVinc = new ListDataModel(listPartVinc);
+        RequestContext.getCurrentInstance().openDialog("dlgAsistVinc");
+    }
+    
+    public void asignarAsistencia(Participante part){
+        listPartVinc.add(part);
+        listPartDisp.remove(part);
+        listParticipantesDisp = null;
+        RequestContext.getCurrentInstance().closeDialog("dlgAsistDisp");
+    }
+    
+    public void quitarAsistencia(Participante part){
+        listPartVinc.remove(part);
+        listPartDisp.add(part);
+        listParticipantesVinc = null;
+        RequestContext.getCurrentInstance().closeDialog("dlgAsistVinc");
+    }    
+    
+    public void limpiarParticipantes(){
+        listParticipantesDisp = null;
+        listParticipantesVinc = null;      
+        listPartVinc = current.getParticipantes();
+        listPartDisp = cargarParticipantesDisponibles();
+    }    
     
     /*********************
      *** Validaciones ****
      *********************/
     
     /**
-     * Método para validad el número de orden
+     * Método para validad que el docente no esté ocupado en este horario
+     * @param docente
+     * @param fecha
+     * @param horaInicio
+     * @param horaFin
+     * @return 
      */
-    /*
-    if (horaInicial().after(horaFinal())) {  
-           FacesContext context = FacesContext.getCurrentInstance();  
-           context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Hora de início precisa ser menor que hora final."));  
-    */
+    private boolean validarDocente(Docente docente, Date fecha, Date horaInicio, Date horaFin) {
+        return docenteFacade.isDisponible(docente, fecha, horaInicio, horaFin);
+    }
+
+    /**
+     * Método que lee el curso seleccionado y obtiene el último número de orden adjudicado a una clase
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     */
+    public void actualizarCurso(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        cursoSelected = (ActividadImplementada)arg2;
+        ultimoNumOrdenAsignado = claseFacade.getUltimoNumeroDeOrden(cursoSelected);
+    }
+    
+    /**
+     * Método para validad el número de orden
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     */
+    public void validarNumeroDeOrden(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        Long numCorrespondiente = Long.valueOf(ultimoNumOrdenAsignado + 1);
+        Long selectNum = (Long)arg2;
+        if(!arg2.equals(numCorrespondiente)){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseValidation_numOrden") + numCorrespondiente));
+        }
+    }
+    
+     /**
+     * Método para la fecha de realización de la clase
+     * No deberá ser anterior a la fecha de inicio de la vigencia del curso
+     * ni anterior a la fecha de la clase inmediatemente anterior
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     */
+    public void validarFechaRelizacion(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{   
+        Date fechaInicioCurso = cursoSelected.getFechaInicio();
+        SimpleDateFormat form_1 = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        String strFechaInicioCurso = form_1.format(fechaInicioCurso);
+        Date fechaPropuesta = (Date)arg2;
+        
+        if(claseFacade.isClasesEmpty(cursoSelected)){
+            if(!fechaPropuesta.after(fechaInicioCurso)){
+                FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior al inicio del curso " + strFechaInicioCurso);
+                message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                throw new ValidatorException(message);
+            }
+        }else{
+            Date ultimaFecha = claseFacade.getLastFechaRelizacion(cursoSelected);
+            if(!fechaPropuesta.after(ultimaFecha)){
+                SimpleDateFormat form_2 = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+                String strUltimaFecha = form_2.format(ultimaFecha);
+                FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior a la fecha de la clase anterior: " + strUltimaFecha);
+                message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                throw new ValidatorException(message);
+            }else{
+                if(!fechaPropuesta.after(fechaInicioCurso)){
+                    FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior al inicio del curso " + strFechaInicioCurso);
+                    message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    throw new ValidatorException(message);
+                }
+            }
+        }
+    }
 
     
     /*********************
@@ -601,6 +777,23 @@ public class MbClase implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseDeletedErrorOccured"));
         }
     }        
+    
+   
+    /**
+     * 
+     */
+    private List<Participante> cargarParticipantesDisponibles(){
+        List<Participante> parts = participanteFacade.getParticipantesXCurso(current.getActividad());
+        List<Participante> partSelect = new ArrayList();
+        Iterator itSubs = parts.listIterator();
+        while(itSubs.hasNext()){
+            Participante part = (Participante)itSubs.next();
+            if(!listPartVinc.contains(part)){
+                partSelect.add(part);
+            }
+        }
+        return partSelect;
+    }    
     
     
     /*****************************************************************************

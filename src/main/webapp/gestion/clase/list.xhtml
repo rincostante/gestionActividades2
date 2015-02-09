@@ -19,6 +19,7 @@
                 <p:panel id="calseForm" header="#{bundle.ClaseListTitle} de Cursos vigentes" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
                     <h:panelGroup>
                         <h:panelGrid columns="4" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbClase.prepareCreate}"/>
                             <p:commandButton icon="ui-icon-refresh" value="Finalizadas" action="#{mbClase.prepareListFin}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbClase.prepareListDes}" ajax="false"/>
                             <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbClase.cleanUp}"/>
@@ -78,11 +79,14 @@
                         <p:outputLabel value="#{e.strFechaRealizacion}"/>
                     </p:column>
                     
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:180px">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbClase.prepareView}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbClase.current}" />
                         </p:commandButton>
+                        <p:commandButton icon="ui-icon-person" action="#{mbClase.prepareAddAsistencia}" title="Asignar asistentes">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbClase.current}" />
+                        </p:commandButton>                      
                         <p:commandButton icon="ui-icon-pencil" action="#{mbClase.prepareEdit}" title="Editar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbClase.current}" />
                         </p:commandButton>

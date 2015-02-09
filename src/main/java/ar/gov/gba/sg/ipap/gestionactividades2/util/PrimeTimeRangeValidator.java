@@ -15,12 +15,12 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 /**
- * Validador de rangos entre fechas
+ * Validador entre rangos horarios
  * @author Administrador
  */
-@FacesValidator("primeDateRangeValidator")
-public class PrimeDateRangeValidator implements Validator{
-
+@FacesValidator("primeTimeRangeValidator")
+public class PrimeTimeRangeValidator implements Validator{
+    
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if (value == null) {
@@ -28,17 +28,18 @@ public class PrimeDateRangeValidator implements Validator{
         }
         
         //Leave the null handling of startDate to required="true"
-        Object startDateValue = component.getAttributes().get("finicial");    
-        if (startDateValue==null) {
+        Object startTimeValue = component.getAttributes().get("hinicial");    
+        if (startTimeValue==null) {
             return;
         }
         
-        Date startDate = (Date)startDateValue;
-        Date endDate = (Date)value;
-        if (endDate.before(startDate)){
-            FacesMessage message = new FacesMessage("La fecha final no puede ser anterior a la fecha inicial.");
+        Date startTime = (Date)startTimeValue;
+        Date endTime = (Date)value;
+        if (endTime.before(startTime) || endTime.equals(startTime)){
+            FacesMessage message = new FacesMessage("La hora final no puede ser anterior o igual a la hora inicial.");
             message.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ValidatorException(message);
-        }         
+        }
     }
+    
 }
