@@ -11,6 +11,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.CriptPass;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -19,6 +20,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
 
 
 public class MbCambioPass implements Serializable{
@@ -29,6 +31,7 @@ public class MbCambioPass implements Serializable{
     @EJB
     private UsuarioFacade usuarioFacade;
     private Usuario usLogeado;
+    private MbLogin login;  
 
     /**
      * Creates a new instance of MbCambioPass
@@ -39,8 +42,29 @@ public class MbCambioPass implements Serializable{
     @PostConstruct
     public void init(){
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+
+	// recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbCambioPass"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }        
     }
 
     public String getClaveNueva() {
@@ -152,6 +176,14 @@ public class MbCambioPass implements Serializable{
         claveAnterior_1 = "";
         claveAnterior_2 = "";
         claveNueva = "";
+        
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+        session.removeAttribute("mbCambioPass");
+
+
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbCambioPass");        
         return "inicio";
     }    
 }

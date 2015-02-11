@@ -16,6 +16,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
@@ -50,6 +51,7 @@ public class MbOrganismo implements Serializable{
     private Organismo orgSelected;
     private List<TipoOrganismo> listaTipoOrg;
     private Usuario usLogeado;
+    private MbLogin login;    
 
     /**
      * Creates a new instance of MbOrganismo
@@ -65,8 +67,29 @@ public class MbOrganismo implements Serializable{
         listaTipoOrg = tipoOrgFacade.findAll();
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+
+	// recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbOrganismo"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }        
     }      
 
     /********************************
@@ -367,6 +390,9 @@ public class MbOrganismo implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbOrganismo");
+        
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbOrganismo");        
         return "inicio";
     }  
     

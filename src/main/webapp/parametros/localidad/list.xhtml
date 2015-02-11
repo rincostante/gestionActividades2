@@ -7,47 +7,53 @@
       xmlns:p="http://primefaces.org/ui">
       
     <h:head>
-        <title>#{bundle.RolTitle}</title>
+        <title>#{bundle.LocalidadTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.RolTitle}" />
+            <h:outputText value="#{bundle.LocalidadTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="rolForm" header="#{bundle.RolListTitle}" style="margin-bottom:10px;">
+                <p:panel id="locForm" header="#{bundle.LocalidadListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbRol.selectParam}" 
-                                        completeMethod="#{mbRol.completeNombres}" />
+                        <p:autoComplete value="#{mbLocalidad.selectParam}" 
+                                        completeMethod="#{mbLocalidad.completeNombres}" />
                         <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="rolForm" resetValues="true" />
+                            <p:ajax update="locForm" resetValues="true" />
                         </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbRol.prepareSelect()}" ajax="false"/>  
-                        <p:outputLabel value="&ensp;"/>
-                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbRol.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbRol.prepareList}" update="rolList"/>
+                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbLocalidad.prepareSelect()}" ajax="false"/>  
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbLocalidad.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbLocalidad.prepareList}" update="locList"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbLocalidad.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <br/>           
 
-                <p:dataTable value="#{mbRol.items}" var="e" id="rolList" rows="5"
+                <p:dataTable value="#{mbLocalidad.items}" var="e" id="locList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.RolListado}
+                        Listado de #{bundle.LocalidadListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:columnToggler datasource="rolList" trigger="toggler" />
+                        <p:columnToggler datasource="locList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
+                    
+                    <p:column headerText="#{bundle.CreateLocalidadTitle_codigoPostal}" sortBy="#{e.codigoPostal}">
+                        <p:outputLabel value="#{e.codigoPostal}"/>
+                    </p:column>
+                    
+                    
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbRol.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbRol.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbRol.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbLocalidad.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbLocalidad.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbLocalidad.prepareDestroy()}"/>
                     </p:column>                
            
                 </p:dataTable>

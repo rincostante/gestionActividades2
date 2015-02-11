@@ -28,7 +28,14 @@
                             <p:menuitem value="Resoluciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizResolucion}/list.xhtml"/>
                             <p:menuitem value="Sub Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSubPrograma}/list.xhtml"/>
                         </p:submenu>
-                        <p:submenu label="Administración">
+                        <p:submenu label="Actores">
+                            <p:menuitem value="Agente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizAgente}/list.xhtml"/>
+                            <p:menuitem value="Docente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizDocente}/list.xhtml"/>
+                            <p:menuitem value="Persona" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPersona}/list.xhtml"/>
+                            <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>    
+                            <p:menuitem value="Usuario" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizUsuario}/list.xhtml"/>    
+                        </p:submenu> 
+                        <p:submenu label="Parámetros">
                             <p:menuitem value="Campo Temático" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCampoTematico}/list.xhtml"/>
                             <p:menuitem value="Cargo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCargo}/list.xhtml"/>
                             <p:menuitem value="Estado de Actividad" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizEstadoAct}/list.xhtml"/>
@@ -44,14 +51,7 @@
                             <p:menuitem value="Tipo de Documento" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoDocumento}/list.xhtml"/>
                             <p:menuitem value="Tipo de Organismo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoOrg}/list.xhtml"/>
                             <p:menuitem value="Título" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTitulo}/list.xhtml"/>
-                        </p:submenu>
-                        <p:submenu label="Seguridad">
-                            <p:menuitem value="Agente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizAgente}/list.xhtml"/>
-                            <p:menuitem value="Docente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizDocente}/list.xhtml"/>
-                            <p:menuitem value="Persona" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPersona}/list.xhtml"/>
-                            <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>    
-                            <p:menuitem value="Usuario" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizUsuario}/list.xhtml"/>    
-                        </p:submenu>                          
+                        </p:submenu>                         
                         <p:submenu label="#{mbLogin.usLogeado.apYNom} | #{mbLogin.usLogeado.rol.nombre}" >
                             <p:menuitem value="Cambiar contraseña" action="#{mbCambioPass.prepareCambioClave}" />
                             <p:menuitem value="Cerrar sesión" action="#{mbLogin.logout}" oncomplete="logout(xhr, status, args)"/>

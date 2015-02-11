@@ -7,53 +7,53 @@
       xmlns:p="http://primefaces.org/ui">
       
     <h:head>
-        <title>#{bundle.EstudiosCursadosTitle}</title>
+        <title>#{bundle.TituloTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.EstudiosCursadosTitle}" />
+            <h:outputText value="#{bundle.TituloTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="estCurForm" header="#{bundle.EstudiosCursadosListTitle}" style="margin-bottom:10px;">
+                <p:panel id="tituloForm" header="#{bundle.TituloListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbEstudiosCursados.selectParam}" 
-                                        completeMethod="#{mbEstudiosCursados.completeNombres}" />
+                        <p:autoComplete value="#{mbTitulo.selectParam}" 
+                                        completeMethod="#{mbTitulo.completeNombres}" />
                         <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="estCurForm" resetValues="true" />
+                            <p:ajax update="tituloForm" resetValues="true" />
                         </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbEstudiosCursados.prepareSelect()}" ajax="false"/>  
-                        <p:outputLabel value="&ensp;"/>
-                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbEstudiosCursados.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbEstudiosCursados.prepareList}" update="estCurList"/>
+                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbTitulo.prepareSelect()}" ajax="false"/>  
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTitulo.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTitulo.prepareList}" update="tituloList"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbTitulo.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <br/>           
 
-                <p:dataTable value="#{mbEstudiosCursados.items}" var="e" id="estCurList" rows="5"
+                <p:dataTable value="#{mbTitulo.items}" var="e" id="tituloList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.EstudiosCursadosListado}
+                        Listado de #{bundle.TituloListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:columnToggler datasource="estCurList" trigger="toggler" />
+                        <p:columnToggler datasource="tituloList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.CreateEstudiosCursadosTitle_estado}" sortBy="#{e.estado}">
-                        <p:outputLabel value="#{e.estado}"/>
+                    <p:column headerText="#{bundle.CreateTituloTitle_expPor}" sortBy="#{e.epedidoPor}">
+                        <p:outputLabel value="#{e.epedidoPor}"/>
                     </p:column>
                     
                     
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbEstudiosCursados.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbEstudiosCursados.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbEstudiosCursados.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTitulo.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbTitulo.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbTitulo.prepareDestroy()}"/>
                     </p:column>                
            
                 </p:dataTable>

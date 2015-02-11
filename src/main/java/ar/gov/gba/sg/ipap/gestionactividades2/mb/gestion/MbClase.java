@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -77,6 +78,7 @@ public class MbClase implements Serializable{
     private Date fAntesDe;
     private Date fDespuesDe;
     private boolean asignaPart; 
+    private MbLogin login;
     private int tipoList; //1=vigentes | 2=finalizadas | 3=deshabilitados   
 
     /**
@@ -92,14 +94,43 @@ public class MbClase implements Serializable{
     public void init(){
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+
+        // recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+        
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbClase"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }
     }
 
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
     
+    public DataModel getListParticipantesDisp() {
+        return listParticipantesDisp;
+    }
+
+    public void setListParticipantesDisp(DataModel listParticipantesDisp) {
+        this.listParticipantesDisp = listParticipantesDisp;
+    }
+
     public DataModel getListParticipantesVinc() {
         return listParticipantesVinc;
     }
@@ -133,16 +164,6 @@ public class MbClase implements Serializable{
     public void setListPartDisp(List<Participante> listPartDisp) {
         this.listPartDisp = listPartDisp;
     }
- 
-    
-    public DataModel getListParticipantesDisp() {
-        return listParticipantesDisp;
-    }
-
-    public void setListParticipantesDisp(DataModel listParticipantesDisp) {
-        this.listParticipantesDisp = listParticipantesDisp;
-    }
- 
     
     public ActividadImplementada getCursoSelected() {
         return cursoSelected;
@@ -257,9 +278,16 @@ public class MbClase implements Serializable{
      */
     public String prepareList() {
         asignaPart = false;
-        listParticipantesVinc = null;
         tipoList = 1;
         recreateModel();
+        listParticipantesDisp = null;
+        listParticipantesVinc = null;
+        if(listPartVinc != null){
+            listPartVinc.clear();
+        }
+        if(listPartDisp != null){
+            listPartDisp.clear();
+        }        
         return "list";
     } 
     
@@ -272,6 +300,14 @@ public class MbClase implements Serializable{
         listParticipantesVinc = null;
         asignaPart = false;
         recreateModel();
+        listParticipantesDisp = null;
+        listParticipantesVinc = null;
+        if(listPartVinc != null){
+            listPartVinc.clear();
+        }
+        if(listPartDisp != null){
+            listPartDisp.clear();
+        } 
         return "listFin";
     }          
     
@@ -284,6 +320,14 @@ public class MbClase implements Serializable{
         listParticipantesVinc = null;
         asignaPart = false;
         recreateModel();
+        listParticipantesDisp = null;
+        listParticipantesVinc = null;
+        if(listPartVinc != null){
+            listPartVinc.clear();
+        }
+        if(listPartDisp != null){
+            listPartDisp.clear();
+        } 
         return "listDes";
     }     
     
@@ -293,6 +337,7 @@ public class MbClase implements Serializable{
     public String prepareView() {
         asignaPart = false;
         selectedItemIndex = getItems().getRowIndex();
+        listPartVinc = current.getParticipantes();
         return "view";
     }
     
@@ -302,16 +347,8 @@ public class MbClase implements Serializable{
     public String prepareViewFin() {
         asignaPart = false;
         selectedItemIndex = getItems().getRowIndex();
+        listPartVinc = current.getParticipantes();
         return "viewFin";
-    }  
-    
-    /**
-     * @return acción para el detalle de la entidad vencida
-     */
-    public String prepareViewProv() { 
-        asignaPart = false;
-        selectedItemIndex = getItems().getRowIndex();
-        return "viewProv";
     }        
     
     /**
@@ -320,6 +357,7 @@ public class MbClase implements Serializable{
     public String prepareViewDes() {
         asignaPart = false;
         selectedItemIndex = getItems().getRowIndex();
+        listPartVinc = current.getParticipantes();
         return "viewDes";
     }
 
@@ -346,7 +384,6 @@ public class MbClase implements Serializable{
         listActImp = cursoFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
         selectedItemIndex = getItems().getRowIndex();
-        asignaPart = true;
         return "edit";
     }
     
@@ -359,7 +396,6 @@ public class MbClase implements Serializable{
         listActImp = cursoFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
         selectedItemIndex = getItems().getRowIndex();
-        asignaPart = true;
         return "editFin";
     }     
     
@@ -372,7 +408,6 @@ public class MbClase implements Serializable{
         listActImp = cursoFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
         selectedItemIndex = getItems().getRowIndex();
-        asignaPart = true;
         return "editProv";
     }    
     
@@ -381,6 +416,9 @@ public class MbClase implements Serializable{
      * @return 
      */
     public String prepareAddAsistencia(){
+        asignaPart = true;
+        listPartVinc = current.getParticipantes();
+        listPartDisp = cargarParticipantesDisponibles();
         return "addAsistencia";
     }
     
@@ -409,6 +447,7 @@ public class MbClase implements Serializable{
             // No Elimina 
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseNonDeletable"));
         }
+        listPartVinc = current.getParticipantes();
         return "view";
     }  
     
@@ -430,6 +469,7 @@ public class MbClase implements Serializable{
             // Actualizo
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseHabilitado"));
+            listPartVinc = current.getParticipantes();
             return "view";
         }catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseHabilitadaErrorOccured"));
@@ -540,7 +580,6 @@ public class MbClase implements Serializable{
                 listDocentes.clear();
                 listActImp.clear();
                 listModalidades.clear();
-                asignaPart = false;
                 if(tipoList == 1){
                     retorno = "view";  
                 }
@@ -561,8 +600,6 @@ public class MbClase implements Serializable{
                     listDocentes.clear();
                     listActImp.clear();
                     listModalidades.clear();
-                    asignaPart = false;
-                    listParticipantesVinc = null;
                     if(tipoList == 1){
                         retorno = "view";  
                     }
@@ -577,6 +614,32 @@ public class MbClase implements Serializable{
             }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseUpdatedErrorOccured"));
+            return null;
+        }
+    }
+    
+    /**
+     * Método para registrar asistencias a la clase
+     * @return 
+     */
+    public String registrarAsistencias(){
+        try{
+            // Actualizo los datos de administración de la entidad
+            Date date = new Date(System.currentTimeMillis());
+            current.getAdmin().setFechaModif(date);
+            current.getAdmin().setUsModif(usLogeado);
+
+            // Persisto
+            getFacade().edit(current);
+            // Resteo los list y datamodels
+            listParticipantesDisp = null;
+            listParticipantesVinc = null;
+            listPartVinc.clear();
+            listPartDisp.clear();
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseAsistenciaRegistrada"));
+            return "view";
+        }catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseAsistenciaErrorOccured"));
             return null;
         }
     }
@@ -624,6 +687,9 @@ public class MbClase implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbClase");
+        
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbClase");
         return "inicio";
     }    
     

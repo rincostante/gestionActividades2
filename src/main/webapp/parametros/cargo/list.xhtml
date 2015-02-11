@@ -7,47 +7,47 @@
       xmlns:p="http://primefaces.org/ui">
       
     <h:head>
-        <title>#{bundle.TipoCapacitacionTitle}</title>
+        <title>#{bundle.CargoTitle}</title>
     </h:head>
     <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.TipoCapacitacionTitle}" />
+            <h:outputText value="#{bundle.CargoTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/> 
             <h:form>
-                <p:panel id="tipoCapForm" header="#{bundle.TipoCapacitacionListTitle}" style="margin-bottom:10px;">
+                <p:panel id="cargoForm" header="#{bundle.CargoListTitle}" style="margin-bottom:10px;">
                     <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbTipoCapacitacion.selectParam}" 
-                                        completeMethod="#{mbTipoCapacitacion.completeNombres}" />
+                        <p:autoComplete value="#{mbCargo.selectParam}" 
+                                        completeMethod="#{mbCargo.completeNombres}" />
                         <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="tipoCapForm" resetValues="true" />
-                        </p:commandButton>                        
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbTipoCapacitacion.prepareSelect()}" ajax="false"/>  
-                        <p:outputLabel value="&ensp;&ensp;"/>
-                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTipoCapacitacion.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoCapacitacion.prepareList}" update="tipoCapList"/>
+                            <p:ajax update="cargoForm" resetValues="true" />
+                        </p:commandButton>                           
+                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbCargo.prepareSelect()}" ajax="false"/>  
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbCargo.prepareCreate}"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbCargo.prepareList}" update="cargoList"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbCargo.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
 
                 <br/>           
 
-                <p:dataTable value="#{mbTipoCapacitacion.items}" var="e" id="tipoCapList" rows="5"
+                <p:dataTable value="#{mbCargo.items}" var="e" id="cargoList" rows="5"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.TipoCapListado}
+                        Listado de #{bundle.CargoListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:columnToggler datasource="tipoCapList" trigger="toggler" />
+                        <p:columnToggler datasource="cargoList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoCapacitacion.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoCapacitacion.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoCapacitacion.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbCargo.prepareView}"/>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbCargo.prepareEdit}"/>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbCargo.prepareDestroy()}"/>
                     </p:column>                
            
                 </p:dataTable>

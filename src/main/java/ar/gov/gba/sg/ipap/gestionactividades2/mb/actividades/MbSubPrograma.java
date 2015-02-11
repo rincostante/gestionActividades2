@@ -63,6 +63,7 @@ public class MbSubPrograma implements Serializable{
     private List<ActividadPlan> listActPlan;
     private Date fAntesDe;
     private Date fDespuesDe;
+    private MbLogin login;
     private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
     
     /** Creates a new instance of MbSubPrograma */
@@ -76,8 +77,29 @@ public class MbSubPrograma implements Serializable{
     public void init(){
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+        
+	// recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbSubPrograma"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }      
     }
     
     /********************************
@@ -508,6 +530,9 @@ public class MbSubPrograma implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbSubPrograma");
+        
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbSubPrograma");
         return "inicio";
     }      
     

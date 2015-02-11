@@ -21,10 +21,13 @@
                     <h:outputText value="#{part.agente.documento}" />
                 </p:column>
                 <p:column headerText="Organismo">
-                    <h:outputText value="#{part.agente.organismo.nombre}" />
+                    <h:outputText value="#{part.agente.organismo.tipoOrganismo.nombre} #{part.agente.organismo.nombre}" />
                 </p:column>
                 <p:column headerText="Cargo">
-                    <h:outputText value="#{part.agente.cargo}" />
+                    <h:outputText value="#{part.agente.cargo.nombre}" />
+                </p:column>
+                <p:column headerText="Referente">
+                    <h:outputText value="#{part.agente.referente.apYNom}" />
                 </p:column>
                 <p:column headerText="Asignar" style="width :45px;">
                     <p:commandButton icon="ui-icon-circle-triangle-s" ajax="false" 

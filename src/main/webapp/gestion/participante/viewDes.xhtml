@@ -33,6 +33,10 @@
                         <h:outputText value="#{mbParticipante.selected.strFechaAutoriz}"
                                       title="#{bundle.ParticipanteTitle_FechaAutorizacion}"/>  
                         
+                        <h:outputLabel value="#{bundle.ParticipanteLable_Referente}"/>
+                        <h:outputText value="#{mbParticipante.selected.agente.referente.apYNom}"
+                                      title="#{bundle.ParticipanteTitle_Referente}"/> 
+                        
                         <h:outputLabel value="#{bundle.ParticipanteLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbParticipante.selected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 

@@ -98,7 +98,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
-                + "AND clase.actividad.fechaFin >= CURRENT_DATE";
+                + "AND clase.fechaRealizacion >= CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -124,7 +124,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
-                + "AND clase.actividad.fechaFin < CURRENT_DATE";
+                + "AND clase.fechaRealizacion < CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }      

@@ -95,7 +95,7 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
     public List<Participante> getAutorizados(){
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
-                + "WHERE part.estado.nombre = 'Autorizado' "
+                + "WHERE part.estado.nombre = 'Inscripto' "
                 + "AND part.admin.habilitado = true "
                 + "AND part.actividad.fechaFin >= CURRENT_DATE";
         Query q = em.createQuery(queryString);
@@ -150,7 +150,7 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.actividad = :curso "
-                + "ORDER BY part.agente.apYNom";
+                + "ORDER BY part.agente.persona.apellidos";
         Query q = em.createQuery(queryString)
                 .setParameter("curso", curso);
         return q.getResultList();

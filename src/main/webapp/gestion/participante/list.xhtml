@@ -73,7 +73,11 @@
                     
                     <p:column headerText="#{bundle.ParticipanteLable_FechaAutorizacion}" sortBy="#{e.strFechaAutoriz}" filterBy="#{e.strFechaAutoriz}">
                         <p:outputLabel value="#{e.strFechaAutoriz}"/>
-                    </p:column>     
+                    </p:column>  
+                    
+                    <p:column headerText="#{bundle.ParticipanteLable_Referente}" sortBy="#{e.agente.referente.apYNom}" filterBy="#{e.agente.referente.apYNom}">
+                        <p:outputLabel value="#{e.agente.referente.apYNom}"/>
+                    </p:column> 
                     
                     <p:column headerText="Acciones" style="width:135px">
                         <p:growl id="messages" showDetail="true" />

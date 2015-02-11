@@ -8,15 +8,18 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -24,6 +27,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -40,12 +44,44 @@ public class MbTipoCapacitacion implements Serializable{
     private int selectedItemIndex;
     private String selectParam;    
     private List<String> listaNombres;
+    private MbLogin login;
 
     /**
      * Creates a new instance of MbTipoCapacitacion
      */
     public MbTipoCapacitacion() {   
     }
+    
+    /**
+     * Método que se ejecuta luego de instanciada la clase e inicializa los datos del usuario
+     */
+    @PostConstruct
+    public void init(){
+        ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+
+        // recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+        
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbTipoCapacitacion"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }
+    }
+    
     
     /********************************
      ** Métodos para la navegación **
@@ -284,6 +320,21 @@ public class MbTipoCapacitacion implements Serializable{
     public TipoCapacitacion getTipoCapacitacion(java.lang.Long id) {
         return tipoCapacitacionFacade.find(id);
     }    
+    
+    /**
+     * Método para revocar la sesión del MB
+     * @return 
+     */
+    public String cleanUp(){
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+        session.removeAttribute("mbTipoCapacitacion");
+        
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbTipoCapacitacion");
+        return "inicio";
+    } 
+    
     
     /*********************
     ** Métodos privados **

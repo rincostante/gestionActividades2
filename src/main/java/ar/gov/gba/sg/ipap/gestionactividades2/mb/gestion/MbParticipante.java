@@ -62,6 +62,7 @@ public class MbParticipante implements Serializable{
     private List<ActividadImplementada> listActImp;
     private Date fAntesDe;
     private Date fDespuesDe;
+    private MbLogin login;
     private int tipoList; //1=autorizados | 2=provisorios | 3=vencidos | 4=deshabilitados     
 
     /**
@@ -77,8 +78,30 @@ public class MbParticipante implements Serializable{
     public void init(){
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+        
+        // recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbParticipante"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }
+
     }
     
     /********************************
@@ -365,7 +388,7 @@ public class MbParticipante implements Serializable{
     public String prepareAutorizar(){
         current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
-        List<EstadoParticipante> estParts = estPartFacade.getXString("Autorizado");
+        List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -580,6 +603,9 @@ public class MbParticipante implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbParticipante");
+        
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbClase");        
         return "inicio";
     }      
 

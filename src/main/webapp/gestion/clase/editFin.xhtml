@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ClaseTitle}" />
+        </ui:define>
+        <ui:define name="content">
+        <br/>
+            <h:form>
+                <p:panel id="pnEdit" header="#{bundle.ClaseEditTitle}" style="margin-bottom:10px;">
+                    <h:inputHidden id="id" value="#{mbClase.selected.id}" />
+                    <p:messages id="messages" />
+                    <h:panelGrid columns="2">
+
+                        <p:outputLabel value="#{bundle.ClaseLabel_curso}" for="curso"/>
+                        <p:selectOneMenu id="curso" value="#{mbClase.selected.actividad}" 
+                                         required="true" 
+                                         requiredMessage="#{bundle.ClaseRequire_curso}"
+                                         validator="#{mbClase.actualizarCurso}" >
+                            <f:selectItem itemLabel="Seleccione el Curso" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbClase.listActImp}" var="curso" 
+                                           itemLabel="#{curso.actividadPlan.nombre} - #{curso.sede.nombre} - #{curso.strFechaFinVig}" 
+                                           itemValue="#{curso}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ClaseLabel_numOrden}" />
+                        <p:outputLabel value="#{mbClase.selected.numOrden}" />
+                        
+                        <p:outputLabel value="#{bundle.ClaseLable_FechaRealizacion}" for="fechaRealiz"/>
+                        <p:calendar id="fechaRealiz" value="#{mbClase.selected.fechaRealizacion}" 
+                                    pattern="dd/MM/yyyy" mask="true" 
+                                    required="true" 
+                                    requiredMessage="ClaseRequire_fechaRealizaccion" />
+                        
+                         <p:outputLabel value="#{bundle.ClaseLabel_horaInicio}" for="horaInicio"/>
+                        <p:calendar id="horaInicio" timeOnly="true" locale="es" pattern="HH:mm" minHour="8" maxHour="20" 
+                                    value="#{mbClase.selected.horaInicio}"  
+                                    required="true" 
+                                    requiredMessage="#{bundle.ClaseRequire_horaInicio}">
+                            <p:ajax event="dateSelect" update="horaFin" />
+                        </p:calendar>  
+                        
+                        <p:outputLabel value="#{bundle.ClaseLabel_horaFin}" for="horaFin"/>
+                        <p:calendar id="horaFin" timeOnly="true" locale="es" pattern="HH:mm" minHour="8" maxHour="20" 
+                                    value="#{mbClase.selected.horaFin}"  
+                                    required="true" 
+                                    requiredMessage="#{bundle.ClaseRequire_horaFin}">
+                            <f:attribute name="hinicial" value="#{mbClase.selected.horaInicio}"/>
+                            <f:validator validatorId="primeTimeRangeValidator" />
+                        </p:calendar> 
+                        
+                        <p:outputLabel value="#{bundle.ClaseLabel_Docente}" for="docente"/>
+                        <p:selectOneMenu id="docente" value="#{mbClase.selected.docente}" 
+                                         required="true" 
+                                         requiredMessage="#{bundle.ClaseRequire_docente}">
+                            <f:selectItem itemLabel="Seleccione el Docente" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbClase.listDocentes}" var="docente" 
+                                           itemLabel="#{docente.apYNom} - #{docente.documento}" 
+                                           itemValue="#{docente}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ClaseLabel_modalidad}" for="modalidad"/>
+                        <p:selectOneMenu id="modalidad" value="#{mbClase.selected.modalidad}" 
+                                         required="true" 
+                                         requiredMessage="#{bundle.ClaseRequire_modalidad}">
+                            <f:selectItem itemLabel="Seleccione el Modalidad" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbClase.listModalidades}" var="modalidad" 
+                                           itemLabel="#{modalidad.nombre}" 
+                                           itemValue="#{modalidad}"/>
+                        </p:selectOneMenu> 
+                        
+                    </h:panelGrid>
+                </p:panel>
+                
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-pencil" 
+                                         action="#{mbClase.update}" 
+                                         value="Guardar" 
+                                         style="margin-right:10px;" 
+                                         update="pnEdit"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnEdit" resetValues="true" />
+                        </p:commandButton>                        
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
+                                         action="#{mbClase.prepareListFin()}" 
+                                         value="Volver" 
+                                         immediate="true" 
+                                         ajax="false"/>
+                    </f:facet>                    
+                </p:toolbar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

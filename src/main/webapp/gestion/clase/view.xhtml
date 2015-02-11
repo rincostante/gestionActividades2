@@ -45,6 +45,9 @@
                         <h:outputText value="#{mbClase.selected.modalidad.nombre}" 
                                       title="#{bundle.ClaseTitle_modalidad}"/>  
                         
+                        <h:outputLabel value="#{bundle.ClaseLabel_Asistentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbClase.verAsistentes}" />
+                        
                         <h:outputLabel value="#{bundle.ClaseLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbClase.selected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 

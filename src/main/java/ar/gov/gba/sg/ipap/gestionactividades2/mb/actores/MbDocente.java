@@ -70,6 +70,7 @@ public class MbDocente implements Serializable{
     boolean esAgente;
     boolean esPersona;   
     private Usuario usLogeado;
+    private MbLogin login;   
     
     /**
      * Creates a new instance of MbDocente
@@ -85,8 +86,29 @@ public class MbDocente implements Serializable{
         listaTitulos = tituloFacade.findAll();
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+        
+	// recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbDocente"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }        
     }   
 
     /********************************
@@ -534,6 +556,9 @@ public class MbDocente implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbDocente");
+        
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbDocente");        
         return "inicio";
     }  
     

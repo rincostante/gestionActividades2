@@ -10,13 +10,13 @@
             <h:outputText value="#{bundle.ClaseTitle}" />
         </ui:define>
         <ui:define name="content">
-        <br/>
-            <h:form>
-                <p:panel id="pnEdit" header="Administre las asistencias de la clase" style="margin-bottom:10px;">
-                    <h:inputHidden id="id" value="#{mbClase.selected.id}" />
+            <br/>
+            <h:form id="frmClaseView">
+                <p:panel id="pnView" header="#{bundle.ClaseViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
+                    <p:dialog id="dlg" resizable="false" />
                     <h:panelGrid columns="2">
-
+                        
                         <h:outputLabel value="#{bundle.ClaseLabel_curso}"/>
                         <h:outputText value="#{mbClase.selected.actividad.actividadPlan.nombre} - #{mbClase.selected.actividad.strFechaIniVig}" 
                                       title="#{bundle.ClaseTitle_curso}"/>  
@@ -45,33 +45,35 @@
                         <h:outputText value="#{mbClase.selected.modalidad.nombre}" 
                                       title="#{bundle.ClaseTitle_modalidad}"/>  
                         
-                        <h:outputLabel value="#{bundle.ClaseLabel_Asistentes}"/>
-                        <h:panelGrid id="btnVerSub" columns="2">
-                            <p:commandButton value="Ver/Quitar Asistentes" icon="ui-icon-extlink"  
-                                             actionListener="#{mbClase.verAsistentes}" />
-                            <p:commandButton value="Ver/Asignar Disponibles" icon="ui-icon-extlink"  
-                                             actionListener="#{mbClase.verParticipantesDisp}" />
-                        </h:panelGrid>
+                        <h:outputLabel value="#{bundle.ClaseLabel_Asistentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbClase.verAsistentes}" />
                         
-                    </h:panelGrid>
+                        <h:outputLabel value="#{bundle.ClaseLabel_fechaAlta}"/>
+                        <p:calendar id="fechaAlta" value="#{mbClase.selected.admin.fechaAlta}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+
+                        <h:outputLabel value="#{bundle.ClaseLabel_usAlta}"/>
+                        <h:outputText value="#{mbClase.selected.admin.usAlta.apYNom}" title="#{bundle.ClaseTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.ClaseLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbClase.selected.admin.fechaModif}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.ClaseLabel_usMod}"/>
+                        <h:outputText value="#{mbClase.selected.admin.usModif.apYNom}" title="#{bundle.ClaseTitle_usMod}"/>     
+                        
+                    </h:panelGrid>                    
                 </p:panel>
-                
                 <p:toolbar>
-                    <f:facet name="left">
-                        <p:commandButton icon="ui-icon-pencil" 
-                                         action="#{mbClase.registrarAsistencias}" 
-                                         value="Guardar" 
-                                         style="margin-right:10px;" 
-                                         update="pnEdit"/>                      
-                    </f:facet>
                     <f:facet name="right">
-                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
-                                         action="#{mbClase.prepareList}" 
-                                         value="Volver" 
-                                         immediate="true" 
-                                         ajax="false"/>
-                    </f:facet>                    
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbClase.prepareListFin}" value="Volver" ajax="false"/>
+                    </f:facet>
                 </p:toolbar>
+
             </h:form>
         </ui:define>
     </ui:composition>

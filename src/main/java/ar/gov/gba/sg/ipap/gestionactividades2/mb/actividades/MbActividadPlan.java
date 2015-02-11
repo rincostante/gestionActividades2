@@ -84,6 +84,7 @@ public class MbActividadPlan implements Serializable{
     private List<TipoCapacitacion> listTipoCapacitaciones;
     private List<CampoTematico> listCamposTematicos;
     private List<Organismo> listOrganismos;
+    private MbLogin login;
     private int tipoList; //1=habilitadas | 2=suspendidas | 3=deshabilitadas     
 
     /** Creates a new instance of MbActividadPlan */
@@ -97,8 +98,29 @@ public class MbActividadPlan implements Serializable{
     public void init(){
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        MbLogin login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+        
+	// recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbActividadPlan"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }
     }
     
     /********************************
@@ -643,6 +665,10 @@ public class MbActividadPlan implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbActividadPlan");
+        
+
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbActividadPlan");
         return "inicio";
     }   
     

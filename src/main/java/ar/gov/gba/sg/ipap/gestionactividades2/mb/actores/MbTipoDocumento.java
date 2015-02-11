@@ -8,15 +8,18 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TipoDocumentoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -24,6 +27,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -38,13 +42,45 @@ public class MbTipoDocumento implements Serializable{
     private TipoDocumentoFacade tipoDocumentoFacade;
     private int selectedItemIndex;
     private String selectParam; 
-    private List<String> listaNombres;      
+    private List<String> listaNombres;   
+    private MbLogin login;
 
     /**
      * Creates a new instance of MbTipoDocumento
      */
     public MbTipoDocumento() {
     }
+    
+    /**
+     * Método que se ejecuta luego de instanciada la clase e inicializa los datos del usuario
+     */
+    @PostConstruct
+    public void init(){
+        ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
+        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
+
+        // recorro los mb que me hayan quedado activos en la session y los voy removiendo
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+        
+        Iterator iMbActivos = login.getListMbActivos().iterator();
+        try{
+            while(iMbActivos.hasNext()){
+                session.removeAttribute((String)iMbActivos.next());
+            }
+
+            // limpio la lista
+            if(!login.getListMbActivos().isEmpty()){
+                login.getListMbActivos().clear();
+            }
+
+            // agrego el mb a la lista de activos
+            login.getListMbActivos().add("mbTipoDocumento"); 
+        }catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
+        }
+    }
+    
     
     /********************************
      ** Métodos para la navegación **
@@ -247,6 +283,21 @@ public class MbTipoDocumento implements Serializable{
     public TipoDocumento getTipoDocumento(java.lang.Long id) {
         return tipoDocumentoFacade.find(id);
     }    
+    
+    /**
+     * Método para revocar la sesión del MB
+     * @return 
+     */
+    public String cleanUp(){
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true);
+        session.removeAttribute("mbTipoDocumento");
+        
+        // quito el mb de la lista de beans en memoria
+        login.getListMbActivos().remove("mbTipoDocumento");
+        return "inicio";
+    } 
+    
     
     /*********************
     ** Métodos privados **

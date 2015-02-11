@@ -10,7 +10,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.CriptPass;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -35,11 +38,28 @@ public class MbLogin implements Serializable{
     private String claveNueva;
     @EJB
     private UsuarioFacade usuarioFacade;
+    private List<String> listMbActivos;
     
     /**
      * Creates a new instance of MbLogin
      */
     public MbLogin() {
+    }
+    
+    /**
+     * Método para inicializar el listado de los Mb activos
+     */
+    @PostConstruct
+    public void init(){
+        listMbActivos = new ArrayList();
+    }
+
+    public List<String> getListMbActivos() {
+        return listMbActivos;
+    }
+
+    public void setListMbActivos(List<String> listMbActivos) {
+        this.listMbActivos = listMbActivos;
     }
 
     public String getClaveAnterior_1() {

@@ -13,7 +13,7 @@
     </h:head>
     <h:body>
         <h:form id="frmAsistVinc">
-            <p:dataTable var="part" value="#{mbClase.listPartVinc}">
+            <p:dataTable var="part" value="#{mbClase.listParticipantesVinc}">
                 <p:column headerText="Nombre">
                     <h:outputText value="#{part.agente.apYNom}" />
                 </p:column>
@@ -21,10 +21,13 @@
                     <h:outputText value="#{part.agente.documento}" />
                 </p:column>
                 <p:column headerText="Organismo">
-                    <h:outputText value="#{part.agente.organismo.nombre}" />
+                    <h:outputText value="#{part.agente.organismo.tipoOrganismo.nombre} #{part.agente.organismo.nombre}" />
                 </p:column>
                 <p:column headerText="Cargo">
-                    <h:outputText value="#{part.agente.cargo}" />
+                    <h:outputText value="#{part.agente.cargo.nombre}" />
+                </p:column>
+                <p:column headerText="Referente">
+                    <h:outputText value="#{part.agente.referente.apYNom}" />
                 </p:column>
                 <p:column headerText="Quitar" style="width :45px;" rendered="#{mbClase.asignaPart}">
                     <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbClase.asignaPart}" 
