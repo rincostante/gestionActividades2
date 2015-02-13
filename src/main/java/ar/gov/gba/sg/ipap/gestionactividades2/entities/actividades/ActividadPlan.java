@@ -91,6 +91,22 @@ public class ActividadPlan implements Serializable {
     private String observaciones;
     
     /**
+     * Campo de texto que indica el resumen académico del contenido de la actividad.
+     */    
+    @Column (nullable=false, length=1500)
+    @NotNull(message = "Este campo es obligatorio")
+    @Size(message = "El campo no puede excederse de  los 1500 caracteres", max = 1500)
+    private String resumenAcademico;    
+    
+    /**
+     * Campo de texto que contiene la url a la informaciación general de la actividad en el centro documental
+     */    
+    @Column (nullable=false, length=200)
+    @NotNull(message = "Este campo es obligatorio")
+    @Size(message = "El campo no puede excederse de  los 200 caracteres", max = 200)
+    private String verMas;        
+    
+    /**
      * Campo de tipo Resolucion que contiene la resolución que da marco institucional a la Actividad.
      */
     @ManyToOne(fetch=FetchType.LAZY)
@@ -156,6 +172,22 @@ public class ActividadPlan implements Serializable {
     public ActividadPlan(){
         actividadesImplementadas = new ArrayList();
         subprogramas = new ArrayList();
+    }
+
+    public String getVerMas() {
+        return verMas;
+    }
+
+    public void setVerMas(String verMas) {
+        this.verMas = verMas;
+    }
+
+    public String getResumenAcademico() {
+        return resumenAcademico;
+    }
+
+    public void setResumenAcademico(String resumenAcademico) {
+        this.resumenAcademico = resumenAcademico;
     }
 
     /**

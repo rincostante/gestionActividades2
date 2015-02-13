@@ -43,28 +43,7 @@ public class MbCambioPass implements Serializable{
     public void init(){
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
-        usLogeado = login.getUsLogeado();
-
-	// recorro los mb que me hayan quedado activos en la session y los voy removiendo
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-
-        Iterator iMbActivos = login.getListMbActivos().iterator();
-        try{
-            while(iMbActivos.hasNext()){
-                session.removeAttribute((String)iMbActivos.next());
-            }
-
-            // limpio la lista
-            if(!login.getListMbActivos().isEmpty()){
-                login.getListMbActivos().clear();
-            }
-
-            // agrego el mb a la lista de activos
-            login.getListMbActivos().add("mbCambioPass"); 
-        }catch(Exception e){
-            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
-        }        
+        usLogeado = login.getUsLogeado();       
     }
 
     public String getClaveNueva() {
@@ -122,7 +101,7 @@ public class MbCambioPass implements Serializable{
      * @return 
      */
     public String prepareCambioClave(){
-        return "/seguridad/usuario/editDatos";
+        return "/actores/usuario/editDatos";
     }
     
     /**
@@ -180,10 +159,7 @@ public class MbCambioPass implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbCambioPass");
-
-
-        // quito el mb de la lista de beans en memoria
-        login.getListMbActivos().remove("mbCambioPass");        
+    
         return "inicio";
     }    
 }

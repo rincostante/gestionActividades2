@@ -8,34 +8,34 @@
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title><ui:insert name="title"/></title>
     </h:head>
-    <h:body>
+    <h:body style="text-align: center">
         <div id="layout">     
             <div id="header">
-                <div id="logo" style="position: relative; left: 18%">
+                <div id="logo">
                     <img src= "#{bundle.Servidor}#{bundle.RutaAplicacion}/faces/resources/img/header.png" width="977" height="123" alt="header" style="alignment-adjust: central"/>
                 </div>
                 <h:form>
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}" />
-                        <p:submenu label="Gestión">
+                        <p:submenu label="Gestión" rendered="#{mbLogin.usLogeado.rol.nombre != 'Administrador'}">
                             <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/list.xhtml"/>
                             <p:menuitem value="Clases" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizClase}/list.xhtml"/>
                         </p:submenu>
-                        <p:submenu label="Actividades">
+                        <p:submenu label="Actividades" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
                             <p:menuitem value="Actividades Formativas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadPlan}/list.xhtml"/>
                             <p:menuitem value="Cursos" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
                             <p:menuitem value="Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPrograma}/list.xhtml"/>
                             <p:menuitem value="Resoluciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizResolucion}/list.xhtml"/>
                             <p:menuitem value="Sub Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSubPrograma}/list.xhtml"/>
                         </p:submenu>
-                        <p:submenu label="Actores">
+                        <p:submenu label="Actores" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
                             <p:menuitem value="Agente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizAgente}/list.xhtml"/>
                             <p:menuitem value="Docente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizDocente}/list.xhtml"/>
                             <p:menuitem value="Persona" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPersona}/list.xhtml"/>
                             <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>    
                             <p:menuitem value="Usuario" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizUsuario}/list.xhtml"/>    
                         </p:submenu> 
-                        <p:submenu label="Parámetros">
+                        <p:submenu label="Parámetros" rendered="#{mbLogin.usLogeado.rol.nombre == 'Administrador'}">
                             <p:menuitem value="Campo Temático" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCampoTematico}/list.xhtml"/>
                             <p:menuitem value="Cargo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCargo}/list.xhtml"/>
                             <p:menuitem value="Estado de Actividad" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizEstadoAct}/list.xhtml"/>
@@ -66,7 +66,7 @@
                 </ui:insert>
             </div>
 
-            <div id="footer" style="position: relative; left: 18%">
+            <div id="footer">
                 <p></p>
                 <img src="#{bundle.Servidor}#{bundle.RutaAplicacion}/faces/resources/img/footer.png" width="962" height="72" alt="footer"/>
             </div>

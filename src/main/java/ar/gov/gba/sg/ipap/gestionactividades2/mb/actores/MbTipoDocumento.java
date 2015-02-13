@@ -51,36 +51,6 @@ public class MbTipoDocumento implements Serializable{
     public MbTipoDocumento() {
     }
     
-    /**
-     * Método que se ejecuta luego de instanciada la clase e inicializa los datos del usuario
-     */
-    @PostConstruct
-    public void init(){
-        ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
-
-        // recorro los mb que me hayan quedado activos en la session y los voy removiendo
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-        
-        Iterator iMbActivos = login.getListMbActivos().iterator();
-        try{
-            while(iMbActivos.hasNext()){
-                session.removeAttribute((String)iMbActivos.next());
-            }
-
-            // limpio la lista
-            if(!login.getListMbActivos().isEmpty()){
-                login.getListMbActivos().clear();
-            }
-
-            // agrego el mb a la lista de activos
-            login.getListMbActivos().add("mbTipoDocumento"); 
-        }catch(Exception e){
-            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
-        }
-    }
-    
     
     /********************************
      ** Métodos para la navegación **
@@ -292,9 +262,7 @@ public class MbTipoDocumento implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbTipoDocumento");
-        
-        // quito el mb de la lista de beans en memoria
-        login.getListMbActivos().remove("mbTipoDocumento");
+
         return "inicio";
     } 
     

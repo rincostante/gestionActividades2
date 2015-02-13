@@ -31,7 +31,7 @@ public class MbLogin implements Serializable{
     private String nombre;
     private String clave;
     private boolean logeado = false;   
-    private String rol;
+    private String ambito;
     private Usuario usLogeado;
     private String claveAnterior_1;
     private String claveAnterior_2;
@@ -118,12 +118,12 @@ public class MbLogin implements Serializable{
         this.logeado = logeado;
     }
 
-    public String getRol() {
-        return rol;
+    public String getAmbito() {
+        return ambito;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setAmbito(String rol) {
+        this.ambito = rol;
     }
     
     public void login(ActionEvent actionEvent){
@@ -135,10 +135,12 @@ public class MbLogin implements Serializable{
             if(validar()){
                 logeado = true;
 
-                if(usLogeado.getRol().getNombre().equals("Administrador")){
-                    rol = "admin";
+                if(usLogeado.getRol().getNombre().equals("Administrador")
+                        || usLogeado.getRol().getNombre().equals("Coordinador")
+                        || usLogeado.getRol().getNombre().equals("Supervisor")){
+                    ambito = "admin";
                 }else{
-                    rol = "usuario";
+                    ambito = "externo";
                 }
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenid@", usLogeado.getApYNom());
             }else{

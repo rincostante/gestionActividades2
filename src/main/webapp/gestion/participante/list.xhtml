@@ -14,15 +14,18 @@
             <h:outputText value="#{bundle.ParticipanteTitle}" />
         </ui:define>
         <ui:define name="content">
+            <f:metadata>  
+                <f:event listener="#{mbParticipante.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata> 
             <br/> 
-            <h:form>
+            <h:form style="text-align: left">
                 <p:panel id="particForm" header="#{bundle.ParticipanteListTitle} Autorizadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
                     <h:panelGroup>
                         <h:panelGrid columns="4" id="pnBotones">
                             <p:commandButton icon="ui-icon-refresh" value="Provisorios" action="#{mbParticipante.prepareListProv}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbParticipante.prepareListVenc}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbParticipante.prepareListDes}" ajax="false"/>
-                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbParticipante.cleanUp}"/>
+                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbParticipante.cleanUp}" ajax="false"/>
                         </h:panelGrid>
                         <br/>
                         <h:panelGrid columns="2" id="pnBusqueda">

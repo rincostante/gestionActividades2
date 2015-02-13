@@ -64,31 +64,7 @@ public class MbNivelIpap implements Serializable{
         estados  = new HashMap<>();
         estados.put("Incompleto", "Incompleto");
         estados.put("En Curso", "En Curso");
-        estados.put("Finalizado", "Finalizado");  
-        
-        ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
-
-	// recorro los mb que me hayan quedado activos en la session y los voy removiendo
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-
-        Iterator iMbActivos = login.getListMbActivos().iterator();
-        try{
-            while(iMbActivos.hasNext()){
-                session.removeAttribute((String)iMbActivos.next());
-            }
-
-            // limpio la lista
-            if(!login.getListMbActivos().isEmpty()){
-                login.getListMbActivos().clear();
-            }
-
-            // agrego el mb a la lista de activos
-            login.getListMbActivos().add("mbNivelIpap"); 
-        }catch(Exception e){
-            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
-        }        
+        estados.put("Finalizado", "Finalizado");        
     }  
     
     /********************************
@@ -292,9 +268,7 @@ public class MbNivelIpap implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbNivelIpap");
-        
-        // quito el mb de la lista de beans en memoria
-        login.getListMbActivos().remove("mbNivelIpap");
+
         return "inicio";
     }   
     

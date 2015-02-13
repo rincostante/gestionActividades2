@@ -21,6 +21,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -63,7 +64,8 @@ public class MbParticipante implements Serializable{
     private Date fAntesDe;
     private Date fDespuesDe;
     private MbLogin login;
-    private int tipoList; //1=autorizados | 2=provisorios | 3=vencidos | 4=deshabilitados     
+    private int tipoList; //1=autorizados | 2=provisorios | 3=vencidos | 4=deshabilitados  
+    private boolean iniciado;
 
     /**
      * Creates a new instance of MbParticipante
@@ -75,33 +77,13 @@ public class MbParticipante implements Serializable{
      *
      */
     @PostConstruct
-    public void init(){
+    private void init(){
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
         
-        // recorro los mb que me hayan quedado activos en la session y los voy removiendo
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
-                .getExternalContext().getSession(true);
-
-        Iterator iMbActivos = login.getListMbActivos().iterator();
-        try{
-            while(iMbActivos.hasNext()){
-                session.removeAttribute((String)iMbActivos.next());
-            }
-
-            // limpio la lista
-            if(!login.getListMbActivos().isEmpty()){
-                login.getListMbActivos().clear();
-            }
-
-            // agrego el mb a la lista de activos
-            login.getListMbActivos().add("mbParticipante"); 
-        }catch(Exception e){
-            JsfUtil.addErrorMessage(e, "Hubo un error removiendo Beans de respaldo");
-        }
-
+        iniciado = false;
     }
     
     /********************************
@@ -163,6 +145,28 @@ public class MbParticipante implements Serializable{
     public void setTipoList(int tipoList) {
         this.tipoList = tipoList;
     }
+    
+    /**
+     * Inicio
+     * @return 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbParticipante") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                        System.out.println("Se limpió " + s + " !!!");
+                    }
+                }
+            }
+        }
+    }
  
     
     /********************************
@@ -205,6 +209,7 @@ public class MbParticipante implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         tipoList = 1;
         recreateModel();
         return "list";
@@ -603,9 +608,7 @@ public class MbParticipante implements Serializable{
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbParticipante");
-        
-        // quito el mb de la lista de beans en memoria
-        login.getListMbActivos().remove("mbClase");        
+     
         return "inicio";
     }      
 

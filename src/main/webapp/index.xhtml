@@ -2,15 +2,47 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:composition template="/WEB-INF/facelets/templates/#{mbLogin.rol}/indexTemplate.xhtml">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/WEB-INF/facelets/templates/#{mbLogin.ambito}/indexTemplate.xhtml">
         <ui:define name="title">
             <h:outputText value="#{bundle.NombreAplicacion}" />
         </ui:define>
         <ui:define name="content">
-            <h:form>
-                <h1>#{bundle.NombreAplicacion}</h1>
-                <h3>Aquí debería listar los cursos disponibles</h3>
+            <h:form style="text-align: left">
+                <br/>
+                <p:dataList value="#{mbCursosPublic.items}" var="curso" type="definition" >
+                    <f:facet name="header">
+                        <p:outputLabel value="Actividades disponibles" style="font-size: 150%"/>
+                    </f:facet>
+                    <p:outputLabel value="&nbsp;#{curso.actividadPlan.nombre}"  style="font-size: 120%"/>
+                        <br/><br/>
+                    <f:facet name="description" >
+                        <p:outputPanel id="desc" style="width: 99%">
+                            <p:outputLabel value="Período de vigencia: " style="font-weight: bold; font-size: 80%"/>
+                            <p:outputLabel value="Desde el #{curso.strFechaIniVig} hasta el #{curso.strFechaFinVig}" style="font-size: 80%"/>
+                            <br/>
+                            <p:outputLabel value="Carga horaria: " style="font-weight: bold; font-size: 80%"/>
+                            <p:outputLabel value="#{curso.actividadPlan.cargaHoraria} horas" style="font-size: 80%"/>
+                            <br/>
+                            <p:outputLabel value="Docente: " style="font-weight: bold; font-size: 80%"/>
+                            <p:outputLabel value="#{curso.docente.apYNom}" style="font-size: 80%"/>
+                            <br/><br/>
+                            <p:outputLabel value="Resumen académico:" style="font-weight: bold; font-size: 80%"/>
+                            <br/>
+                            <p:outputLabel value="#{curso.actividadPlan.resumenAcademico}" style="font-size: 80%; margin-right: 40px"/>
+                            <br/><br/>
+                            <h:panelGrid columns="3">
+                                <p:link value="Ver Más" href="#{curso.actividadPlan.verMas}" style="font-size: 80%" />
+                                <p:outputLabel value="&emsp;"/>  
+                                <p:link value="Inscribirse" href="#{curso.actividadPlan.verMas}" style="font-size: 80%; text-align: right" 
+                                        rendered="#{mbCursosPublic.ambito == 'externo'}" />
+                            </h:panelGrid>
+                            <br/><br/>
+                        </p:outputPanel>
+                    </f:facet>
+                </p:dataList>
             </h:form>
         </ui:define>
 

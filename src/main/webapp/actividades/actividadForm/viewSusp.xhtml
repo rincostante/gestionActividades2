@@ -11,7 +11,7 @@
         </ui:define>
         <ui:define name="content">
             <br/>
-            <h:form id="frmActividadPlanView">
+            <h:form id="frmActividadPlanView" style="text-align: left">
                 <p:panel id="pnView" header="#{bundle.ActividadPlanViewTitle} Suspendida" style="margin-bottom:10px;">
                     <p:messages id="messages" />
                     
@@ -47,7 +47,13 @@
                         <h:outputText value="#{mbActividadPlan.selected.certifica}" title="#{bundle.ActividadPlanTitle_certifica}"/> 
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_observaciones}"/>
-                        <h:outputText value="#{mbActividadPlan.selected.observaciones}" title="#{bundle.ActividadPlanTitle_observaciones}"/>   
+                        <h:outputText value="#{mbActividadPlan.selected.observaciones}" title="#{bundle.ActividadPlanTitle_observaciones}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_resumenAcademico}"/>
+                        <h:outputText value="#{mbActividadPlan.selected.resumenAcademico}" title="#{bundle.ActividadPlanTitle_resumenAcademico}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_verMas}"/>
+                        <h:outputText value="#{mbActividadPlan.selected.verMas}" title="#{bundle.ActividadPlanTitle_verMas}"/>   
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbActividadPlan.selected.admin.fechaAlta}" 

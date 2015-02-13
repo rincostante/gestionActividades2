@@ -11,7 +11,7 @@
         </ui:define>
         <ui:define name="content">
             <br/>
-            <h:form id="frmNew">
+            <h:form id="frmNew" style="text-align: left">
                 <p:panel id="pnNew" header="#{bundle.ActividadPlanNewTitle}" style="margin-bottom:10px;">
                     <p:growl id="messages" />
                     <h:panelGrid columns="2">
@@ -92,9 +92,25 @@
                         
                         <p:outputLabel value="Observaciones: " />
                         <p:inputTextarea value="#{mbActividadPlan.selected.observaciones}" rows="5" cols="50" 
-                                         counter="display" maxlength="250" 
+                                         counter="disObs" maxlength="250" 
                                          counterTemplate="{0} Caracteres restantes." autoResize="false" style="width: 500px" />
-                        <h:outputText id="display" />
+                        <h:outputText id="disObs" style="font-size: 80%" />
+                        <br/>
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_resumenAcademico}" for="resumen" />
+                        <p:inputTextarea value="#{mbActividadPlan.selected.resumenAcademico}" rows="5" cols="100" id="resumen"
+                                         counter="disRes" maxlength="1500" 
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_resumenAcademico}"
+                                         counterTemplate="{0} Caracteres restantes." autoResize="false" style="width: 1000px" />
+                        <h:outputText id="disRes" style="font-size: 80%" />  
+                        <br/>
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_verMas}" for="verMas"/>
+                        <p:inputText id="verMas"
+                                     value="#{mbActividadPlan.selected.verMas}" 
+                                     requiredMessage="#{bundle.ActividadPlanRequire_verMas}" 
+                                     required="true" style="width: 500px" /> 
                     </h:panelGrid>
                 </p:panel>
                 
