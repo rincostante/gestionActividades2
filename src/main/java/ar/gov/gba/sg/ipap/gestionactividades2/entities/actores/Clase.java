@@ -48,7 +48,7 @@ public class Clase implements Serializable {
     /**
      * Campo entero que indica el número de orden de la clase en el total que instrumenta la actividad
      */
-    @Column (nullable=false, unique=true)
+    @Column (nullable=false)
     @NotNull(message = "{entidades.fieldNotNullError}")
     private int numOrden;    
     

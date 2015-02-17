@@ -23,7 +23,7 @@
                                          validator="#{mbClase.actualizarCurso}" >
                             <f:selectItem itemLabel="Seleccione el Curso" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbClase.listActImp}" var="curso" 
-                                           itemLabel="#{curso.actividadPlan.nombre} - #{curso.sede.nombre} - #{curso.strFechaFinVig}" 
+                                           itemLabel="#{curso.actividadPlan.nombre} - #{curso.sede.nombre} - #{curso.strFechaIniVig}" 
                                            itemValue="#{curso}"/>
                         </p:selectOneMenu> 
                         

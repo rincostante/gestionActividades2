@@ -36,6 +36,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -45,6 +46,7 @@ public class MbParticipante implements Serializable{
     
     private Participante current;
     private DataModel items = null;   
+    private DataModel listDMClases = null;
     
     @EJB
     private ParticipanteFacade participanteFacade;
@@ -66,6 +68,7 @@ public class MbParticipante implements Serializable{
     private MbLogin login;
     private int tipoList; //1=autorizados | 2=provisorios | 3=vencidos | 4=deshabilitados  
     private boolean iniciado;
+    private boolean esCoordinador;
 
     /**
      * Creates a new instance of MbParticipante
@@ -82,13 +85,31 @@ public class MbParticipante implements Serializable{
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
-        
+        esCoordinador = usLogeado.getRol().getNombre().equals("Coordinador");
         iniciado = false;
     }
     
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+    
+    public DataModel getListDMClases() {
+        return listDMClases;
+    }
+
+    public void setListDMClases(DataModel listDMClases) {
+        this.listDMClases = listDMClases;
+    }
+ 
+    
+    public boolean isEsCoordinador() {
+        return esCoordinador;
+    }
+
+    public void setEsCoordinador(boolean esCoordinador) {
+        this.esCoordinador = esCoordinador;
+    }
+ 
     
     public Usuario getUsLogeado() {
         return usLogeado;
@@ -188,14 +209,26 @@ public class MbParticipante implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            switch(tipoList){
-                case 1: items = new ListDataModel(getFacade().getAutorizados());
-                    break;
-                case 2: items = new ListDataModel(getFacade().getProvisiorios());
-                    break;
-                case 3: items = new ListDataModel(getFacade().getVencidos());
-                    break;
-                default: items = new ListDataModel(getFacade().getDeshabilitadas());
+            if(esCoordinador){
+                switch(tipoList){
+                    case 1: items = new ListDataModel(getFacade().getAutorizadosXCoor(usLogeado));
+                        break;
+                    case 2: items = new ListDataModel(getFacade().getProvisioriosXCoor(usLogeado));
+                        break;
+                    case 3: items = new ListDataModel(getFacade().getVencidosXCoor(usLogeado));
+                        break;
+                    default: items = new ListDataModel(getFacade().getDeshabilitadasXCoor(usLogeado));
+                }
+            }else{
+                switch(tipoList){
+                    case 1: items = new ListDataModel(getFacade().getAutorizados());
+                        break;
+                    case 2: items = new ListDataModel(getFacade().getProvisiorios());
+                        break;
+                    case 3: items = new ListDataModel(getFacade().getVencidos());
+                        break;
+                    default: items = new ListDataModel(getFacade().getDeshabilitadas());
+                } 
             }
         }
         return items;
@@ -287,7 +320,7 @@ public class MbParticipante implements Serializable{
     public String prepareCreate() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();
+        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
         current = new Participante();
         selectedItemIndex = -1;
         return "new";
@@ -299,7 +332,7 @@ public class MbParticipante implements Serializable{
     public String prepareEdit() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();
+        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
         current = partSelected;
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
@@ -311,7 +344,7 @@ public class MbParticipante implements Serializable{
     public String prepareEditVenc() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();      
+        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado); 
         current = partSelected;
         // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
@@ -324,7 +357,7 @@ public class MbParticipante implements Serializable{
     public String prepareEditProv() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadas();      
+        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);     
         current = partSelected;
         // cargo los list para los combos     
         selectedItemIndex = getItems().getRowIndex();
@@ -489,7 +522,7 @@ public class MbParticipante implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
                 listAgentes.clear();
                 listActImp.clear();
-                return "view";
+                return "viewProv";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
                 return null;
@@ -610,6 +643,11 @@ public class MbParticipante implements Serializable{
         session.removeAttribute("mbParticipante");
      
         return "inicio";
+    }      
+    
+    public void verClases(){
+        listDMClases = new ListDataModel(current.getClases());
+        RequestContext.getCurrentInstance().openDialog("dlgClases");
     }      
 
     

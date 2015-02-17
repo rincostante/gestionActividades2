@@ -9,6 +9,7 @@ package ar.gov.gba.sg.ipap.gestionactividades2.facades.actores;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -104,6 +105,23 @@ public class ClaseFacade extends AbstractFacade<Clase> {
     }
     
     /**
+     * Método que devuelve todas las Clases habilitadas y vigentes,
+     * es decir, que conforman una actividad en curso. Para la interfase de coordinador.
+     * @param us: Coordinador del Curso al cual pertenece la clase.
+     * @return 
+     */
+    public List<ActividadImplementada> getHabilitadasXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "WHERE clase.admin.habilitado = true "
+                + "AND clase.fechaRealizacion >= CURRENT_DATE "
+                + "AND clase.actividad.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }    
+    
+    /**
      * Método que devuelve todas las Clases deshabilitadas
      * @return 
      */
@@ -113,7 +131,39 @@ public class ClaseFacade extends AbstractFacade<Clase> {
                 + "WHERE clase.admin.habilitado = false";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }          
+    }    
+    
+    /**
+     * Método que devuelve todas las Clases deshabilitadas
+     * @param us: Coordinador del Curso al cual pertenece la clase. 
+     * @return  
+     */
+    public List<ActividadImplementada> getDeshabilitadasXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "WHERE clase.admin.habilitado = false "
+                + "AND clase.actividad.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }           
+    
+    /**
+     * Método que devuelve las Clases finalizadas. Para la interfase de coordinador.
+     * @param us: Coordinador del Curso al cual pertenece la clase.
+     * @return 
+     */
+    public List<ActividadImplementada> getFinalizadasXCoor(Usuario us){
+        
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "WHERE clase.admin.habilitado = true "
+                + "AND clase.fechaRealizacion < CURRENT_DATE "
+                + "AND clase.actividad.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    } 
     
     /**
      * Método que devuelve las Clases finalizadas
@@ -127,7 +177,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
                 + "AND clase.fechaRealizacion < CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }      
+    }        
     
     /**
      * Método para validad la disponibilidad del docente que se pretende asignar

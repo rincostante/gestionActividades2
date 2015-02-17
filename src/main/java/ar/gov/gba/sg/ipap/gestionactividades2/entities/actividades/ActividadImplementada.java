@@ -83,19 +83,6 @@ public class ActividadImplementada implements Serializable {
     private boolean publicado = false;
     
     /**
-     * Campo entero que indica el tamaño de archvos (heredado para migrar)
-     */
-    @Column (nullable=true)
-    private int fileSize;
-    
-    /**
-     * Campo de texto indefinido (heredado para migrar)
-     */
-    @Column (nullable=true, length=40)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 40)
-    private String mime; 
-    
-    /**
      * Campo de texto que indica a quién está dirigida la Actividad
      */
     @Column (nullable=true, length=1000)
@@ -106,7 +93,7 @@ public class ActividadImplementada implements Serializable {
      * Campo de texto que registra observaciones para la Actividad
      */
     @Column (nullable=true, length=1000)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 1000)
+    @Size(message = "{endidades.stringSizeError}", max = 1000)
     private String observaciones;    
     
     /**
@@ -417,38 +404,6 @@ public class ActividadImplementada implements Serializable {
      */
     public void setPublicado(boolean publicado) {
         this.publicado = publicado;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getFileSize() {
-        return fileSize;
-    }
-
-    /**
-     *
-     * @param fileSize
-     */
-    public void setFileSize(int fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getMime() {
-        return mime;
-    }
-
-    /**
-     *
-     * @param mime
-     */
-    public void setMime(String mime) {
-        this.mime = mime;
     }
 
     /**

@@ -13,6 +13,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
@@ -28,7 +29,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -43,6 +43,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -52,6 +53,7 @@ public class MbActividadImpl implements Serializable{
     
     private ActividadImplementada current;
     private DataModel items = null;   
+    private DataModel listDMPart = null;
 
     @EJB
     private ActividadImplementadaFacade actImpFacade;
@@ -83,7 +85,7 @@ public class MbActividadImpl implements Serializable{
     private Date fDespuesDe;
     private MbLogin login;          
     private int tipoList; //1=habilitadas | 2=finalizadas | 3=suspendidas | 4=deshabilitadas 
-    
+    private boolean esCoordinador;
     
     /**
      * Creates a new instance of MbActividadImpl
@@ -100,11 +102,30 @@ public class MbActividadImpl implements Serializable{
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+        esCoordinador = usLogeado.getRol().getNombre().equals("Coordinador");
     }
     
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public DataModel getListDMPart() {
+        return listDMPart;
+    }
+
+    public void setListDMPart(DataModel listDMPart) {
+        this.listDMPart = listDMPart;
+    }
+   
+    
+    public boolean isEsCoordinador() {
+        return esCoordinador;
+    }
+
+    public void setEsCoordinador(boolean esCoordinador) {
+        this.esCoordinador = esCoordinador;
+    }
+   
     
     public ActividadImplementada getActImpSelected() {
         return actImpSelected;
@@ -214,14 +235,26 @@ public class MbActividadImpl implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            switch(tipoList){
-                case 1: items = new ListDataModel(getFacade().getHabilitadas());
-                    break;
-                case 2: items = new ListDataModel(getFacade().getFinalizadas());
-                    break;
-                case 3: items = new ListDataModel(getFacade().getSuspendidas());
-                    break;
-                default: items = new ListDataModel(getFacade().getDeshabilitadas());
+            if(esCoordinador){
+                switch(tipoList){
+                    case 1: items = new ListDataModel(getFacade().getHabilitadasXCoor(usLogeado));
+                        break;
+                    case 2: items = new ListDataModel(getFacade().getFinalizadasXCoor(usLogeado));
+                        break;
+                    case 3: items = new ListDataModel(getFacade().getSuspendidasXCoor(usLogeado));
+                        break;
+                    default: items = new ListDataModel(getFacade().getDeshabilitadasXCoor(usLogeado));
+                }
+            }else{
+                switch(tipoList){
+                    case 1: items = new ListDataModel(getFacade().getHabilitadas());
+                        break;
+                    case 2: items = new ListDataModel(getFacade().getFinalizadas());
+                        break;
+                    case 3: items = new ListDataModel(getFacade().getSuspendidas());
+                        break;
+                    default: items = new ListDataModel(getFacade().getDeshabilitadas());
+                }
             }
         }
         return items;
@@ -318,9 +351,11 @@ public class MbActividadImpl implements Serializable{
         listSedes = sedeFacade.getHabilitados();
         listDocentes = docenteFacade.getHabilitadas();
         
-        //identifico el rol para la selección del Coordinador
-        List<Rol> roles = rolFacade.getXString("Coordinador");
-        listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());
+        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
+        if(!esCoordinador){
+            List<Rol> roles = rolFacade.getXString("Coordinador");
+            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
+        }
         
         current = new ActividadImplementada();
         selectedItemIndex = -1;
@@ -338,9 +373,11 @@ public class MbActividadImpl implements Serializable{
         listSedes = sedeFacade.getHabilitados();
         listDocentes = docenteFacade.getHabilitadas();
         
-        //identifico el rol para la selección del Coordinador
-        List<Rol> roles = rolFacade.getXString("Coordinador");
-        listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());
+        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
+        if(!esCoordinador){
+            List<Rol> roles = rolFacade.getXString("Coordinador");
+            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
+        }
         
         current = actImpSelected;
         selectedItemIndex = getItems().getRowIndex();
@@ -358,9 +395,11 @@ public class MbActividadImpl implements Serializable{
         listSedes = sedeFacade.getHabilitados();
         listDocentes = docenteFacade.getHabilitadas();
         
-        //identifico el rol para la selección del Coordinador
-        List<Rol> roles = rolFacade.getXString("Coordinador");
-        listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());
+        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
+        if(!esCoordinador){
+            List<Rol> roles = rolFacade.getXString("Coordinador");
+            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
+        }
         
         current = actImpSelected;   
         selectedItemIndex = getItems().getRowIndex();
@@ -538,6 +577,11 @@ public class MbActividadImpl implements Serializable{
                 admEnt.setUsAlta(usLogeado);
                 current.setAdmin(admEnt);
                 
+                // Si se trata de un coordinador, lo asigno directamente
+                if(usLogeado.getRol().getNombre().equals("Coordinador")){
+                   current.setCoordinador(usLogeado);
+                }
+                
                 // Inserción
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplCreated"));
@@ -572,6 +616,11 @@ public class MbActividadImpl implements Serializable{
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
                 current.getAdmin().setUsModif(usLogeado);
+                
+                // Si se trata de un coordinador, lo asigno directamente
+                if(usLogeado.getRol().getNombre().equals("Coordinador")){
+                   current.setCoordinador(usLogeado);
+                }
                 
                 // Actualizo
                 getFacade().edit(current);
@@ -665,6 +714,10 @@ public class MbActividadImpl implements Serializable{
         return "inicio";
     }      
     
+    public void verParticipantes(){
+        listDMPart = new ListDataModel(current.getParticipantes());
+        RequestContext.getCurrentInstance().openDialog("dlgParticipantes");
+    }    
     
     /*********************
     ** Métodos privados **

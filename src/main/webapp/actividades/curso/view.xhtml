@@ -44,17 +44,14 @@
                         <h:outputLabel value="#{bundle.ActividadImplLabel_aula}"/>
                         <h:outputText value="#{mbActividadImpl.selected.aula}" title="#{bundle.ActividadImplTitle_aula}"/>  
                         
-                        <h:outputLabel value="#{bundle.ActividadImplLabel_tamanioArchivo}"/>
-                        <h:outputText value="#{mbActividadImpl.selected.fileSize}" title="#{bundle.ActividadImplTitle_tamanioArchivo}"/>  
-                        
-                        <h:outputLabel value="#{bundle.ActividadImplLabel_mime}"/>
-                        <h:outputText value="#{mbActividadImpl.selected.mime}" title="#{bundle.ActividadImplTitle_mime}"/> 
-                        
                         <h:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}"/>
                         <h:outputText value="#{mbActividadImpl.selected.dirigidoa}" title="#{bundle.ActividadImplTitle_dirigidoA}"/> 
 
                         <h:outputLabel value="#{bundle.ActividadImplLabel_observaciones}"/>
                         <h:outputText value="#{mbActividadImpl.selected.observaciones}" title="#{bundle.ActividadImplTitle_observaciones}"/>   
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_participantes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verParticipantes}" />
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbActividadImpl.selected.admin.fechaAlta}" 

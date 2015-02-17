@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -80,6 +79,7 @@ public class MbClase implements Serializable{
     private boolean asignaPart; 
     private MbLogin login;
     private int tipoList; //1=vigentes | 2=finalizadas | 3=deshabilitados   
+    private boolean esCoordinador;
 
     /**
      * Creates a new instance of MbClase
@@ -96,11 +96,21 @@ public class MbClase implements Serializable{
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();
+        esCoordinador = usLogeado.getRol().getNombre().equals("Coordinador");
     }
 
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+    
+    public boolean isEsCoordinador() {
+        return esCoordinador;
+    }
+
+    public void setEsCoordinador(boolean esCoordinador) {
+        this.esCoordinador = esCoordinador;
+    }
+ 
     
     public DataModel getListParticipantesDisp() {
         return listParticipantesDisp;
@@ -237,12 +247,22 @@ public class MbClase implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            switch(tipoList){
-                case 1: items = new ListDataModel(getFacade().getHabilitadas());
-                    break;
-                case 2: items = new ListDataModel(getFacade().getFinalizadas());
-                    break;
-                default: items = new ListDataModel(getFacade().getDeshabilitadas());
+            if(esCoordinador){
+                switch(tipoList){
+                    case 1: items = new ListDataModel(getFacade().getHabilitadasXCoor(usLogeado));
+                        break;
+                    case 2: items = new ListDataModel(getFacade().getFinalizadasXCoor(usLogeado));
+                        break;
+                    default: items = new ListDataModel(getFacade().getDeshabilitadasXCoor(usLogeado));  
+                }
+            }else{
+                switch(tipoList){
+                    case 1: items = new ListDataModel(getFacade().getHabilitadas());
+                        break;
+                    case 2: items = new ListDataModel(getFacade().getFinalizadas());
+                        break;
+                    default: items = new ListDataModel(getFacade().getDeshabilitadas());
+                }
             }
         }
         return items;
@@ -346,7 +366,12 @@ public class MbClase implements Serializable{
     public String prepareCreate() {
         //cargo los list para los combos
         listDocentes = docenteFacade.getHabilitadas();
-        listActImp = cursoFacade.getHabilitadas();
+        // si es coordinador solo levanto sus cursos
+        if(esCoordinador){
+            listActImp = cursoFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = cursoFacade.getHabilitadas();
+        }
         listModalidades = modalidadFacade.findAll();
         current = new Clase();
         selectedItemIndex = -1;
@@ -360,7 +385,12 @@ public class MbClase implements Serializable{
     public String prepareEdit() {
         //cargo los list para los combos
         listDocentes = docenteFacade.getHabilitadas();
-        listActImp = cursoFacade.getHabilitadas();
+        // si es coordinador solo levanto sus cursos
+        if(esCoordinador){
+            listActImp = cursoFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = cursoFacade.getHabilitadas();
+        }
         listModalidades = modalidadFacade.findAll();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
@@ -372,7 +402,12 @@ public class MbClase implements Serializable{
     public String prepareEditFin() {
         //cargo los list para los combos
         listDocentes = docenteFacade.getHabilitadas();
-        listActImp = cursoFacade.getHabilitadas();
+        // si es coordinador solo levanto sus cursos
+        if(esCoordinador){
+            listActImp = cursoFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = cursoFacade.getHabilitadas();
+        }
         listModalidades = modalidadFacade.findAll();
         selectedItemIndex = getItems().getRowIndex();
         return "editFin";
@@ -384,7 +419,12 @@ public class MbClase implements Serializable{
     public String prepareEditProv() {
         //cargo los list para los combos
         listDocentes = docenteFacade.getHabilitadas();
-        listActImp = cursoFacade.getHabilitadas();
+        // si es coordinador solo levanto sus cursos
+        if(esCoordinador){
+            listActImp = cursoFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = cursoFacade.getHabilitadas();
+        }
         listModalidades = modalidadFacade.findAll();
         selectedItemIndex = getItems().getRowIndex();
         return "editProv";
@@ -760,8 +800,8 @@ public class MbClase implements Serializable{
         Date fechaPropuesta = (Date)arg2;
         
         if(claseFacade.isClasesEmpty(cursoSelected)){
-            if(!fechaPropuesta.after(fechaInicioCurso)){
-                FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior al inicio del curso " + strFechaInicioCurso);
+            if(!fechaInicioCurso.after(fechaPropuesta)){
+                FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser anterior a la de inicio del curso " + strFechaInicioCurso);
                 message.setSeverity(FacesMessage.SEVERITY_ERROR);
                 throw new ValidatorException(message);
             }

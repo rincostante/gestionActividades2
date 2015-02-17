@@ -7,6 +7,7 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -59,7 +60,7 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE (actImp.fechaInicio >= :fechaInio "
-                + "OR actImp.fechaFin <= :fechaFin) "
+                + "AND actImp.fechaFin <= :fechaFin) "
                 + "AND actImp.sede.id = :idSede "
                 + "AND actImp.actividadPlan.nombre = :nombre";
         Query q = em.createQuery(queryString)
@@ -83,7 +84,7 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE (actImp.fechaInicio >= :fechaInio "
-                + "OR actImp.fechaFin <= :fechaFin) "
+                + "AND actImp.fechaFin <= :fechaFin) "
                 + "AND actImp.sede.id = :idSede "
                 + "AND actImp.actividadPlan.nombre = :nombre";
         Query q = em.createQuery(queryString)
@@ -114,6 +115,23 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
     }
     
     /**
+     * Método que devuelve todas los Actividades Implementadas habilitadas y vigentes para la interfase de coordinador
+     * @param us: Agente que actúa como coordinador del curso
+     * @return 
+     */
+    public List<ActividadImplementada> getHabilitadasXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
+                + "WHERE actImp.admin.habilitado = true "
+                + "AND actImp.suspendido = false "
+                + "AND actImp.fechaFin >= CURRENT_DATE "
+                + "AND actImp.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }
+    
+    /**
      * Método que devuelve todas los Actividades Implementadas deshabilitadas
      * @return 
      */
@@ -123,7 +141,22 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
                 + "WHERE actImp.admin.habilitado = false";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }          
+    }        
+    
+    /**
+     * Método que devuelve todas los Actividades Implementadas deshabilitadas para la interfase de coordinador
+     * @param us
+     * @return 
+     */
+    public List<ActividadImplementada> getDeshabilitadasXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
+                + "WHERE actImp.admin.habilitado = false "
+                + "AND actImp.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }         
     
     /**
      * Método que devuelve los Actividades Implementadas finalizadas
@@ -137,7 +170,23 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
                 + "AND actImp.fechaFin < CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }      
+    }   
+    
+    /**
+     * Método que devuelve los Actividades Implementadas finalizadas para la interfase de coordinador
+     * @param us
+     * @return 
+     */
+    public List<ActividadImplementada> getFinalizadasXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
+                + "WHERE actImp.admin.habilitado = true "
+                + "AND actImp.fechaFin < CURRENT_DATE "
+                + "AND actImp.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }     
     
     /**
      * Método que devuelve los Actividades Implementadas suspendidas
@@ -152,4 +201,21 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }     
+    
+    /**
+     * Método que devuelve los Actividades Implementadas suspendidas para la interfase de coordinador
+     * @param us
+     * @return 
+     */
+    public List<ActividadImplementada> getSuspendidasXCoor(Usuario us){
+        
+        em = getEntityManager();
+        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
+                + "WHERE actImp.admin.habilitado = true "
+                + "AND actImp.suspendido = true "
+                + "AND actImp.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }       
 }

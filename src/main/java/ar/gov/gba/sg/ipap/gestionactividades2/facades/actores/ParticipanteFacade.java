@@ -9,6 +9,7 @@ package ar.gov.gba.sg.ipap.gestionactividades2.facades.actores;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -103,6 +104,23 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
     }
     
     /**
+     * Método que devuelve todas los Participantes autorizados para la interfase de Coordinador
+     * @param us: Coordinador del curso
+     * @return 
+     */
+    public List<Participante> getAutorizadosXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.estado.nombre = 'Inscripto' "
+                + "AND part.admin.habilitado = true "
+                + "AND part.actividad.fechaFin >= CURRENT_DATE "
+                + "AND part.actividad.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }
+    
+    /**
      * Método que devuelve todas los Participantes provisorios
      * @return 
      */
@@ -114,7 +132,24 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
                 + "AND part.actividad.fechaFin >= CURRENT_DATE";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }    
+    } 
+    
+    /**
+     * Método que devuelve todas los Participantes provisorios para la interfase de Coordinador
+     * @param us: Coordinador del curso
+     * @return 
+     */
+    public List<Participante> getProvisioriosXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.estado.nombre = 'Provisorio' "
+                + "AND part.admin.habilitado = true "
+                + "AND part.actividad.fechaFin >= CURRENT_DATE "
+                + "AND part.actividad.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    } 
     
     /**
      * Método que devuelve todas los Participantes deshabilitados
@@ -126,7 +161,22 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
                 + "WHERE part.admin.habilitado = false";
         Query q = em.createQuery(queryString);
         return q.getResultList();
-    }          
+    }      
+    
+    /**
+     * Método que devuelve todas los Participantes deshabilitados para la interfase de Coordinador
+     * @param us: Coordinador del curso
+     * @return 
+     */
+    public List<Participante> getDeshabilitadasXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.admin.habilitado = false "
+                + "AND part.actividad.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }      
     
     /**
      * Método que devuelve los Participantes de Actividades vencidas
@@ -142,6 +192,22 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
     } 
     
     /**
+     * Método que devuelve los Participantes de Actividades vencidas para la interfase de Coordinador
+     * @param us: Coordinador del curso
+     * @return 
+     */
+    public List<Participante> getVencidosXCoor(Usuario us){
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.admin.habilitado = true "
+                + "AND part.actividad.fechaFin < CURRENT_DATE "
+                + "AND part.actividad.coordinador = :us";
+        Query q = em.createQuery(queryString)
+                .setParameter("us", us);
+        return q.getResultList();
+    }     
+    
+    /**
      * Método que obtiene todos los participantes de un curso
      * @param curso
      * @return 
@@ -150,6 +216,7 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.actividad = :curso "
+                + "AND part.estado.nombre = 'Inscripto' "
                 + "ORDER BY part.agente.persona.apellidos";
         Query q = em.createQuery(queryString)
                 .setParameter("curso", curso);

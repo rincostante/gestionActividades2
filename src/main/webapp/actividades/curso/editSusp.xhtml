@@ -64,10 +64,10 @@
                                            itemValue="#{doc}"/>
                         </p:selectOneMenu>   
                         
-                        <p:outputLabel value="#{bundle.ActividadImplLabel_coordinador}" for="coor"/>
+                        <p:outputLabel value="#{bundle.ActividadImplLabel_coordinador}" for="coor" rendered="#{not mbActividadImpl.esCoordinador}"/>
                         <p:selectOneMenu id="coor" value="#{mbActividadImpl.selected.coordinador}"
                                          required="true" 
-                                         requiredMessage="#{bundle.ActividadImplRequire_coordinador}">
+                                         requiredMessage="#{bundle.ActividadImplRequire_coordinador}" rendered="#{not mbActividadImpl.esCoordinador}">
                             <f:selectItem itemLabel="Seleccione el Coordinador" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbActividadImpl.listCoordinadores}" var="coor" 
                                            itemLabel="#{coor.apYNom}" 
@@ -94,17 +94,7 @@
                         <p:inputText id="aula"
                                      value="#{mbActividadImpl.selected.aula}" 
                                      requiredMessage="#{bundle.ActividadImplRequire_aula}" 
-                                     required="true"/>                         
- 
-                        <p:outputLabel value="#{bundle.ActividadImplLabel_tamanioArchivo}" for="tamanioArch"/>
-                        <p:inputText id="tamanioArch"
-                                     value="#{mbActividadImpl.selected.fileSize}" >
-                            <f:convertNumber integerOnly="true" type="number" />
-                        </p:inputText>    
-                        
-                        <p:outputLabel value="#{bundle.ActividadImplLabel_mime}" for="mime"/>
-                        <p:inputText id="mime"
-                                     value="#{mbActividadImpl.selected.mime}"/>     
+                                     required="true"/>                           
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}" for="dirigA"/>
                         <p:inputText id="dirigA"
