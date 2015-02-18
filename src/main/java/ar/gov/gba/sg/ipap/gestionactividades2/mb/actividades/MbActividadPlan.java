@@ -86,6 +86,7 @@ public class MbActividadPlan implements Serializable{
     private List<Organismo> listOrganismos;
     private MbLogin login;
     private int tipoList; //1=habilitadas | 2=suspendidas | 3=deshabilitadas     
+    private ListDataModel listDMActImp;
 
     /** Creates a new instance of MbActividadPlan */
     public MbActividadPlan() {
@@ -105,6 +106,15 @@ public class MbActividadPlan implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+ 
+    public ListDataModel getListDMActImp() {
+        return listDMActImp;
+    }
+
+    public void setListDMActImp(ListDataModel listDMActImp) {
+        this.listDMActImp = listDMActImp;
+    }
+ 
  
     public DataModel getListSubProgramas() {
         return listSubProgramas;
@@ -646,7 +656,15 @@ public class MbActividadPlan implements Serializable{
         session.removeAttribute("mbActividadPlan");
 
         return "inicio";
-    }   
+    }  
+    
+    /**
+     * Método para mostrar las Actividades Implementadas vinculadas a esta Actividad Planificada
+     */
+    public void verActividadesImp(){
+        listDMActImp = new ListDataModel(current.getActividadesImplementadas());
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
+    }         
     
     /**
      * Método para manipular los Sub Programas de una Actividad
@@ -698,6 +716,7 @@ public class MbActividadPlan implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMActImp = null;
     }      
     
     

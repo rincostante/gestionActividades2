@@ -53,7 +53,10 @@
                         <h:outputText value="#{mbActividadPlan.selected.resumenAcademico}" title="#{bundle.ActividadPlanTitle_resumenAcademico}"/> 
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_verMas}"/>
-                        <h:outputText value="#{mbActividadPlan.selected.verMas}" title="#{bundle.ActividadPlanTitle_verMas}"/>                         
+                        <h:outputText value="#{mbActividadPlan.selected.verMas}" title="#{bundle.ActividadPlanTitle_verMas}"/>   
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_ActImp}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadPlan.verActividadesImp}" /> 
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbActividadPlan.selected.admin.fechaAlta}" 

@@ -29,7 +29,10 @@
                         <h:outputText value="#{mbSubPrograma.selected.strFechaFinVig}" title="#{bundle.SubProgramaTitle_fechaFinVig}"/>  
                         
                         <h:outputLabel value="#{bundle.SubProgramaLabel_resolucion}"/>
-                        <h:outputText value="#{mbSubPrograma.selected.resolucion.resolucion}" title="#{bundle.SubProgramaTitle_resolucion}"/>  
+                        <h:outputText value="#{mbSubPrograma.selected.resolucion.resolucion}" title="#{bundle.SubProgramaTitle_resolucion}"/>
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbSubPrograma.verActividades}" />
                         
                         <h:outputLabel value="#{bundle.SubProgramaLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbSubPrograma.selected.admin.fechaAlta}" 

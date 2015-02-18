@@ -18,6 +18,9 @@
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.CreateModalidadLabel_nombre}"/>
                         <h:outputText value="#{mbModalidad.selected.nombre}" title="#{bundle.CreateModalidadTitle_nombre}"/>
+                        
+                        <h:outputLabel value="#{bundle.CreateModalidadLabel_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbModalidad.verActividades}" />
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

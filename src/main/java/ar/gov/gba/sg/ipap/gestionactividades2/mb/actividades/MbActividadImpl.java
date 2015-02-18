@@ -13,7 +13,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
@@ -734,6 +733,7 @@ public class MbActividadImpl implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMPart = null;
     }      
     
     

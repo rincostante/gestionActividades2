@@ -19,7 +19,11 @@
                         <h:outputLabel value="#{bundle.CreateTituloLabel_nombre}"/>
                         <h:outputText value="#{mbTitulo.selected.nombre}" title="#{bundle.CreateTituloTitle_nombre}"/>
                         <h:outputLabel value="#{bundle.CreateTituloLabel_expPor}"/>
-                        <h:outputText value="#{mbTitulo.selected.epedidoPor}" title="#{bundle.CreateTituloTitle_expPor}"/>                        
+                        <h:outputText value="#{mbTitulo.selected.epedidoPor}" title="#{bundle.CreateTituloTitle_expPor}"/>       
+                        <h:outputLabel value="#{bundle.tituloLabel_agentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbTitulo.verAgentes}" />
+                        <h:outputLabel value="#{bundle.tituloLabel_docentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbTitulo.verDocentes}" />
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

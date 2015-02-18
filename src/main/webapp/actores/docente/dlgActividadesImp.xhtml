@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Actividades Implementadas que tienen asignado a este Docente</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmActImp">
+            <p:dataTable var="actImp" value="#{mbDocente.listDMActImp}" style="width: 1100px" >
+                <p:column headerText="Nombre" sortBy="#{actImp.actividadPlan.nombre}" filterBy="#{actImp.actividadPlan.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.actividadPlan.nombre}" />
+                </p:column>
+                <p:column headerText="Fecha de inicio" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.strFechaIniVig}" />
+                </p:column>    
+                <p:column headerText="Fecha de fin" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.strFechaFinVig}" />
+                </p:column>
+
+                <p:column headerText="Sede" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.sede.nombre}" />
+                </p:column>
+                <p:column headerText="Docente" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.docente.apYNom}" />
+                </p:column>
+                <p:column headerText="Coordinador" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.coordinador.apYNom}" />
+                </p:column>
+                <p:column headerText="Resolución" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.resolucion.resolucion} - #{actImp.resolucion.anio}" />
+                </p:column>
+                <p:column headerText="Haibilitada" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.admin.habilitado}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

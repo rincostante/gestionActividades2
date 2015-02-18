@@ -15,10 +15,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -26,6 +24,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -42,11 +41,29 @@ public class MbTitulo implements Serializable{
     private String selectParam; 
     private List<String> listaNombres;    
     private MbLogin login; 
+    private ListDataModel listDMAgentes;
+    private ListDataModel listDMDocentes;
     
     /**
      * Creates a new instance of MbTitulo
      */
     public MbTitulo() {
+    }
+
+    public ListDataModel getListDMAgentes() {
+        return listDMAgentes;
+    }
+
+    public void setListDMAgentes(ListDataModel listDMAgentes) {
+        this.listDMAgentes = listDMAgentes;
+    }
+
+    public ListDataModel getListDMDocentes() {
+        return listDMDocentes;
+    }
+
+    public void setListDMDocentes(ListDataModel listDMDocentes) {
+        this.listDMDocentes = listDMDocentes;
     }
     
     
@@ -152,6 +169,8 @@ public class MbTitulo implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMAgentes = null;
+        listDMDocentes = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -256,6 +275,21 @@ public class MbTitulo implements Serializable{
         return "inicio";
     } 
     
+    /**
+     * Método para mostrar los Agentes con este título
+     */
+    public void verAgentes(){
+        listDMAgentes = new ListDataModel(current.getAgentes());
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+    }          
+    
+    /**
+     * Método para mostrar los Docentes con este título
+     */
+    public void verDocentes(){
+        listDMDocentes = new ListDataModel(current.getDocentes());
+        RequestContext.getCurrentInstance().openDialog("dlgDocentes");
+    }     
     
     /*********************
     ** Métodos privados **

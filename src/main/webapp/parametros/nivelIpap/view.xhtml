@@ -19,7 +19,9 @@
                         <h:outputLabel value="#{bundle.CreateNivelIpapLabel_nombre}"/>
                         <h:outputText value="#{mbNivelIpap.selected.nombre}" title="#{bundle.CreateNivelIpapTitle_nombre}"/>
                         <h:outputLabel value="#{bundle.CreateNivelIpapLabel_estado}"/>
-                        <h:outputText value="#{mbNivelIpap.selected.estado}" title="#{bundle.CreateNivelIpapTitle_estado}"/>                        
+                        <h:outputText value="#{mbNivelIpap.selected.estado}" title="#{bundle.CreateNivelIpapTitle_estado}"/>     
+                        <h:outputLabel value="#{bundle.CreateNivelIpapLabel_agentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbNivelIpap.verAgentes}" />
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

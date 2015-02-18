@@ -14,7 +14,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -27,6 +26,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -45,6 +45,7 @@ public class MbSede implements Serializable{
     private Sede sedeSelected;
     private Usuario usLogeado;    
     private MbLogin login; 
+    private ListDataModel listDMActImp;
     
     /**
      * Creates a new instance of MbSede
@@ -66,6 +67,16 @@ public class MbSede implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/  
+    
+    public ListDataModel getListDMActImp() {
+        return listDMActImp;
+    }
+
+    public void setListDMActImp(ListDataModel listDMActImp) {
+        this.listDMActImp = listDMActImp;
+    }
+  
+    
     public boolean isHabilitadas() {
         return habilitadas;
     }
@@ -356,6 +367,14 @@ public class MbSede implements Serializable{
         return "inicio";
     }
     
+    /**
+     * Método para mostrar las Actividades Implementadas vinculadas a esta Sede
+     */
+    public void verActividadesImp(){
+        listDMActImp = new ListDataModel(current.getActividades());
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
+    }      
+    
     
     /*********************
     ** Métodos privados **
@@ -372,6 +391,7 @@ public class MbSede implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMActImp = null;
     }      
     
     

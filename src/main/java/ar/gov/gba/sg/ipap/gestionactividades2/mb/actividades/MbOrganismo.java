@@ -16,7 +16,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
@@ -30,6 +29,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -52,6 +52,8 @@ public class MbOrganismo implements Serializable{
     private List<TipoOrganismo> listaTipoOrg;
     private Usuario usLogeado;
     private MbLogin login;    
+    private ListDataModel listDMActPlan;
+    private ListDataModel listDMActImp;
 
     /**
      * Creates a new instance of MbOrganismo
@@ -74,6 +76,23 @@ public class MbOrganismo implements Serializable{
     /********************************
      ** Getters y Setters *********** 
      ********************************/    
+    
+    public ListDataModel getListDMActPlan() {
+        return listDMActPlan;
+    }
+
+    public void setListDMActPlan(ListDataModel listDMActPlan) {
+        this.listDMActPlan = listDMActPlan;
+    }
+
+    public ListDataModel getListDMActImp() {
+        return listDMActImp;
+    }
+
+    public void setListDMActImp(ListDataModel listDMActImp) {
+        this.listDMActImp = listDMActImp;
+    }
+    
     
     public Usuario getUsLogeado() {
         return usLogeado;
@@ -373,6 +392,22 @@ public class MbOrganismo implements Serializable{
         return "inicio";
     }  
     
+    /**
+     * Método para mostrar las Actividades Planificadas vinculadas a este Organismo
+     */
+    public void verActividadesPlan(){
+        listDMActPlan = new ListDataModel(current.getActividadesPlan());
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesPlan");
+    }      
+    
+    /**
+     * Método para mostrar las Actividades Implementadas vinculadas a este Organismo
+     */
+    public void verActividadesImp(){
+        listDMActImp = new ListDataModel(current.getActividadesImplementadas());
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
+    }        
+    
     
     /*********************
     ** Métodos privados **
@@ -389,6 +424,8 @@ public class MbOrganismo implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMActPlan = null;
+        listDMActImp = null;
         if(selectParam != null){
             selectParam = null;
         }

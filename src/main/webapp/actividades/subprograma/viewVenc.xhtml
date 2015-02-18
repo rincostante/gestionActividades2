@@ -28,6 +28,9 @@
                         <h:outputLabel value="#{bundle.SubProgramaLabel_fechaFinVig}"/>
                         <h:outputText value="#{mbSubPrograma.selected.strFechaFinVig}" title="#{bundle.SubProgramaTitle_fechaFinVig}"/>
                         
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbSubPrograma.verActividades}" />
+                        
                         <h:outputLabel value="#{bundle.OrganismoLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbSubPrograma.selected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 

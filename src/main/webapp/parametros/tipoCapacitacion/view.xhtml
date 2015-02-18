@@ -18,6 +18,9 @@
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.CreateTipoCapLabel_nombre}"/>
                         <h:outputText value="#{mbTipoCapacitacion.selected.nombre}" title="#{bundle.CreateTipoCapTitle_nombre}"/>
+                        
+                        <h:outputLabel value="#{bundle.CreateTipoCapLabel_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbTipoCapacitacion.verActividades}" />
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Docentes con este título</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmDoc">
+            <p:dataTable var="doc" value="#{mbTitulo.listDMDocentes}" style="width: 900px">
+                <p:column headerText="Nombre" sortBy="#{doc.apYNom}" filterBy="#{doc.apYNom}">
+                    <h:outputText value="#{doc.apYNom}" />
+                </p:column>
+                <p:column headerText="Documento" sortBy="#{doc.documento}" filterBy="#{doc.documento}">
+                    <h:outputText value="#{doc.documento}" />
+                </p:column>    
+                <p:column headerText="Especialidad" sortBy="#{doc.especialidad}" filterBy="#{doc.especialidad}">
+                    <h:outputText value="#{doc.especialidad}" />
+                </p:column>
+                <p:column headerText="Teléfono laboral" sortBy="#{doc.telefonoLaboral}" filterBy="#{doc.telefonoLaboral}">
+                    <h:outputText value="#{doc.telefonoLaboral}" />
+                </p:column>
+                <p:column headerText="Correo electrónico laboral" style="width: 200px" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}">
+                    <h:outputText value="#{doc.emailLaboral}" />
+                </p:column>
+                <p:column headerText="Antigüedad" sortBy="#{doc.antigAnios}" filterBy="#{doc.antigAnios}">
+                    <h:outputText value="#{doc.antigAnios}" />
+                </p:column>
+                <p:column headerText="Haibilitado" sortBy="#{doc.admin.habilitado}" filterBy="#{doc.admin.habilitado}">
+                    <h:outputText value="#{doc.admin.habilitado}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

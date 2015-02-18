@@ -666,6 +666,7 @@ public class MbParticipante implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMClases = null;
     }      
     
     

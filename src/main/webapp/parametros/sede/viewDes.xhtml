@@ -19,6 +19,9 @@
                         <h:outputLabel value="#{bundle.SedeLabel_nombre}"/>
                         <h:outputText value="#{mbSede.selected.nombre}" title="#{bundle.SedeTitle_nombre}"/>     
                         
+                        <h:outputLabel value="#{bundle.SedeLabel_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbSede.verActividadesImp}" />
+                        
                         <h:outputLabel value="#{bundle.SedeLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbSede.selected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 

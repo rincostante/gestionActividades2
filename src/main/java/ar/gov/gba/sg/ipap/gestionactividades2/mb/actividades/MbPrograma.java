@@ -31,6 +31,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -54,6 +55,7 @@ public class MbPrograma implements Serializable{
     private Date fDespuesDe;
     private MbLogin login; 
     private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
+    private ListDataModel listDMSubprog;
 
     /**
      * Creates a new instance of MbPrograma
@@ -75,6 +77,15 @@ public class MbPrograma implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public ListDataModel getListDMSubprog() {
+        return listDMSubprog;
+    }
+
+    public void setListDMSubprog(ListDataModel listDMSubprog) {
+        this.listDMSubprog = listDMSubprog;
+    }
+   
     
     public int getTipoList() {
         return tipoList;
@@ -482,6 +493,14 @@ public class MbPrograma implements Serializable{
         return "inicio";
     }      
     
+    /**
+     * Método para mostrar los Subprogramas de este Programa
+     */
+    public void verSubProgramas(){
+        listDMSubprog = new ListDataModel(current.getSubProgramas());
+        RequestContext.getCurrentInstance().openDialog("dlgSubProgramas");
+    }        
+    
     
     /*********************
     ** Métodos privados **
@@ -498,6 +517,7 @@ public class MbPrograma implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMSubprog = null;
     }      
     
     

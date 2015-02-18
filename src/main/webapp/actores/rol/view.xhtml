@@ -18,6 +18,9 @@
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.CreateRolLabel_nombre}"/>
                         <h:outputText value="#{mbRol.selected.nombre}" title="#{bundle.CreateRolTitle_nombre}"/>
+                        
+                        <h:outputLabel value="#{bundle.SedeLabel_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbRol.verUsuarios}" />
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

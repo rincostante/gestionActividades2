@@ -29,6 +29,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -48,6 +49,7 @@ public class MbCampoTematico implements Serializable{
     
     @EJB
     private CampoTematicoFacade campoTematicoFacade;
+    private ListDataModel listDMAct;
 
     /**
      * Creates a new instance of MbCampoTematico
@@ -69,6 +71,15 @@ public class MbCampoTematico implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+    
+    public ListDataModel getListDMAct() {
+        return listDMAct;
+    }
+
+    public void setListDMAct(ListDataModel listDMAct) {
+        this.listDMAct = listDMAct;
+    }
+ 
     
     public Date getfAntesDe() {
         return fAntesDe;
@@ -465,6 +476,14 @@ public class MbCampoTematico implements Serializable{
         return "inicio";
     }  
     
+    /**
+     * Método para mostrar las Actividades vinculadas a este Campo Temático
+     */
+    public void verActividades(){
+        listDMAct = new ListDataModel(current.getActividades());
+        RequestContext.getCurrentInstance().openDialog("dlgActividades");
+    }      
+    
     /*********************
     ** Métodos privados **
     **********************/
@@ -480,6 +499,7 @@ public class MbCampoTematico implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMAct = null;
     }      
     
     

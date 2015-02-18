@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -28,6 +26,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -45,11 +44,20 @@ public class MbTipoCapacitacion implements Serializable{
     private String selectParam;    
     private List<String> listaNombres;
     private MbLogin login;
+    private ListDataModel listDMAct;
 
     /**
      * Creates a new instance of MbTipoCapacitacion
      */
     public MbTipoCapacitacion() {   
+    }
+
+    public ListDataModel getListDMAct() {
+        return listDMAct;
+    }
+
+    public void setListDMAct(ListDataModel listDMAct) {
+        this.listDMAct = listDMAct;
     }
     
     
@@ -199,6 +207,7 @@ public class MbTipoCapacitacion implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMAct = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -303,6 +312,13 @@ public class MbTipoCapacitacion implements Serializable{
         return "inicio";
     } 
     
+    /**
+     * Método para mostrar las Actividades vinculadas a este tipo de capacitación
+     */
+    public void verActividades(){
+        listDMAct = new ListDataModel(current.getActividades());
+        RequestContext.getCurrentInstance().openDialog("dlgActividades");
+    }  
     
     /*********************
     ** Métodos privados **

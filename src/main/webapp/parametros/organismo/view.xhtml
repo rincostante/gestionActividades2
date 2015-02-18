@@ -20,7 +20,13 @@
                         <h:outputText value="#{mbOrganismo.selected.nombre}" title="#{bundle.OrganismoTitle_nombre}"/>     
                         
                         <h:outputLabel value="#{bundle.OrganismoLebel_tipo}"/>
-                        <h:outputText value="#{mbOrganismo.selected.tipoOrganismo.nombre}" title="#{bundle.OrganismoTitle_tipo}"/>                           
+                        <h:outputText value="#{mbOrganismo.selected.tipoOrganismo.nombre}" title="#{bundle.OrganismoTitle_tipo}"/>   
+                        
+                        <h:outputLabel value="#{bundle.OrganismoLebel_activPlan}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbOrganismo.verActividadesPlan}" />
+                        
+                        <h:outputLabel value="#{bundle.OrganismoLebel_activImp}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbOrganismo.verActividadesImp}" />
                         
                         <h:outputLabel value="#{bundle.OrganismoLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbOrganismo.selected.admin.fechaAlta}" 

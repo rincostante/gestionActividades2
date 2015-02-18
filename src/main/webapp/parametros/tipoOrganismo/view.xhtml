@@ -18,6 +18,9 @@
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.CreateTipoOrgLabel_nombre}"/>
                         <h:outputText value="#{mbTipoOrganismo.selected.nombre}" title="#{bundle.CreateTipoOrgTitle_nombre}"/>
+                        
+                        <h:outputLabel value="#{bundle.CreateTipoOrgLabel_organismos}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbTipoOrganismo.verOganismos}" />
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

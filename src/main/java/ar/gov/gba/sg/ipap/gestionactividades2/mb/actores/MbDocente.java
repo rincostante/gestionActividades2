@@ -8,6 +8,7 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
@@ -36,6 +37,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 
 /**
@@ -71,6 +73,8 @@ public class MbDocente implements Serializable{
     boolean esPersona;   
     private Usuario usLogeado;
     private MbLogin login;   
+    private ListDataModel listDMActImp;
+    private ListDataModel listDMClases;
     
     /**
      * Creates a new instance of MbDocente
@@ -96,6 +100,24 @@ public class MbDocente implements Serializable{
     /**
      *
      */
+
+    public ListDataModel getListDMClases() {
+        return listDMClases;
+    }
+
+    public void setListDMClases(ListDataModel listDMClases) {
+        this.listDMClases = listDMClases;
+    }
+
+    
+    public ListDataModel getListDMActImp() {
+        return listDMActImp;
+    }
+
+    public void setListDMActImp(ListDataModel listDMActImp) {
+        this.listDMActImp = listDMActImp;
+    }
+
     
     public Usuario getUsLogeado() {
         return usLogeado;
@@ -539,6 +561,21 @@ public class MbDocente implements Serializable{
         return "inicio";
     }  
     
+    /**
+     * Método para mostrar las Actividades Implementadas vinculadas a este Docente
+     */
+    public void verActividadesImp(){
+        listDMActImp = new ListDataModel(current.getActividades());
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
+    }     
+    
+    /**
+     * Método para mostrar las Clases vinculadas a este Docente
+     */
+    public void verClases(){
+        listDMClases = new ListDataModel(current.getClases());
+        RequestContext.getCurrentInstance().openDialog("dlgClases");
+    }       
     
     /*********************
     ** Desencadenadores **
@@ -589,6 +626,8 @@ public class MbDocente implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMActImp = null;
+        listDMClases = null;
         if(selectParam != null){
             selectParam = null;
         }

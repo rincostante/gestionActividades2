@@ -28,6 +28,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -45,10 +46,19 @@ public class MbNivelIpap implements Serializable{
     private List<String> listaNombres;    
     private Map<String,String> estados;    
     private MbLogin login; 
+    private ListDataModel listDMAgentes;
     /**
      * Creates a new instance of MbNivelIpap
      */
     public MbNivelIpap() {
+    }
+
+    public ListDataModel getListDMAgentes() {
+        return listDMAgentes;
+    }
+
+    public void setListDMAgentes(ListDataModel listDMAgentes) {
+        this.listDMAgentes = listDMAgentes;
     }
     
     public Map<String, String> getEstados() {
@@ -169,6 +179,7 @@ public class MbNivelIpap implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMAgentes = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -271,6 +282,14 @@ public class MbNivelIpap implements Serializable{
 
         return "inicio";
     }   
+    
+    /**
+     * Método para mostrar los Agentes con este título
+     */
+    public void verAgentes(){
+        listDMAgentes = new ListDataModel(current.getAgentes());
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+    }  
     
     
     /*********************

@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -28,6 +26,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -45,12 +44,21 @@ public class MbTipoOrganismo implements Serializable{
     private String selectParam;     
     private List<String> listaNombres;
     private MbLogin login;
+    private ListDataModel listDMOrganismos;
     
     /**
      * Creates a new instance of MbTipoOrganismo
      */
     public MbTipoOrganismo() {
     }   
+
+    public ListDataModel getListDMOrganismos() {
+        return listDMOrganismos;
+    }
+
+    public void setListDMOrganismos(ListDataModel listDMOrganismos) {
+        this.listDMOrganismos = listDMOrganismos;
+    }
     
  
     /********************************
@@ -185,6 +193,7 @@ public class MbTipoOrganismo implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMOrganismos = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -268,6 +277,14 @@ public class MbTipoOrganismo implements Serializable{
         
         return "inicio";
     } 
+    
+    /**
+     * Método para mostrar los Organismos de este Tipo
+     */
+    public void verOganismos(){
+        listDMOrganismos = new ListDataModel(current.getOrganismos());
+        RequestContext.getCurrentInstance().openDialog("dlgOrganismos");
+    }      
     
     
     /*********************

@@ -25,6 +25,9 @@
                         <h:outputLabel value="#{bundle.CampoTematicoLabel_fechaFinVig}"/>
                         <h:outputText value="#{mbCampoTematico.selected.strFechaFinVig}" title="#{bundle.CampoTematicoTitle_fechaFinVig}"/>
                         
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbCampoTematico.verActividades}" />
+                        
                         <h:outputLabel value="#{bundle.OrganismoLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbCampoTematico.selected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 

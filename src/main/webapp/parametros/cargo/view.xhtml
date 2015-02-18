@@ -18,6 +18,8 @@
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.CreateCargoLabel_nombre}"/>
                         <h:outputText value="#{mbCargo.selected.nombre}" title="#{bundle.CreateCargoTitle_nombre}"/>
+                        <h:outputLabel value="#{bundle.CreateCargoLabel_agentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbCargo.verAgentes}" />
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

@@ -40,6 +40,12 @@
                         <h:outputLabel value="#{bundle.DocenteLable_antigAnio}" rendered="#{mbDocente.selected.antigAnios > 0}"/>
                         <h:outputText value="#{mbDocente.selected.antigAnios}" title="#{bundle.DocenteTitle_antigAnio}" rendered="#{mbDocente.selected.antigAnios > 0}"/>   
                         
+                        <h:outputLabel value="#{bundle.DocenteLable_actividades}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbDocente.verActividadesImp}" />
+                        
+                        <h:outputLabel value="#{bundle.DocenteLable_clases}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbDocente.verClases}" />
+                        
                         <h:outputLabel value="#{bundle.DocenteLabel_fechaInicio}"/>
                         <p:calendar id="fechaNac" value="#{mbDocente.selected.fechaInicioDocencia}" 
                                     pattern="dd/MM/yyyy" 

@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -28,6 +26,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -44,10 +43,19 @@ public class MbRol implements Serializable{
     private String selectParam; 
     private List<String> listaNombres;   
     private MbLogin login;
+    private ListDataModel listDMUsuarios;
     /**
      * Creates a new instance of MbRol
      */
     public MbRol() {
+    }
+
+    public ListDataModel getListDMUsuarios() {
+        return listDMUsuarios;
+    }
+
+    public void setListDMUsuarios(ListDataModel listDMUsuarios) {
+        this.listDMUsuarios = listDMUsuarios;
     }
   
     
@@ -154,6 +162,7 @@ public class MbRol implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMUsuarios = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -240,6 +249,15 @@ public class MbRol implements Serializable{
        
         return "inicio";
     }    
+    
+    /**
+     * Método para mostrar los Usuarios de este Rol
+     */
+    public void verUsuarios(){
+        listDMUsuarios = new ListDataModel(current.getUsuarios());
+        RequestContext.getCurrentInstance().openDialog("dlgUsuarios");
+    }      
+    
     
     /*************************
     ** Métodos de selección **

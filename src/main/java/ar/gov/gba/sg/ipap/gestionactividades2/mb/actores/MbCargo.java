@@ -28,6 +28,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -45,11 +46,20 @@ public class MbCargo implements Serializable{
     private String selectParam; 
     private List<String> listaNombres; 
     private MbLogin login;  
+    private ListDataModel listDMAgentes;
     /**
      * Creates a new instance of MbCargo
      */
     public MbCargo() {
     }    
+
+    public ListDataModel getListDMAgentes() {
+        return listDMAgentes;
+    }
+
+    public void setListDMAgentes(ListDataModel listDMAgentes) {
+        this.listDMAgentes = listDMAgentes;
+    }
     
     
     /********************************
@@ -155,6 +165,7 @@ public class MbCargo implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMAgentes = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -267,6 +278,13 @@ public class MbCargo implements Serializable{
         return "inicio";
     }  
     
+    /**
+     * Método para mostrar los Agentes con este cargo
+     */
+    public void verAgentes(){
+        listDMAgentes = new ListDataModel(current.getAgentes());
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+    }      
     
     /*********************
     ** Métodos privados **
