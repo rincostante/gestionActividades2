@@ -20,6 +20,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +65,7 @@ public class MbPersona implements Serializable{
     private Localidad localidad;
     private Usuario usLogeado;
     private MbLogin login; 
+    private boolean iniciado;
     
     /**
      * Creates a new instance of MbPersona
@@ -76,6 +78,7 @@ public class MbPersona implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         listaTipoDocs = tipoDocFacade.findAll();
         listaLocalidades = localidadFacade.findAll();
         sexos  = new HashMap<>();
@@ -90,6 +93,16 @@ public class MbPersona implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/
+    
+    public Persona getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Persona current) {
+        this.current = current;
+    }
+
+    
     public Usuario getUsLogeado() {
         return usLogeado;
     }
@@ -242,6 +255,7 @@ public class MbPersona implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         habilitadas = true;
         recreateModel();
         return "list";
@@ -261,7 +275,6 @@ public class MbPersona implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         
         // seteo la edad de la persona
@@ -275,7 +288,6 @@ public class MbPersona implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         
         // seteo la edad de la persona
@@ -298,7 +310,6 @@ public class MbPersona implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
@@ -317,7 +328,6 @@ public class MbPersona implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (Persona) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
@@ -337,7 +347,6 @@ public class MbPersona implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        current = (Persona) getItems().getRowData();
         selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
@@ -363,15 +372,6 @@ public class MbPersona implements Serializable{
      *************************************************************/
     
     /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelectHab(){
-        buscarRapida();
-        return "list";
-    }
-    
-    /**
      *
      * @return
      */
@@ -379,28 +379,11 @@ public class MbPersona implements Serializable{
         buscarXLocalidad();
         return "list";
     }
-    
-    /**
-     * 
-     * @return 
-     */
-    public String prepareSelectXDoc(){
-        buscarRapidaXDoc();
-        return "list";
-    }
+   
       
     /****************************************************************
      ** Métodos de inicialización de búsquedas para DesHabilitados **
      ****************************************************************/   
-    
-    /**
-     * 
-     * @return 
-     */
-    public String prepareSelectDes(){
-        buscarRapida();
-        return "listDes";
-    }
 
     /**
      *
@@ -408,15 +391,6 @@ public class MbPersona implements Serializable{
      */
     public String prepareSelectDesXLoc(){
         buscarXLocalidad();
-        return "listDes";
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String prepareDesSelectDesXDoc(){
-        buscarRapidaXDoc();
         return "listDes";
     }
     
@@ -598,6 +572,27 @@ public class MbPersona implements Serializable{
         return "inicio";
     }
     
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbPersona") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }
+
+    
     /*********************
     ** Métodos privados **
     **********************/
@@ -647,38 +642,6 @@ public class MbPersona implements Serializable{
     /*********************************************************
      **** métodos privados para la búsqueda de habiliados ****
      *********************************************************/
-    private void buscarRapida(){
-        List<Persona> personas = new ArrayList();
-        Iterator itRows = items.iterator();
-        String apellidos = "";
-        String nombres = "";
-        
-        // verifico de qué búsqueda se trata, si es completa busco en apellido y en nombre y si no, en uno o en otro
-        boolean completa;
-        if(selectParam.indexOf(",") > 0){
-            apellidos = selectParam.substring(0, selectParam.indexOf(","));
-            nombres = selectParam.substring(selectParam.indexOf(",") + 1, selectParam.length());
-            completa = true;
-        }else{
-            completa = false;
-        }
-        
-        // recorro el dadamodel
-        while(itRows.hasNext()){
-            Persona per = (Persona)itRows.next();
-            if(completa){
-                if(per.getApellidos().contains(apellidos.trim()) && per.getNombres().contains(nombres.trim())){
-                    personas.add(per);
-                }
-            }else{
-                if(per.getApellidos().contains(selectParam) || per.getNombres().contains(selectParam)){
-                    personas.add(per);
-                }
-            }           
-        }        
-        items = null;
-        items = new ListDataModel(personas); 
-    } 
     
     private void buscarXLocalidad(){
         List<Persona> personas = new ArrayList();
@@ -691,19 +654,6 @@ public class MbPersona implements Serializable{
         items = null;
         items = new ListDataModel(personas);            
         }
-    }
-    
-    private void buscarRapidaXDoc(){
-        List<Persona> personas = new ArrayList();
-        Iterator itRows = items.iterator();
-        while(itRows.hasNext()){
-            Persona per = (Persona)itRows.next();
-            if(per.getDocumento() == selectIParam){
-                personas.add(per);
-            }
-        }
-        items = null;
-        items = new ListDataModel(personas);
     }
     
     

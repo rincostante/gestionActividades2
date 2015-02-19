@@ -28,8 +28,11 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -85,6 +88,7 @@ public class MbActividadImpl implements Serializable{
     private MbLogin login;          
     private int tipoList; //1=habilitadas | 2=finalizadas | 3=suspendidas | 4=deshabilitadas 
     private boolean esCoordinador;
+    private boolean iniciado;
     
     /**
      * Creates a new instance of MbActividadImpl
@@ -97,6 +101,7 @@ public class MbActividadImpl implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
@@ -268,6 +273,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         tipoList = 1;
         recreateModel();
         return "list";
@@ -715,7 +721,29 @@ public class MbActividadImpl implements Serializable{
     
     public void verParticipantes(){
         listDMPart = new ListDataModel(current.getParticipantes());
-        RequestContext.getCurrentInstance().openDialog("dlgParticipantes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgParticipantes", options, null);
+    }    
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbActividadImpl") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
     }    
     
     /*********************

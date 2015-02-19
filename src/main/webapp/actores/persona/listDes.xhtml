@@ -15,7 +15,7 @@
         <ui:define name="content">
             <br/> 
             <h:form style="text-align: left">
-                <p:panel id="perForm" header="#{bundle.PersonaListTitle} Deshabilitadas" style="margin-bottom:10px;">
+                <p:panel id="perForm" header="#{bundle.PersonaListTitle} Deshabilitadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar">
                     <h:panelGroup>
                         <h:panelGrid columns="3" id="pnBotones">
                             <p:commandButton icon="ui-icon-refresh" value="Habilitadas" action="#{mbPersona.prepareList}"/>
@@ -24,14 +24,7 @@
                         
                         <br/> 
                         
-                        <h:panelGrid columns="4">
-                            <p:autoComplete value="#{mbPersona.selectParam}" 
-                                            completeMethod="#{mbPersona.completeNombres}" />
-                            <p:commandButton icon="ui-icon-close" style="float: right">
-                                <p:ajax update="perForm" resetValues="true" />
-                            </p:commandButton>                           
-                            <p:commandButton style="width: 280px" icon="ui-icon-search" value="Búsqueda por nombres" action="#{mbPersona.prepareSelectDes}" ajax="false"/>  
-                            <p:outputLabel value="&ensp;"/>
+                        <h:panelGrid columns="4">                        
                             
                             <p:selectOneMenu id="localidad" value="#{mbPersona.localidad}">
                                 <f:selectItem itemLabel="Seleccione la localidad" itemValue="" noSelectionOption="true" />
@@ -43,14 +36,7 @@
                             </p:commandButton>  
                             <p:commandButton style="width: 280px" icon="ui-icon-search" value="Búsqueda por Localidad" action="#{mbPersona.prepareSelectDesXLoc}" ajax="false"/> 
                             <p:outputLabel value="&ensp;" />
-                            
-                            <p:autoComplete value="#{mbPersona.selectIParam}" 
-                                            completeMethod="#{mbPersona.completeDocum}" />
-                            <p:commandButton icon="ui-icon-close" style="float: right">
-                                <p:ajax update="perForm" resetValues="true" />
-                            </p:commandButton>   
-                            <p:commandButton style="width: 280px" icon="ui-icon-search" value="Búsqueda por Documento" action="#{mbPersona.prepareDesSelectDesXDoc}" ajax="false"/>
-                            
+
                         </h:panelGrid>
                     </h:panelGroup>
                 </p:panel>
@@ -92,8 +78,12 @@
                     </p:column>                    
                     
                     <p:column headerText="Acciones" style="width:90px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbPersona.prepareViewDes}"/>
-                        <p:commandButton icon="ui-icon-unlocked" action="#{mbPersona.prepareHabilitar}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbPersona.prepareViewDes}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbPersona.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-unlocked" action="#{mbPersona.prepareHabilitar}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbPersona.current}" />
+                        </p:commandButton>
                     </p:column>                
                 </p:dataTable>
             </h:form>

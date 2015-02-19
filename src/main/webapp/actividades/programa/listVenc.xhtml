@@ -58,19 +58,19 @@
                         <p:columnToggler datasource="campoList" trigger="toggler" />
                     </f:facet>
 
-                    <p:column headerText="#{bundle.ProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                    <p:column headerText="#{bundle.ProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>   
                     
-                    <p:column headerText="#{bundle.ProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}">
+                    <p:column headerText="#{bundle.ProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaIniVig}"/>
                     </p:column>  
                     
-                    <p:column headerText="#{bundle.ProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}">
+                    <p:column headerText="#{bundle.ProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaFinVig}"/>
                     </p:column>  
                     
-                    <p:column headerText="#{bundle.ProgramaLabel_resolucion}" sortBy="#{e.resolucion.resolucion}" filterBy="#{e.resolucion.resolucion}">
+                    <p:column headerText="#{bundle.ProgramaLabel_resolucion}" sortBy="#{e.resolucion.resolucion}" filterBy="#{e.resolucion.resolucion}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.resolucion.resolucion} / #{e.resolucion.anio}"/>
                     </p:column>  
 

@@ -35,19 +35,19 @@
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbResolucion.prepareListDes}" update="docList" style="margin-left: 10px"/>
                         <p:columnToggler datasource="docList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="#{bundle.ResolucionLabel_nombre}" sortBy="#{e.resolucion}" filterBy="#{e.resolucion}">
+                    <p:column headerText="#{bundle.ResolucionLabel_nombre}" sortBy="#{e.resolucion}" filterBy="#{e.resolucion}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.resolucion}"/>
                     </p:column>   
-                    <p:column headerText="#{bundle.ResolucionLabel_anio}" sortBy="#{e.anio}" filterBy="#{e.anio}">
+                    <p:column headerText="#{bundle.ResolucionLabel_anio}" sortBy="#{e.anio}" filterBy="#{e.anio}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.anio}"/>
                     </p:column>
-                    <p:column headerText="#{bundle.ResolucionLabel_libro}" sortBy="#{e.libro}" filterBy="#{e.libro}">
+                    <p:column headerText="#{bundle.ResolucionLabel_libro}" sortBy="#{e.libro}" filterBy="#{e.libro}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.libro}"/>
                     </p:column>
-                    <p:column headerText="#{bundle.ResolucionLabel_acta}" sortBy="#{e.acta}" filterBy="#{e.acta}">
+                    <p:column headerText="#{bundle.ResolucionLabel_acta}" sortBy="#{e.acta}" filterBy="#{e.acta}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.acta}"/>
                     </p:column>
-                    <p:column headerText="#{bundle.ResolucionLabel_foja}" sortBy="#{e.foja}" filterBy="#{e.foja}">
+                    <p:column headerText="#{bundle.ResolucionLabel_foja}" sortBy="#{e.foja}" filterBy="#{e.foja}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.foja}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:90px">

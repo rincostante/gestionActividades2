@@ -22,8 +22,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -168,8 +170,7 @@ public class MbParticipante implements Serializable{
     }
     
     /**
-     * Inicio
-     * @return 
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
      */
     public void iniciar(){
         if(!iniciado){
@@ -647,7 +648,9 @@ public class MbParticipante implements Serializable{
     
     public void verClases(){
         listDMClases = new ListDataModel(current.getClases());
-        RequestContext.getCurrentInstance().openDialog("dlgClases");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgClases", options, null);
     }      
 
     

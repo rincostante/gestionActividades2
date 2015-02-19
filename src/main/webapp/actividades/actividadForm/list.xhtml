@@ -14,6 +14,9 @@
             <h:outputText value="#{bundle.ActividadPlanTitle}" />
         </ui:define>
         <ui:define name="content">
+            <f:metadata>  
+                <f:event listener="#{mbActividadPlan.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <br/> 
             <h:form style="text-align: left">
                 <p:panel id="actPlanForm" header="#{bundle.ActividadPlanListTitle} Habilitadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
@@ -27,7 +30,7 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbActividadPlan.items}" var="e" id="actPlanList" rows="5"
+                <p:dataTable value="#{mbActividadPlan.lstActPlan}" var="e" id="actPlanList" rows="5" filteredValue="#{mbActividadPlan.lstActPlan}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -37,27 +40,27 @@
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareList}" update="actPlanList" style="margin-left: 10px"/>
                         <p:columnToggler datasource="actPlanList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="#{bundle.ActividadPlanLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                    <p:column headerText="#{bundle.ActividadPlanLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ActividadPlanLabel_cargaHoraria}" sortBy="#{e.cargaHoraria}" filterBy="#{e.cargaHoraria}" style="width: 150px">
+                    <p:column headerText="#{bundle.ActividadPlanLabel_cargaHoraria}" sortBy="#{e.cargaHoraria}" filterBy="#{e.cargaHoraria}" style="width: 150px" filterMatchMode="contains">
                         <p:outputLabel value="#{e.cargaHoraria}"/>
                     </p:column> 
                     
-                    <p:column headerText="#{bundle.ActividadPlanLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}">
+                    <p:column headerText="#{bundle.ActividadPlanLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.modalidad.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ActividadPlanLabel_tipoCapacitacion}" sortBy="#{e.tipoCapacitacion.nombre}" filterBy="#{e.tipoCapacitacion.nombre}">
+                    <p:column headerText="#{bundle.ActividadPlanLabel_tipoCapacitacion}" sortBy="#{e.tipoCapacitacion.nombre}" filterBy="#{e.tipoCapacitacion.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.tipoCapacitacion.nombre}"/>
                     </p:column> 
                     
-                    <p:column headerText="#{bundle.ActividadPlanLabel_campoTematico}" sortBy="#{e.campoTematico.nombre}" filterBy="#{e.campoTematico.nombre}">
+                    <p:column headerText="#{bundle.ActividadPlanLabel_campoTematico}" sortBy="#{e.campoTematico.nombre}" filterBy="#{e.campoTematico.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.campoTematico.nombre}"/>
                     </p:column> 
                     
-                    <p:column headerText="#{bundle.ActividadPlanLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}">
+                    <p:column headerText="#{bundle.ActividadPlanLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.organismo.nombre}"/>
                     </p:column> 
 

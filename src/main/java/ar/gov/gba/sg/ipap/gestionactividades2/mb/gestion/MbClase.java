@@ -24,9 +24,12 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -80,6 +83,7 @@ public class MbClase implements Serializable{
     private MbLogin login;
     private int tipoList; //1=vigentes | 2=finalizadas | 3=deshabilitados   
     private boolean esCoordinador;
+    private boolean iniciado;
 
     /**
      * Creates a new instance of MbClase
@@ -715,12 +719,16 @@ public class MbClase implements Serializable{
      */
     public void verParticipantesDisp(){
         listParticipantesDisp = new ListDataModel(listPartDisp);
-        RequestContext.getCurrentInstance().openDialog("dlgAsistDisp");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgAsistDisp", options, null);        
     }
     
     public void verAsistentes(){
         listParticipantesVinc = new ListDataModel(listPartVinc);
-        RequestContext.getCurrentInstance().openDialog("dlgAsistVinc");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgAsistVinc", options, null); 
     }
     
     public void asignarAsistencia(Participante part){
@@ -742,6 +750,26 @@ public class MbClase implements Serializable{
         listParticipantesVinc = null;      
         listPartVinc = current.getParticipantes();
         listPartDisp = cargarParticipantesDisponibles();
+    }    
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbClase") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
     }    
     
     /*********************

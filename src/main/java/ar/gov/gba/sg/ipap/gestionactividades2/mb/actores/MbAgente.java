@@ -29,8 +29,11 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -96,6 +99,7 @@ public class MbAgente implements Serializable{
     private Usuario usLogeado;
     private MbLogin login;  
     private ListDataModel listDMPart;
+    private boolean iniciado;
     /**
      * Creates a new instance of MbAgente
      */
@@ -107,6 +111,7 @@ public class MbAgente implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         listaEstudios = estCurFacade.findAll();
         listaNivelIpap = nivelIpapFacade.findAll();
         listaTitulos = tituloFacade.findAll();
@@ -335,6 +340,7 @@ public class MbAgente implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         habilitadas = true;
         esReferente = false;
         recreateModel();
@@ -778,6 +784,26 @@ public class MbAgente implements Serializable{
         return "inicio";
     }  
     
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbAgente") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
+    
     /*********************
     ** Desencadenadores **
     **********************/    
@@ -807,7 +833,9 @@ public class MbAgente implements Serializable{
     
     public void verParticipantes(){
         listDMPart = new ListDataModel(current.getParticipaciones());
-        RequestContext.getCurrentInstance().openDialog("dlgParticipantes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgParticipantes", options, null);
     }  
     
     

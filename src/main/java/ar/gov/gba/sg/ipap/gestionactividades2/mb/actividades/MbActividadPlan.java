@@ -26,9 +26,13 @@ import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -60,6 +64,7 @@ public class MbActividadPlan implements Serializable{
     private List<SubPrograma> subVinc;
     private List<SubPrograma> subDisp;
     private boolean asignaSub; 
+    private List<ActividadPlan> lstActPlan;
     
     @EJB
     private ActividadPlanFacade actividadPlanFacade;
@@ -76,7 +81,6 @@ public class MbActividadPlan implements Serializable{
     @EJB
     private OrganismoFacade organismoFacade;
     
-    private int selectedItemIndex;
     private ActividadPlan actPlanSelected;
     private Usuario usLogeado;     
     private List<Resolucion> listResoluciones;
@@ -87,6 +91,7 @@ public class MbActividadPlan implements Serializable{
     private MbLogin login;
     private int tipoList; //1=habilitadas | 2=suspendidas | 3=deshabilitadas     
     private ListDataModel listDMActImp;
+    private boolean iniciado;
 
     /** Creates a new instance of MbActividadPlan */
     public MbActividadPlan() {
@@ -97,6 +102,7 @@ public class MbActividadPlan implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
@@ -106,6 +112,24 @@ public class MbActividadPlan implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+ 
+    public List<ActividadPlan> getLstActPlan() {
+        if(lstActPlan == null){
+            switch(tipoList){
+                case 1: lstActPlan = getFacade().getHabilitadas();
+                    break;
+                case 2: lstActPlan = getFacade().getSuspendidas();
+                    break;
+                default: lstActPlan = getFacade().getDeshabilitadas();
+            }
+        }
+        return lstActPlan;
+    }
+
+    public void setLstActPlan(List<ActividadPlan> lstActPlan) {
+        this.lstActPlan = lstActPlan;
+    }
+ 
  
     public ListDataModel getListDMActImp() {
         return listDMActImp;
@@ -226,26 +250,10 @@ public class MbActividadPlan implements Serializable{
     public ActividadPlan getSelected() {
         if (current == null) {
             current = new ActividadPlan();
-            selectedItemIndex = -1;
         }
         return current;
     }    
     
-    /**
-     * @return el listado de entidades a mostrar en el list
-     */
-    public DataModel getItems() {
-        if (items == null) {
-            switch(tipoList){
-                case 1: items = new ListDataModel(getFacade().getHabilitadas());
-                    break;
-                case 2: items = new ListDataModel(getFacade().getSuspendidas());
-                    break;
-                default: items = new ListDataModel(getFacade().getDeshabilitadas());
-            }
-        }
-        return items;
-    }    
     
     /*******************************
      ** Métodos de inicialización **
@@ -255,6 +263,7 @@ public class MbActividadPlan implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         asignaSub = false;
         tipoList = 1;
         recreateModel();
@@ -314,7 +323,6 @@ public class MbActividadPlan implements Serializable{
         asignaSub = false;
         current = actPlanSelected;
         subVinc = current.getSubprogramas();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -325,7 +333,6 @@ public class MbActividadPlan implements Serializable{
         asignaSub = false;
         current = actPlanSelected;
         subVinc = current.getSubprogramas();
-        selectedItemIndex = getItems().getRowIndex();
         return "viewSusp";
     }    
     
@@ -336,7 +343,6 @@ public class MbActividadPlan implements Serializable{
         asignaSub = false;
         current = actPlanSelected;
         subVinc = current.getSubprogramas();
-        selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
 
@@ -355,7 +361,6 @@ public class MbActividadPlan implements Serializable{
         listSubProgramas = new ListDataModel(subProgramaFacade.getHabilitadas());
 
         current = new ActividadPlan();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -373,7 +378,6 @@ public class MbActividadPlan implements Serializable{
         asignaSub = true;
         subVinc = current.getSubprogramas();
         subDisp = cargarSubProgramasDisponibles();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -391,7 +395,6 @@ public class MbActividadPlan implements Serializable{
         asignaSub = true;
         subVinc = current.getSubprogramas();
         subDisp = cargarSubProgramasDisponibles();  
-        selectedItemIndex = getItems().getRowIndex();
         return "editSusp";
     }        
     
@@ -414,7 +417,6 @@ public class MbActividadPlan implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -431,7 +433,6 @@ public class MbActividadPlan implements Serializable{
      */
     public String prepareHabilitar(){
         current = actPlanSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -457,7 +458,6 @@ public class MbActividadPlan implements Serializable{
      */
     public String preparSuspender(){
         current = actPlanSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -482,7 +482,6 @@ public class MbActividadPlan implements Serializable{
      */
     public String prepareActivar(){
         current = actPlanSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -615,7 +614,6 @@ public class MbActividadPlan implements Serializable{
      */    
     public String destroy() {
         current = actPlanSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -624,19 +622,6 @@ public class MbActividadPlan implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -663,7 +648,9 @@ public class MbActividadPlan implements Serializable{
      */
     public void verActividadesImp(){
         listDMActImp = new ListDataModel(current.getActividadesImplementadas());
-        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp", options, null);
     }         
     
     /**
@@ -671,12 +658,16 @@ public class MbActividadPlan implements Serializable{
      */
     public void verSubProgramas(){
         listSubProgVinc = new ListDataModel(subVinc);
-        RequestContext.getCurrentInstance().openDialog("dlgSubProgVinc");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgSubProgVinc", options, null);
     }
     
     public void verSubProgamasDisp(){
         listSubProgDisp = new ListDataModel(subDisp);
-        RequestContext.getCurrentInstance().openDialog("dlgSubProgDisp");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgSubProgDisp", options, null);
     }
 
     public void asignarSubPrograma(SubPrograma sub){
@@ -700,6 +691,26 @@ public class MbActividadPlan implements Serializable{
         subDisp = cargarSubProgramasDisponibles();
     }
     
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbActividadPlan") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
+    
     
     /*********************
     ** Métodos privados **
@@ -715,7 +726,8 @@ public class MbActividadPlan implements Serializable{
      * Restea la entidad
      */
     private void recreateModel() {
-        items = null;
+        lstActPlan.clear();
+        lstActPlan = null;
         listDMActImp = null;
     }      
     

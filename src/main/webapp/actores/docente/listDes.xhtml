@@ -56,19 +56,19 @@
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbDocente.prepareListDes}" update="docList" style="margin-left: 10px"/>
                         <p:columnToggler datasource="docList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="#{bundle.DocenteLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}">
+                    <p:column headerText="#{bundle.DocenteLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.apYNom}"/>
                     </p:column>   
-                    <p:column headerText="#{bundle.DocenteLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}">
+                    <p:column headerText="#{bundle.DocenteLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.documento}"/>
                     </p:column>
-                    <p:column headerText="#{bundle.DocenteTitle_titulo}" sortBy="#{e.titulo.nombre}" filterBy="#{e.titulo.nombre}">
+                    <p:column headerText="#{bundle.DocenteTitle_titulo}" sortBy="#{e.titulo.nombre}" filterBy="#{e.titulo.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.titulo.nombre}"/>
                     </p:column>
-                    <p:column headerText="#{bundle.DocenteTitle_especialidad}" sortBy="#{e.especialidad}" filterBy="#{e.especialidad}">
+                    <p:column headerText="#{bundle.DocenteTitle_especialidad}" sortBy="#{e.especialidad}" filterBy="#{e.especialidad}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.especialidad}"/>
                     </p:column>
-                    <p:column headerText="#{bundle.DocenteTitle_emailLab}" style="width:250px" sortBy="#{e.emailLaboral}" filterBy="#{e.emailLaboral}">
+                    <p:column headerText="#{bundle.DocenteTitle_emailLab}" style="width:250px" sortBy="#{e.emailLaboral}" filterBy="#{e.emailLaboral}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.emailLaboral}"/>
                     </p:column>                    
                     <p:column headerText="#{bundle.DocenteTitle_telefonoLab}">

@@ -15,6 +15,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
@@ -49,6 +50,7 @@ public class MbResolucion implements Serializable{
     private Resolucion resSelected;
     private Usuario usLogeado;    
     private MbLogin login;  
+    private boolean iniciado;
 
     /** Creates a new instance of MbResolucion */
     public MbResolucion() {
@@ -59,6 +61,7 @@ public class MbResolucion implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
@@ -130,6 +133,7 @@ public class MbResolucion implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         habilitadas = true;
         recreateModel();
         return "list";
@@ -375,7 +379,27 @@ public class MbResolucion implements Serializable{
         session.removeAttribute("mbResolucion");
 
         return "inicio";
-    }      
+    }  
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbResolucion") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
     
     
     /*********************

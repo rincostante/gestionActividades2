@@ -17,8 +17,11 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -56,6 +59,7 @@ public class MbPrograma implements Serializable{
     private MbLogin login; 
     private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
     private ListDataModel listDMSubprog;
+    private boolean iniciado;
 
     /**
      * Creates a new instance of MbPrograma
@@ -68,6 +72,7 @@ public class MbPrograma implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
@@ -174,6 +179,7 @@ public class MbPrograma implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         tipoList = 1;
         recreateModel();
         return "list";
@@ -498,9 +504,30 @@ public class MbPrograma implements Serializable{
      */
     public void verSubProgramas(){
         listDMSubprog = new ListDataModel(current.getSubProgramas());
-        RequestContext.getCurrentInstance().openDialog("dlgSubProgramas");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgSubProgramas", options, null);
     }        
     
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbPrograma") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
     
     /*********************
     ** Métodos privados **

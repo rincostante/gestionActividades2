@@ -8,7 +8,6 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
@@ -22,8 +21,11 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -75,6 +77,7 @@ public class MbDocente implements Serializable{
     private MbLogin login;   
     private ListDataModel listDMActImp;
     private ListDataModel listDMClases;
+    private boolean iniciado;
     
     /**
      * Creates a new instance of MbDocente
@@ -87,6 +90,7 @@ public class MbDocente implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         listaTitulos = tituloFacade.findAll();
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
@@ -262,6 +266,7 @@ public class MbDocente implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         habilitadas = true;
         recreateModel();
         return "list";
@@ -566,7 +571,9 @@ public class MbDocente implements Serializable{
      */
     public void verActividadesImp(){
         listDMActImp = new ListDataModel(current.getActividades());
-        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp", options, null);
     }     
     
     /**
@@ -574,8 +581,30 @@ public class MbDocente implements Serializable{
      */
     public void verClases(){
         listDMClases = new ListDataModel(current.getClases());
-        RequestContext.getCurrentInstance().openDialog("dlgClases");
-    }       
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgClases", options, null);  
+    }  
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbDocente") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
     
     /*********************
     ** Desencadenadores **

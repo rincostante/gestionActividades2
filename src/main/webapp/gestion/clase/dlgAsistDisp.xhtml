@@ -13,20 +13,24 @@
     </h:head>
     <h:body>
         <h:form id="frmAsistDisp">
-            <p:dataTable var="part" value="#{mbClase.listPartDisp}">
-                <p:column headerText="Nombre">
+            <p:dataTable var="part" value="#{mbClase.listPartDisp}"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Nombre" sortBy="#{part.agente.apYNom}" filterBy="#{part.agente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.apYNom}" />
                 </p:column>
-                <p:column headerText="Documento">
+                <p:column headerText="Documento" sortBy="#{part.agente.documento}" filterBy="#{part.agente.documento}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.documento}" />
                 </p:column>
-                <p:column headerText="Organismo">
+                <p:column headerText="Organismo" sortBy="#{part.agente.organismo.nombre}" filterBy="#{part.agente.organismo.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.organismo.tipoOrganismo.nombre} #{part.agente.organismo.nombre}" />
                 </p:column>
-                <p:column headerText="Cargo">
+                <p:column headerText="Cargo" sortBy="#{part.agente.cargo.nombre}" filterBy="#{part.agente.cargo.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.cargo.nombre}" />
                 </p:column>
-                <p:column headerText="Referente">
+                <p:column headerText="Referente" sortBy="#{part.agente.referente.apYNom}" filterBy="#{part.agente.referente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.referente.apYNom}" />
                 </p:column>
                 <p:column headerText="Asignar" style="width :45px;">

@@ -13,29 +13,33 @@
     </h:head>
     <h:body>
         <h:form id="frmClases">
-            <p:dataTable var="clase" value="#{mbParticipante.listDMClases}">
-                <p:column headerText="Curso">
+            <p:dataTable var="clase" value="#{mbParticipante.listDMClases}" style="width: 1100px"
+                        rows="5" 
+                        paginator="true" 
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                        rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Curso" sortBy="#{clase.actividad.actividadPlan.nombre}" filterBy="#{clase.actividad.actividadPlan.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{clase.actividad.actividadPlan.nombre}" />
                 </p:column>
-                <p:column headerText="Modalidad">
+                <p:column headerText="Modalidad" sortBy="#{clase.modalidad.nombre}" filterBy="#{clase.modalidad.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{clase.modalidad.nombre}" />
                 </p:column>
-                <p:column headerText="Nº de orden">
+                <p:column headerText="Nº de orden" sortBy="#{clase.numOrden}" filterBy="#{clase.numOrden}" filterMatchMode="contains">
                     <h:outputText value="#{clase.numOrden}" />
                 </p:column>
-                <p:column headerText="Fecha">
+                <p:column headerText="Fecha" sortBy="#{clase.strFechaRealizacion}" filterBy="#{clase.strFechaRealizacion}" filterMatchMode="contains">
                     <h:outputText value="#{clase.strFechaRealizacion}" />
                 </p:column>
-                <p:column headerText="Docente">
+                <p:column headerText="Docente" sortBy="#{clase.docente.apYNom}" filterBy="#{clase.docente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{clase.docente.apYNom}" />
                 </p:column>
-                <p:column headerText="Hora inicio">
+                <p:column headerText="Hora inicio" sortBy="#{clase.strHoraInicio}" filterBy="#{clase.strHoraInicio}" filterMatchMode="contains">
                     <h:outputText value="#{clase.strHoraInicio}" />
                 </p:column>
-                <p:column headerText="Hora fin">
+                <p:column headerText="Hora fin" sortBy="#{clase.strHoraFin}" filterBy="#{clase.strHoraFin}" filterMatchMode="contains">
                     <h:outputText value="#{clase.strHoraFin}" />
                 </p:column>
-                <p:column headerText="Habilitado">
+                <p:column headerText="Habilitado" sortBy="#{clase.admin.habilitado}" filterBy="#{clase.admin.habilitado}" filterMatchMode="contains">
                     <h:outputText value="#{clase.admin.habilitado}" />
                 </p:column>
             </p:dataTable>

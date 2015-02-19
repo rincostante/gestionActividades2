@@ -13,17 +13,21 @@
     </h:head>
     <h:body>
         <h:form id="frmSubDisp">
-            <p:dataTable var="sub" value="#{mbPrograma.listDMSubprog}">
-                <p:column headerText="Nombre">
+            <p:dataTable var="sub" value="#{mbPrograma.listDMSubprog}" 
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Nombre" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{sub.nombre}" />
                 </p:column>
-                <p:column headerText="Programa">
+                <p:column headerText="Programa" sortBy="#{sub.programa.nombre}" filterBy="#{sub.programa.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{sub.programa.nombre}" />
                 </p:column>
-                <p:column headerText="Fin vigencia">
+                <p:column headerText="Fin vigencia" sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
                     <h:outputText value="#{sub.strFechaFinVig}" />
                 </p:column>
-                <p:column headerText="Nombre">
+                <p:column headerText="Nombre" sortBy="#{sub.resolucion.resolucion}" filterBy="#{sub.resolucion.resolucion}" filterMatchMode="contains">
                     <h:outputText value="#{sub.resolucion.resolucion}/#{sub.resolucion.anio}" />
                 </p:column>
             </p:dataTable>

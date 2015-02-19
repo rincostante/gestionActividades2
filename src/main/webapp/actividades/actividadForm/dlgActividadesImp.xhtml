@@ -13,29 +13,33 @@
     </h:head>
     <h:body>
         <h:form id="frmActImp">
-            <p:dataTable var="actImp" value="#{mbActividadPlan.listDMActImp}" style="width: 800px">
-                <p:column headerText="Nombre">
+            <p:dataTable var="actImp" value="#{mbActividadPlan.listDMActImp}" style="width: 1100px"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Nombre" sortBy="#{actImp.actividadPlan.nombre}" filterBy="#{actImp.actividadPlan.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.actividadPlan.nombre}" />
                 </p:column>
-                <p:column headerText="Fecha de inicio">
+                <p:column headerText="Fecha de inicio" sortBy="#{actImp.strFechaIniVig}" filterBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.strFechaIniVig}" />
                 </p:column>    
-                <p:column headerText="Fecha de fin">
+                <p:column headerText="Fecha de fin" sortBy="#{actImp.strFechaFinVig}" filterBy="#{actImp.strFechaFinVig}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.strFechaFinVig}" />
                 </p:column>
-                <p:column headerText="Sede">
+                <p:column headerText="Sede" sortBy="#{actImp.sede.nombre}" filterBy="#{actImp.sede.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.sede.nombre}" />
                 </p:column>
-                <p:column headerText="Docente">
+                <p:column headerText="Docente" sortBy="#{actImp.docente.apYNom}" filterBy="#{actImp.docente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.docente.apYNom}" />
                 </p:column>
-                <p:column headerText="Coordinador">
+                <p:column headerText="Coordinador" sortBy="#{actImp.coordinador.apYNom}" filterBy="#{actImp.coordinador.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.coordinador.apYNom}" />
                 </p:column>
-                <p:column headerText="Resolución">
+                <p:column headerText="Resolución" sortBy="#{actImp.resolucion.resolucion}" filterBy="#{actImp.resolucion.resolucion}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.resolucion.resolucion} - #{actImp.resolucion.anio}" />
                 </p:column>
-                <p:column headerText="Haibilitada">
+                <p:column headerText="Haibilitada" sortBy="#{actImp.admin.habilitado}" filterBy="#{actImp.admin.habilitado}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.admin.habilitado}" />
                 </p:column>
             </p:dataTable>
