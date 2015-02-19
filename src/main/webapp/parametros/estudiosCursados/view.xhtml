@@ -20,6 +20,8 @@
                         <h:outputText value="#{mbEstudiosCursados.selected.nombre}" title="#{bundle.CreateEstudiosCursadosTitle_nombre}"/>
                         <h:outputLabel value="#{bundle.CreateEstudiosCursadosLabel_estado}"/>
                         <h:outputText value="#{mbEstudiosCursados.selected.estado}" title="#{bundle.CreateEstudiosCursadosTitle_estado}"/>                        
+                        <h:outputLabel value="#{bundle.CreateEstudiosCursadosLabel_agentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbEstudiosCursados.verAgentes}" />  
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

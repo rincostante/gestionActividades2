@@ -18,6 +18,8 @@
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.CreateSituacionRevistaLabel_nombre}"/>
                         <h:outputText value="#{mbSituacionRevista.selected.nombre}" title="#{bundle.CreateSituacionRevistaTitle_nombre}"/>
+                        <h:outputLabel value="#{bundle.CreateSituacionRevistaLabel_agentes}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbSituacionRevista.verAgentes}" />                    
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>

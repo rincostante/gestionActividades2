@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -28,6 +26,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 
 /**
@@ -46,10 +45,19 @@ public class MbSituacionRevista implements Serializable{
     private String selectParam; 
     private List<String> listaNombres;     
     private MbLogin login;  
+    private ListDataModel listDMAgentes;
 
     /** Creates a new instance of MbSituacionRevista */
     public MbSituacionRevista() {
     }   
+
+    public ListDataModel getListDMAgentes() {
+        return listDMAgentes;
+    }
+
+    public void setListDMAgentes(ListDataModel listDMAgentes) {
+        this.listDMAgentes = listDMAgentes;
+    }
     
     
     /********************************
@@ -155,6 +163,7 @@ public class MbSituacionRevista implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMAgentes = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -266,6 +275,14 @@ public class MbSituacionRevista implements Serializable{
         session.removeAttribute("mbSituacionRevista");
 
         return "inicio";
+    }     
+    
+    /**
+     * Método para mostrar los Agentes con este cargo
+     */
+    public void verAgentes(){
+        listDMAgentes = new ListDataModel(current.getAgentes());
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
     }     
     
     /*********************

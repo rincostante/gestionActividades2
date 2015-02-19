@@ -44,6 +44,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -94,6 +95,7 @@ public class MbAgente implements Serializable{
     private boolean esReferente;
     private Usuario usLogeado;
     private MbLogin login;  
+    private ListDataModel listDMPart;
     /**
      * Creates a new instance of MbAgente
      */
@@ -120,6 +122,15 @@ public class MbAgente implements Serializable{
     /********************************
      ** Getters y Setters *********** 
      ********************************/
+    
+    public ListDataModel getListDMPart() {
+        return listDMPart;
+    }
+
+    public void setListDMPart(ListDataModel listDMPart) {
+        this.listDMPart = listDMPart;
+    }
+
     
     public Usuario getUsLogeado() {
         return usLogeado;
@@ -794,6 +805,12 @@ public class MbAgente implements Serializable{
         esReferente = !(boolean)event.getNewValue();
     }
     
+    public void verParticipantes(){
+        listDMPart = new ListDataModel(current.getParticipaciones());
+        RequestContext.getCurrentInstance().openDialog("dlgParticipantes");
+    }  
+    
+    
     /*********************
     ** Métodos privados **
     **********************/
@@ -809,6 +826,7 @@ public class MbAgente implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMPart = null;
         if(selectParam != null){
             selectParam = null;
         }

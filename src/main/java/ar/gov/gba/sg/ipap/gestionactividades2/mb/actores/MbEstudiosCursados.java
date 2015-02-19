@@ -28,6 +28,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -46,6 +47,7 @@ public class MbEstudiosCursados implements Serializable{
     private List<String> listaNombres;    
     private Map<String,String> estados;
     private MbLogin login; 
+    private ListDataModel listDMAgentes;
 
     
     public Map<String, String> getEstados() {
@@ -69,6 +71,14 @@ public class MbEstudiosCursados implements Serializable{
         estados.put("En Curso", "En Curso");
         estados.put("Finalizado", "Finalizado");     
     }  
+
+    public ListDataModel getListDMAgentes() {
+        return listDMAgentes;
+    }
+
+    public void setListDMAgentes(ListDataModel listDMAgentes) {
+        this.listDMAgentes = listDMAgentes;
+    }
     
     /********************************
      ** Métodos para la navegación **
@@ -173,6 +183,7 @@ public class MbEstudiosCursados implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        listDMAgentes = null;
         if(selectParam != null){
             selectParam = null;
         }
@@ -276,6 +287,15 @@ public class MbEstudiosCursados implements Serializable{
 
         return "inicio";
     }  
+    
+    /**
+     * Método para mostrar los Agentes con este cargo
+     */
+    public void verAgentes(){
+        listDMAgentes = new ListDataModel(current.getAgentes());
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+    }    
+    
     
     /*********************
     ** Métodos privados **
