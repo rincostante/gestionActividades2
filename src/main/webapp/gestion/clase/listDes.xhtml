@@ -47,7 +47,8 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbClase.items}" var="e" id="calseList" rows="5"
+                <p:dataTable value="#{mbClase.listado}" var="e" id="calseList" rows="5" 
+                             filteredValue="#{mbClase.listadoFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -58,23 +59,23 @@
                         <p:columnToggler datasource="calseList" trigger="toggler" />
                     </f:facet>
                     
-                    <p:column headerText="#{bundle.ClaseLabel_curso}" sortBy="#{e.actividad.actividadPlan.nombre}" filterBy="#{e.actividad.actividadPlan.nombre}">
+                    <p:column headerText="#{bundle.ClaseLabel_curso}" sortBy="#{e.actividad.actividadPlan.nombre}" filterBy="#{e.actividad.actividadPlan.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.actividad.actividadPlan.nombre} - #{e.actividad.strFechaIniVig}"/>
                     </p:column>
 
-                    <p:column headerText="#{bundle.ClaseLabel_numOrden}" sortBy="#{e.numOrden}" filterBy="#{e.numOrden}" style="width: 130px">
+                    <p:column headerText="#{bundle.ClaseLabel_numOrden}" sortBy="#{e.numOrden}" filterBy="#{e.numOrden}" style="width: 130px" filterMatchMode="contains">
                         <p:outputLabel value="#{e.numOrden}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ClaseLabel_Docente}" sortBy="#{e.docente.apYNom}" filterBy="#{e.docente.apYNom}">
+                    <p:column headerText="#{bundle.ClaseLabel_Docente}" sortBy="#{e.docente.apYNom}" filterBy="#{e.docente.apYNom}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.docente.apYNom} - #{e.docente.documento}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ClaseLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}">
+                    <p:column headerText="#{bundle.ClaseLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.modalidad.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ClaseLable_FechaRealizacion}" sortBy="#{e.strFechaRealizacion}" filterBy="#{e.strFechaRealizacion}">
+                    <p:column headerText="#{bundle.ClaseLable_FechaRealizacion}" sortBy="#{e.strFechaRealizacion}" filterBy="#{e.strFechaRealizacion}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaRealizacion}"/>
                     </p:column>
                     

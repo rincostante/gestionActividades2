@@ -51,7 +51,8 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbSubPrograma.items}" var="e" id="subProgList" rows="5"
+                <p:dataTable value="#{mbSubPrograma.items}" var="e" id="subProgList" rows="5" 
+                             filteredValue="#{mbSubPrograma.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">

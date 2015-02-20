@@ -51,7 +51,8 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbParticipante.items}" var="e" id="particList" rows="5"
+                <p:dataTable value="#{mbParticipante.listado}" var="e" id="particList" rows="5" 
+                             filteredValue="#{mbParticipante.listadoFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -62,23 +63,23 @@
                         <p:columnToggler datasource="particList" trigger="toggler" />
                     </f:facet>
 
-                    <p:column headerText="#{bundle.ParticipanteLabel_Agente}" sortBy="#{e.agente.apYNom}" filterBy="#{e.agente.apYNom}">
+                    <p:column headerText="#{bundle.ParticipanteLabel_Agente}" sortBy="#{e.agente.apYNom}" filterBy="#{e.agente.apYNom}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.agente.apYNom} - #{e.agente.documento}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ParticipanteLabel_ActividadImpl}" sortBy="#{e.actividad.actividadPlan.nombre}" filterBy="#{e.actividad.actividadPlan.nombre}">
+                    <p:column headerText="#{bundle.ParticipanteLabel_ActividadImpl}" sortBy="#{e.actividad.actividadPlan.nombre}" filterBy="#{e.actividad.actividadPlan.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.actividad.actividadPlan.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ParticipanteLabel_Autorizacion}" sortBy="#{e.autorizacion}" filterBy="#{e.autorizacion}">
+                    <p:column headerText="#{bundle.ParticipanteLabel_Autorizacion}" sortBy="#{e.autorizacion}" filterBy="#{e.autorizacion}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.autorizacion}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ParticipanteLable_FechaAutorizacion}" sortBy="#{e.strFechaAutoriz}" filterBy="#{e.strFechaAutoriz}">
+                    <p:column headerText="#{bundle.ParticipanteLable_FechaAutorizacion}" sortBy="#{e.strFechaAutoriz}" filterBy="#{e.strFechaAutoriz}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaAutoriz}"/>
                     </p:column>  
                     
-                    <p:column headerText="#{bundle.ParticipanteLable_Referente}" sortBy="#{e.agente.referente.apYNom}" filterBy="#{e.agente.referente.apYNom}">
+                    <p:column headerText="#{bundle.ParticipanteLable_Referente}" sortBy="#{e.agente.referente.apYNom}" filterBy="#{e.agente.referente.apYNom}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.agente.referente.apYNom}"/>
                     </p:column> 
                     

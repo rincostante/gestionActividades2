@@ -6,6 +6,7 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
@@ -26,7 +27,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,9 +42,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -57,12 +54,12 @@ import org.primefaces.context.RequestContext;
 public class MbActividadPlan implements Serializable{
     
     private ActividadPlan current;
-    private DataModel items = null;
-    private DataModel listSubProgDisp = null;
-    private DataModel listSubProgVinc = null;
-    private DataModel listSubProgramas = null;
     private List<SubPrograma> subVinc;
+    private List<SubPrograma> subVincFilter;
     private List<SubPrograma> subDisp;
+    private List<SubPrograma> subDispFilter;
+    private List<SubPrograma> subProgramas;
+    private List<SubPrograma> subProgramasFilter;
     private boolean asignaSub; 
     private List<ActividadPlan> lstActPlan;
     
@@ -88,9 +85,10 @@ public class MbActividadPlan implements Serializable{
     private List<TipoCapacitacion> listTipoCapacitaciones;
     private List<CampoTematico> listCamposTematicos;
     private List<Organismo> listOrganismos;
+    private List<ActividadImplementada> listActImp;
     private MbLogin login;
     private int tipoList; //1=habilitadas | 2=suspendidas | 3=deshabilitadas     
-    private ListDataModel listDMActImp;
+    //private ListDataModel listDMActImp;
     private boolean iniciado;
 
     /** Creates a new instance of MbActividadPlan */
@@ -113,6 +111,31 @@ public class MbActividadPlan implements Serializable{
      ** Getters y Setters ***********
      ********************************/ 
  
+    public List<SubPrograma> getSubVincFilter() {
+        return subVincFilter;
+    }
+
+    public void setSubVincFilter(List<SubPrograma> subVincFilter) {
+        this.subVincFilter = subVincFilter;
+    }
+
+    public List<SubPrograma> getSubDispFilter() {
+        return subDispFilter;
+    }
+
+    public void setSubDispFilter(List<SubPrograma> subDispFilter) {
+        this.subDispFilter = subDispFilter;
+    }
+
+    public List<SubPrograma> getSubProgramasFilter() {
+        return subProgramasFilter;
+    }
+
+    public void setSubProgramasFilter(List<SubPrograma> subProgramasFilter) {
+        this.subProgramasFilter = subProgramasFilter;
+    }
+ 
+ 
     public List<ActividadPlan> getLstActPlan() {
         if(lstActPlan == null){
             switch(tipoList){
@@ -131,21 +154,21 @@ public class MbActividadPlan implements Serializable{
     }
  
  
-    public ListDataModel getListDMActImp() {
-        return listDMActImp;
+    public List<ActividadImplementada> getListActImp() {
+        return listActImp;
     }
 
-    public void setListDMActImp(ListDataModel listDMActImp) {
-        this.listDMActImp = listDMActImp;
+    public void setListActImp(List<ActividadImplementada> listActImp) {
+        this.listActImp = listActImp;
     }
  
  
-    public DataModel getListSubProgramas() {
-        return listSubProgramas;
+    public List<SubPrograma> getSubProgramas() {
+        return subProgramas;
     }
 
-    public void setListSubProgramas(DataModel listSubProgramas) {
-        this.listSubProgramas = listSubProgramas;
+    public void setSubProgramas(List<SubPrograma> listSubProgramas) {
+        this.subProgramas = listSubProgramas;
     }
  
  
@@ -158,21 +181,21 @@ public class MbActividadPlan implements Serializable{
     }
  
  
-    public DataModel getListSubProgVinc() {
-        return listSubProgVinc;
+    public List<SubPrograma> getSubVinc() {
+        return subVinc;
     }
 
-    public void setListSubProgVinc(DataModel listSubProgVinc) {
-        this.listSubProgVinc = listSubProgVinc;
+    public void setSubVinc(List<SubPrograma> subVinc) {
+        this.subVinc = subVinc;
     }
  
  
-    public DataModel getListSubProgDisp() {
-        return listSubProgDisp;
+    public List<SubPrograma> getSubDisp() {
+        return subDisp;
     }
 
-    public void setListSubProgDisp(DataModel listSubProgDisp) {
-        this.listSubProgDisp = listSubProgDisp;
+    public void setSubDisp(List<SubPrograma> subDisp) {
+        this.subDisp = subDisp;
     }
  
     public List<Modalidad> getListModalidades() {
@@ -267,8 +290,6 @@ public class MbActividadPlan implements Serializable{
         asignaSub = false;
         tipoList = 1;
         recreateModel();
-        listSubProgVinc = null;
-        listSubProgDisp = null;
         if(subVinc != null){
             subVinc.clear();
         }
@@ -286,8 +307,6 @@ public class MbActividadPlan implements Serializable{
         tipoList = 2;
         recreateModel();
         asignaSub = false;
-        listSubProgVinc = null;
-        listSubProgDisp = null;
         if(subVinc != null){
             subVinc.clear();
         }
@@ -305,8 +324,6 @@ public class MbActividadPlan implements Serializable{
         tipoList = 3;
         recreateModel();
         asignaSub = false;
-        listSubProgVinc = null;
-        listSubProgDisp = null;
         if(subVinc != null){
             subVinc.clear();
         }
@@ -358,7 +375,7 @@ public class MbActividadPlan implements Serializable{
         listOrganismos = organismoFacade.getHabilitados();
         
         // cargo la tabla de subProgramas
-        listSubProgramas = new ListDataModel(subProgramaFacade.getHabilitadas());
+        subProgramas = subProgramaFacade.getHabilitadas();
 
         current = new ActividadPlan();
         return "new";
@@ -545,6 +562,7 @@ public class MbActividadPlan implements Serializable{
                     listTipoCapacitaciones.clear();
                     listCamposTematicos.clear();
                     listOrganismos.clear();
+                    subProgramas.clear();
                     subVinc = current.getSubprogramas();
                     return "view";
                 }else{
@@ -584,10 +602,8 @@ public class MbActividadPlan implements Serializable{
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanUpdated"));
                 listResoluciones.clear();
-                listSubProgDisp = null;
                 asignaSub = false;
                 subDisp.clear();
-                listSubProgVinc = null;
                 listModalidades.clear();
                 listTipoCapacitaciones.clear();
                 listCamposTematicos.clear();
@@ -647,7 +663,7 @@ public class MbActividadPlan implements Serializable{
      * Método para mostrar las Actividades Implementadas vinculadas a esta Actividad Planificada
      */
     public void verActividadesImp(){
-        listDMActImp = new ListDataModel(current.getActividadesImplementadas());
+        listActImp = current.getActividadesImplementadas();
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgActividadesImp", options, null);
@@ -657,14 +673,12 @@ public class MbActividadPlan implements Serializable{
      * Método para manipular los Sub Programas de una Actividad
      */
     public void verSubProgramas(){
-        listSubProgVinc = new ListDataModel(subVinc);
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgSubProgVinc", options, null);
     }
     
     public void verSubProgamasDisp(){
-        listSubProgDisp = new ListDataModel(subDisp);
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgSubProgDisp", options, null);
@@ -673,20 +687,28 @@ public class MbActividadPlan implements Serializable{
     public void asignarSubPrograma(SubPrograma sub){
         subVinc.add(sub);
         subDisp.remove(sub);
-        listSubProgDisp = null;
+        if(subVincFilter != null){
+            subVincFilter = null;
+        }
+        if(subDispFilter != null){
+            subDispFilter = null;
+        }
         RequestContext.getCurrentInstance().closeDialog("dlgSubProgDisp");
     }
     
     public void quitarSubPrograma(SubPrograma sub){
         subVinc.remove(sub);
         subDisp.add(sub);
-        listSubProgVinc = null;
+        if(subVincFilter != null){
+            subVincFilter = null;
+        }
+        if(subDispFilter != null){
+            subDispFilter = null;
+        }
         RequestContext.getCurrentInstance().closeDialog("dlgSubProgVinc");
     }
     
     public void limpiarSubProg(){
-        listSubProgDisp = null;
-        listSubProgVinc = null;      
         subVinc = current.getSubprogramas();
         subDisp = cargarSubProgramasDisponibles();
     }
@@ -728,7 +750,15 @@ public class MbActividadPlan implements Serializable{
     private void recreateModel() {
         lstActPlan.clear();
         lstActPlan = null;
-        listDMActImp = null;
+        if(subVincFilter != null){
+            subVincFilter = null;
+        }
+        if(subDispFilter != null){
+            subDispFilter = null;
+        }
+        if(subProgramasFilter != null){
+            subProgramasFilter = null;
+        }
     }      
     
     

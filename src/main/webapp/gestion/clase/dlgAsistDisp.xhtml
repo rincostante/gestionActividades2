@@ -13,7 +13,8 @@
     </h:head>
     <h:body>
         <h:form id="frmAsistDisp">
-            <p:dataTable var="part" value="#{mbClase.listPartDisp}"
+            <p:dataTable var="part" value="#{mbClase.listPartDisp}" 
+                         filteredValue="#{mbClase.listPartDispFilter}"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 

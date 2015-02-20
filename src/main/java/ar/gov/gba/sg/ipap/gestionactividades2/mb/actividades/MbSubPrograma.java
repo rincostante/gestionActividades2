@@ -36,7 +36,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -48,7 +47,8 @@ import org.primefaces.context.RequestContext;
 public class MbSubPrograma implements Serializable{
 
     private SubPrograma current;
-    private DataModel items = null;    
+    private DataModel items = null;   
+    private List<SubPrograma> listFilter;
     
     @EJB
     private SubProgramaFacade subProgramaFacade;
@@ -56,20 +56,17 @@ public class MbSubPrograma implements Serializable{
     private ResolucionFacade resolucionFacade;    
     @EJB
     private ProgramaFacade programaFacade;
-    @EJB
-    private ActividadPlanFacade actividadPlanFacade;
     
-    private int selectedItemIndex;
     private SubPrograma subProgSelected;
     private Usuario usLogeado;     
     private List<Resolucion> listResoluciones;
     private List<Programa> listProgramas;
-    private List<ActividadPlan> listActPlan;
     private Date fAntesDe;
     private Date fDespuesDe;
     private MbLogin login;
     private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
-    private ListDataModel listDMActImp;
+    private ListDataModel listDMActPlan;
+    private List<ActividadPlan> listActPlanFilter;
     private boolean iniciado;
     
     /** Creates a new instance of MbSubPrograma */
@@ -92,21 +89,28 @@ public class MbSubPrograma implements Serializable{
      ** Getters y Setters ***********
      ********************************/ 
     
-    public ListDataModel getListDMActImp() {
-        return listDMActImp;
+    public List<SubPrograma> getListFilter() {
+        return listFilter;
     }
 
-    public void setListDMActImp(ListDataModel listDMActImp) {
-        this.listDMActImp = listDMActImp;
+    public void setListFilter(List<SubPrograma> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<ActividadPlan> getListActPlanFilter() {
+        return listActPlanFilter;
+    }
+
+    public void setListActPlanFilter(List<ActividadPlan> listActPlanFilter) {
+        this.listActPlanFilter = listActPlanFilter;
     }
  
-    
-    public List<ActividadPlan> getListActPlan() {
-        return listActPlan;
+    public ListDataModel getListDMActPlan() {
+        return listDMActPlan;
     }
 
-    public void setListActPlan(List<ActividadPlan> listActPlan) {
-        this.listActPlan = listActPlan;
+    public void setListDMActPlan(ListDataModel listDMActImp) {
+        this.listDMActPlan = listDMActImp;
     }
  
     
@@ -176,7 +180,6 @@ public class MbSubPrograma implements Serializable{
     public SubPrograma getSelected() {
         if (current == null) {
             current = new SubPrograma();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -236,7 +239,6 @@ public class MbSubPrograma implements Serializable{
      */
     public String prepareView() {
         current = subProgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -245,7 +247,6 @@ public class MbSubPrograma implements Serializable{
      */
     public String prepareViewVenc() {
         current = subProgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "viewVenc";
     }    
     
@@ -254,7 +255,6 @@ public class MbSubPrograma implements Serializable{
      */
     public String prepareViewDes() {
         current = (SubPrograma) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
 
@@ -266,7 +266,6 @@ public class MbSubPrograma implements Serializable{
         listResoluciones = resolucionFacade.getHabilitadas();
         listProgramas = programaFacade.getHabilitadas();
         current = new SubPrograma();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -278,7 +277,6 @@ public class MbSubPrograma implements Serializable{
         listResoluciones = resolucionFacade.getHabilitadas();
         listProgramas = programaFacade.getHabilitadas();
         current = subProgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -291,7 +289,6 @@ public class MbSubPrograma implements Serializable{
         listProgramas = programaFacade.getHabilitadas();
         current = subProgSelected;
         // cargo los list para los combos     
-        selectedItemIndex = getItems().getRowIndex();
         return "editVenc";
     }        
     
@@ -314,7 +311,6 @@ public class MbSubPrograma implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -330,7 +326,6 @@ public class MbSubPrograma implements Serializable{
      */
     public String prepareHabilitar(){
         current = subProgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -487,7 +482,6 @@ public class MbSubPrograma implements Serializable{
      */    
     public String destroy() {
         current = subProgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -496,19 +490,6 @@ public class MbSubPrograma implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -534,7 +515,7 @@ public class MbSubPrograma implements Serializable{
      * Método para mostrar las Actividades de este Subprograma
      */
     public void verActividades(){
-        listDMActImp = new ListDataModel(current.getActividadesPlan());
+        listDMActPlan = new ListDataModel(current.getActividadesPlan());
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgActividades", options, null);
@@ -576,7 +557,13 @@ public class MbSubPrograma implements Serializable{
      */
     private void recreateModel() {
         items = null;
-        listDMActImp = null;
+        listDMActPlan = null;
+        if(listActPlanFilter != null){
+            listActPlanFilter = null;
+        }
+        if(listFilter != null){
+            listFilter = null;
+        }
     }      
     
     

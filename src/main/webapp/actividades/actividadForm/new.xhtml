@@ -118,7 +118,8 @@
                          header="Seleccione los Sub Programas para la Actividad Planificada" 
                          toggleable="true" toggleTitle="Ver/Ocultar"
                          style="width:800px;">
-                    <p:dataTable value="#{mbActividadPlan.listSubProgramas}" var="e" id="subProgList" rows="5" 
+                    <p:dataTable value="#{mbActividadPlan.subProgramas}" var="e" id="subProgList" rows="5" 
+                                 filteredValue="#{mbActividadPlan.subProgramasFilter}"
                                  rowKey="#{e.id}"
                                  selection="#{mbActividadPlan.selected.subprogramas}"
                                  paginator="true"
@@ -128,25 +129,24 @@
                             Listado de #{bundle.SubProgramaListado}
                             <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                             <p:commandButton icon="ui-icon-refresh" value="Listar" 
-                                             actionListener="#{mbActividadPlan.prepareListSubProg}" 
                                              update="subProgList" style="margin-left: 10px"/>
                             <p:columnToggler datasource="subProgList" trigger="toggler" />
                         </f:facet>
                         <p:column selectionMode="multiple" style="width: 20px"  />  
                         
-                        <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                        <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                             <p:outputLabel value="#{e.nombre}"/>
                         </p:column>
 
-                        <p:column headerText="#{bundle.SubProgramaLabel_programa}" sortBy="#{e.programa.nombre}" filterBy="#{e.programa.nombre}">
+                        <p:column headerText="#{bundle.SubProgramaLabel_programa}" sortBy="#{e.programa.nombre}" filterBy="#{e.programa.nombre}" filterMatchMode="contains">
                             <p:outputLabel value="#{e.programa.nombre}"/>
                         </p:column>  
 
-                        <p:column headerText="#{bundle.SubProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}">
+                        <p:column headerText="#{bundle.SubProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
                             <p:outputLabel value="#{e.strFechaIniVig}"/>
                         </p:column>  
 
-                        <p:column headerText="#{bundle.SubProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}">
+                        <p:column headerText="#{bundle.SubProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
                             <p:outputLabel value="#{e.strFechaFinVig}"/>
                         </p:column>           
                     </p:dataTable>

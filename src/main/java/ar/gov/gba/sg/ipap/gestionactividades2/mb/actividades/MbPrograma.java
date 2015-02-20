@@ -9,6 +9,7 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Programa;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ProgramaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
@@ -32,7 +33,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -43,14 +43,14 @@ import org.primefaces.context.RequestContext;
 public class MbPrograma implements Serializable{
     
     private Programa current;
-    private DataModel items = null;    
+    private DataModel items = null;  
+    private List<Programa> listFilter;
     
     @EJB
     private ProgramaFacade programaFacade;
     @EJB
     private ResolucionFacade resolucionFacade;
     
-    private int selectedItemIndex;
     private Programa progSelected;
     private Usuario usLogeado;     
     private List<Resolucion> listResoluciones;
@@ -59,6 +59,7 @@ public class MbPrograma implements Serializable{
     private MbLogin login; 
     private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
     private ListDataModel listDMSubprog;
+    private List<SubPrograma> listSubFilter;
     private boolean iniciado;
 
     /**
@@ -82,6 +83,24 @@ public class MbPrograma implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public List<SubPrograma> getListSubFilter() {
+        return listSubFilter;
+    }
+
+    public void setListSubFilter(List<SubPrograma> listSubFilter) {
+        this.listSubFilter = listSubFilter;
+    }
+   
+    
+    public List<Programa> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Programa> listFilter) {
+        this.listFilter = listFilter;
+    }
+   
     
     public ListDataModel getListDMSubprog() {
         return listDMSubprog;
@@ -150,7 +169,6 @@ public class MbPrograma implements Serializable{
     public Programa getSelected() {
         if (current == null) {
             current = new Programa();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -210,7 +228,6 @@ public class MbPrograma implements Serializable{
      */
     public String prepareView() {
         current = progSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -219,7 +236,6 @@ public class MbPrograma implements Serializable{
      */
     public String prepareViewVenc() {
         current = progSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "viewVenc";
     }    
     
@@ -227,8 +243,7 @@ public class MbPrograma implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (Programa) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
+        current = progSelected;
         return "viewDes";
     }
 
@@ -239,7 +254,6 @@ public class MbPrograma implements Serializable{
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas();
         current = new Programa();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -250,7 +264,6 @@ public class MbPrograma implements Serializable{
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas();
         current = progSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -260,9 +273,7 @@ public class MbPrograma implements Serializable{
     public String prepareEditVenc() {
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas();        
-        current = progSelected;
-        // cargo los list para los combos     
-        selectedItemIndex = getItems().getRowIndex();
+        current = progSelected; 
         return "editVenc";
     }        
     
@@ -285,7 +296,6 @@ public class MbPrograma implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -301,7 +311,6 @@ public class MbPrograma implements Serializable{
      */
     public String prepareHabilitar(){
         current = progSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -456,7 +465,6 @@ public class MbPrograma implements Serializable{
      */    
     public String destroy() {
         current = progSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -465,19 +473,6 @@ public class MbPrograma implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -545,6 +540,12 @@ public class MbPrograma implements Serializable{
     private void recreateModel() {
         items = null;
         listDMSubprog = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listSubFilter != null){
+            listSubFilter = null;
+        }
     }      
     
     

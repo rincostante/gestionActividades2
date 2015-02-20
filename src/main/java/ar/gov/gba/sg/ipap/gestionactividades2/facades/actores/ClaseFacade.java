@@ -95,7 +95,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
      * es decir, que conforman una actividad en curso.
      * @return 
      */
-    public List<ActividadImplementada> getHabilitadas(){
+    public List<Clase> getHabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
@@ -110,7 +110,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
      * @param us: Coordinador del Curso al cual pertenece la clase.
      * @return 
      */
-    public List<ActividadImplementada> getHabilitadasXCoor(Usuario us){
+    public List<Clase> getHabilitadasXCoor(Usuario us){
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
@@ -125,7 +125,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
      * Método que devuelve todas las Clases deshabilitadas
      * @return 
      */
-    public List<ActividadImplementada> getDeshabilitadas(){
+    public List<Clase> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = false";
@@ -138,7 +138,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
      * @param us: Coordinador del Curso al cual pertenece la clase. 
      * @return  
      */
-    public List<ActividadImplementada> getDeshabilitadasXCoor(Usuario us){
+    public List<Clase> getDeshabilitadasXCoor(Usuario us){
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = false "
@@ -153,7 +153,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
      * @param us: Coordinador del Curso al cual pertenece la clase.
      * @return 
      */
-    public List<ActividadImplementada> getFinalizadasXCoor(Usuario us){
+    public List<Clase> getFinalizadasXCoor(Usuario us){
         
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
@@ -169,7 +169,7 @@ public class ClaseFacade extends AbstractFacade<Clase> {
      * Método que devuelve las Clases finalizadas
      * @return 
      */
-    public List<ActividadImplementada> getFinalizadas(){
+    public List<Clase> getFinalizadas(){
         
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "

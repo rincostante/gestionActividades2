@@ -39,9 +39,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -53,9 +50,8 @@ import org.primefaces.context.RequestContext;
 public class MbClase implements Serializable{
     
     private Clase current;
-    private DataModel items = null;   
-    private DataModel listParticipantesDisp = null;
-    private DataModel listParticipantesVinc = null;
+    private List<Clase> listado; 
+    private List<Clase> listadoFilter;  
     
     @EJB
     private ClaseFacade claseFacade;
@@ -68,13 +64,14 @@ public class MbClase implements Serializable{
     @EJB
     private ParticipanteFacade participanteFacade;
     
-    private int selectedItemIndex;
     private Usuario usLogeado;     
     private List<Docente> listDocentes;
     private List<ActividadImplementada> listActImp;
     private List<Modalidad> listModalidades;
     private List<Participante> listPartVinc;
     private List<Participante> listPartDisp;
+    private List<Participante> listPartVincFilter;
+    private List<Participante> listPartDispFilter;
     private ActividadImplementada cursoSelected;
     private int ultimoNumOrdenAsignado;
     private Date fAntesDe;
@@ -107,6 +104,31 @@ public class MbClase implements Serializable{
      ** Getters y Setters ***********
      ********************************/ 
     
+    public List<Clase> getListadoFilter() {
+        return listadoFilter;
+    }
+
+    public void setListadoFilter(List<Clase> listadoFilter) {
+        this.listadoFilter = listadoFilter;
+    }
+ 
+    public List<Participante> getListPartVincFilter() {
+        return listPartVincFilter;
+    }
+
+    public void setListPartVincFilter(List<Participante> listPartVincFilter) {
+        this.listPartVincFilter = listPartVincFilter;
+    }
+
+    public List<Participante> getListPartDispFilter() {
+        return listPartDispFilter;
+    }
+
+    public void setListPartDispFilter(List<Participante> listPartDispFilter) {
+        this.listPartDispFilter = listPartDispFilter;
+    }
+ 
+    
     public boolean isEsCoordinador() {
         return esCoordinador;
     }
@@ -116,23 +138,14 @@ public class MbClase implements Serializable{
     }
  
     
-    public DataModel getListParticipantesDisp() {
-        return listParticipantesDisp;
+    public List<Participante> getListPartDisp() {
+        return listPartDisp;
     }
 
-    public void setListParticipantesDisp(DataModel listParticipantesDisp) {
-        this.listParticipantesDisp = listParticipantesDisp;
-    }
-
-    public DataModel getListParticipantesVinc() {
-        return listParticipantesVinc;
-    }
-
-    public void setListParticipantesVinc(DataModel listParticipantesVinc) {
-        this.listParticipantesVinc = listParticipantesVinc;
+    public void setListPartDisp(List<Participante> listPartDisp) {
+        this.listPartDisp = listPartDisp;
     }
  
-    
     public boolean isAsignaPart() {
         return asignaPart;
     }
@@ -148,14 +161,6 @@ public class MbClase implements Serializable{
 
     public void setListPartVinc(List<Participante> listPartVinc) {
         this.listPartVinc = listPartVinc;
-    }
-
-    public List<Participante> getListPartDisp() {
-        return listPartDisp;
-    }
-
-    public void setListPartDisp(List<Participante> listPartDisp) {
-        this.listPartDisp = listPartDisp;
     }
     
     public ActividadImplementada getCursoSelected() {
@@ -241,7 +246,6 @@ public class MbClase implements Serializable{
     public Clase getSelected() {
         if (current == null) {
             current = new Clase();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -249,27 +253,27 @@ public class MbClase implements Serializable{
     /**
      * @return el listado de entidades a mostrar en el list
      */
-    public DataModel getItems() {
-        if (items == null) {
+    public List<Clase> getListado() {
+        if (listado == null) {
             if(esCoordinador){
                 switch(tipoList){
-                    case 1: items = new ListDataModel(getFacade().getHabilitadasXCoor(usLogeado));
+                    case 1: listado = getFacade().getHabilitadasXCoor(usLogeado);
                         break;
-                    case 2: items = new ListDataModel(getFacade().getFinalizadasXCoor(usLogeado));
+                    case 2: listado = getFacade().getFinalizadasXCoor(usLogeado);
                         break;
-                    default: items = new ListDataModel(getFacade().getDeshabilitadasXCoor(usLogeado));  
+                    default: listado = getFacade().getDeshabilitadasXCoor(usLogeado);  
                 }
             }else{
                 switch(tipoList){
-                    case 1: items = new ListDataModel(getFacade().getHabilitadas());
+                    case 1: listado = getFacade().getHabilitadas();
                         break;
-                    case 2: items = new ListDataModel(getFacade().getFinalizadas());
+                    case 2: listado = getFacade().getFinalizadas();
                         break;
-                    default: items = new ListDataModel(getFacade().getDeshabilitadas());
+                    default: listado = getFacade().getDeshabilitadas();
                 }
             }
         }
-        return items;
+        return listado;
     }    
     
     /*******************************
@@ -283,8 +287,6 @@ public class MbClase implements Serializable{
         asignaPart = false;
         tipoList = 1;
         recreateModel();
-        listParticipantesDisp = null;
-        listParticipantesVinc = null;
         if(listPartVinc != null){
             listPartVinc.clear();
         }
@@ -300,11 +302,8 @@ public class MbClase implements Serializable{
      */
     public String prepareListFin() {
         tipoList = 2;
-        listParticipantesVinc = null;
         asignaPart = false;
         recreateModel();
-        listParticipantesDisp = null;
-        listParticipantesVinc = null;
         if(listPartVinc != null){
             listPartVinc.clear();
         }
@@ -320,11 +319,8 @@ public class MbClase implements Serializable{
      */
     public String prepareListDes() {
         tipoList = 3;
-        listParticipantesVinc = null;
         asignaPart = false;
         recreateModel();
-        listParticipantesDisp = null;
-        listParticipantesVinc = null;
         if(listPartVinc != null){
             listPartVinc.clear();
         }
@@ -339,7 +335,6 @@ public class MbClase implements Serializable{
      */
     public String prepareView() {
         asignaPart = false;
-        selectedItemIndex = getItems().getRowIndex();
         listPartVinc = current.getParticipantes();
         return "view";
     }
@@ -349,7 +344,6 @@ public class MbClase implements Serializable{
      */
     public String prepareViewFin() {
         asignaPart = false;
-        selectedItemIndex = getItems().getRowIndex();
         listPartVinc = current.getParticipantes();
         return "viewFin";
     }        
@@ -359,7 +353,6 @@ public class MbClase implements Serializable{
      */
     public String prepareViewDes() {
         asignaPart = false;
-        selectedItemIndex = getItems().getRowIndex();
         listPartVinc = current.getParticipantes();
         return "viewDes";
     }
@@ -378,7 +371,6 @@ public class MbClase implements Serializable{
         }
         listModalidades = modalidadFacade.findAll();
         current = new Clase();
-        selectedItemIndex = -1;
         ultimoNumOrdenAsignado = 0;
         return "new";
     }
@@ -396,7 +388,6 @@ public class MbClase implements Serializable{
             listActImp = cursoFacade.getHabilitadas();
         }
         listModalidades = modalidadFacade.findAll();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -413,7 +404,6 @@ public class MbClase implements Serializable{
             listActImp = cursoFacade.getHabilitadas();
         }
         listModalidades = modalidadFacade.findAll();
-        selectedItemIndex = getItems().getRowIndex();
         return "editFin";
     }     
     
@@ -430,7 +420,6 @@ public class MbClase implements Serializable{
             listActImp = cursoFacade.getHabilitadas();
         }
         listModalidades = modalidadFacade.findAll();
-        selectedItemIndex = getItems().getRowIndex();
         return "editProv";
     }    
     
@@ -463,7 +452,6 @@ public class MbClase implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -479,7 +467,6 @@ public class MbClase implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -654,9 +641,8 @@ public class MbClase implements Serializable{
 
             // Persisto
             getFacade().edit(current);
-            // Resteo los list y datamodels
-            listParticipantesDisp = null;
-            listParticipantesVinc = null;
+            
+            // Resteo los list
             listPartVinc.clear();
             listPartDisp.clear();
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseAsistenciaRegistrada"));
@@ -671,7 +657,6 @@ public class MbClase implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -680,19 +665,6 @@ public class MbClase implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -718,14 +690,12 @@ public class MbClase implements Serializable{
      * Método para ver los Participantes del curso disponebles para asgnarles asistencia
      */
     public void verParticipantesDisp(){
-        listParticipantesDisp = new ListDataModel(listPartDisp);
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgAsistDisp", options, null);        
     }
     
     public void verAsistentes(){
-        listParticipantesVinc = new ListDataModel(listPartVinc);
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgAsistVinc", options, null); 
@@ -734,22 +704,36 @@ public class MbClase implements Serializable{
     public void asignarAsistencia(Participante part){
         listPartVinc.add(part);
         listPartDisp.remove(part);
-        listParticipantesDisp = null;
+        if(listPartVincFilter != null){
+            listPartVincFilter = null;
+        }
+        if(listPartDispFilter != null){
+            listPartDispFilter = null;
+        }        
         RequestContext.getCurrentInstance().closeDialog("dlgAsistDisp");
     }
     
     public void quitarAsistencia(Participante part){
         listPartVinc.remove(part);
         listPartDisp.add(part);
-        listParticipantesVinc = null;
+        if(listPartVincFilter != null){
+            listPartVincFilter = null;
+        }
+        if(listPartDispFilter != null){
+            listPartDispFilter = null;
+        }
         RequestContext.getCurrentInstance().closeDialog("dlgAsistVinc");
     }    
     
-    public void limpiarParticipantes(){
-        listParticipantesDisp = null;
-        listParticipantesVinc = null;      
+    public void limpiarParticipantes(){   
         listPartVinc = current.getParticipantes();
         listPartDisp = cargarParticipantesDisponibles();
+        if(listPartVincFilter != null){
+            listPartVincFilter = null;
+        }
+        if(listPartDispFilter != null){
+            listPartDispFilter = null;
+        }
     }    
     
     /**
@@ -866,7 +850,17 @@ public class MbClase implements Serializable{
      * Restea la entidad
      */
     private void recreateModel() {
-        items = null;
+        listado.clear();
+        listado = null;
+        if(listPartVincFilter != null){
+            listPartVincFilter = null;
+        }
+        if(listPartDispFilter != null){
+            listPartDispFilter = null;
+        }
+        if(listadoFilter != null){
+            listadoFilter = null;
+        }
     }      
     
     
@@ -912,18 +906,13 @@ public class MbClase implements Serializable{
      *****************************************************************************/
 
     private void buscarEntreFechas(){
-        List<Clase> parts = new ArrayList();
-        Iterator itRows = items.iterator();
-        
-        // recorro el dadamodel
-        while(itRows.hasNext()){
-            Clase part = (Clase)itRows.next();
-            if(part.getActividad().getFechaFin().after(fDespuesDe) && part.getActividad().getFechaFin().before(fAntesDe)){
-                parts.add(part);
-            }          
+        List<Clase> clases = new ArrayList();
+        for (Clase clase : listado) {
+            if(clase.getFechaRealizacion().after(fDespuesDe) && clase.getFechaRealizacion().before(fAntesDe)){
+                clases.add(clase);
+            }
         }        
-        items = null;
-        items = new ListDataModel(parts); 
+        listado = clases; 
     }     
     
     

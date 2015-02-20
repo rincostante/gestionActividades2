@@ -16,7 +16,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -28,7 +28,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
@@ -41,11 +40,11 @@ public class MbResolucion implements Serializable{
     
     private Resolucion current;
     private DataModel items = null;    
+    private List<Resolucion> listFilter;
     
     @EJB
     private ResolucionFacade resolucionFacade;
     
-    private int selectedItemIndex;
     private boolean habilitadas;
     private Resolucion resSelected;
     private Usuario usLogeado;    
@@ -71,6 +70,14 @@ public class MbResolucion implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/    
+    
+    public List<Resolucion> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Resolucion> listFilter) {
+        this.listFilter = listFilter;
+    }
     
     public boolean isHabilitadas() {
         return habilitadas;
@@ -106,7 +113,6 @@ public class MbResolucion implements Serializable{
     public Resolucion getSelected() {
         if (current == null) {
             current = new Resolucion();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -154,7 +160,6 @@ public class MbResolucion implements Serializable{
      */
     public String prepareView() {
         current = resSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -162,8 +167,7 @@ public class MbResolucion implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (Resolucion) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
+        current = resSelected;
         return "viewDes";
     }
 
@@ -172,7 +176,6 @@ public class MbResolucion implements Serializable{
      */
     public String prepareCreate() {
         current = new Resolucion();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -182,7 +185,6 @@ public class MbResolucion implements Serializable{
     public String prepareEdit() {
         current = resSelected;
         // cargo los list para los combos     
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -205,7 +207,6 @@ public class MbResolucion implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -221,7 +222,6 @@ public class MbResolucion implements Serializable{
      */
     public String prepareHabilitar(){
         current = resSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -338,7 +338,6 @@ public class MbResolucion implements Serializable{
      */    
     public String destroy() {
         current = resSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -347,19 +346,6 @@ public class MbResolucion implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -417,6 +403,9 @@ public class MbResolucion implements Serializable{
      */
     private void recreateModel() {
         items = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
     }      
     
     

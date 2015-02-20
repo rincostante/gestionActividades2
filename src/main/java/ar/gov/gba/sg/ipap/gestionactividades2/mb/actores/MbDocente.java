@@ -6,8 +6,10 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
@@ -37,7 +39,6 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -50,6 +51,7 @@ public class MbDocente implements Serializable{
 
     private Docente current;
     private DataModel items = null;
+    private List<Docente> listFilter;
     
     @EJB
     private DocenteFacade docenteFacade;
@@ -60,7 +62,6 @@ public class MbDocente implements Serializable{
     @EJB
     private TituloFacade tituloFacade;      
     
-    private int selectedItemIndex;
     private String selectParam;
     private List<Persona> listaPersonas;
     private List<Agente> listaAgentes;
@@ -76,7 +77,9 @@ public class MbDocente implements Serializable{
     private Usuario usLogeado;
     private MbLogin login;   
     private ListDataModel listDMActImp;
+    private List<ActividadImplementada> listActImpFilter;
     private ListDataModel listDMClases;
+    private List<Clase> listClasesFilter;
     private boolean iniciado;
     
     /**
@@ -104,6 +107,30 @@ public class MbDocente implements Serializable{
     /**
      *
      */
+
+    public List<ActividadImplementada> getListActImpFilter() {
+        return listActImpFilter;
+    }
+
+    public void setListActImpFilter(List<ActividadImplementada> listActImpFilter) {
+        this.listActImpFilter = listActImpFilter;
+    }
+
+    public List<Clase> getListClasesFilter() {
+        return listClasesFilter;
+    }
+
+    public void setListClasesFilter(List<Clase> listClasesFilter) {
+        this.listClasesFilter = listClasesFilter;
+    }
+
+    public List<Docente> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Docente> listFilter) {
+        this.listFilter = listFilter;
+    }
 
     public ListDataModel getListDMClases() {
         return listDMClases;
@@ -189,15 +216,6 @@ public class MbDocente implements Serializable{
         this.docSelected = docSelected;
     }
 
-    
-    public int getSelectedItemIndex() {
-        return selectedItemIndex;
-    }
-
-    public void setSelectedItemIndex(int selectedItemIndex) {
-        this.selectedItemIndex = selectedItemIndex;
-    }
-
     public String getSelectParam() {
         return selectParam;
     }
@@ -239,7 +257,6 @@ public class MbDocente implements Serializable{
     public Docente getSelected() {
         if (current == null) {
             current = new Docente();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -287,7 +304,6 @@ public class MbDocente implements Serializable{
      */
     public String prepareView() {
         current = docSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -295,8 +311,7 @@ public class MbDocente implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (Docente) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
+        current = docSelected;
         return "viewDes";
     }
 
@@ -310,7 +325,6 @@ public class MbDocente implements Serializable{
         // cargo los list para los combos
         listaPersonas = personaFacade.findAll();
         listaAgentes = agenteFacade.findAll();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -329,7 +343,6 @@ public class MbDocente implements Serializable{
         // cargo los list para los combos
         listaPersonas = personaFacade.findAll();
         listaAgentes = agenteFacade.findAll();        
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -352,7 +365,6 @@ public class MbDocente implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -367,9 +379,7 @@ public class MbDocente implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        //current = (Docente) getItems().getRowData();
         current = docSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -521,9 +531,7 @@ public class MbDocente implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        //current = (Docente) getItems().getRowData();
         current = docSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -532,20 +540,7 @@ public class MbDocente implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
-
+    
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
@@ -659,6 +654,15 @@ public class MbDocente implements Serializable{
         listDMClases = null;
         if(selectParam != null){
             selectParam = null;
+        }
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listActImpFilter != null){
+            listActImpFilter = null;
+        }
+        if(listClasesFilter != null){
+            listClasesFilter = null;
         }
     }      
     

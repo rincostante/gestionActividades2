@@ -12,6 +12,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
@@ -45,7 +46,6 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -57,6 +57,7 @@ public class MbAgente implements Serializable{
 
     private Agente current;
     private DataModel items = null;
+    private List<Agente> listFilter;
     private Agente agSelected;
     
     @EJB
@@ -76,7 +77,6 @@ public class MbAgente implements Serializable{
     @EJB
     private SituacionRevistaFacade sitRevFacade;
     
-    private int selectedItemIndex;
     private String selectParam;    
     private boolean habilitadas;
     private List<EstudiosCursados> listaEstudios;
@@ -99,6 +99,7 @@ public class MbAgente implements Serializable{
     private Usuario usLogeado;
     private MbLogin login;  
     private ListDataModel listDMPart;
+    private List<Participante> listPartFilter;
     private boolean iniciado;
     /**
      * Creates a new instance of MbAgente
@@ -128,6 +129,22 @@ public class MbAgente implements Serializable{
      ** Getters y Setters *********** 
      ********************************/
     
+    public List<Agente> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Agente> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<Participante> getListPartFilter() {
+        return listPartFilter;
+    }
+
+    public void setListPartFilter(List<Participante> listPartFilter) {
+        this.listPartFilter = listPartFilter;
+    }
+
     public ListDataModel getListDMPart() {
         return listDMPart;
     }
@@ -313,7 +330,6 @@ public class MbAgente implements Serializable{
     public Agente getSelected() {
         if (current == null) {
             current = new Agente();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -363,7 +379,6 @@ public class MbAgente implements Serializable{
      */
     public String prepareView() {
         current = agSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -372,7 +387,6 @@ public class MbAgente implements Serializable{
      */
     public String prepareViewDes() {
         current = (Agente) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
 
@@ -384,7 +398,6 @@ public class MbAgente implements Serializable{
         current = new Agente();
         // cargo los list pesados para los combos
         listaPersonas = personaFacade.findAll();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -396,7 +409,6 @@ public class MbAgente implements Serializable{
         // cargo los list pesados para los combos
         listaPersonas = personaFacade.findAll();
         listaOrganismos = organismoFacade.findAll();      
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -419,7 +431,6 @@ public class MbAgente implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -435,7 +446,6 @@ public class MbAgente implements Serializable{
      */
     public String prepareHabilitar(){
         current = agSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -739,9 +749,7 @@ public class MbAgente implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        //current = (Docente) getItems().getRowData();
         current = agSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -750,19 +758,6 @@ public class MbAgente implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -881,6 +876,12 @@ public class MbAgente implements Serializable{
                 listaReferentes.clear();
             }
         }
+        if(listPartFilter != null){
+            listPartFilter = null;
+        }
+        if(listFilter != null){
+            listFilter = null;
+        } 
     }      
     
     

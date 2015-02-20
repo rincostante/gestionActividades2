@@ -14,6 +14,7 @@
     <h:body>
         <h:form id="frmSubDisp">
             <p:dataTable var="sub" value="#{mbPrograma.listDMSubprog}" 
+                         filteredValue="#{mbPrograma.listSubFilter}"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 

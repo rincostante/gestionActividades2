@@ -13,7 +13,8 @@
     </h:head>
     <h:body>
         <h:form id="frmActImp">
-            <p:dataTable var="actImp" value="#{mbActividadPlan.listDMActImp}" style="width: 1100px"
+            <p:dataTable var="actImp" value="#{mbActividadPlan.listActImp}" style="width: 1100px" 
+                         filteredValue="#{mbActividadPlan.listActImp}"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 

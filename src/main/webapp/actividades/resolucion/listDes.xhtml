@@ -26,6 +26,7 @@
                 </p:panel>      
                 
                 <p:dataTable value="#{mbResolucion.items}" var="e" id="docList" rows="5"
+                             filteredValue="#{mbResolucion.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">

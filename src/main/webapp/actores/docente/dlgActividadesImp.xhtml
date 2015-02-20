@@ -14,6 +14,7 @@
     <h:body>
         <h:form id="frmActImp">
             <p:dataTable var="actImp" value="#{mbDocente.listDMActImp}" style="width: 1100px" 
+                         filteredValue="#{mbDocente.listActImpFilter}"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 

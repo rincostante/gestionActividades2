@@ -13,6 +13,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
@@ -30,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -41,9 +41,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -54,8 +51,9 @@ import org.primefaces.context.RequestContext;
 public class MbActividadImpl implements Serializable{
     
     private ActividadImplementada current;
-    private DataModel items = null;   
-    private DataModel listDMPart = null;
+    private List<ActividadImplementada> listado;
+    private List<Participante> listPart;
+    private List<Participante> listPartFilter;
 
     @EJB
     private ActividadImplementadaFacade actImpFacade;
@@ -74,7 +72,6 @@ public class MbActividadImpl implements Serializable{
     @EJB
     private RolFacade rolFacade;
     
-    private int selectedItemIndex;
     private ActividadImplementada actImpSelected;
     private Usuario usLogeado;        
     private List<ActividadPlan> listActPlan;
@@ -113,12 +110,21 @@ public class MbActividadImpl implements Serializable{
      ** Getters y Setters ***********
      ********************************/   
     
-    public DataModel getListDMPart() {
-        return listDMPart;
+    public List<Participante> getListPartFilter() {
+        return listPartFilter;
     }
 
-    public void setListDMPart(DataModel listDMPart) {
-        this.listDMPart = listDMPart;
+    public void setListPartFilter(List<Participante> listPartFilter) {
+        this.listPartFilter = listPartFilter;
+    }
+   
+    
+    public List<Participante> getListPart() {
+        return listPart;
+    }
+
+    public void setListPart(List<Participante> listPart) {
+        this.listPart = listPart;
     }
    
     
@@ -229,7 +235,6 @@ public class MbActividadImpl implements Serializable{
     public ActividadImplementada getSelected() {
         if (current == null) {
             current = new ActividadImplementada();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -237,32 +242,36 @@ public class MbActividadImpl implements Serializable{
     /**
      * @return el listado de entidades a mostrar en el list
      */
-    public DataModel getItems() {
-        if (items == null) {
+    public List<ActividadImplementada> getListado() {
+        if (listado == null) {
             if(esCoordinador){
                 switch(tipoList){
-                    case 1: items = new ListDataModel(getFacade().getHabilitadasXCoor(usLogeado));
+                    case 1: listado = getFacade().getHabilitadasXCoor(usLogeado);
                         break;
-                    case 2: items = new ListDataModel(getFacade().getFinalizadasXCoor(usLogeado));
+                    case 2: listado = getFacade().getFinalizadasXCoor(usLogeado);
                         break;
-                    case 3: items = new ListDataModel(getFacade().getSuspendidasXCoor(usLogeado));
+                    case 3: listado = getFacade().getSuspendidasXCoor(usLogeado);
                         break;
-                    default: items = new ListDataModel(getFacade().getDeshabilitadasXCoor(usLogeado));
+                    default: listado = getFacade().getDeshabilitadasXCoor(usLogeado);
                 }
             }else{
                 switch(tipoList){
-                    case 1: items = new ListDataModel(getFacade().getHabilitadas());
+                    case 1: listado = getFacade().getHabilitadas();
                         break;
-                    case 2: items = new ListDataModel(getFacade().getFinalizadas());
+                    case 2: listado = getFacade().getFinalizadas();
                         break;
-                    case 3: items = new ListDataModel(getFacade().getSuspendidas());
+                    case 3: listado = getFacade().getSuspendidas();
                         break;
-                    default: items = new ListDataModel(getFacade().getDeshabilitadas());
+                    default: listado = getFacade().getDeshabilitadas();
                 }
             }
         }
-        return items;
-    }        
+        return listado;
+    }  
+    
+    public void setListado(List<ActividadImplementada> listado){
+        this.listado = listado;
+    }
     
     
     /*******************************
@@ -314,7 +323,6 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareView() {
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -323,7 +331,6 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareViewFin() {
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "viewFin";
     }    
     
@@ -332,7 +339,6 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareViewSusp() {
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "viewSusp";
     }    
     
@@ -340,8 +346,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        current = (ActividadImplementada) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
+        current = actImpSelected;
         return "viewDes";
     }
 
@@ -363,7 +368,6 @@ public class MbActividadImpl implements Serializable{
         }
         
         current = new ActividadImplementada();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -385,7 +389,6 @@ public class MbActividadImpl implements Serializable{
         }
         
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }   
     
@@ -407,7 +410,6 @@ public class MbActividadImpl implements Serializable{
         }
         
         current = actImpSelected;   
-        selectedItemIndex = getItems().getRowIndex();
         return "editSusp";
     }     
     
@@ -430,7 +432,6 @@ public class MbActividadImpl implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -446,7 +447,6 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareHabilitar(){
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -472,7 +472,6 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareSuspender(){
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -496,7 +495,6 @@ public class MbActividadImpl implements Serializable{
      */
     public String prepareActivar(){
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -676,7 +674,6 @@ public class MbActividadImpl implements Serializable{
      */    
     public String destroy() {
         current = actImpSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -685,19 +682,6 @@ public class MbActividadImpl implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -720,7 +704,7 @@ public class MbActividadImpl implements Serializable{
     }      
     
     public void verParticipantes(){
-        listDMPart = new ListDataModel(current.getParticipantes());
+        listPart = current.getParticipantes();
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgParticipantes", options, null);
@@ -760,8 +744,8 @@ public class MbActividadImpl implements Serializable{
      * Restea la entidad
      */
     private void recreateModel() {
-        items = null;
-        listDMPart = null;
+        listado.clear();
+        listado = null;
     }      
     
     
@@ -791,17 +775,12 @@ public class MbActividadImpl implements Serializable{
 
     private void buscarEntreFechas(){
         List<ActividadImplementada> actImpls = new ArrayList();
-        Iterator itRows = items.iterator();
-        
-        // recorro el dadamodel
-        while(itRows.hasNext()){
-            ActividadImplementada actImp = (ActividadImplementada)itRows.next();
+        for (ActividadImplementada actImp : listado) {
             if(actImp.getFechaInicio().after(fDespuesDe) && actImp.getFechaInicio().before(fAntesDe)){
                 actImpls.add(actImp);
-            }          
+            }
         }        
-        items = null;
-        items = new ListDataModel(actImpls); 
+        listado = actImpls; 
     }     
     
  

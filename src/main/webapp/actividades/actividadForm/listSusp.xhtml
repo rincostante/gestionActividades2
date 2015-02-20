@@ -26,7 +26,8 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbActividadPlan.lstActPlan}" var="e" id="campoList" rows="5" filteredValue="#{mbActividadPlan.lstActPlan}"
+                <p:dataTable value="#{mbActividadPlan.lstActPlan}" var="e" id="campoList" rows="5" 
+                             filteredValue="#{mbActividadPlan.lstActPlan}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">

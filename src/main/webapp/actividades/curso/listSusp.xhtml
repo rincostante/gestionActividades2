@@ -48,7 +48,8 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbActividadImpl.items}" var="e" id="campoList" rows="5"
+                <p:dataTable value="#{mbActividadImpl.listado}" var="e" id="campoList" rows="5" 
+                             filteredValue="#{mbActividadImpl.listado}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">

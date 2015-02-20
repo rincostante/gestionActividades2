@@ -44,6 +44,7 @@
                 <br/>           
 
                 <p:dataTable value="#{mbPersona.items}" var="e" id="perList" rows="5"
+                             filteredValue="#{mbPersona.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">

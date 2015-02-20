@@ -35,7 +35,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -46,6 +45,7 @@ public class MbPersona implements Serializable{
 
     private Persona current;
     private DataModel items = null;
+    private List<Persona> listFilter;
     
     @EJB
     private PersonaFacade personaFacade;
@@ -53,9 +53,7 @@ public class MbPersona implements Serializable{
     private TipoDocumentoFacade tipoDocFacade;
     @EJB
     private LocalidadFacade localidadFacade;
-    private int selectedItemIndex;
     private String selectParam; 
-    private List<String> listaNombres; 
     private List<TipoDocumento> listaTipoDocs; 
     private List<Localidad> listaLocalidades;
     private Map<String,String> sexos;   
@@ -94,6 +92,14 @@ public class MbPersona implements Serializable{
      ** Getters y Setters ***********
      ********************************/
     
+    public List<Persona> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Persona> listFilter) {
+        this.listFilter = listFilter;
+    }
+
     public Persona getCurrent() {
         return current;
     }
@@ -228,7 +234,6 @@ public class MbPersona implements Serializable{
     public Persona getSelected() {
         if (current == null) {
             current = new Persona();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -275,8 +280,6 @@ public class MbPersona implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        selectedItemIndex = getItems().getRowIndex();
-        
         // seteo la edad de la persona
         Edad edadUtil = new Edad();
         edad = edadUtil.calcularEdad(current.getFechaNacimiento());
@@ -288,8 +291,6 @@ public class MbPersona implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
-        selectedItemIndex = getItems().getRowIndex();
-        
         // seteo la edad de la persona
         Edad edadUtil = new Edad();
         edad = edadUtil.calcularEdad(current.getFechaNacimiento());
@@ -302,7 +303,6 @@ public class MbPersona implements Serializable{
      */
     public String prepareCreate() {
         current = new Persona();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -310,7 +310,6 @@ public class MbPersona implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -332,7 +331,6 @@ public class MbPersona implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -347,7 +345,6 @@ public class MbPersona implements Serializable{
      * @return 
      */
     public String prepareHabilitar(){
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -473,8 +470,6 @@ public class MbPersona implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Persona) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -483,19 +478,6 @@ public class MbPersona implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(personaFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(personaFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -616,6 +598,9 @@ public class MbPersona implements Serializable{
         }
         if(localidad != null){
             localidad = null;
+        }
+        if(listFilter != null){
+            listFilter = null;
         }
     }      
     

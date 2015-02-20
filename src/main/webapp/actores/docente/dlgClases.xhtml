@@ -13,7 +13,8 @@
     </h:head>
     <h:body>
         <h:form id="frmClases">
-            <p:dataTable var="clase" value="#{mbDocente.listDMClases}" style="width: 1100px"
+            <p:dataTable var="clase" value="#{mbDocente.listDMClases}" style="width: 1100px" 
+                         filteredValue="#{mbDocente.listClasesFilter}"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
