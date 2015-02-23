@@ -68,6 +68,10 @@
                         <p:outputLabel value="#{e.actividad.actividadPlan.nombre}"/>
                     </p:column>
                     
+                    <p:column headerText="Fecha de inicio Act." sortBy="#{e.actividad.strFechaIniVig}" filterBy="#{e.actividad.strFechaIniVig}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.actividad.strFechaIniVig}"/>
+                    </p:column>
+                    
                     <p:column headerText="#{bundle.ParticipanteLabel_Autorizacion}" sortBy="#{e.autorizacion}" filterBy="#{e.autorizacion}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.autorizacion}"/>
                     </p:column>

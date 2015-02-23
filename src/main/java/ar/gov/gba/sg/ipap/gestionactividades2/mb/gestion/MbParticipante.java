@@ -199,7 +199,6 @@ public class MbParticipante implements Serializable{
                 if(s.substring(0, 2).equals("mb")){
                     if(!s.equals("mbParticipante") && !s.equals("mbLogin")){
                         session.removeAttribute(s);
-                        System.out.println("Se limpió " + s + " !!!");
                     }
                 }
             }

@@ -9,41 +9,39 @@
     <h:head>
         <title>#{bundle.ParticipanteTitle}</title>
     </h:head>
-    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+    <ui:composition template="/WEB-INF/facelets/templates/externo/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.ParticipanteTitle}" />
+            <h:outputText value="#{bundle.InscripcionTitle}" />
         </ui:define>
         <ui:define name="content">
             <f:metadata>  
-                <f:event listener="#{mbParticipante.iniciar}" type="preRenderView"></f:event>  
+                <f:event listener="#{mbMisInscripciones.iniciar}" type="preRenderView"></f:event>  
             </f:metadata> 
             <br/> 
             <h:form style="text-align: left">
-                <p:panel id="particForm" header="#{bundle.ParticipanteListTitle} Autorizadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
+                <p:panel id="particForm" header="Listado de las inscripciones históricas de mis Agentes" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
                     <h:panelGroup>
                         <h:panelGrid columns="4" id="pnBotones">
-                            <p:commandButton icon="ui-icon-refresh" value="Provisorios" action="#{mbParticipante.prepareListProv}" ajax="false"/>
-                            <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbParticipante.prepareListVenc}" ajax="false"/>
-                            <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbParticipante.prepareListDes}" ajax="false"/>
-                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbParticipante.cleanUp}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Vigentes" action="#{mbMisInscripciones.prepareList}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbMisInscripciones.cleanUp}" ajax="false"/>
                         </h:panelGrid>
                         <br/>
                         <h:panelGrid columns="2" id="pnBusqueda">
                             <p:outputLabel for="fDespDe" value="Después de:" />
-                            <p:calendar id="fDespDe" value="#{mbParticipante.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
+                            <p:calendar id="fDespDe" value="#{mbMisInscripciones.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
                                 <p:ajax event="dateSelect" update="fAntesDe" />
                             </p:calendar>
                             
                             <p:outputLabel for="fAntesDe" value="Antes de:" />
-                            <p:calendar id="fAntesDe" value="#{mbParticipante.fAntesDe}" pattern="dd/MM/yyyy" mask="true" 
-                                        mindate="#{mbParticipante.fDespuesDe}" >
-                                <f:attribute name="finicial" value="#{mbParticipante.fDespuesDe}"/>
+                            <p:calendar id="fAntesDe" value="#{mbMisInscripciones.fAntesDe}" pattern="dd/MM/yyyy" mask="true" 
+                                        mindate="#{mbMisInscripciones.fDespuesDe}" >
+                                <f:attribute name="finicial" value="#{mbMisInscripciones.fDespuesDe}"/>
                                 <f:validator validatorId="primeDateRangeValidator" />
                             </p:calendar>
                         </h:panelGrid>
                         <h:panelGrid columns="2"> 
-                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de incio Actividad" action="#{mbParticipante.prepareSelectHab}" ajax="false"/> 
-                            <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbParticipante.resetFechas}">
+                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de incio Actividad" action="#{mbMisInscripciones.prepareSelectHab}" ajax="false"/> 
+                            <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbMisInscripciones.resetFechas}">
                                 <p:ajax update="fDespDe" resetValues="true" />
                                 <p:ajax update="fAntesDe" resetValues="true" />
                             </p:commandButton>                        
@@ -51,15 +49,16 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbParticipante.listado}" var="e" id="particList" rows="5" 
-                             filteredValue="#{mbParticipante.listadoFilter}"
+                <p:dataTable value="#{mbMisInscripciones.listado}" var="e" id="particList" rows="5" 
+                             widgetVar="partTable" 
+                             filteredValue="#{mbMisInscripciones.listadoFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.ParticipanteListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbParticipante.prepareList}" update="particList" style="margin-left: 10px"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbMisInscripciones.prepareList}" update="particList" style="margin-left: 10px"/>
                         <p:columnToggler datasource="particList" trigger="toggler" />
                     </f:facet>
 
@@ -86,20 +85,22 @@
                     <p:column headerText="#{bundle.ParticipanteLable_Referente}" sortBy="#{e.agente.referente.apYNom}" filterBy="#{e.agente.referente.apYNom}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.agente.referente.apYNom}"/>
                     </p:column> 
-                    
-                    <p:column headerText="Acciones" style="width:135px">
+
+                    <p:column id="estado" headerText="Estado" filterBy="#{e.estado.nombre}" filterMatchMode="exact" >
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('partTable').filter()">
+                                <f:selectItem itemLabel="Seleccionar" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{mbMisInscripciones.listEstPart}" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{e.estado.nombre}" />
+                    </p:column> 
+
+                    <p:column headerText="Acciones" style="width:85px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbParticipante.prepareView}" title="Ver Detalle">
-                            <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbMisInscripciones.prepareView}" title="Ver Detalle">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbMisInscripciones.current}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbParticipante.prepareEdit}" title="Editar">
-                            <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
-                        </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbParticipante.prepareDestroy}" update="messages" title="Deshabilitar" >
-                            <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
-                            <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de esta Inscripción?" />
-                        </p:commandButton>
-                        
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />

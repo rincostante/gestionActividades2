@@ -222,4 +222,34 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
                 .setParameter("curso", curso);
         return q.getResultList();
     }
+    
+    /**
+     * Método que obtiene las inscripciones vigentes por Referente
+     * @param referente
+     * @return 
+     */
+    public List<Participante> getVigentesXReferente(Agente referente){
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.agente.referente = :referente "
+                + "AND part.actividad.fechaFin >= CURRENT_DATE";
+        Query q = em.createQuery(queryString)
+                .setParameter("referente", referente);
+        return q.getResultList();
+    }
+    
+    /**
+     * Método que obtiene las inscripciones vencidos por Referente
+     * @param referente
+     * @return 
+     */
+    public List<Participante> getVencidosXReferente(Agente referente){
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.agente.referente = :referente "
+                + "AND part.actividad.fechaFin < CURRENT_DATE";
+        Query q = em.createQuery(queryString)
+                .setParameter("referente", referente);
+        return q.getResultList();
+    }    
 }

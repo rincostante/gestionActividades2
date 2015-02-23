@@ -17,8 +17,16 @@
                 <h:form>
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}" />
-                        <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}" />
-                        <p:menuitem value="Actividades" url="#{bundle.Servidor}#{bundle.RutaAplicacion}" />
+                        <p:menuitem value="Mis Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizInscripcion}/list.xhtml" rendered="#{mbLogin.usLogeado.rol.nombre == 'Referente'}" />
+                        
+                        <p:submenu label="Mis Actividades" rendered="#{mbLogin.usLogeado.rol.nombre == 'Docente'}" >
+                            
+                        </p:submenu>
+                        
+                        <p:submenu label="Mis Actividades" rendered="#{mbLogin.usLogeado.rol.nombre != 'Docente'}" >
+                        
+                        </p:submenu>
+                        
                         <p:submenu label="#{mbLogin.usLogeado.apYNom} | #{mbLogin.usLogeado.rol.nombre}" >
                             <p:menuitem value="Cambiar contraseña" action="#{mbCambioPass.prepareCambioClave}" />
                             <p:menuitem value="Cerrar sesión" action="#{mbLogin.logout}" oncomplete="logout(xhr, status, args)"/>
