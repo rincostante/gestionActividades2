@@ -21,6 +21,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -34,7 +35,6 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -45,8 +45,8 @@ public class MbUsuario implements Serializable{
     
     private Usuario current;
     private DataModel items = null;
+    private List<Usuario> listFilter;
     private Usuario usSelected;   
-    private int selectedItemIndex;
     private String selectParam; 
     private boolean habilitadas;
     private List<Usuario> listaUsuarios;
@@ -55,6 +55,7 @@ public class MbUsuario implements Serializable{
     private List<Rol> listaRoles;
     private Usuario usLogeado;
     private MbLogin login;   
+    private boolean iniciado;
     
     @EJB
     private UsuarioFacade usuarioFacade;   
@@ -79,6 +80,7 @@ public class MbUsuario implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         listaRoles = rolFacade.findAll();
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
@@ -90,6 +92,14 @@ public class MbUsuario implements Serializable{
      ** Getters y Setters *********** 
      ********************************/
     
+    public List<Usuario> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Usuario> listFilter) {
+        this.listFilter = listFilter;
+    }
+
     public Usuario getUsLogeado() {
         return usLogeado;
     }
@@ -175,7 +185,6 @@ public class MbUsuario implements Serializable{
     public Usuario getSelected() {
         if (current == null) {
             current = new Usuario();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -203,6 +212,7 @@ public class MbUsuario implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         habilitadas = true;
         recreateModel();
         return "list";
@@ -223,7 +233,6 @@ public class MbUsuario implements Serializable{
      */
     public String prepareView() {
         current = usSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -232,7 +241,6 @@ public class MbUsuario implements Serializable{
      */
     public String prepareViewDes() {
         current = usSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
 
@@ -246,7 +254,6 @@ public class MbUsuario implements Serializable{
         // cargo los list pesados para los combos
         listaAgentes = agenteFacade.getHabilitados();
         listaDocentes = docenteFacade.getHabilitadas();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -265,7 +272,6 @@ public class MbUsuario implements Serializable{
         // cargo los list pesados para los combos
         listaAgentes = agenteFacade.getHabilitados();
         listaDocentes = docenteFacade.getHabilitadas();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -284,7 +290,6 @@ public class MbUsuario implements Serializable{
      */
     public String prepareHabilitar(){
         current = usSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -303,67 +308,6 @@ public class MbUsuario implements Serializable{
             return null; 
         }
     }    
-
-    /**
-     * 
-     */
-    public void resetSelect(){
-
-    }
-    
-   /*************************************************************
-     ** Métodos de inicialización de búsquedas para habilitados **
-     *************************************************************/
-    
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelectHab(){
-        List<Usuario> usuarios = new ArrayList();
-        Iterator itRows = items.iterator();
-        boolean valida = false;
-        boolean entro = false;
-        
-        // recorro el dadamodel
-        while(itRows.hasNext()){
-            boolean sale = false;
-            Usuario ag = (Usuario)itRows.next();
- 
-            usuarios.add(ag);
-   
-            items = null;
-            items = new ListDataModel(usuarios); 
-        }
-        return "list";
-    }
-    
-    
-   /****************************************************************
-     ** Métodos de inicialización de búsquedas para DesHabilitados **
-     ****************************************************************/   
-    
-    /**
-     * 
-     * @return 
-     */
-    public String prepareSelectDes(){
-        List<Usuario> usuarios = new ArrayList();
-        Iterator itRows = items.iterator();
-        boolean valida = false;
-        boolean entro = false;
-        
-        // recorro el dadamodel
-        while(itRows.hasNext()){
-            boolean sale = false;
-            Usuario ag = (Usuario)itRows.next();
-
-        }    
-        items = null;
-        items = new ListDataModel(usuarios); 
-        return "listDes";
-    }
-    
     
     /*************************
     ** Métodos de operación **
@@ -478,7 +422,6 @@ public class MbUsuario implements Serializable{
      */    
     public String destroy() {
         current = usSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -487,19 +430,6 @@ public class MbUsuario implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -521,6 +451,25 @@ public class MbUsuario implements Serializable{
         return "inicio";
     }  
     
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbUsuario") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }        
     
     /*********************
     ** Desencadenadores **
@@ -574,6 +523,9 @@ public class MbUsuario implements Serializable{
         items = null;
         if(selectParam != null){
             selectParam = null;
+        }
+        if(listFilter != null){
+            listFilter = null;
         }
     }      
     

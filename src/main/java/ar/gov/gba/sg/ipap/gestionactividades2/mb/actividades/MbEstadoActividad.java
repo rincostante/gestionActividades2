@@ -8,24 +8,17 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.EstadoActividad;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.EstadoActividadFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
@@ -40,12 +33,7 @@ public class MbEstadoActividad implements Serializable{
     
     @EJB
     private EstadoActividadFacade estadoActividadFacade;
-    //private PaginationHelper pagination;
-    private int selectedItemIndex;
-    private String selectParam; 
-    private List<String> listaNombres;  
-    private MbLogin login;   
-
+    
     /**
      * Creates a new instance of MbEstadoActividad
      */
@@ -61,7 +49,6 @@ public class MbEstadoActividad implements Serializable{
     public EstadoActividad getSelected() {
         if (current == null) {
             current = new EstadoActividad();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -71,7 +58,6 @@ public class MbEstadoActividad implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
@@ -92,8 +78,6 @@ public class MbEstadoActividad implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (EstadoActividad) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -102,7 +86,6 @@ public class MbEstadoActividad implements Serializable{
      */
     public String prepareCreate() {
         current = new EstadoActividad();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -110,24 +93,12 @@ public class MbEstadoActividad implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (EstadoActividad) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
     public String prepareInicio(){
         recreateModel();
         return "/faces/index";
-    }
-    
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        items = null;
-        buscarEstadoActividad();
-        return "list";
     }
     
     /**
@@ -140,7 +111,6 @@ public class MbEstadoActividad implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -155,9 +125,6 @@ public class MbEstadoActividad implements Serializable{
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
-        }
     }    
     
     /**
@@ -223,8 +190,6 @@ public class MbEstadoActividad implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (EstadoActividad) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -233,19 +198,6 @@ public class MbEstadoActividad implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(estadoActividadFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(estadoActividadFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -288,54 +240,7 @@ public class MbEstadoActividad implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstadoActividadDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
-    
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarEstadoActividad(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
+       
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

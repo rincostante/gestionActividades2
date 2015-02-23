@@ -6,6 +6,8 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
@@ -16,7 +18,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -27,7 +32,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -39,21 +43,23 @@ public class MbOrganismo implements Serializable{
     
     private Organismo current;
     private DataModel items = null;    
+    private List<Organismo> listFilter;
     
     @EJB
     private OrganismoFacade organismoFacade;
     @EJB
     private TipoOrganismoFacade tipoOrgFacade;
     
-    private int selectedItemIndex;
-    private String selectParam;
     private boolean habilitadas;
     private Organismo orgSelected;
     private List<TipoOrganismo> listaTipoOrg;
     private Usuario usLogeado;
     private MbLogin login;    
     private ListDataModel listDMActPlan;
+    private List<ActividadPlan> listActPlanFilter;
     private ListDataModel listDMActImp;
+    private List<ActividadImplementada> listActImpFilter;
+    private boolean iniciado;
 
     /**
      * Creates a new instance of MbOrganismo
@@ -66,6 +72,7 @@ public class MbOrganismo implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         listaTipoOrg = tipoOrgFacade.findAll();
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
@@ -76,6 +83,31 @@ public class MbOrganismo implements Serializable{
     /********************************
      ** Getters y Setters *********** 
      ********************************/    
+    
+    public List<Organismo> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Organismo> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<ActividadPlan> getListActPlanFilter() {
+        return listActPlanFilter;
+    }
+
+    public void setListActPlanFilter(List<ActividadPlan> listActPlanFilter) {
+        this.listActPlanFilter = listActPlanFilter;
+    }
+
+    public List<ActividadImplementada> getListActImpFilter() {
+        return listActImpFilter;
+    }
+
+    public void setListActImpFilter(List<ActividadImplementada> listActImpFilter) {
+        this.listActImpFilter = listActImpFilter;
+    }
+    
     
     public ListDataModel getListDMActPlan() {
         return listDMActPlan;
@@ -92,7 +124,6 @@ public class MbOrganismo implements Serializable{
     public void setListDMActImp(ListDataModel listDMActImp) {
         this.listDMActImp = listDMActImp;
     }
-    
     
     public Usuario getUsLogeado() {
         return usLogeado;
@@ -136,7 +167,6 @@ public class MbOrganismo implements Serializable{
     public Organismo getSelected() {
         if (current == null) {
             current = new Organismo();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -163,6 +193,7 @@ public class MbOrganismo implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         habilitadas = true;
         recreateModel();
         return "list";
@@ -183,7 +214,6 @@ public class MbOrganismo implements Serializable{
      */
     public String prepareView() {
         current = orgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -192,7 +222,6 @@ public class MbOrganismo implements Serializable{
      */
     public String prepareViewDes() {
         current = (Organismo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
 
@@ -201,7 +230,6 @@ public class MbOrganismo implements Serializable{
      */
     public String prepareCreate() {
         current = new Organismo();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -210,8 +238,6 @@ public class MbOrganismo implements Serializable{
      */
     public String prepareEdit() {
         current = orgSelected;
-        // cargo los list para los combos     
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -234,7 +260,6 @@ public class MbOrganismo implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -250,7 +275,6 @@ public class MbOrganismo implements Serializable{
      */
     public String prepareHabilitar(){
         current = orgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -349,7 +373,6 @@ public class MbOrganismo implements Serializable{
      */    
     public String destroy() {
         current = orgSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -358,19 +381,6 @@ public class MbOrganismo implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -397,7 +407,9 @@ public class MbOrganismo implements Serializable{
      */
     public void verActividadesPlan(){
         listDMActPlan = new ListDataModel(current.getActividadesPlan());
-        RequestContext.getCurrentInstance().openDialog("dlgActividadesPlan");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesPlan", options, null);
     }      
     
     /**
@@ -405,8 +417,30 @@ public class MbOrganismo implements Serializable{
      */
     public void verActividadesImp(){
         listDMActImp = new ListDataModel(current.getActividadesImplementadas());
-        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp", options, null);
     }        
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbOrganismo") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
     
     
     /*********************
@@ -426,8 +460,14 @@ public class MbOrganismo implements Serializable{
         items = null;
         listDMActPlan = null;
         listDMActImp = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listActPlanFilter != null){
+            listActPlanFilter = null;
+        }
+        if(listActImpFilter != null){
+            listActImpFilter = null;
         }
     }      
     

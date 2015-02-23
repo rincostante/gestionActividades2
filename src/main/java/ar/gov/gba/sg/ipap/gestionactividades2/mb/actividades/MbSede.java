@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
@@ -14,6 +14,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -24,7 +28,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -32,42 +35,62 @@ import org.primefaces.context.RequestContext;
  *
  * @author rincostante
  */
-public class MbSede implements Serializable{
+public class MbSede implements Serializable {
 
     private Sede current;
-    private DataModel items = null;    
-    
+    private DataModel items = null;
+    private List<Sede> listFilter;
+
     @EJB
     private SedeFacade sedeFacade;
-    
-    private int selectedItemIndex;
+
     private boolean habilitadas;
     private Sede sedeSelected;
-    private Usuario usLogeado;    
-    private MbLogin login; 
+    private Usuario usLogeado;
+    private MbLogin login;
     private ListDataModel listDMActImp;
-    
+    private List<ActividadImplementada> listActImpFilter;
+    private boolean iniciado;
+
     /**
      * Creates a new instance of MbSede
      */
     public MbSede() {
     }
-    
+
     /**
      *
      */
     @PostConstruct
-    public void init(){
+    public void init() {
+        iniciado = false;
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
-        login = (MbLogin)ctx.getSessionMap().get("mbLogin");
-        usLogeado = login.getUsLogeado();     
+        login = (MbLogin) ctx.getSessionMap().get("mbLogin");
+        usLogeado = login.getUsLogeado();
     }
 
-    /********************************
+    /**
+     * ******************************
      ** Getters y Setters ***********
-     ********************************/  
-    
+     *******************************
+     */
+    public List<Sede> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Sede> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<ActividadImplementada> getListActImpFilter() {
+        return listActImpFilter;
+    }
+
+    public void setListActImpFilter(List<ActividadImplementada> listActImpFilter) {
+        this.listActImpFilter = listActImpFilter;
+    }
+
     public ListDataModel getListDMActImp() {
         return listDMActImp;
     }
@@ -75,8 +98,7 @@ public class MbSede implements Serializable{
     public void setListDMActImp(ListDataModel listDMActImp) {
         this.listDMActImp = listDMActImp;
     }
-  
-    
+
     public boolean isHabilitadas() {
         return habilitadas;
     }
@@ -100,83 +122,86 @@ public class MbSede implements Serializable{
     public void setUsLogeado(Usuario usLogeado) {
         this.usLogeado = usLogeado;
     }
-  
-    
-    /********************************
+
+    /**
+     * ******************************
      ** Métodos para el datamodel **
-     ********************************/
+     *******************************
+     */
     /**
      * @return La entidad gestionada
      */
     public Sede getSelected() {
         if (current == null) {
             current = new Sede();
-            selectedItemIndex = -1;
         }
         return current;
-    }    
-    
+    }
+
     /**
      * @return el listado de entidades a mostrar en el list
      */
     public DataModel getItems() {
         if (items == null) {
-            if(habilitadas){
+            if (habilitadas) {
                 items = new ListDataModel(getFacade().getHabilitados());
-            }else{
+            } else {
                 items = new ListDataModel(getFacade().getDeshabilitados());
             }
         }
         return items;
-    }    
-    
-    /*******************************
+    }
+
+    /**
+     * *****************************
      ** Métodos de inicialización **
-     *******************************/
+     ******************************
+     */
     /**
      * Método para inicializar el listado de los Sedes habilitados
+     *
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         habilitadas = true;
         recreateModel();
         return "list";
-    } 
-    
+    }
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public String prepareListDes() {
         habilitadas = false;
         recreateModel();
         return "listDes";
-    }     
-    
+    }
+
     /**
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
         current = sedeSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
-    
+
     /**
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
         current = (Sede) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "viewDes";
     }
 
-    /** (Probablemente haya que embeberlo con el listado para una misma vista)
+    /**
+     * (Probablemente haya que embeberlo con el listado para una misma vista)
+     *
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
         current = new Sede();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -185,48 +210,46 @@ public class MbSede implements Serializable{
      */
     public String prepareEdit() {
         current = sedeSelected;
-        // cargo los list para los combos     
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
-    
+
     /**
      *
      * @return
      */
-    public String prepareInicio(){
+    public String prepareInicio() {
         recreateModel();
         return "/faces/index";
     }
-    
+
     /**
-     * Método que verifica que la Sede que se quiere eliminar no esté siento utilizado por otra entidad
-     * @return 
+     * Método que verifica que la Sede que se quiere eliminar no esté siento
+     * utilizado por otra entidad
+     *
+     * @return
      */
-    public String prepareDestroy(){
+    public String prepareDestroy() {
         current = sedeSelected;
         boolean libre = getFacade().getUtilizado(current.getId());
 
-        if (libre){
+        if (libre) {
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
-        }else{
+        } else {
             //No Elimina 
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("SedeNonDeletable"));
         }
         return "view";
-    }  
-    
+    }
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-    public String prepareHabilitar(){
+    public String prepareHabilitar() {
         current = sedeSelected;
-        selectedItemIndex = getItems().getRowIndex();
-        try{
+        try {
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
             current.getAdmin().setFechaModif(date);
@@ -239,23 +262,27 @@ public class MbSede implements Serializable{
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("SedeHabilitado"));
             return "view";
-        }catch (Exception e) {
+        } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("SedeHabilitadaErrorOccured"));
-            return null; 
+            return null;
         }
-    }  
-    
-    /*************************
-    ** Métodos de operación **
-    **************************/
+    }
+
     /**
-     * Méto que inserta una nueva Sede en la base de datos, previamente genera una entidad de administración
-     * con los datos necesarios y luego se la asigna a la persona
+     * ***********************
+     ** Métodos de operación **
+     *************************
+     */
+    /**
+     * Méto que inserta una nueva Sede en la base de datos, previamente genera
+     * una entidad de administración con los datos necesarios y luego se la
+     * asigna a la persona
+     *
      * @return mensaje que notifica la inserción
      */
     public String create() {
         try {
-            if(getFacade().noExiste(current.getNombre())){
+            if (getFacade().noExiste(current.getNombre())) {
                 // Creación de la entidad de administración y asignación
                 Date date = new Date(System.currentTimeMillis());
                 AdmEntidad admEnt = new AdmEntidad();
@@ -263,12 +290,12 @@ public class MbSede implements Serializable{
                 admEnt.setHabilitado(true);
                 admEnt.setUsAlta(usLogeado);
                 current.setAdmin(admEnt);
-                
+
                 // Inserción
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("SedeCreated"));
                 return "view";
-            }else{
+            } else {
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("SedeExistente"));
                 return null;
             }
@@ -279,26 +306,27 @@ public class MbSede implements Serializable{
     }
 
     /**
-     * Método que actualiza una nueva Sede en la base de datos.
-     * Previamente actualiza los datos de administración
+     * Método que actualiza una nueva Sede en la base de datos. Previamente
+     * actualiza los datos de administración
+     *
      * @return mensaje que notifica la actualización
      */
-    public String update() {    
+    public String update() {
         Sede org;
         try {
             org = getFacade().getExistente(current.getNombre());
-            if(org == null){
+            if (org == null) {
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
                 current.getAdmin().setFechaModif(date);
                 current.getAdmin().setUsModif(usLogeado);
-                
+
                 // Actualizo
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("SedeUpdated"));
                 return "view";
-            }else{
-                if(org.getId().equals(current.getId())){
+            } else {
+                if (org.getId().equals(current.getId())) {
                     // Actualización de datos de administración de la entidad
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
@@ -307,8 +335,8 @@ public class MbSede implements Serializable{
                     // Actualizo
                     getFacade().edit(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("SedeUpdated"));
-                    return "view";                    
-                }else{
+                    return "view";
+                } else {
                     JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("SedeExistente"));
                     return null;
                 }
@@ -321,80 +349,96 @@ public class MbSede implements Serializable{
 
     /**
      * @return mensaje que notifica el borrado
-     */    
+     */
     public String destroy() {
         current = sedeSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
-    }    
-    
-    /*************************
-    ** Métodos de selección **
-    **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
     }
 
     /**
-     * @return de a una las entidades persistidas formateadas
+     * ***********************
+     ** Métodos de selección **
+    *************************
      */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
-
     /**
      * @param id equivalente al id de la entidad persistida
      * @return la entidad correspondiente
      */
     public Sede getSede(java.lang.Long id) {
         return getFacade().find(id);
-    }  
-    
+    }
+
     /**
      * Método para revocar la sesión del MB
-     * @return 
+     *
+     * @return
      */
-    public String cleanUp(){
+    public String cleanUp() {
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
         session.removeAttribute("mbSede");
-      
+
         return "inicio";
     }
-    
+
     /**
      * Método para mostrar las Actividades Implementadas vinculadas a esta Sede
      */
-    public void verActividadesImp(){
+    public void verActividadesImp() {
         listDMActImp = new ListDataModel(current.getActividades());
-        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp");
-    }      
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgActividadesImp", options, null);
+    }
     
-    
-    /*********************
-    ** Métodos privados **
-    **********************/
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbSede") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }       
+
+    /**
+     * *******************
+     ** Métodos privados **
+    *********************
+     */
     /**
      * @return el Facade
      */
     private SedeFacade getFacade() {
         return sedeFacade;
-    }    
-    
+    }
+
     /**
      * Restea la entidad
      */
     private void recreateModel() {
         items = null;
         listDMActImp = null;
-    }      
-    
-    
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listActImpFilter != null){
+            listActImpFilter = null;
+        }
+    }
+
     /**
      * Método que deshabilita la entidad
      */
@@ -405,20 +449,20 @@ public class MbSede implements Serializable{
             current.getAdmin().setFechaBaja(date);
             current.getAdmin().setUsBaja(usLogeado);
             current.getAdmin().setHabilitado(false);
-            
+
             // Deshabilito la entidad
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("SedeDeleted"));
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("SedeDeletedErrorOccured"));
         }
-    }        
-    
-    
-    
-    /********************************************************************
-    ** Converter. Se debe actualizar la entidad y el facade respectivo **
-    *********************************************************************/
+    }
+
+    /**
+     * ******************************************************************
+     ** Converter. Se debe actualizar la entidad y el facade respectivo **
+    ********************************************************************
+     */
     @FacesConverter(forClass = Sede.class)
     public static class SedeControllerConverter implements Converter {
 
@@ -439,7 +483,6 @@ public class MbSede implements Serializable{
             return controller.getSede(getKey(value));
         }
 
-        
         java.lang.Long getKey(String value) {
             java.lang.Long key;
             key = Long.valueOf(value);
@@ -451,7 +494,7 @@ public class MbSede implements Serializable{
             sb.append(value);
             return sb.toString();
         }
-        
+
         String getStringKey(java.lang.Long value) {
             StringBuilder sb = new StringBuilder();
             sb.append(value);
@@ -477,5 +520,5 @@ public class MbSede implements Serializable{
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Sede.class.getName());
             }
         }
-    }               
+    }
 }

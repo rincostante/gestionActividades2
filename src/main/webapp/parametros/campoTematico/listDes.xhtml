@@ -47,6 +47,7 @@
                 </p:panel>      
                 
                 <p:dataTable value="#{mbCampoTematico.items}" var="e" id="docList" rows="5"
+                             filteredValue="#{mbCampoTematico.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -56,15 +57,15 @@
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbCampoTematico.prepareListDes}" update="docList" style="margin-left: 10px"/>
                         <p:columnToggler datasource="docList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="#{bundle.CampoTematicoLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                    <p:column headerText="#{bundle.CampoTematicoLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>   
                     
-                    <p:column headerText="#{bundle.CampoTematicoLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}">
+                    <p:column headerText="#{bundle.CampoTematicoLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaIniVig}"/>
                     </p:column>  
                     
-                    <p:column headerText="#{bundle.CampoTematicoLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}">
+                    <p:column headerText="#{bundle.CampoTematicoLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaFinVig}"/>
                     </p:column> 
                     <p:column headerText="Acciones" style="width:90px">

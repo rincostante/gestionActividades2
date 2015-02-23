@@ -15,18 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbEstadoParticipante.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="estParForm" header="#{bundle.EstadoParticipanteListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbEstadoParticipante.selectParam}" 
-                                        completeMethod="#{mbEstadoParticipante.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="estParForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbEstadoParticipante.prepareSelect()}" ajax="false"/>  
-                        <p:outputLabel value="&ensp;"/>
+                    <h:panelGrid columns="2">
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbEstadoParticipante.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbEstadoParticipante.prepareList}" update="estParList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbEstadoParticipante.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -34,21 +29,29 @@
                 <br/>           
 
                 <p:dataTable value="#{mbEstadoParticipante.items}" var="e" id="estParList" rows="5"
+                             filteredValue="#{mbEstadoParticipante.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.EstadoParticipanteListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbEstadoParticipante.prepareList}" update="estParList"/>
                         <p:columnToggler datasource="estParList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbEstadoParticipante.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbEstadoParticipante.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbEstadoParticipante.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbEstadoParticipante.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbEstadoParticipante.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbEstadoParticipante.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbEstadoParticipante.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbEstadoParticipante.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbEstadoParticipante.current}" />
+                        </p:commandButton>
                     </p:column>                
            
                 </p:dataTable>

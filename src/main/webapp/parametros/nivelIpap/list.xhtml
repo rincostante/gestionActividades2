@@ -15,17 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbNivelIpap.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="nivIpapForm" header="#{bundle.NivelIpapListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbNivelIpap.selectParam}" 
-                                        completeMethod="#{mbNivelIpap.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="nivIpapForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbNivelIpap.prepareSelect()}" ajax="false"/>  
+                    <h:panelGrid columns="2">                         
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbNivelIpap.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbNivelIpap.prepareList}" update="nivIpapList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbNivelIpap.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -33,27 +29,35 @@
                 <br/>           
 
                 <p:dataTable value="#{mbNivelIpap.items}" var="e" id="nivIpapList" rows="5"
+                             filteredValue="#{mbNivelIpap.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.NivelIpapListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbNivelIpap.prepareList}" update="nivIpapList"/>
                         <p:columnToggler datasource="nivIpapList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.CreateNivelIpapTitle_estado}" sortBy="#{e.estado}">
+                    <p:column headerText="#{bundle.CreateNivelIpapTitle_estado}" sortBy="#{e.estado}" filterBy="#{e.estado}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.estado}"/>
                     </p:column>
                     
                     
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbNivelIpap.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbNivelIpap.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbNivelIpap.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbNivelIpap.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbNivelIpap.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbNivelIpap.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbNivelIpap.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-trash" action="#{mbNivelIpap.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbNivelIpap.current}" />
+                        </p:commandButton> 
                     </p:column>                
            
                 </p:dataTable>

@@ -13,17 +13,22 @@
     </h:head>
     <h:body>
         <h:form id="frmAct">
-            <p:dataTable var="us" value="#{mbRol.listDMUsuarios}">
-                <p:column headerText="Nombre">
+            <p:dataTable var="us" value="#{mbRol.listDMUsuarios}" 
+                         filteredValue="#{mbRol.listUsuariosFilter}"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">>
+                <p:column headerText="Nombre" sortBy="#{us.apYNom}" filterBy="#{us.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{us.apYNom}" />
                 </p:column>
-                <p:column headerText="Documento">
+                <p:column headerText="Documento" sortBy="#{us.apYNom}" filterBy="#{us.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{us.documento}" />
                 </p:column>    
-                <p:column headerText="Organismo">
+                <p:column headerText="Organismo" sortBy="#{us.apYNom}" filterBy="#{us.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{us.agente.organismo.tipoOrganismo.nombre} - #{us.agente.organismo.nombre}" />
                 </p:column>
-                <p:column headerText="Haibilitado">
+                <p:column headerText="Haibilitado" sortBy="#{us.apYNom}" filterBy="#{us.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{us.admin.habilitado}" />
                 </p:column>
             </p:dataTable>

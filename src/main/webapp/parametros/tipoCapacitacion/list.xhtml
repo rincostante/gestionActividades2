@@ -15,17 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbTipoCapacitacion.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="tipoCapForm" header="#{bundle.TipoCapacitacionListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbTipoCapacitacion.selectParam}" 
-                                        completeMethod="#{mbTipoCapacitacion.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="tipoCapForm" resetValues="true" />
-                        </p:commandButton>                        
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbTipoCapacitacion.prepareSelect()}" ajax="false"/>  
+                    <h:panelGrid columns="2">                      
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTipoCapacitacion.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoCapacitacion.prepareList}" update="tipoCapList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbTipoCapacitacion.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -33,21 +29,29 @@
                 <br/>           
 
                 <p:dataTable value="#{mbTipoCapacitacion.items}" var="e" id="tipoCapList" rows="5"
+                             filteredValue="#{mbTipoCapacitacion.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.TipoCapListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoCapacitacion.prepareList}" update="tipoCapList"/>
                         <p:columnToggler datasource="tipoCapList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoCapacitacion.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoCapacitacion.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoCapacitacion.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoCapacitacion.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbTipoCapacitacion.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoCapacitacion.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbTipoCapacitacion.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoCapacitacion.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbTipoCapacitacion.current}" />
+                        </p:commandButton> 
                     </p:column>                
            
                 </p:dataTable>

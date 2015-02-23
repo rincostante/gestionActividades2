@@ -6,15 +6,18 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TituloFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -22,7 +25,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -34,20 +36,60 @@ public class MbTitulo implements Serializable{
 
     private Titulo current;
     private DataModel items = null;
+    private List<Titulo> listFilter;
     
     @EJB
     private TituloFacade tituloFacade;
-    private int selectedItemIndex;
-    private String selectParam; 
-    private List<String> listaNombres;    
-    private MbLogin login; 
     private ListDataModel listDMAgentes;
+    private List<Agente> listAgentesFilter;
     private ListDataModel listDMDocentes;
+    private List<Docente> listDocentesFilter;
+    private boolean iniciado;
     
     /**
      * Creates a new instance of MbTitulo
      */
     public MbTitulo() {
+    }
+
+    /**
+     *
+     */
+    @PostConstruct
+    public void init() {
+        iniciado = false;
+    }
+    
+    public Titulo getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Titulo current) {
+        this.current = current;
+    }
+
+    public List<Titulo> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Titulo> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<Agente> getListAgentesFilter() {
+        return listAgentesFilter;
+    }
+
+    public void setListAgentesFilter(List<Agente> listAgentesFilter) {
+        this.listAgentesFilter = listAgentesFilter;
+    }
+
+    public List<Docente> getListDocentesFilter() {
+        return listDocentesFilter;
+    }
+
+    public void setListDocentesFilter(List<Docente> listDocentesFilter) {
+        this.listDocentesFilter = listDocentesFilter;
     }
 
     public ListDataModel getListDMAgentes() {
@@ -76,7 +118,6 @@ public class MbTitulo implements Serializable{
     public Titulo getSelected() {
         if (current == null) {
             current = new Titulo();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -98,6 +139,7 @@ public class MbTitulo implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
@@ -106,8 +148,6 @@ public class MbTitulo implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Titulo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -116,7 +156,6 @@ public class MbTitulo implements Serializable{
      */
     public String prepareCreate() {
         current = new Titulo();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -124,8 +163,6 @@ public class MbTitulo implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Titulo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -140,7 +177,6 @@ public class MbTitulo implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarTitulo();
         return "list";
     }
     
@@ -149,12 +185,10 @@ public class MbTitulo implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (Titulo) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -171,8 +205,14 @@ public class MbTitulo implements Serializable{
         items = null;
         listDMAgentes = null;
         listDMDocentes = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listAgentesFilter != null){
+            listAgentesFilter = null;
+        }
+        if(listDocentesFilter != null){
+            listDocentesFilter = null;
         }
     }    
    
@@ -230,8 +270,6 @@ public class MbTitulo implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Titulo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -240,19 +278,6 @@ public class MbTitulo implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(tituloFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(tituloFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -280,7 +305,9 @@ public class MbTitulo implements Serializable{
      */
     public void verAgentes(){
         listDMAgentes = new ListDataModel(current.getAgentes());
-        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes", options, null);
     }          
     
     /**
@@ -288,8 +315,30 @@ public class MbTitulo implements Serializable{
      */
     public void verDocentes(){
         listDMDocentes = new ListDataModel(current.getDocentes());
-        RequestContext.getCurrentInstance().openDialog("dlgDocentes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgDocentes", options, null);
     }     
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbTitulo") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }          
     
     /*********************
     ** Métodos privados **
@@ -312,54 +361,6 @@ public class MbTitulo implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TituloDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
-    
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarTitulo(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

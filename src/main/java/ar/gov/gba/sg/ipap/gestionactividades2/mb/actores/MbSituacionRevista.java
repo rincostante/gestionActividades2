@@ -6,15 +6,17 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.SituacionRevistaFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -23,7 +25,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -37,19 +38,50 @@ public class MbSituacionRevista implements Serializable{
     
     private SituacionRevista current;
     private DataModel items = null;
+    private List<SituacionRevista> listFilter;
     
     @EJB
     private SituacionRevistaFacade situacionRevistaFacade;
-    //private PaginationHelper pagination;
-    private int selectedItemIndex;
-    private String selectParam; 
-    private List<String> listaNombres;     
-    private MbLogin login;  
     private ListDataModel listDMAgentes;
+    private List<Agente> listAgentesFilter;
+    private boolean iniciado;
 
     /** Creates a new instance of MbSituacionRevista */
     public MbSituacionRevista() {
     }   
+
+    /**
+     *
+     */
+    @PostConstruct
+    public void init() {
+        iniciado = false;
+    }   
+    
+    
+    public SituacionRevista getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(SituacionRevista current) {
+        this.current = current;
+    }
+
+    public List<SituacionRevista> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<SituacionRevista> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<Agente> getListAgentesFilter() {
+        return listAgentesFilter;
+    }
+
+    public void setListAgentesFilter(List<Agente> listAgentesFilter) {
+        this.listAgentesFilter = listAgentesFilter;
+    }
 
     public ListDataModel getListDMAgentes() {
         return listDMAgentes;
@@ -69,7 +101,6 @@ public class MbSituacionRevista implements Serializable{
     public SituacionRevista getSelected() {
         if (current == null) {
             current = new SituacionRevista();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -79,7 +110,6 @@ public class MbSituacionRevista implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
@@ -92,6 +122,7 @@ public class MbSituacionRevista implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
@@ -100,8 +131,6 @@ public class MbSituacionRevista implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (SituacionRevista) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -110,7 +139,6 @@ public class MbSituacionRevista implements Serializable{
      */
     public String prepareCreate() {
         current = new SituacionRevista();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -118,8 +146,6 @@ public class MbSituacionRevista implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (SituacionRevista) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -128,27 +154,16 @@ public class MbSituacionRevista implements Serializable{
         return "/faces/index";
     }
     
-    /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        items = null;
-        buscarSituacionRevista();
-        return "list";
-    }
     
     /**
      * Método que verifica que la Situación de Revista que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = (SituacionRevista) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -164,8 +179,11 @@ public class MbSituacionRevista implements Serializable{
     private void recreateModel() {
         items = null;
         listDMAgentes = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listAgentesFilter != null){
+            listAgentesFilter = null;
         }
     }    
     
@@ -232,8 +250,6 @@ public class MbSituacionRevista implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (SituacionRevista) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -242,19 +258,6 @@ public class MbSituacionRevista implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -282,8 +285,31 @@ public class MbSituacionRevista implements Serializable{
      */
     public void verAgentes(){
         listDMAgentes = new ListDataModel(current.getAgentes());
-        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes", options, null);
     }     
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbSituacionRevista") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }       
+    
     
     /*********************
     ** Métodos privados **
@@ -306,54 +332,7 @@ public class MbSituacionRevista implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("SituacionRevistaDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
     
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarSituacionRevista(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

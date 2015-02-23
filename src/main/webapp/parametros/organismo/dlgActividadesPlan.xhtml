@@ -13,23 +13,28 @@
     </h:head>
     <h:body>
         <h:form id="frmActPlan">
-            <p:dataTable var="actPlan" value="#{mbOrganismo.listDMActPlan}">
-                <p:column headerText="Nombre">
+            <p:dataTable var="actPlan" value="#{mbOrganismo.listDMActPlan}"
+                         filteredValue="#{mbOrganismo.listActPlanFilter}"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Nombre" sortBy="#{actPlan.nombre}" filterBy="#{actPlan.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actPlan.nombre}" />
                 </p:column>
-                <p:column headerText="Carga horaria">
+                <p:column headerText="Carga horaria" sortBy="#{actPlan.cargaHoraria}" filterBy="#{actPlan.cargaHoraria}" filterMatchMode="contains">
                     <h:outputText value="#{actPlan.cargaHoraria}" />
                 </p:column>    
-                <p:column headerText="Modalidad">
+                <p:column headerText="Modalidad" sortBy="#{actPlan.modalidad.nombre}" filterBy="#{actPlan.modalidad.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actPlan.modalidad.nombre}" />
                 </p:column>
-                <p:column headerText="Organismo solicitante">
+                <p:column headerText="Organismo solicitante" sortBy="#{actPlan.organismo.nombre}" filterBy="" filterMatchMode="contains">
                     <h:outputText value="#{actPlan.organismo.nombre}" />
                 </p:column>
-                <p:column headerText="Resolución">
+                <p:column headerText="Resolución" sortBy="#{actPlan.resolucion.resolucion}" filterBy="#{actPlan.resolucion.resolucion}" filterMatchMode="contains">
                     <h:outputText value="#{actPlan.resolucion.resolucion} - #{actPlan.resolucion.anio}" />
                 </p:column>
-                <p:column headerText="Haibilitada">
+                <p:column headerText="Haibilitada" sortBy="#{actPlan.admin.habilitado}" filterBy="#{actPlan.admin.habilitado}" filterMatchMode="contains">
                     <h:outputText value="#{actPlan.admin.habilitado}" />
                 </p:column>
             </p:dataTable>

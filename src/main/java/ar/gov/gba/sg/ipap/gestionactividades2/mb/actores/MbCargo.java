@@ -6,15 +6,17 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.CargoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -23,7 +25,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -36,27 +37,59 @@ public class MbCargo implements Serializable{
 
     private Cargo current;
     private DataModel items = null;
+    private List<Cargo> listFilter;
     
     @EJB
     private CargoFacade situacionRevistaFacade;
-    //private PaginationHelper pagination;
-    private int selectedItemIndex;
     private String selectParam; 
-    private List<String> listaNombres; 
-    private MbLogin login;  
     private ListDataModel listDMAgentes;
+    private List<Agente> listAgentesFilter;
+    private boolean iniciado;
+    
     /**
      * Creates a new instance of MbCargo
      */
     public MbCargo() {
     }    
 
+    /**
+     * 
+     */
+    @PostConstruct
+    public void init(){
+        iniciado = false;
+    }
+    
     public ListDataModel getListDMAgentes() {
         return listDMAgentes;
     }
 
     public void setListDMAgentes(ListDataModel listDMAgentes) {
         this.listDMAgentes = listDMAgentes;
+    }
+
+    public Cargo getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Cargo current) {
+        this.current = current;
+    }
+
+    public List<Cargo> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Cargo> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<Agente> getListAgentesFilter() {
+        return listAgentesFilter;
+    }
+
+    public void setListAgentesFilter(List<Agente> listAgentesFilter) {
+        this.listAgentesFilter = listAgentesFilter;
     }
     
     
@@ -69,7 +102,6 @@ public class MbCargo implements Serializable{
     public Cargo getSelected() {
         if (current == null) {
             current = new Cargo();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -79,7 +111,6 @@ public class MbCargo implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
@@ -92,6 +123,7 @@ public class MbCargo implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
@@ -100,8 +132,6 @@ public class MbCargo implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Cargo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -110,7 +140,6 @@ public class MbCargo implements Serializable{
      */
     public String prepareCreate() {
         current = new Cargo();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -118,8 +147,6 @@ public class MbCargo implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Cargo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -129,26 +156,14 @@ public class MbCargo implements Serializable{
     }
     
     /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        items = null;
-        buscarCargo();
-        return "list";
-    }
-    
-    /**
      * Método que verifica que el Cargo que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = (Cargo) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -166,6 +181,12 @@ public class MbCargo implements Serializable{
         listDMAgentes = null;
         if(selectParam != null){
             selectParam = null;
+        }
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listAgentesFilter != null){
+            listAgentesFilter = null;
         }
     }    
     
@@ -232,8 +253,6 @@ public class MbCargo implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Cargo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -242,19 +261,6 @@ public class MbCargo implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -281,8 +287,31 @@ public class MbCargo implements Serializable{
      */
     public void verAgentes(){
         listDMAgentes = new ListDataModel(current.getAgentes());
-        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes", options, null);
     }      
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbCargo") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
+    
     
     /*********************
     ** Métodos privados **
@@ -305,20 +334,6 @@ public class MbCargo implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("CargoDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
     
     
     /*
@@ -331,28 +346,7 @@ public class MbCargo implements Serializable{
     public void setSelectParam(String selectParam) {
         this.selectParam = selectParam;
     }
-    
-    private void buscarCargo(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
+  
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

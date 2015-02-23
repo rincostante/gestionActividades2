@@ -6,15 +6,17 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -23,7 +25,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -36,21 +37,51 @@ public class MbTipoOrganismo implements Serializable{
 
     private TipoOrganismo current;
     private DataModel items = null;
+    private List<TipoOrganismo> listFilter;
     
     @EJB
     private TipoOrganismoFacade tipoOrganismoFacade;
-    //private PaginationHelper pagination;
-    private int selectedItemIndex;
-    private String selectParam;     
-    private List<String> listaNombres;
-    private MbLogin login;
     private ListDataModel listDMOrganismos;
+    private List<Organismo> listOrgnanismosFilter;
+    private boolean iniciado;
     
     /**
      * Creates a new instance of MbTipoOrganismo
      */
     public MbTipoOrganismo() {
     }   
+    
+    /**
+     *
+     */
+    @PostConstruct
+    public void init() {
+        iniciado = false;
+    }
+
+    public TipoOrganismo getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(TipoOrganismo current) {
+        this.current = current;
+    }
+
+    public List<TipoOrganismo> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<TipoOrganismo> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<Organismo> getListOrgnanismosFilter() {
+        return listOrgnanismosFilter;
+    }
+
+    public void setListOrgnanismosFilter(List<Organismo> listOrgnanismosFilter) {
+        this.listOrgnanismosFilter = listOrgnanismosFilter;
+    }
 
     public ListDataModel getListDMOrganismos() {
         return listDMOrganismos;
@@ -70,7 +101,6 @@ public class MbTipoOrganismo implements Serializable{
     public TipoOrganismo getSelected() {
         if (current == null) {
             current = new TipoOrganismo();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -93,6 +123,7 @@ public class MbTipoOrganismo implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
@@ -101,8 +132,6 @@ public class MbTipoOrganismo implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (TipoOrganismo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -111,7 +140,6 @@ public class MbTipoOrganismo implements Serializable{
      */
     public String prepareCreate() {
         current = new TipoOrganismo();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -119,8 +147,6 @@ public class MbTipoOrganismo implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (TipoOrganismo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -135,7 +161,6 @@ public class MbTipoOrganismo implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarTipoOrganismo();
         return "list";
     }
     
@@ -149,7 +174,6 @@ public class MbTipoOrganismo implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -194,8 +218,11 @@ public class MbTipoOrganismo implements Serializable{
     private void recreateModel() {
         items = null;
         listDMOrganismos = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listOrgnanismosFilter != null){
+            listOrgnanismosFilter = null;
         }
     }    
     
@@ -234,8 +261,6 @@ public class MbTipoOrganismo implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (TipoOrganismo) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -244,19 +269,6 @@ public class MbTipoOrganismo implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(tipoOrganismoFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(tipoOrganismoFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -283,9 +295,30 @@ public class MbTipoOrganismo implements Serializable{
      */
     public void verOganismos(){
         listDMOrganismos = new ListDataModel(current.getOrganismos());
-        RequestContext.getCurrentInstance().openDialog("dlgOrganismos");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgOrganismos", options, null);
     }      
     
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbTipoOrganismo") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }      
     
     /*********************
     ** Métodos privados **
@@ -308,54 +341,7 @@ public class MbTipoOrganismo implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoOrganismoDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
     
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarTipoOrganismo(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

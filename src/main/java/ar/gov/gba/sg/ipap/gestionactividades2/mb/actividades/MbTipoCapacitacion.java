@@ -6,15 +6,17 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -23,7 +25,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -36,20 +37,50 @@ public class MbTipoCapacitacion implements Serializable{
     
     private TipoCapacitacion current;
     private DataModel items = null;
+    private List<TipoCapacitacion> listFilter;
     
     @EJB
     private TipoCapacitacionFacade tipoCapacitacionFacade;
-    //private PaginationHelper pagination;
-    private int selectedItemIndex;
-    private String selectParam;    
-    private List<String> listaNombres;
-    private MbLogin login;
     private ListDataModel listDMAct;
+    private List<ActividadPlan> listActFilter;
+    private boolean iniciado;
 
     /**
      * Creates a new instance of MbTipoCapacitacion
      */
     public MbTipoCapacitacion() {   
+    }
+    
+    /**
+     *
+     */
+    @PostConstruct
+    public void init() {
+        iniciado = false;
+    }
+
+    public TipoCapacitacion getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(TipoCapacitacion current) {
+        this.current = current;
+    }
+
+    public List<TipoCapacitacion> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<TipoCapacitacion> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<ActividadPlan> getListActFilter() {
+        return listActFilter;
+    }
+
+    public void setListActFilter(List<ActividadPlan> listActFilter) {
+        this.listActFilter = listActFilter;
     }
 
     public ListDataModel getListDMAct() {
@@ -70,7 +101,6 @@ public class MbTipoCapacitacion implements Serializable{
     public TipoCapacitacion getSelected() {
         if (current == null) {
             current = new TipoCapacitacion();
-            selectedItemIndex = -1;
         }
         return current;
     }   
@@ -80,7 +110,6 @@ public class MbTipoCapacitacion implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
@@ -94,28 +123,16 @@ public class MbTipoCapacitacion implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
     
-    public String iniciarList(){
-        String redirect = "";
-        if(selectParam != null){
-            redirect = "list";
-        }else{
-            redirect = "administracion/tipoCapacitacion/list";
-        }
-        recreateModel();
-        return redirect;
-    }
 
     /**
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -124,7 +141,6 @@ public class MbTipoCapacitacion implements Serializable{
      */
     public String prepareCreate() {
         current = new TipoCapacitacion();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -132,9 +148,6 @@ public class MbTipoCapacitacion implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -149,7 +162,6 @@ public class MbTipoCapacitacion implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarTipoCapacitacion();
         return "list";
     }
     
@@ -163,7 +175,6 @@ public class MbTipoCapacitacion implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -208,8 +219,11 @@ public class MbTipoCapacitacion implements Serializable{
     private void recreateModel() {
         items = null;
         listDMAct = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listActFilter != null){
+            listActFilter = null;
         }
     }
 
@@ -248,49 +262,15 @@ public class MbTipoCapacitacion implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (TipoCapacitacion) getItems().getRowData();
-        //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
-        //recreatePagination();
         recreateModel();
         return "view";
     }
-
-    /**
-     * @return mensaje que notifica la inserción
-     */
-    public String destroyAndView() {
-        performDestroy();
-        recreateModel();
-        updateCurrentItem();
-        if (selectedItemIndex >= 0) {
-            return "view";
-        } else {
-            // all items were removed - go back to list
-            recreateModel();
-            return "list";
-        }
-    }    
-    
   
     
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(tipoCapacitacionFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(tipoCapacitacionFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -317,8 +297,30 @@ public class MbTipoCapacitacion implements Serializable{
      */
     public void verActividades(){
         listDMAct = new ListDataModel(current.getActividades());
-        RequestContext.getCurrentInstance().openDialog("dlgActividades");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgActividades", options, null);
     }  
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbTipoCapacitacion") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }           
     
     /*********************
     ** Métodos privados **
@@ -340,60 +342,6 @@ public class MbTipoCapacitacion implements Serializable{
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("TipoCapacitacionDeletedErrorOccured"));
         }
-    }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-            // go to previous page if last page disappeared:
-            /*
-            if (pagination.getPageFirstItem() >= count) {
-                pagination.previousPage();
-            }
-            */
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
-    
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarTipoCapacitacion(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }   
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
     }
         
     

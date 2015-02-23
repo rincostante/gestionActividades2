@@ -46,7 +46,7 @@ public class RolFacade extends AbstractFacade<Rol> {
                 .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
         return result;
-    }     
+    }    
     
     /**
      * Método que verifica si el Rol puede ser eliminado
@@ -73,16 +73,5 @@ public class RolFacade extends AbstractFacade<Rol> {
         Query q = em.createQuery(queryString)
                 .setParameter("unique", unique);
         return q.getResultList().isEmpty();
-    }
-    
-    /**
-     * Metodo para el autocompletado de la búsqueda por nombre
-     * @return 
-     */
-    public List<String> getNombres(){
-        em = getEntityManager();
-        String queryString = "SELECT rol.nombre FROM Rol rol";
-        Query q = em.createQuery(queryString);
-        return q.getResultList();
-    }              
+    }            
 }

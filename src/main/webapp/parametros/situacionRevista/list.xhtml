@@ -15,17 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbSituacionRevista.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="sirRevForm" header="#{bundle.SituacionRevistaListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbSituacionRevista.selectParam}" 
-                                        completeMethod="#{mbSituacionRevista.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="sirRevForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbSituacionRevista.prepareSelect()}" ajax="false"/>  
+                    <h:panelGrid columns="2">                       
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbSituacionRevista.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSituacionRevista.prepareList}" update="sirRevList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbSituacionRevista.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -33,21 +29,29 @@
                 <br/>           
 
                 <p:dataTable value="#{mbSituacionRevista.items}" var="e" id="sirRevList" rows="5"
+                             filteredValue="#{mbSituacionRevista.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.SituacionRevistaListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSituacionRevista.prepareList}" update="sirRevList"/>
                         <p:columnToggler datasource="sirRevList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbSituacionRevista.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbSituacionRevista.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbSituacionRevista.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbSituacionRevista.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbSituacionRevista.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbSituacionRevista.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbSituacionRevista.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-trash" action="#{mbSituacionRevista.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbSituacionRevista.current}" />
+                        </p:commandButton>  
                     </p:column>                
            
                 </p:dataTable>

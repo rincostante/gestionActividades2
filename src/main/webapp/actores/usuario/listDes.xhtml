@@ -30,6 +30,7 @@
                 </p:panel>      
                 
                 <p:dataTable value="#{mbUsuario.items}" var="e" id="usList" rows="5"
+                             filteredValue="#{mbUsuario.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -39,16 +40,16 @@
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbUsuario.prepareListDes}" update="usList" style="margin-left: 10px"/>
                         <p:columnToggler datasource="usList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="#{bundle.UsuarioLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}">
+                    <p:column headerText="#{bundle.UsuarioLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}" filterMatchMode="contains"> 
                         <p:outputLabel value="#{e.apYNom}"/>
                     </p:column> 
-                    <p:column headerText="#{bundle.UsuarioLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}">
+                    <p:column headerText="#{bundle.UsuarioLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.documento}"/>
                     </p:column>   
-                    <p:column headerText="#{bundle.UsuarioLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                    <p:column headerText="#{bundle.UsuarioLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>  
-                    <p:column headerText="#{bundle.UsuarioLable_rol}" sortBy="#{e.rol.nombre}" filterBy="#{e.rol.nombre}">
+                    <p:column headerText="#{bundle.UsuarioLable_rol}" sortBy="#{e.rol.nombre}" filterBy="#{e.rol.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.rol.nombre}"/>
                     </p:column> 
                     

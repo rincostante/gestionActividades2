@@ -13,23 +13,28 @@
     </h:head>
     <h:body>
         <h:form id="frmAg">
-            <p:dataTable var="ag" value="#{mbTitulo.listDMAgentes}" style="width: 900px">
-                <p:column headerText="Nombre" sortBy="#{ag.apYNom}" filterBy="#{ag.apYNom}">
+            <p:dataTable var="ag" value="#{mbTitulo.listDMAgentes}" style="width: 900px"
+                         filteredValue="#{mbTitulo.listAgentesFilter}"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Nombre" sortBy="#{ag.apYNom}" filterBy="#{ag.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{ag.apYNom}" />
                 </p:column>
-                <p:column headerText="Documento" sortBy="#{ag.documento}" filterBy="#{ag.documento}">
+                <p:column headerText="Documento" sortBy="#{ag.documento}" filterBy="#{ag.documento}" filterMatchMode="contains">
                     <h:outputText value="#{ag.documento}" />
                 </p:column>    
-                <p:column headerText="Organismo" sortBy="#{ag.organismo.nombre}" filterBy="#{ag.organismo.nombre}">
+                <p:column headerText="Organismo" sortBy="#{ag.organismo.nombre}" filterBy="#{ag.organismo.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{ag.organismo.tipoOrganismo.nombre} - #{ag.organismo.nombre}" />
                 </p:column>
-                <p:column headerText="Teléfono" sortBy="#{ag.telefono}" filterBy="#{ag.telefono}">
+                <p:column headerText="Teléfono" sortBy="#{ag.telefono}" filterBy="#{ag.telefono}" filterMatchMode="contains">
                     <h:outputText value="#{ag.telefono}" />
                 </p:column>
-                <p:column headerText="Correo electrónico" style="width: 200px" sortBy="#{ag.email}" filterBy="#{ag.email}">
+                <p:column headerText="Correo electrónico" style="width: 200px" sortBy="#{ag.email}" filterBy="#{ag.email}" filterMatchMode="contains">
                     <h:outputText value="#{ag.email}" />
                 </p:column>
-                <p:column headerText="Haibilitado" sortBy="#{ag.admin.habilitado}" filterBy="#{ag.admin.habilitado}">
+                <p:column headerText="Haibilitado" sortBy="#{ag.admin.habilitado}" filterBy="#{ag.admin.habilitado}" filterMatchMode="contains">
                     <h:outputText value="#{ag.admin.habilitado}" />
                 </p:column>
             </p:dataTable>

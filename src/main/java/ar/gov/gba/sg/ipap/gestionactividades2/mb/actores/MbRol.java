@@ -7,14 +7,16 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -23,7 +25,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -36,20 +37,53 @@ public class MbRol implements Serializable{
 
     private Rol current;
     private DataModel items = null;
+    private List<Rol> listFilter;
     
     @EJB
     private RolFacade situacionRevistaFacade;
-    private int selectedItemIndex;
     private String selectParam; 
     private List<String> listaNombres;   
-    private MbLogin login;
     private ListDataModel listDMUsuarios;
+    private List<Usuario> listUsuariosFilter;
+    private boolean iniciado;
     /**
      * Creates a new instance of MbRol
      */
     public MbRol() {
     }
 
+    /**
+     *
+     */
+    @PostConstruct
+    public void init(){
+        iniciado = false;
+    }    
+
+    public Rol getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Rol current) {
+        this.current = current;
+    }
+
+    public List<Rol> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<Rol> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<Usuario> getListUsuariosFilter() {
+        return listUsuariosFilter;
+    }
+
+    public void setListUsuariosFilter(List<Usuario> listUsuariosFilter) {
+        this.listUsuariosFilter = listUsuariosFilter;
+    }
+    
     public ListDataModel getListDMUsuarios() {
         return listDMUsuarios;
     }
@@ -68,7 +102,6 @@ public class MbRol implements Serializable{
     public Rol getSelected() {
         if (current == null) {
             current = new Rol();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -78,7 +111,6 @@ public class MbRol implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
@@ -91,6 +123,7 @@ public class MbRol implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
@@ -99,8 +132,6 @@ public class MbRol implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (Rol) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -109,7 +140,6 @@ public class MbRol implements Serializable{
      */
     public String prepareCreate() {
         current = new Rol();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -117,8 +147,6 @@ public class MbRol implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (Rol) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -128,26 +156,14 @@ public class MbRol implements Serializable{
     }
     
     /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        items = null;
-        buscarRol();
-        return "list";
-    }
-    
-    /**
      * Método que verifica que el Rol que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = (Rol) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -165,6 +181,12 @@ public class MbRol implements Serializable{
         listDMUsuarios = null;
         if(selectParam != null){
             selectParam = null;
+        }
+        if(listUsuariosFilter != null){
+            listUsuariosFilter = null;
+        }
+        if(listFilter != null){
+            listFilter = null;
         }
     }    
     
@@ -231,8 +253,6 @@ public class MbRol implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (Rol) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -255,26 +275,35 @@ public class MbRol implements Serializable{
      */
     public void verUsuarios(){
         listDMUsuarios = new ListDataModel(current.getUsuarios());
-        RequestContext.getCurrentInstance().openDialog("dlgUsuarios");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgUsuarios", options, null);
     }      
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbRol") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
     
     
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -305,20 +334,6 @@ public class MbRol implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("RolDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
     
     
     /*
@@ -330,29 +345,7 @@ public class MbRol implements Serializable{
 
     public void setSelectParam(String selectParam) {
         this.selectParam = selectParam;
-    }
-    
-    private void buscarRol(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
+    } 
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

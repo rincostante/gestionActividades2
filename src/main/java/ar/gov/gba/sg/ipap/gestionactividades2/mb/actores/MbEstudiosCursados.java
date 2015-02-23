@@ -6,21 +6,19 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstudiosCursadosFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -38,25 +36,14 @@ public class MbEstudiosCursados implements Serializable{
 
     private EstudiosCursados current;
     private DataModel items = null;
+    private List<EstudiosCursados> listFilter;
     
     @EJB
-    private EstudiosCursadosFacade estudiosCursadosFacade;
-    //private PaginationHelper pagination;
-    private int selectedItemIndex;
-    private String selectParam; 
-    private List<String> listaNombres;    
+    private EstudiosCursadosFacade estudiosCursadosFacade;  
     private Map<String,String> estados;
-    private MbLogin login; 
     private ListDataModel listDMAgentes;
-
-    
-    public Map<String, String> getEstados() {
-        return estados;
-    }
-
-    public void setEstados(Map<String, String> estados) {
-        this.estados = estados;
-    }
+    private List<Agente> listAgentesFilter;
+    private boolean iniciado;
     
     /**
      * Creates a new instance of MbEstudiosCursados
@@ -66,12 +53,45 @@ public class MbEstudiosCursados implements Serializable{
     
     @PostConstruct
     public void init(){
+        iniciado = false;
         estados  = new HashMap<>();
         estados.put("Incompleto", "Incompleto");
         estados.put("En Curso", "En Curso");
         estados.put("Finalizado", "Finalizado");     
     }  
 
+    public EstudiosCursados getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(EstudiosCursados current) {
+        this.current = current;
+    }
+
+    public List<EstudiosCursados> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<EstudiosCursados> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<Agente> getListAgentesFilter() {
+        return listAgentesFilter;
+    }
+
+    public void setListAgentesFilter(List<Agente> listAgentesFilter) {
+        this.listAgentesFilter = listAgentesFilter;
+    }
+    
+    public Map<String, String> getEstados() {
+        return estados;
+    }
+
+    public void setEstados(Map<String, String> estados) {
+        this.estados = estados;
+    }
+    
     public ListDataModel getListDMAgentes() {
         return listDMAgentes;
     }
@@ -89,7 +109,6 @@ public class MbEstudiosCursados implements Serializable{
     public EstudiosCursados getSelected() {
         if (current == null) {
             current = new EstudiosCursados();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -99,7 +118,6 @@ public class MbEstudiosCursados implements Serializable{
      */
     public DataModel getItems() {
         if (items == null) {
-            //items = getPagination().createPageDataModel();
             items = new ListDataModel(getFacade().findAll());
         }
         return items;
@@ -112,6 +130,7 @@ public class MbEstudiosCursados implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
@@ -120,8 +139,6 @@ public class MbEstudiosCursados implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (EstudiosCursados) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -130,7 +147,6 @@ public class MbEstudiosCursados implements Serializable{
      */
     public String prepareCreate() {
         current = new EstudiosCursados();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -138,8 +154,6 @@ public class MbEstudiosCursados implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (EstudiosCursados) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -154,7 +168,6 @@ public class MbEstudiosCursados implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarEstudiosCursados();
         return "list";
     }
     
@@ -163,12 +176,10 @@ public class MbEstudiosCursados implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (EstudiosCursados) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -184,8 +195,11 @@ public class MbEstudiosCursados implements Serializable{
     private void recreateModel() {
         items = null;
         listDMAgentes = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listAgentesFilter != null){
+            listAgentesFilter = null;
         }
     }    
    
@@ -243,8 +257,6 @@ public class MbEstudiosCursados implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (EstudiosCursados) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -293,8 +305,30 @@ public class MbEstudiosCursados implements Serializable{
      */
     public void verAgentes(){
         listDMAgentes = new ListDataModel(current.getAgentes());
-        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes", options, null);
     }    
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbEstudiosCursados") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }        
     
     
     /*********************
@@ -318,54 +352,7 @@ public class MbEstudiosCursados implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstudiosCursadosDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
-    
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarEstudiosCursados(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
+  
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

@@ -15,6 +15,9 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbSede.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="sedeForm" header="#{bundle.SedeListTitle} Habilitadas" style="margin-bottom:10px;" >
                     <h:panelGroup>
@@ -27,6 +30,7 @@
                 </p:panel>      
                 
                 <p:dataTable value="#{mbSede.items}" var="e" id="sedeList" rows="5"
+                             filteredValue="#{mbSede.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -36,7 +40,7 @@
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSede.prepareList}" update="sedeList" style="margin-left: 10px"/>
                         <p:columnToggler datasource="sedeList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="#{bundle.SedeLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}">
+                    <p:column headerText="#{bundle.SedeLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>   
                     <p:column headerText="Acciones" style="width:135px">

@@ -13,26 +13,31 @@
     </h:head>
     <h:body>
         <h:form id="frmDoc">
-            <p:dataTable var="doc" value="#{mbTitulo.listDMDocentes}" style="width: 900px">
-                <p:column headerText="Nombre" sortBy="#{doc.apYNom}" filterBy="#{doc.apYNom}">
+            <p:dataTable var="doc" value="#{mbTitulo.listDMDocentes}" style="width: 900px"
+                         filteredValue="#{mbTitulo.listDocentesFilter}"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Nombre" sortBy="#{doc.apYNom}" filterBy="#{doc.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{doc.apYNom}" />
                 </p:column>
-                <p:column headerText="Documento" sortBy="#{doc.documento}" filterBy="#{doc.documento}">
+                <p:column headerText="Documento" sortBy="#{doc.documento}" filterBy="#{doc.documento}" filterMatchMode="contains">
                     <h:outputText value="#{doc.documento}" />
                 </p:column>    
-                <p:column headerText="Especialidad" sortBy="#{doc.especialidad}" filterBy="#{doc.especialidad}">
+                <p:column headerText="Especialidad" sortBy="#{doc.especialidad}" filterBy="#{doc.especialidad}" filterMatchMode="contains">
                     <h:outputText value="#{doc.especialidad}" />
                 </p:column>
-                <p:column headerText="Teléfono laboral" sortBy="#{doc.telefonoLaboral}" filterBy="#{doc.telefonoLaboral}">
+                <p:column headerText="Teléfono laboral" sortBy="#{doc.telefonoLaboral}" filterBy="#{doc.telefonoLaboral}" filterMatchMode="contains">
                     <h:outputText value="#{doc.telefonoLaboral}" />
                 </p:column>
-                <p:column headerText="Correo electrónico laboral" style="width: 200px" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}">
+                <p:column headerText="Correo electrónico laboral" style="width: 200px" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}" filterMatchMode="contains">
                     <h:outputText value="#{doc.emailLaboral}" />
                 </p:column>
-                <p:column headerText="Antigüedad" sortBy="#{doc.antigAnios}" filterBy="#{doc.antigAnios}">
+                <p:column headerText="Antigüedad" sortBy="#{doc.antigAnios}" filterBy="#{doc.antigAnios}" filterMatchMode="contains">
                     <h:outputText value="#{doc.antigAnios}" />
                 </p:column>
-                <p:column headerText="Haibilitado" sortBy="#{doc.admin.habilitado}" filterBy="#{doc.admin.habilitado}">
+                <p:column headerText="Haibilitado" sortBy="#{doc.admin.habilitado}" filterBy="#{doc.admin.habilitado}" filterMatchMode="contains">
                     <h:outputText value="#{doc.admin.habilitado}" />
                 </p:column>
             </p:dataTable>

@@ -15,18 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbModalidad.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="modForm" header="#{bundle.ModalidadListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbModalidad.selectParam}" 
-                                        completeMethod="#{mbModalidad.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="modForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbModalidad.prepareSelect()}" ajax="false"/>  
-                        <p:outputLabel value="&ensp;"/>
+                    <h:panelGrid columns="6">                         
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbModalidad.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbModalidad.prepareList}" update="modList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbModalidad.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -34,21 +29,29 @@
                 <br/>           
 
                 <p:dataTable value="#{mbModalidad.items}" var="e" id="modList" rows="5"
+                             filteredValue="#{mbModalidad.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.ModListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbModalidad.prepareList}" update="modList"/>
                         <p:columnToggler datasource="modList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbModalidad.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbModalidad.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbModalidad.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbModalidad.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbModalidad.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbModalidad.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbModalidad.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-trash" action="#{mbModalidad.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbModalidad.current}" />
+                        </p:commandButton> 
                     </p:column>                
            
                 </p:dataTable>

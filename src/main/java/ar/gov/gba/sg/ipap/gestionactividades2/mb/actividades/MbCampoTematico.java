@@ -6,6 +6,7 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
@@ -15,8 +16,11 @@ import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -27,7 +31,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -39,17 +42,19 @@ public class MbCampoTematico implements Serializable{
     
     private CampoTematico current;
     private DataModel items = null; 
-    private int selectedItemIndex;
+    private List<CampoTematico> listFilter;
     private int tipoList; //1=habilitados | 2=venidos | 3=deshabilitados 
     private CampoTematico campoSelected;
     private Usuario usLogeado;
     private Date fAntesDe;
     private Date fDespuesDe;
     private MbLogin login;
+    private boolean iniciado;
     
     @EJB
     private CampoTematicoFacade campoTematicoFacade;
     private ListDataModel listDMAct;
+    private List<ActividadPlan> listActFilter;
 
     /**
      * Creates a new instance of MbCampoTematico
@@ -62,6 +67,7 @@ public class MbCampoTematico implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         tipoList = 1;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
@@ -71,6 +77,24 @@ public class MbCampoTematico implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+    
+    public List<ActividadPlan> getListActFilter() {
+        return listActFilter;
+    }
+
+    public void setListActFilter(List<ActividadPlan> listActFilter) {
+        this.listActFilter = listActFilter;
+    }
+ 
+    
+    public List<CampoTematico> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<CampoTematico> listFilter) {
+        this.listFilter = listFilter;
+    }
+ 
     
     public ListDataModel getListDMAct() {
         return listDMAct;
@@ -133,7 +157,6 @@ public class MbCampoTematico implements Serializable{
     public CampoTematico getSelected() {
         if (current == null) {
             current = new CampoTematico();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -163,6 +186,7 @@ public class MbCampoTematico implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         tipoList = 1;
         recreateModel();
         return "list";
@@ -193,7 +217,6 @@ public class MbCampoTematico implements Serializable{
      */
     public String prepareView() {
         current = campoSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
     
@@ -202,7 +225,6 @@ public class MbCampoTematico implements Serializable{
      */
     public String prepareViewVenc() {
         current = campoSelected;
-        selectedItemIndex = getItems().getRowIndex();
         return "viewVenc";
     }    
     
@@ -210,8 +232,7 @@ public class MbCampoTematico implements Serializable{
      * @return acción para el detalle de la entidad deshabilitada
      */
     public String prepareViewDes() {
-        current = (CampoTematico) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
+        current = campoSelected;
         return "viewDes";
     }
 
@@ -220,7 +241,6 @@ public class MbCampoTematico implements Serializable{
      */
     public String prepareCreate() {
         current = new CampoTematico();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -229,8 +249,6 @@ public class MbCampoTematico implements Serializable{
      */
     public String prepareEdit() {
         current = campoSelected;
-        // cargo los list para los combos     
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -239,8 +257,6 @@ public class MbCampoTematico implements Serializable{
      */
     public String prepareEditVenc() {
         current = campoSelected;
-        // cargo los list para los combos     
-        selectedItemIndex = getItems().getRowIndex();
         return "editVenc";
     }    
     
@@ -263,7 +279,6 @@ public class MbCampoTematico implements Serializable{
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -279,7 +294,6 @@ public class MbCampoTematico implements Serializable{
      */
     public String prepareHabilitar(){
         current = campoSelected;
-        selectedItemIndex = getItems().getRowIndex();
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
@@ -432,7 +446,6 @@ public class MbCampoTematico implements Serializable{
      */    
     public String destroy() {
         current = campoSelected;
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -442,19 +455,6 @@ public class MbCampoTematico implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(getFacade().findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -481,8 +481,31 @@ public class MbCampoTematico implements Serializable{
      */
     public void verActividades(){
         listDMAct = new ListDataModel(current.getActividades());
-        RequestContext.getCurrentInstance().openDialog("dlgActividades");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgActividades", options, null);
     }      
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbCampoTematico") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    } 
+    
     
     /*********************
     ** Métodos privados **
@@ -500,6 +523,12 @@ public class MbCampoTematico implements Serializable{
     private void recreateModel() {
         items = null;
         listDMAct = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listActFilter != null){
+            listActFilter = null;
+        }
     }      
     
     

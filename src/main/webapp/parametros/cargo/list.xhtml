@@ -15,17 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbCargo.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="cargoForm" header="#{bundle.CargoListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbCargo.selectParam}" 
-                                        completeMethod="#{mbCargo.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="cargoForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbCargo.prepareSelect()}" ajax="false"/>  
+                    <h:panelGrid columns="2">                          
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbCargo.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbCargo.prepareList}" update="cargoList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbCargo.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -33,21 +29,29 @@
                 <br/>           
 
                 <p:dataTable value="#{mbCargo.items}" var="e" id="cargoList" rows="5"
+                             filteredValue="#{mbCargo.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.CargoListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbCargo.prepareList}" update="cargoList"/>
                         <p:columnToggler datasource="cargoList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbCargo.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbCargo.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbCargo.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbCargo.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbCargo.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbCargo.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbCargo.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-trash" action="#{mbCargo.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbCargo.current}" />
+                        </p:commandButton> 
                     </p:column>                
            
                 </p:dataTable>

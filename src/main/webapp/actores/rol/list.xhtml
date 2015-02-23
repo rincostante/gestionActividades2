@@ -15,17 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbRol.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata> 
             <h:form style="text-align: left">
                 <p:panel id="rolForm" header="#{bundle.RolListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbRol.selectParam}" 
-                                        completeMethod="#{mbRol.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="rolForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbRol.prepareSelect()}" ajax="false"/>  
+                    <h:panelGrid columns="2">
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbRol.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbRol.prepareList}" update="rolList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbRol.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -33,21 +29,29 @@
                 <br/>           
 
                 <p:dataTable value="#{mbRol.items}" var="e" id="rolList" rows="5"
+                             filteredValue="#{mbRol.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.RolListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbRol.prepareList}" update="rolList"/>
                         <p:columnToggler datasource="rolList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbRol.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbRol.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbRol.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbRol.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbRol.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbRol.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbRol.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbRol.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbRol.current}" />
+                        </p:commandButton>
                     </p:column>                
            
                 </p:dataTable>

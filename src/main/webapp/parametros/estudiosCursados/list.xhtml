@@ -15,18 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbEstudiosCursados.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="estCurForm" header="#{bundle.EstudiosCursadosListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbEstudiosCursados.selectParam}" 
-                                        completeMethod="#{mbEstudiosCursados.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="estCurForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbEstudiosCursados.prepareSelect()}" ajax="false"/>  
-                        <p:outputLabel value="&ensp;"/>
+                    <h:panelGrid columns="2">                           
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbEstudiosCursados.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbEstudiosCursados.prepareList}" update="estCurList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbEstudiosCursados.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -34,27 +29,35 @@
                 <br/>           
 
                 <p:dataTable value="#{mbEstudiosCursados.items}" var="e" id="estCurList" rows="5"
+                             filteredValue="#{mbEstudiosCursados.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.EstudiosCursadosListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbEstudiosCursados.prepareList}" update="estCurList"/>
                         <p:columnToggler datasource="estCurList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.CreateEstudiosCursadosTitle_estado}" sortBy="#{e.estado}">
+                    <p:column headerText="#{bundle.CreateEstudiosCursadosTitle_estado}" sortBy="#{e.estado}" filterBy="#{e.estado}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.estado}"/>
                     </p:column>
                     
                     
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbEstudiosCursados.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbEstudiosCursados.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbEstudiosCursados.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbEstudiosCursados.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbEstudiosCursados.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbEstudiosCursados.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbEstudiosCursados.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbEstudiosCursados.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbEstudiosCursados.current}" />
+                        </p:commandButton>
                     </p:column>                
            
                 </p:dataTable>

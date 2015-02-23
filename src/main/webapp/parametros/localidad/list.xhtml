@@ -15,17 +15,13 @@
         </ui:define>
         <ui:define name="content">
             <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbLocalidad.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
             <h:form style="text-align: left">
                 <p:panel id="locForm" header="#{bundle.LocalidadListTitle}" style="margin-bottom:10px;">
-                    <h:panelGrid columns="6">
-                        <p:autoComplete value="#{mbLocalidad.selectParam}" 
-                                        completeMethod="#{mbLocalidad.completeNombres}" />
-                        <p:commandButton icon="ui-icon-close" style="float: right">
-                            <p:ajax update="locForm" resetValues="true" />
-                        </p:commandButton>                           
-                        <p:commandButton icon="ui-icon-search" value="Buscar" action="#{mbLocalidad.prepareSelect()}" ajax="false"/>  
+                    <h:panelGrid columns="2">                         
                         <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbLocalidad.prepareCreate}"/>
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbLocalidad.prepareList}" update="locList"/>
                         <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbLocalidad.cleanUp}"/>
                     </h:panelGrid>
                 </p:panel>
@@ -33,27 +29,35 @@
                 <br/>           
 
                 <p:dataTable value="#{mbLocalidad.items}" var="e" id="locList" rows="5"
+                             filteredValue="#{mbLocalidad.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
                         Listado de #{bundle.LocalidadListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbLocalidad.prepareList}" update="locList"/>
                         <p:columnToggler datasource="locList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}">
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.CreateLocalidadTitle_codigoPostal}" sortBy="#{e.codigoPostal}">
+                    <p:column headerText="#{bundle.CreateLocalidadTitle_codigoPostal}" sortBy="#{e.codigoPostal}" filterBy="#{e.codigoPostal}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.codigoPostal}"/>
                     </p:column>
                     
                     
                     <p:column headerText="Acciones" style="width:135px">
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbLocalidad.prepareView}"/>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbLocalidad.prepareEdit}"/>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbLocalidad.prepareDestroy()}"/>
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbLocalidad.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbLocalidad.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbLocalidad.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbLocalidad.current}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbLocalidad.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbLocalidad.current}" />
+                        </p:commandButton>
                     </p:column>                
            
                 </p:dataTable>

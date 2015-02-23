@@ -8,25 +8,21 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.NivelIpapFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -38,19 +34,51 @@ public class MbNivelIpap implements Serializable{
 
     private NivelIpap current;
     private DataModel items = null;
+    private List<NivelIpap> listFilter;
     
     @EJB
-    private NivelIpapFacade estudiosCursadosFacade;
-    private int selectedItemIndex;
-    private String selectParam; 
-    private List<String> listaNombres;    
+    private NivelIpapFacade estudiosCursadosFacade; 
     private Map<String,String> estados;    
-    private MbLogin login; 
     private ListDataModel listDMAgentes;
+    private List<NivelIpap> listAgentesFilter;
+    private boolean iniciado;
     /**
      * Creates a new instance of MbNivelIpap
      */
     public MbNivelIpap() {
+    }
+   
+    @PostConstruct
+    public void init(){
+        iniciado = false;
+        estados  = new HashMap<>();
+        estados.put("Incompleto", "Incompleto");
+        estados.put("En Curso", "En Curso");
+        estados.put("Finalizado", "Finalizado");        
+    }      
+
+    public NivelIpap getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(NivelIpap current) {
+        this.current = current;
+    }
+
+    public List<NivelIpap> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<NivelIpap> listFilter) {
+        this.listFilter = listFilter;
+    }
+
+    public List<NivelIpap> getListAgentesFilter() {
+        return listAgentesFilter;
+    }
+
+    public void setListAgentesFilter(List<NivelIpap> listAgentesFilter) {
+        this.listAgentesFilter = listAgentesFilter;
     }
 
     public ListDataModel getListDMAgentes() {
@@ -68,14 +96,7 @@ public class MbNivelIpap implements Serializable{
     public void setEstados(Map<String, String> estados) {
         this.estados = estados;
     }    
-    
-   @PostConstruct
-    public void init(){
-        estados  = new HashMap<>();
-        estados.put("Incompleto", "Incompleto");
-        estados.put("En Curso", "En Curso");
-        estados.put("Finalizado", "Finalizado");        
-    }  
+ 
     
     /********************************
      ** Métodos para la navegación **
@@ -86,7 +107,6 @@ public class MbNivelIpap implements Serializable{
     public NivelIpap getSelected() {
         if (current == null) {
             current = new NivelIpap();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -108,6 +128,7 @@ public class MbNivelIpap implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = false;
         recreateModel();
         return "list";
     }
@@ -116,8 +137,6 @@ public class MbNivelIpap implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (NivelIpap) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -126,7 +145,6 @@ public class MbNivelIpap implements Serializable{
      */
     public String prepareCreate() {
         current = new NivelIpap();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -134,8 +152,6 @@ public class MbNivelIpap implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (NivelIpap) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -150,7 +166,6 @@ public class MbNivelIpap implements Serializable{
      */
     public String prepareSelect(){
         items = null;
-        buscarNivelIpap();
         return "list";
     }
     
@@ -159,12 +174,10 @@ public class MbNivelIpap implements Serializable{
      * @return 
      */
     public String prepareDestroy(){
-        current = (NivelIpap) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -180,8 +193,11 @@ public class MbNivelIpap implements Serializable{
     private void recreateModel() {
         items = null;
         listDMAgentes = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
+        }
+        if(listAgentesFilter != null){
+            listAgentesFilter = null;
         }
     }    
    
@@ -239,8 +255,6 @@ public class MbNivelIpap implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (NivelIpap) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -249,19 +263,6 @@ public class MbNivelIpap implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(estudiosCursadosFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -288,8 +289,30 @@ public class MbNivelIpap implements Serializable{
      */
     public void verAgentes(){
         listDMAgentes = new ListDataModel(current.getAgentes());
-        RequestContext.getCurrentInstance().openDialog("dlgAgentes");
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgAgentes", options, null);
     }  
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbNivelIpap") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }    
     
     
     /*********************
@@ -314,53 +337,6 @@ public class MbNivelIpap implements Serializable{
         }
     }
 
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
-    
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarNivelIpap(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

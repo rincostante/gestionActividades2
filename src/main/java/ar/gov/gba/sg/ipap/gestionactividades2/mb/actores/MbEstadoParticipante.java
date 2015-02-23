@@ -8,24 +8,20 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstadoParticipante;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstadoParticipanteFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.model.SelectItem;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
@@ -37,20 +33,43 @@ public class MbEstadoParticipante implements Serializable{
 
     private EstadoParticipante current;
     private DataModel items = null;
+    private List<EstadoParticipante> listFilter;
+    private boolean iniciado;
     
     @EJB
-    private EstadoParticipanteFacade situacionRevistaFacade;
-    private int selectedItemIndex;
-    private String selectParam; 
-    private List<String> listaNombres;     
-    private MbLogin login; 
+    private EstadoParticipanteFacade situacionRevistaFacade; 
+    
     /**
      * Creates a new instance of MbEstadoParticipante
      */
     public MbEstadoParticipante() {
     }
-     
+
+    /**
+     *
+     */
+    @PostConstruct
+    public void init(){
+        iniciado = false;
+    }
     
+    public EstadoParticipante getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(EstadoParticipante current) {
+        this.current = current;
+    }
+
+    public List<EstadoParticipante> getListFilter() {
+        return listFilter;
+    }
+
+    public void setListFilter(List<EstadoParticipante> listFilter) {
+        this.listFilter = listFilter;
+    }
+     
+
     /********************************
      ** Métodos para la navegación **
      ********************************/
@@ -60,7 +79,6 @@ public class MbEstadoParticipante implements Serializable{
     public EstadoParticipante getSelected() {
         if (current == null) {
             current = new EstadoParticipante();
-            selectedItemIndex = -1;
         }
         return current;
     }    
@@ -82,6 +100,7 @@ public class MbEstadoParticipante implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        iniciado = true;
         recreateModel();
         return "list";
     }
@@ -90,8 +109,6 @@ public class MbEstadoParticipante implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        current = (EstadoParticipante) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "view";
     }
 
@@ -100,7 +117,6 @@ public class MbEstadoParticipante implements Serializable{
      */
     public String prepareCreate() {
         current = new EstadoParticipante();
-        selectedItemIndex = -1;
         return "new";
     }
 
@@ -108,8 +124,6 @@ public class MbEstadoParticipante implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        current = (EstadoParticipante) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         return "edit";
     }
     
@@ -119,26 +133,14 @@ public class MbEstadoParticipante implements Serializable{
     }
     
     /**
-     * Método para preparar la búsqueda
-     * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
-     */
-    public String prepareSelect(){
-        items = null;
-        buscarEstadoParticipante();
-        return "list";
-    }
-    
-    /**
      * Método que verifica que el Estado de Participante que se quiere eliminar no esté siento utilizado por otra entidad
      * @return 
      */
     public String prepareDestroy(){
-        current = (EstadoParticipante) getItems().getRowData();
         boolean libre = getFacade().getUtilizado(current.getId());
 
         if (libre){
             // Elimina
-            selectedItemIndex = getItems().getRowIndex();
             performDestroy();
             recreateModel();
         }else{
@@ -153,8 +155,8 @@ public class MbEstadoParticipante implements Serializable{
      */
     private void recreateModel() {
         items = null;
-        if(selectParam != null){
-            selectParam = null;
+        if(listFilter != null){
+            listFilter = null;
         }
     }    
     
@@ -221,8 +223,6 @@ public class MbEstadoParticipante implements Serializable{
      * @return mensaje que notifica el borrado
      */    
     public String destroy() {
-        current = (EstadoParticipante) getItems().getRowData();
-        selectedItemIndex = getItems().getRowIndex();
         performDestroy();
         recreateModel();
         return "view";
@@ -231,19 +231,6 @@ public class MbEstadoParticipante implements Serializable{
     /*************************
     ** Métodos de selección **
     **************************/
-    /**
-     * @return la totalidad de las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectMany() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), false);
-    }
-
-    /**
-     * @return de a una las entidades persistidas formateadas
-     */
-    public SelectItem[] getItemsAvailableSelectOne() {
-        return JsfUtil.getSelectItems(situacionRevistaFacade.findAll(), true);
-    }
 
     /**
      * @param id equivalente al id de la entidad persistida
@@ -260,9 +247,29 @@ public class MbEstadoParticipante implements Serializable{
     public String cleanUp(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
                 .getExternalContext().getSession(true);
-
+        session.removeAttribute("mbEstadoParticipante");
         return "inicio";
     }     
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbEstadoParticipante") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
+    }        
     
     /*********************
     ** Métodos privados **
@@ -285,54 +292,7 @@ public class MbEstadoParticipante implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("EstadoParticipanteDeletedErrorOccured"));
         }
     }
-
-    /**
-     * Actualiza el detalle de la entidad si la última se eliminó
-     */
-    private void updateCurrentItem() {
-        int count = getFacade().count();
-        if (selectedItemIndex >= count) {
-            // selected index cannot be bigger than number of items:
-            selectedItemIndex = count - 1;
-        }
-        if (selectedItemIndex >= 0) {
-            current = getFacade().findRange(new int[]{selectedItemIndex, selectedItemIndex + 1}).get(0);
-        }
-    }
-    
-    
-    /*
-     * Métodos de búsqueda
-     */
-    public String getSelectParam() {
-        return selectParam;
-    }
-
-    public void setSelectParam(String selectParam) {
-        this.selectParam = selectParam;
-    }
-    
-    private void buscarEstadoParticipante(){
-        items = new ListDataModel(getFacade().getXString(selectParam)); 
-    }  
-    
-    /**
-     * Método para llegar la lista para el autocompletado de la búsqueda de nombres
-     * @param query
-     * @return 
-     */
-    public List<String> completeNombres(String query){
-        listaNombres = getFacade().getNombres();
-        List<String> nombres = new ArrayList();
-        Iterator itLista = listaNombres.listIterator();
-        while(itLista.hasNext()){
-            String nom = (String)itLista.next();
-            if(nom.contains(query)){
-                nombres.add(nom);
-            }
-        }
-        return nombres;
-    }    
+ 
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
