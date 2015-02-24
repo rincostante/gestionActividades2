@@ -18,11 +18,13 @@
                         <p:menuitem value="Mis Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizInscripcion}/list.xhtml" rendered="#{mbLogin.usLogeado.rol.nombre == 'Referente'}" />
                         
                         <p:submenu label="Mis Actividades" rendered="#{mbLogin.usLogeado.rol.nombre == 'Docente'}" >
-                            
+                            <p:menuitem value="Cursos" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCursoEx}/list.xhtml"/>
+                            <p:menuitem value="Asistencias" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizClaseEx}/list.xhtml"/>
                         </p:submenu>
                         
                         <p:submenu label="Mis Actividades" rendered="#{mbLogin.usLogeado.rol.nombre != 'Docente'}" >
-                        
+                            <p:menuitem value="Cursos" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCursoIn}/list.xhtml"/>
+                            <p:menuitem value="Asistencias" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizClaseIn}/list.xhtml"/>
                         </p:submenu>
                     
                         <p:submenu label="#{mbLogin.usLogeado.apYNom} | #{mbLogin.usLogeado.rol.nombre}" >

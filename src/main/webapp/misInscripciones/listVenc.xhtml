@@ -40,7 +40,7 @@
                             </p:calendar>
                         </h:panelGrid>
                         <h:panelGrid columns="2"> 
-                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de incio Actividad" action="#{mbMisInscripciones.prepareSelectHab}" ajax="false"/> 
+                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha de incio Actividad" action="#{mbMisInscripciones.prepareSelectHab}" ajax="false"/> 
                             <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbMisInscripciones.resetFechas}">
                                 <p:ajax update="fDespDe" resetValues="true" />
                                 <p:ajax update="fAntesDe" resetValues="true" />
@@ -81,10 +81,6 @@
                     <p:column headerText="#{bundle.ParticipanteLable_FechaAutorizacion}" sortBy="#{e.strFechaAutoriz}" filterBy="#{e.strFechaAutoriz}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaAutoriz}"/>
                     </p:column>  
-                    
-                    <p:column headerText="#{bundle.ParticipanteLable_Referente}" sortBy="#{e.agente.referente.apYNom}" filterBy="#{e.agente.referente.apYNom}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.agente.referente.apYNom}"/>
-                    </p:column> 
 
                     <p:column id="estado" headerText="Estado" filterBy="#{e.estado.nombre}" filterMatchMode="exact" >
                         <f:facet name="filter">
@@ -98,7 +94,7 @@
 
                     <p:column headerText="Acciones" style="width:85px">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbMisInscripciones.prepareView}" title="Ver Detalle">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbMisInscripciones.prepareViewVenc}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbMisInscripciones.current}" />
                         </p:commandButton>
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

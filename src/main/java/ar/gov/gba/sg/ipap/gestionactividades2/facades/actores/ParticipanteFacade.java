@@ -231,7 +231,7 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
     public List<Participante> getVigentesXReferente(Agente referente){
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
-                + "WHERE part.agente.referente = :referente "
+                + "WHERE (part.agente.referente = :referente OR part.agente = :referente )"
                 + "AND part.actividad.fechaFin >= CURRENT_DATE";
         Query q = em.createQuery(queryString)
                 .setParameter("referente", referente);
@@ -246,7 +246,7 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
     public List<Participante> getVencidosXReferente(Agente referente){
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
-                + "WHERE part.agente.referente = :referente "
+                + "WHERE (part.agente.referente = :referente OR part.agente = :referente )"
                 + "AND part.actividad.fechaFin < CURRENT_DATE";
         Query q = em.createQuery(queryString)
                 .setParameter("referente", referente);
