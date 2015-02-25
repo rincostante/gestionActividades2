@@ -199,4 +199,14 @@
         <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.misActividades.MbCursoEx</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbCursoIn</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.misActividades.MbCursoIn</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>mbClaseEx1</managed-bean-name>
+        <managed-bean-class>ar.gov.gba.sg.ipap.gestionactividades2.mb.misActividades.MbClaseEx</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>

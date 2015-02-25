@@ -9,6 +9,7 @@ package ar.gov.gba.sg.ipap.gestionactividades2.facades.actores;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.util.Date;
 import java.util.List;
@@ -253,5 +254,19 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         listClases = q.getResultList();
         Date fecha = listClases.get(listClases.size() - 1).getFechaRealizacion();
         return fecha;
+    }
+    
+    /**
+     * Método para obtener las clases habilitadas por docente
+     * @param docente
+     * @return 
+     */    
+    public List<Clase> getHabilitadasXDocente(Docente docente){
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "WHERE clase.docente = :docente";
+        Query q = em.createQuery(queryString)
+                .setParameter("docente", docente);
+        return q.getResultList();
     }
 }

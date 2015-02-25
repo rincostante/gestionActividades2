@@ -7,6 +7,9 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.util.Date;
 import java.util.List;
@@ -217,5 +220,72 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
-    }       
+    }    
+    
+    /**
+     * Método que devuleve las Actividades implementadas por participante
+     * @param participante
+     * @return 
+     */
+    public List<ActividadImplementada> getHabilitadasXPart(Agente participante){
+        em = getEntityManager();
+        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
+                + "INNER JOIN actImp.participantes part "
+                + "WHERE part.agente = :participante";
+        Query q = em.createQuery(queryString)
+                .setParameter("participante", participante);
+        return q.getResultList();
+    }
+    
+    /**
+     * Método que devuleve las Actividades implementadas por docente
+     * @param docente
+     * @return 
+     */   
+    public List<ActividadImplementada> getHabilitadasXDocente(Docente docente){
+        em = getEntityManager();
+        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
+                + "WHERE actImp.docente = :docente";
+        Query q = em.createQuery(queryString)
+                .setParameter("docente", docente);
+        return q.getResultList();
+    }
+    
+    /**
+     * Método que devuelve las Clases tomadas por un participante de una Actividad implementada
+     * @param act
+     * @param participante
+     * @return 
+     */
+    public List<Clase> getClasesXActPart(ActividadImplementada act, Agente participante){
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "INNER JOIN clase.participantes part "
+                + "WHERE part.agente = :participante "
+                + "AND part.actividad = :act";
+        Query q = em.createQuery(queryString)
+                .setParameter("act", act)
+                .setParameter("participante", participante);
+        return q.getResultList();
+    }
+    
+    /**
+     * Método que devuelve las Clases dictadas por un docente 
+     * de una Actividad implementada que lo tenga como titular
+     * @param act
+     * @param docente
+     * @return 
+     */
+    public List<Clase> getClasesXActDocente(ActividadImplementada act, Docente docente){
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "INNER JOIN clase.participantes part "
+                + "WHERE part.actividad = :act "
+                + "AND clase.docente = :docente";
+        Query q = em.createQuery(queryString)
+                .setParameter("act", act)
+                .setParameter("docente", docente);
+        return q.getResultList();
+    }
+    
 }

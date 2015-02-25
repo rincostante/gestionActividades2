@@ -331,7 +331,12 @@ public class MbParticipante implements Serializable{
     public String prepareCreate() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
+        if(esCoordinador){
+            listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = actImpFacade.getHabilitadas();
+        }
+        
         current = new Participante();
         return "new";
     }
@@ -342,7 +347,11 @@ public class MbParticipante implements Serializable{
     public String prepareEdit() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
+        if(esCoordinador){
+            listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = actImpFacade.getHabilitadas();
+        }
         current = partSelected;
         return "edit";
     }
@@ -353,7 +362,11 @@ public class MbParticipante implements Serializable{
     public String prepareEditVenc() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado); 
+        if(esCoordinador){
+            listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = actImpFacade.getHabilitadas();
+        }
         current = partSelected;
         // cargo los list para los combos     
         return "editVenc";
@@ -365,7 +378,11 @@ public class MbParticipante implements Serializable{
     public String prepareEditProv() {
         //cargo los list para los combos
         listAgentes = agenteFacade.getHabilitados();
-        listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);     
+        if(esCoordinador){
+            listActImp = actImpFacade.getHabilitadasXCoor(usLogeado);
+        }else{
+            listActImp = actImpFacade.getHabilitadas();
+        }   
         current = partSelected;
         // cargo los list para los combos     
         return "editProv";
@@ -430,22 +447,8 @@ public class MbParticipante implements Serializable{
      */
     public String prepareAutorizar(){
         current = partSelected;
-        List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
-        try{
-            // Actualización de datos de administración de la entidad
-            Date date = new Date(System.currentTimeMillis());
-            current.getAdmin().setFechaModif(date);
-            current.getAdmin().setUsModif(usLogeado);
-            current.setEstado(estParts.get(0));
 
-            // Actualizo
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitado"));
-            return "view";
-        }catch (Exception e) {
-            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteHabilitadaErrorOccured"));
-            return null; 
-        }
+        return "aut";
     }        
     
     /**
@@ -598,6 +601,29 @@ public class MbParticipante implements Serializable{
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdatedErrorOccured"));
             return null;
+        }
+    }
+    
+    /**
+     * Mátodo para autorizar una inscripción provisoria
+     * @return 
+     */
+    public String autorizar(){
+        List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
+        try{
+            // Actualización de datos de administración de la entidad
+            Date date = new Date(System.currentTimeMillis());
+            current.getAdmin().setFechaModif(date);
+            current.getAdmin().setUsModif(usLogeado);
+            current.setEstado(estParts.get(0));
+
+            // Actualizo
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteAutorizada"));
+            return "view";
+        }catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteAutorizadaErrorOccured"));
+            return null; 
         }
     }
 

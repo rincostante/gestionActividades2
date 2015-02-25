@@ -52,6 +52,7 @@ public class MbActividadImpl implements Serializable{
     
     private ActividadImplementada current;
     private List<ActividadImplementada> listado;
+    private List<ActividadImplementada> listadoFilter;
     private List<Participante> listPart;
     private List<Participante> listPartFilter;
 
@@ -109,6 +110,15 @@ public class MbActividadImpl implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public List<ActividadImplementada> getListadoFilter() {
+        return listadoFilter;
+    }
+
+    public void setListadoFilter(List<ActividadImplementada> listadoFilter) {
+        this.listadoFilter = listadoFilter;
+    }
+   
     
     public List<Participante> getListPartFilter() {
         return listPartFilter;
