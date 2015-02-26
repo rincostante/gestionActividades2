@@ -10,6 +10,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImpl
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.util.Date;
 import java.util.List;
@@ -288,4 +289,26 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         return q.getResultList();
     }
     
+    /**
+     * Método que devuelve el estado de participación de de un agente en una Actividad implementada
+     * @param act
+     * @param agente
+     * @return 
+     */
+    public Participante getParticipacion(ActividadImplementada act, Agente agente){
+        List<Participante> listPart;
+        em = getEntityManager();
+        String queryString = "SELECT part FROM Participante part "
+                + "WHERE part.agente = :agente "
+                + "AND part.actividad = :act";
+        Query q = em.createQuery(queryString)
+                .setParameter("act", act)
+                .setParameter("agente", agente);
+        listPart = q.getResultList();
+        if(!listPart.isEmpty()){
+            return listPart.get(0);
+        }else{
+            return null;
+        }
+    }
 }

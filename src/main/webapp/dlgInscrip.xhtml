@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Estado de inscripción a #{mbCursosPublic.current.actividadPlan.nombre}</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmInsripcion">
+            <h:panelGrid columns="1">
+                <p:outputLabel value="#{mbCursosPublic.mensaje}" style="font-size: 100%; font-style: oblique"/>
+                <br/>
+                <h:panelGrid columns="3">
+                    <p:commandButton action="#{mbCursosPublic.registrarInscripcion}" 
+                                     value="Registrar inscripción" ajax="false" 
+                                     rendered="#{mbCursosPublic.registra}" >
+                        <p:confirm header="Confirmar" message="¿Desea registrar su inscripción?" />
+                    </p:commandButton>
+                    <p:commandButton action="#{mbCursosPublic.cancelar}" 
+                                     value="Cancelar" ajax="false" 
+                                     rendered="#{mbCursosPublic.registra}"/>
+                    <p:commandButton action="#{mbCursosPublic.cancelar}" 
+                                     value="Eliminar" ajax="false" 
+                                     rendered="#{not mbCursosPublic.registra}" >
+                        <p:confirm header="Confirmar" message="¿Desea eliinar su inscripción?" />
+                    </p:commandButton>
+                    <p:commandButton action="#{mbCursosPublic.cancelar}" 
+                                     value="Cerrar" ajax="false" 
+                                     rendered="#{not mbCursosPublic.registra}" />
+                    
+                </h:panelGrid>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                   <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                   <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+               </p:confirmDialog>  
+            </h:panelGrid>
+        </h:form>
+    </h:body>
+</html>
+

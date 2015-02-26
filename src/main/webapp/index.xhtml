@@ -12,46 +12,39 @@
         <ui:define name="content">
             <h:form style="text-align: left">
                 <br/>
-                <p:dataList value="#{mbCursosPublic.items}" var="curso" type="definition" >
-                    <f:facet name="header">
-                        <p:outputLabel value="Actividades disponibles" style="font-size: 150%"/>
-                    </f:facet>
-                    <p:outputLabel value="&nbsp;#{curso.actividadPlan.nombre}"  style="font-size: 120%"/>
-                    <p:commandButton value="Inscripción" style="height: 25px; font-size: 80%" action="#{mbParticipante.prepareView}" title="Ver Detalle">
-                            <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
-                    </p:commandButton>
-                        <br/><br/>
-                    <f:facet name="description" >
-                        <p:outputPanel id="desc" style="width: 99%">
+                <p:dataTable value="#{mbCursosPublic.items}" var="e" >
+                    
+                    <p:column headerText="Actividades disponibles" >
+                            <p:outputLabel value="#{e.actividadPlan.nombre}"  style="font-size: 120%"/>
+                            <br/><br/>
+                            <p:commandButton action="#{mbCursosPublic.prepareInscripcion}" value="Inscripción" style="font-size: 75%">
+                                <f:setPropertyActionListener value="#{e}" target="#{mbCursosPublic.current}" />
+                            </p:commandButton>
+                            <br/><br/>
                             <p:outputLabel value="Período de vigencia: " style="font-weight: bold; font-size: 80%"/>
-                            <p:outputLabel value="Desde el #{curso.strFechaIniVig} hasta el #{curso.strFechaFinVig}" style="font-size: 80%"/>
+                            <p:outputLabel value="Desde el #{e.strFechaIniVig} hasta el #{e.strFechaFinVig}" style="font-size: 80%"/>
                             <br/>
                             <p:outputLabel value="Carga horaria: " style="font-weight: bold; font-size: 80%"/>
-                            <p:outputLabel value="#{curso.actividadPlan.cargaHoraria} horas" style="font-size: 80%"/>
+                            <p:outputLabel value="#{e.actividadPlan.cargaHoraria} horas" style="font-size: 80%"/>
                             <br/>
                             <p:outputLabel value="Docente: " style="font-weight: bold; font-size: 80%"/>
-                            <p:outputLabel value="#{curso.docente.apYNom}" style="font-size: 80%"/>
+                            <p:outputLabel value="#{e.docente.apYNom}" style="font-size: 80%"/>
                             <br/>
                             <p:outputLabel value="Sede: " style="font-weight: bold; font-size: 80%"/>
-                            <p:outputLabel value="#{curso.sede.nombre}" style="font-size: 80%"/>
+                            <p:outputLabel value="#{e.sede.nombre}" style="font-size: 80%"/>
                             <br/>
                             <p:outputLabel value="Coordinador: " style="font-weight: bold; font-size: 80%"/>
-                            <p:outputLabel value="#{curso.coordinador.apYNom}" style="font-size: 80%"/>
+                            <p:outputLabel value="#{e.coordinador.apYNom}" style="font-size: 80%"/>
                             <br/><br/>
                             <p:outputLabel value="Resumen académico:" style="font-weight: bold; font-size: 80%"/>
                             <br/>
-                            <p:outputLabel value="#{curso.actividadPlan.resumenAcademico}" style="font-size: 80%; margin-right: 40px"/>
+                            <p:outputLabel value="#{e.actividadPlan.resumenAcademico}" style="font-size: 80%; margin-right: 40px"/>
+                            <br/>
+                            <p:link value="Ver Más" href="#{e.actividadPlan.verMas}" style="font-size: 80%" />
                             <br/><br/>
-                            <h:panelGrid columns="3">
-                                <p:link value="Ver Más" href="#{curso.actividadPlan.verMas}" style="font-size: 80%" />
-                                <p:outputLabel value="&emsp;"/>  
-                                <p:link value="Inscribirse" href="#{curso.actividadPlan.verMas}" style="font-size: 80%; text-align: right" 
-                                        rendered="#{mbCursosPublic.ambito == 'externo'}" />
-                            </h:panelGrid>
-                            <br/><br/>
-                        </p:outputPanel>
-                    </f:facet>
-                </p:dataList>
+                    </p:column>
+                </p:dataTable>
+
             </h:form>
         </ui:define>
 

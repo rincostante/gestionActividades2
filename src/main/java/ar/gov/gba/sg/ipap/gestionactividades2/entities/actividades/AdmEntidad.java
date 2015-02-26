@@ -8,7 +8,9 @@ package ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -61,6 +64,26 @@ public class AdmEntidad implements Serializable {
     @Column(nullable=false)
     @NotNull(message = "{entidades.fieldNotNullError}")
     private boolean habilitado = true;
+    
+    /**
+     * Campo que muestra la fecha de inicio de vigencia como string
+     */
+    @Transient
+    String strFechaAlta;
+
+    /**
+     * 
+     * @return 
+     */
+    public String getStrFechaAlta() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaAlta = formateador.format(fechaAlta);   
+        return strFechaAlta;
+    }
+
+    public void setStrFechaAlta(String strFechaAlta) {
+        this.strFechaAlta = strFechaAlta;
+    }
     
     /**
      *
