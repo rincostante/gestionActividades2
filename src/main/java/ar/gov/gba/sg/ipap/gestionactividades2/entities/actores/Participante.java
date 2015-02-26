@@ -21,7 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+//import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -76,13 +76,8 @@ public class Participante implements Serializable {
     /**
      * Campo que indica las clases del participante
      */    
-    @ManyToMany
-    @JoinTable(
-            name = "participantesXClases",
-            joinColumns = @JoinColumn(name = "participante_fk"),
-            inverseJoinColumns = @JoinColumn(name = "clase_fk")
-    )
-    private List<Clase> clases;  
+    @ManyToMany(mappedBy = "participantes")
+    private List<Clase> clases;
     
     /**
      * Campo entero que indica la fecha de la autorización

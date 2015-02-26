@@ -23,6 +23,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -111,7 +112,7 @@ public class Clase implements Serializable {
     private Docente docente;
     
     /**
-     * Campo que indica los participantes de la clase
+     * Campo que indica la actividad que compone
      */
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="actividad_id", nullable=false)
@@ -122,13 +123,19 @@ public class Clase implements Serializable {
      * Campo de tipo AdmEntidad que encapsula los datos de administración y trazabilidad de la Clase
      */   
     @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    private AdmEntidad admin; 
+    private AdmEntidad admin;  
     
     /**
-     * Campo que indica la actividad que compone
+     * Campo que indica las los participantes de la clas
      */    
-    @ManyToMany(mappedBy = "clases")
-    private List<Participante> participantes;    
+    @ManyToMany
+    @JoinTable(
+            name = "participantesXClases",
+            joinColumns = @JoinColumn(name = "clase_fk"),
+            inverseJoinColumns = @JoinColumn(name = "participante_fk")
+    )
+    private List<Participante> participantes;
+    
     
     /**
      * Constructor

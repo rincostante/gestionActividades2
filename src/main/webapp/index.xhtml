@@ -17,6 +17,9 @@
                         <p:outputLabel value="Actividades disponibles" style="font-size: 150%"/>
                     </f:facet>
                     <p:outputLabel value="&nbsp;#{curso.actividadPlan.nombre}"  style="font-size: 120%"/>
+                    <p:commandButton value="Inscripción" style="height: 25px; font-size: 80%" action="#{mbParticipante.prepareView}" title="Ver Detalle">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />
+                    </p:commandButton>
                         <br/><br/>
                     <f:facet name="description" >
                         <p:outputPanel id="desc" style="width: 99%">
