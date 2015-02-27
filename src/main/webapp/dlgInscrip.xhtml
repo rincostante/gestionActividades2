@@ -12,15 +12,16 @@
         </style>
     </h:head>
     <h:body>
+        <p:growl id="mensajes" showDetail="true" life="2000" />
         <h:form id="frmInsripcion">
-            <h:panelGrid columns="1">
+            <h:panelGrid columns="1"  rendered="#{not mbCursosPublic.registrado}">
                 <p:outputLabel value="#{mbCursosPublic.mensaje}" style="font-size: 100%; font-style: oblique"/>
                 <br/>
-                <h:panelGrid columns="3">
+                <h:panelGrid columns="3" id="msgEstado" >
                     <p:commandButton action="#{mbCursosPublic.registrarInscripcion}" 
-                                     value="Registrar inscripción" ajax="false" 
+                                     value="Registrar inscripción"
                                      rendered="#{mbCursosPublic.registra}" >
-                        <p:confirm header="Confirmar" message="¿Desea registrar su inscripción?" />
+
                     </p:commandButton>
                     <p:commandButton action="#{mbCursosPublic.cancelar}" 
                                      value="Cancelar" ajax="false" 

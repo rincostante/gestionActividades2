@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -215,7 +216,11 @@ public class MbCursosPublic implements Serializable{
      * Métodos de operaciones
      */
     public void registrarInscripcion(){
-        RequestContext.getCurrentInstance().closeDialog("dlgInscrip");
+        FacesMessage msg = null;
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Chagracia!!!", " Pepe");
+        //FacesContext.getCurrentInstance().addMessage(null, msg);
+        RequestContext.getCurrentInstance().showMessageInDialog(msg);
+        //RequestContext.getCurrentInstance().closeDialog("dlgInscrip");
     }
           
     
