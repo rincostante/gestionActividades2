@@ -66,10 +66,26 @@ public class AdmEntidad implements Serializable {
     private boolean habilitado = true;
     
     /**
-     * Campo que muestra la fecha de inicio de vigencia como string
+     * Campo que muestra la fecha de alta como string
      */
     @Transient
     String strFechaAlta;
+    
+    /**
+     * Campo que muestra la fecha de baja como string
+     */
+    @Transient
+    String strFechaBaja;
+
+    public String getStrFechaBaja() {
+        SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        strFechaBaja = formateador.format(fechaBaja);   
+        return strFechaBaja;
+    }
+
+    public void setStrFechaBaja(String strFechaBaja) {
+        this.strFechaBaja = strFechaBaja;
+    }
 
     /**
      * 

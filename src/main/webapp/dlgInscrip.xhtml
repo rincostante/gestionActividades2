@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" >
+      
     <h:head>
         <title>Estado de inscripción a #{mbCursosPublic.current.actividadPlan.nombre}</title>
         <style type="text/css">
@@ -12,35 +13,43 @@
         </style>
     </h:head>
     <h:body>
-        <p:growl id="mensajes" showDetail="true" life="2000" />
-        <h:form id="frmInsripcion">
-            <h:panelGrid columns="1"  rendered="#{not mbCursosPublic.registrado}">
-                <p:outputLabel value="#{mbCursosPublic.mensaje}" style="font-size: 100%; font-style: oblique"/>
-                <br/>
-                <h:panelGrid columns="3" id="msgEstado" >
-                    <p:commandButton action="#{mbCursosPublic.registrarInscripcion}" 
-                                     value="Registrar inscripción"
-                                     rendered="#{mbCursosPublic.registra}" >
-
-                    </p:commandButton>
-                    <p:commandButton action="#{mbCursosPublic.cancelar}" 
-                                     value="Cancelar" ajax="false" 
-                                     rendered="#{mbCursosPublic.registra}"/>
-                    <p:commandButton action="#{mbCursosPublic.cancelar}" 
-                                     value="Eliminar" ajax="false" 
-                                     rendered="#{not mbCursosPublic.registra}" >
-                        <p:confirm header="Confirmar" message="¿Desea eliinar su inscripción?" />
-                    </p:commandButton>
-                    <p:commandButton action="#{mbCursosPublic.cancelar}" 
-                                     value="Cerrar" ajax="false" 
-                                     rendered="#{not mbCursosPublic.registra}" />
-                    
-                </h:panelGrid>
-                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                   <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                   <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-               </p:confirmDialog>  
+        <h:form>
+            <p:outputLabel value="#{mbCursosPublic.mensaje}" style="font-size: 100%; font-style: oblique; font-size: 100%"/>
+            <br/><br/>
+            <h:panelGrid columns="4" id="msgEstado" >
+                <p:commandButton value="Registrar inscripción" oncomplete="PF('widgetDlgAgregar').show()" 
+                                 action="#{mbCursosPublic.registrarInscripcion}" 
+                                 update="gridAdd"
+                                 rendered="#{mbCursosPublic.registra == 1}"/>
+                
+                <p:commandButton value="Eliminar inscripción" oncomplete="PF('widgetDlgAgregar').show()" 
+                                 action="#{mbCursosPublic.eliminarInscripcion}" 
+                                 update="gridAdd"
+                                 rendered="#{mbCursosPublic.registra == 2}"/>
+                
+                <p:commandButton action="#{mbCursosPublic.cancelar}" 
+                                 value="Cancelar" ajax="false" 
+                                 rendered="#{mbCursosPublic.registra != 0}"/>
+                
+                <p:commandButton action="#{mbCursosPublic.cerrar}" 
+                                 value="Cerrar" ajax="false" 
+                                 rendered="#{mbCursosPublic.registra == 0}"/>
             </h:panelGrid>
+            
+            <p:dialog header="Resultado de la transacción" widgetVar="widgetDlgAgregar" width="500" height="110" closable="true">
+                <h:panelGrid id="gridAdd" columns="1">
+                    <h:outputLabel id="ok" value="#{mbCursosPublic.respuesta}" 
+                                   rendered="#{not mbCursosPublic.resultado}" 
+                                   style="color: blue; font-weight: bold; font-size: 100%"/>
+                    <h:outputLabel id="err" value="#{mbCursosPublic.respuesta}" 
+                                   rendered="#{mbCursosPublic.resultado}" 
+                                   style="color: red; font-weight: bold; font-size: 100%"/>
+                    <br/>
+                    <p:commandButton oncomplete="PF('widgetDlgAgregar').hide()" 
+                                     value="Cerrar" 
+                                     action="#{mbCursosPublic.cerrar}" />
+                </h:panelGrid>
+            </p:dialog>
         </h:form>
     </h:body>
 </html>

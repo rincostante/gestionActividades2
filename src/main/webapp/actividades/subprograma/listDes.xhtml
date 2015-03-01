@@ -20,6 +20,7 @@
                     <h:panelGroup>
                         <h:panelGrid columns="3" id="pnBotones">
                             <p:commandButton icon="ui-icon-refresh" value="Habilitados" action="#{mbSubPrograma.prepareList}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbSubPrograma.prepareListVenc}" ajax="false"/>
                             <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbSubPrograma.cleanUp}"/>
                         </h:panelGrid>
                         <br/>
