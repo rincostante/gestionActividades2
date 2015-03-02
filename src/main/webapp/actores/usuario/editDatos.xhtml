@@ -34,7 +34,7 @@
                                      required="true" 
                                      requiredMessage="#{bundle.UsuarioContrasenia1RequiredMessage}"/>  
                         
-                        <p:outputLabel value="Repita la contraseña anterior:" for="claveAnt_2" />
+                        <p:outputLabel value="Ingrese la nueva contraseña:" for="claveAnt_2" />
                         <p:password id="claveAnt_2" value="#{mbCambioPass.claveAnterior_2}" 
                                      validator="#{mbCambioPass.validarClaveVieja_2}"
                                      required="true" 
@@ -42,7 +42,7 @@
                             <f:validateLength maximum="8" minimum="8" />
                         </p:password>  
                         
-                        <p:outputLabel value="Ingrese la nueva contraseña:" for="claveNueva" />
+                        <p:outputLabel value="Repitia la contraseña ingresada:" for="claveNueva" />
                         <p:password id="claveNueva" value="#{mbCambioPass.claveNueva}" 
                                      validator="#{mbCambioPass.validarClaveNueva}"
                                      required="true" 

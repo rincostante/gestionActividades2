@@ -196,6 +196,8 @@ public class MbCursosPublic implements Serializable{
                     mensaje = "Regitramos a su favor una inscripción, "
                             + "con fecha " + part.getAdmin().getStrFechaAlta() + ", la misma continúa a la espera de la validación "
                             + "de su Referente. ¡Muchas gracias por su participación!";
+                    
+                    registra = 2;
                 }else{
                     if(!part.getAdmin().isHabilitado()){
                         mensaje = "Registramos a su favor una inscripción deshabilitada con fecha: " + part.getAdmin().getStrFechaBaja() + ", "
