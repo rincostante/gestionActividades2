@@ -807,12 +807,14 @@ public class MbClase implements Serializable{
      */
     public void validarFechaRelizacion(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{   
         Date fechaInicioCurso = cursoSelected.getFechaInicio();
+        Date fechaFinCurso = cursoSelected.getFechaFin();
         SimpleDateFormat form_1 = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
         String strFechaInicioCurso = form_1.format(fechaInicioCurso);
+        String strFechaFinCurso = form_1.format(fechaFinCurso);
         Date fechaPropuesta = (Date)arg2;
         
         if(claseFacade.isClasesEmpty(cursoSelected)){
-            if(!fechaInicioCurso.after(fechaPropuesta)){
+            if(fechaInicioCurso.after(fechaPropuesta)){
                 FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser anterior a la de inicio del curso " + strFechaInicioCurso);
                 message.setSeverity(FacesMessage.SEVERITY_ERROR);
                 throw new ValidatorException(message);
@@ -825,13 +827,12 @@ public class MbClase implements Serializable{
                 FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior a la fecha de la clase anterior: " + strUltimaFecha);
                 message.setSeverity(FacesMessage.SEVERITY_ERROR);
                 throw new ValidatorException(message);
-            }else{
-                if(!fechaPropuesta.after(fechaInicioCurso)){
-                    FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior al inicio del curso " + strFechaInicioCurso);
-                    message.setSeverity(FacesMessage.SEVERITY_ERROR);
-                    throw new ValidatorException(message);
-                }
             }
+        }
+        if(fechaPropuesta.after(fechaFinCurso)){
+            FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser posterior al fin del curso " + strFechaFinCurso);
+            message.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(message);
         }
     }
 
