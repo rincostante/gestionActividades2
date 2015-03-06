@@ -41,12 +41,14 @@ public class LoginFilter implements Filter {
         if (debug) {
             log("LoginFilter:DoBeforeProcessing");
         }
-
-	// Write code here to process the request and/or response before
-        // the rest of the filter chain is invoked.
-	// For example, a logging filter might log items on the request object,
-        // such as the parameters.
-	/*
+        
+        /**
+         * Escribe aquí el código para procesar la solicitud 
+         * y / o la respuesta antes de invocar el resto de la cadena de filtros. 
+         * Por ejemplo, un filtro de registro podría registrar elementos 
+         * en el objeto de la petición, como los parámetros.
+         */
+        /*
          for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
          String name = (String)en.nextElement();
          String values[] = request.getParameterValues(name);
@@ -68,12 +70,14 @@ public class LoginFilter implements Filter {
             throws IOException, ServletException {
         if (debug) {
             log("LoginFilter:DoAfterProcessing");
-        }
-
-	// Write code here to process the request and/or response after
-        // the rest of the filter chain is invoked.
-	// For example, a logging filter might log the attributes on the
-        // request object after the request has been processed. 
+        }  
+        
+        /**
+         * Escribe aquí el código para procesar la solicitud y / o 
+         * la respuesta después de que se invoca el resto de la cadena de filtros. 
+         * Por ejemplo, un filtro de registro podría registrar los atributos del objeto 
+         * de la solicitud después de que el pedido ha sido procesado.
+         */
 	/*
          for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
          String name = (String)en.nextElement();
