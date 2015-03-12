@@ -12,9 +12,13 @@
         <ui:define name="content">
         <br/>
             <h:form style="text-align: left">
-                <p:panel id="pnEdit" header="Actualice aquí si contraseña" style="margin-bottom:10px;">
+                <h:panelGrid columns="1" rendered="#{mbLogin.usLogeado.primeraVez}">
+                    <p:outputLabel value="Por favor, ingrese una contraseña de su elección para poder continuar." />
+                    <br/>
+                </h:panelGrid>
+                <p:panel id="pnEdit" header="Actualice aquí si contraseña, deberá ser distinta de la existente, tener (8) caracteres y al menos (2) de ellos numéricos." style="margin-bottom:10px;">
                     <h:inputHidden id="id" value="#{mbCambioPass.usLogeado.id}" />
-                    <p:messages id="messages" />
+                    <p:growl id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Apellidos y nombres: " />
                         <h:outputText value="#{mbCambioPass.usLogeado.apYNom}" />
@@ -28,27 +32,25 @@
                         <p:outputLabel value="#{bundle.UsuarioLabel_nombre}" />
                         <h:outputText value="#{mbCambioPass.usLogeado.nombre}"/> 
                         
-                        <p:outputLabel value="Contraseña anterior:" for="claveAnt_1" />
-                        <p:password id="claveAnt_1" value="#{mbCambioPass.claveAnterior_1}" 
-                                     validator="#{mbCambioPass.validarClaveVieja_1}" 
+                        <p:outputLabel value="Contraseña anterior:" for="claveAnt" />
+                        <p:password id="claveAnt" value="#{mbCambioPass.claveAnterior}" 
+                                    validator="#{mbCambioPass.validarClaveVieja}" 
                                      required="true" 
-                                     requiredMessage="#{bundle.UsuarioContrasenia1RequiredMessage}"/>  
+                                     requiredMessage="#{bundle.UsuarioContraseniaActualRequiredMessage}"/>  
                         
-                        <p:outputLabel value="Ingrese la nueva contraseña:" for="claveAnt_2" />
-                        <p:password id="claveAnt_2" value="#{mbCambioPass.claveAnterior_2}" 
-                                     validator="#{mbCambioPass.validarClaveVieja_2}"
+                        <p:outputLabel value="Ingrese la nueva contraseña:" for="claveNueva_1" />
+                        <p:password id="claveNueva_1" value="#{mbCambioPass.claveNueva_1}" 
+                                     validator="#{mbCambioPass.validarClaveNueva}"
                                      required="true" 
-                                     requiredMessage="#{bundle.UsuarioContrasenia2RequiredMessage}" >
+                                     requiredMessage="#{bundle.UsuarioContraseniaNuevaRequiredMessage}" >
                             <f:validateLength maximum="8" minimum="8" />
                         </p:password>  
                         
-                        <p:outputLabel value="Repitia la contraseña ingresada:" for="claveNueva" />
-                        <p:password id="claveNueva" value="#{mbCambioPass.claveNueva}" 
-                                     validator="#{mbCambioPass.validarClaveNueva}"
+                        <p:outputLabel value="Repitia la contraseña ingresada:" for="claveNueva_2" />
+                        <p:password id="claveNueva_2" value="#{mbCambioPass.claveNueva_2}" 
+                                     validator="#{mbCambioPass.validarClaveNueva_2}"
                                      required="true" 
-                                     requiredMessage="#{bundle.UsuarioContraseniaNuevaRequiredMessage}" 
-                                     validatorMessage="#{bundle.UsuarioContraseniaNuevaValidateMessage}"  >
-                            <f:validateLength maximum="8" minimum="8" />
+                                     requiredMessage="#{bundle.UsuarioContraseniaNueva2RequiredMessage}" >
                         </p:password>    
 
                     </h:panelGrid>

@@ -174,6 +174,8 @@ public class LoginFilter implements Filter {
      */
       if (urlStr.endsWith("login.xhtml"))
         return true;
+      if (urlStr.endsWith("editDatos.xhtml"))
+        return true;
       if (urlStr.indexOf("/javax.faces.resource/") != -1)
         return true;
       return false;

@@ -154,7 +154,11 @@ public class MbLogin implements Serializable{
         clave = "";
         
         if (logeado){
-            context.addCallbackParam("view", ResourceBundle.getBundle("/Bundle").getString("RutaAplicacion"));
+            if(usLogeado.isPrimeraVez()){
+                context.addCallbackParam("view", ResourceBundle.getBundle("/Bundle").getString("RutaInicioPrimeraVez"));
+            }else{
+                context.addCallbackParam("view", ResourceBundle.getBundle("/Bundle").getString("RutaAplicacion"));
+            }
         }
     }
     
