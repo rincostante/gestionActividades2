@@ -7,17 +7,17 @@
       xmlns:p="http://primefaces.org/ui">
     <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
-            <h:outputText value="#{bundle.OrganismoTitle}" />
+            <h:outputText value="#{bundle.CampoTematicoTitle}" />
         </ui:define>
         <ui:define name="content">
             <br/>
-            <h:form id="frmOrganismoView" style="text-align: left">
-                <p:panel id="pnView" header="#{bundle.OrganismoViewTitle}" style="margin-bottom:10px;">
+            <h:form id="frmCampoTematicoView" style="text-align: left">
+                <p:panel id="pnView" header="#{bundle.CampoTematicoViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
                     
                     <h:panelGrid columns="2">
-                        <h:outputLabel value="#{bundle.OrganismoLabel_nombre}"/>
-                        <h:outputText value="#{mbCampoTematico.selected.nombre}" title="#{bundle.OrganismoTitle_nombre}"/>   
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_nombre}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.nombre}" title="#{bundle.CampoTematicoTitle_nombre}"/>   
                         
                         <h:outputLabel value="#{bundle.CampoTematicoLabel_fechaInicioVig}"/>
                         <h:outputText value="#{mbCampoTematico.selected.strFechaIniVig}" title="#{bundle.CampoTematicoTitle_fechaInicioVig}"/>
@@ -28,23 +28,23 @@
                         <h:outputLabel value="#{bundle.CampoTematicoLabel_actividades}" />
                         <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbCampoTematico.verActividades}" />
                         
-                        <h:outputLabel value="#{bundle.OrganismoLabel_fechaAlta}"/>
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbCampoTematico.selected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 
                                     disabled="true"
                                     locale="es"/>
 
-                        <h:outputLabel value="#{bundle.OrganismoLabel_usAlta}"/>
-                        <h:outputText value="#{mbCampoTematico.selected.admin.usAlta.apYNom}" title="#{bundle.OrganismoTitle_usAlta}"/>     
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_usAlta}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.admin.usAlta.apYNom}" title="#{bundle.CampoTematicoTitle_usAlta}"/>     
                         
-                        <h:outputLabel value="#{bundle.OrganismoLabel_fachaMod}"/>
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_fachaMod}"/>
                         <p:calendar id="fechaMod" value="#{mbCampoTematico.selected.admin.fechaModif}" 
                                     pattern="dd/MM/yyyy HH:mm" 
                                     disabled="true"
                                     locale="es"/>
                         
-                        <h:outputLabel value="#{bundle.OrganismoLabel_usMod}"/>
-                        <h:outputText value="#{mbCampoTematico.selected.admin.usModif.apYNom}" title="#{bundle.OrganismoTitle_usMod}"/>                         
+                        <h:outputLabel value="#{bundle.CampoTematicoLabel_usMod}"/>
+                        <h:outputText value="#{mbCampoTematico.selected.admin.usModif.apYNom}" title="#{bundle.CampoTematicoTitle_usMod}"/>                         
                         
                     </h:panelGrid>                    
                 </p:panel>

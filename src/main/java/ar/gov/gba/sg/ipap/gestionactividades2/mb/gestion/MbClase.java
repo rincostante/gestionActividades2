@@ -827,13 +827,12 @@ public class MbClase implements Serializable{
                 FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior a la fecha de la clase anterior: " + strUltimaFecha);
                 message.setSeverity(FacesMessage.SEVERITY_ERROR);
                 throw new ValidatorException(message);
-            }else{
-                if(fechaPropuesta.after(fechaFinCurso)){
-                    FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser anterior al fin del curso " + strFechaFinCurso);
-                    message.setSeverity(FacesMessage.SEVERITY_ERROR);
-                    throw new ValidatorException(message);
-                }
             }
+        }
+        if(fechaPropuesta.after(fechaFinCurso)){
+            FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser posterior al fin del curso " + strFechaFinCurso);
+            message.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(message);
         }
     }
 

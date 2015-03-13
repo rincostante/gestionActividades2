@@ -84,6 +84,16 @@ public class Usuario implements Serializable {
     private AdmEntidad admin;
     
     /**
+     * Este campo solo está en true cuando el usuario es registrado o
+     * su contraseña blanqueada. El sistema validará este campo en cada 
+     * inicio de sesión, en caso de ser verdadero redirecciona al cambio de contraseña,
+     * la que una vez actualizada permitirá al usuario reiniciar sesión y operar normalemente el sistema.
+     */
+    @Column(nullable=false)
+    @NotNull(message = "El campo 'primeraVez' no puede quedar vacío")
+    private boolean primeraVez = true;    
+    
+    /**
      * Campo que muestra los Apellidos y nombres personales del docente
      */
     @Transient
@@ -94,6 +104,14 @@ public class Usuario implements Serializable {
      */
     @Transient
     String documento;    
+
+    public boolean isPrimeraVez() {
+        return primeraVez;
+    }
+
+    public void setPrimeraVez(boolean primeraVez) {
+        this.primeraVez = primeraVez;
+    }
 
     public String getApYNom() {
         if(agente != null){

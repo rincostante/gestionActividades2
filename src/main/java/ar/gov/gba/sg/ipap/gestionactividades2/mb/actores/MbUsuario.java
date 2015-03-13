@@ -16,14 +16,15 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.Correo;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.CorreoEnvios;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.CriptPass;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -56,6 +57,7 @@ public class MbUsuario implements Serializable{
     private Usuario usLogeado;
     private MbLogin login;   
     private boolean iniciado;
+    private String clave;
     
     @EJB
     private UsuarioFacade usuarioFacade;   
@@ -327,7 +329,6 @@ public class MbUsuario implements Serializable{
             idDocente = current.getDocente().getId();
             idAgente = Long.valueOf(0);
         }
-        String clave = "";
         String claveEncriptada = "";
         try {
             if(getFacade().noExiste(idDocente, idAgente)){
@@ -357,12 +358,13 @@ public class MbUsuario implements Serializable{
                 // Inserción
                 getFacade().create(current);
                 
-                /********************************************************************************
-                 * Aquí debería enviar el correo al usuario notificando el suceso, **************
-                 * remitiendo la nueva contraseña y el procedimiento de incicio por primera vez *
-                 ********************************************************************************/
-                
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated") + "La clave asignada es: " + clave);
+                // envío las credenciales de acceso al correo del usuario
+                if(!enviarCorreo()){
+                    JsfUtil.addErrorMessage("Hubo un error enviando el correo al usuario. Consulte el log del servidor.");
+                    return null;
+                }
+
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated") + " La clave asignada es: " + clave);
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioExistente"));
@@ -471,6 +473,7 @@ public class MbUsuario implements Serializable{
         }
     }        
     
+    
     /*********************
     ** Desencadenadores **
     **********************/    
@@ -547,6 +550,44 @@ public class MbUsuario implements Serializable{
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("UsuarioDeletedErrorOccured"));
         }
     }       
+    
+    private boolean enviarCorreo(){
+        String correo;
+        String nombre;      
+        String bodyMessage;
+        Correo c = new Correo();
+        CorreoEnvios envio = new CorreoEnvios();
+        
+        if(current.getAgente() != null){
+            correo = current.getAgente().getPersona().getEmail_1();
+            nombre = current.getAgente().getPersona().getNombres() + " " + current.getAgente().getPersona().getApellidos();
+        }else{
+            correo = current.getDocente().getPersona().getEmail_1();
+            nombre = current.getDocente().getPersona().getNombres() + " " + current.getDocente().getPersona().getApellidos();
+        }
+        
+        bodyMessage = "<p>Estimado/a " + nombre + "</p> "
+                + "<p>Se ha creado una cuenta a su nombre en el Sistema " + ResourceBundle.getBundle("/Bundle").getString("Aplicacion") + " con las siguientes credenciales de acceso:</p> "
+                + "<p><strong>usuario:</strong> " + current.getNombre() + "<br/> "
+                + "<strong>contraseña:</strong> " + clave + "</p> "
+                + "<p>Podrá acceder mediantes esle link " + ResourceBundle.getBundle("/Bundle").getString("Servidor") + ResourceBundle.getBundle("/Bundle").getString("RutaAplicacion") + " <br/> "
+                + "Una vez iniciada la sesión, el sistema lo redireccionará para cambiar la contraseña por una de su elección.</p> "
+                + "<p>Por favor, no responda este correo. No divulgue ni comparta sus credenciales de acceso.</p> "
+                + "<p>Saludos cordiales</p> "
+                + "<p>Instituto Provincial de la Administración Pública<br/> "
+                + "Subsecretaría para la Modernización del Estado<br/> "
+                + "Calle 12 y 53 - Torre Gubernamental II - Piso 11. Código Postal 1900. La Plata, Provincia de Buenos Aires, República Argentina<br/> "
+                + "Teléfono: (0221) 429 5574/76<br /> "
+                + "Correo electrónico: <a href=\"mailto:privadaipap@ipap.sg.gba.gov.ar\">privadaipap@ipap.sg.gba.gov.ar</a></p>";        
+        
+        c.setContrasenia("usgpxriehulvqxmz");
+        c.setUsuarioCorreo("gestionipap@gmail.com");
+        c.setAsunto(ResourceBundle.getBundle("/Bundle").getString("Aplicacion") + ": Nuevo registro de cuenta en el Sistema");
+        c.setMensaje(bodyMessage);
+        c.setDestino(correo);
+
+        return envio.enviarCorreo(c);
+    }
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

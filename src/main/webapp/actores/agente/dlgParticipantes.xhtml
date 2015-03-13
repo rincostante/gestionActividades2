@@ -19,24 +19,27 @@
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
                          rowsPerPageTemplate="5,10,15">
-                <p:column headerText="Nombre" sortBy="#{part.agente.apYNom}" filterBy="#{part.agente.apYNom}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.apYNom}" />
+                
+                <p:column headerText="Nombre" sortBy="#{part.actividad.actividadPlan.nombre}" filterBy="#{part.actividad.actividadPlan.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{part.actividad.actividadPlan.nombre}" />
                 </p:column>
-                <p:column headerText="Documento" sortBy="#{part.agente.documento}" filterBy="#{part.agente.documento}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.documento}" />
+                
+                <p:column headerText="Fecha de inicio" sortBy="#{part.actividad.strFechaIniVig}" filterBy="#{part.actividad.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{part.actividad.strFechaIniVig}" />
                 </p:column>
-                <p:column headerText="Organismo" sortBy="#{part.agente.organismo.tipoOrganismo.nombre}" filterBy="#{part.agente.organismo.tipoOrganismo.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.organismo.tipoOrganismo.nombre} #{part.agente.organismo.nombre}" />
+                
+                <p:column headerText="Fecha de fin" sortBy="#{part.actividad.strFechaFinVig}" filterBy="#{part.actividad.strFechaFinVig}" filterMatchMode="contains">
+                    <h:outputText value="#{part.actividad.strFechaFinVig}" />
                 </p:column>
-                <p:column headerText="Cargo" sortBy="#{part.agente.cargo.nombre}" filterBy="#{part.agente.cargo.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.cargo.nombre}" />
+                
+                <p:column headerText="Sede" sortBy="#{part.actividad.sede.nombre}" filterBy="#{part.actividad.sede.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{part.actividad.sede.nombre}" />
                 </p:column>
-                <p:column headerText="Referente" sortBy="#{part.agente.referente.apYNom}" filterBy="#{part.agente.referente.apYNom}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.referente.apYNom}" />
+                
+                <p:column headerText="Docente" sortBy="#{part.actividad.docente.apYNom}" filterBy="#{part.actividad.docente.apYNom}" filterMatchMode="contains">
+                    <h:outputText value="#{part.actividad.docente.apYNom}" />
                 </p:column>
-                <p:column headerText="Habilitado" sortBy="#{part.agente.admin.habilitado}" filterBy="#{part.agente.admin.habilitado}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.admin.habilitado}" />
-                </p:column> 
+                 
             </p:dataTable>
         </h:form>
     </h:body>
