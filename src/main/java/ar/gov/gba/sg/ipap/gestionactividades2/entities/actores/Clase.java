@@ -107,8 +107,7 @@ public class Clase implements Serializable {
      * Campo que indica el docente asociado a la clase
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="docente_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="docente_id", nullable=true)
     private Docente docente;
     
     /**

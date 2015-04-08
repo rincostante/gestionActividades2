@@ -12,7 +12,7 @@
         <ui:define name="content">
         <br/>
             <h:form style="text-align: left">
-                <p:panel id="pnEdit" header="#{bundle.ParticipanteEditTitle} de la Inscripción Provisoria" style="margin-bottom:10px;">
+                <p:panel id="pnEdit" header="#{bundle.ParticipanteEditTitle} de la Inscripción de la Actividad Vencida" style="margin-bottom:10px;">
                     <h:inputHidden id="id" value="#{mbParticipante.selected.id}" />
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
@@ -48,7 +48,7 @@
                     </f:facet>
                     <f:facet name="right">
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
-                                         action="#{mbParticipante.prepareListProv}" 
+                                         action="#{mbParticipante.prepareListVenc}" 
                                          value="Volver" 
                                          immediate="true" 
                                          ajax="false"/>

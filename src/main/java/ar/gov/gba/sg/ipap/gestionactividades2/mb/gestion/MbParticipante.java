@@ -521,7 +521,7 @@ public class MbParticipante implements Serializable{
                 current.setAdmin(admEnt);
                 
                 // inserto el estado por defecto: Provisorio
-                List<EstadoParticipante> estParts = estPartFacade.getXString("Provisorio");
+                List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
                 current.setEstado(estParts.get(0));
                 
                 // Inserción
@@ -569,7 +569,7 @@ public class MbParticipante implements Serializable{
                 }     
                 if(tipoList == 2){
                     retorno = "viewProv";  
-                }   
+                }                  
                 return retorno;
             }else{
                 if(res.getId().equals(current.getId())){

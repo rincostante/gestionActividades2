@@ -424,6 +424,27 @@ public class MbActividadImpl implements Serializable{
     }     
     
     /**
+     * @return acción para la edición de la entidad finalizada
+     */
+    public String prepareEditFinal() {
+        //cargo los list para los combos
+        listResoluciones = resFacade.getHabilitadas();
+        listActPlan = actPlanFacade.getHabilitadas();
+        listOrganismos = organismoFacade.getHabilitados();
+        listSedes = sedeFacade.getHabilitados();
+        listDocentes = docenteFacade.getHabilitadas();
+        
+        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
+        if(!esCoordinador){
+            List<Rol> roles = rolFacade.getXString("Coordinador");
+            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
+        }
+        
+        current = actImpSelected;   
+        return "editFinal";
+    }     
+    
+    /**
      *
      * @return
      */

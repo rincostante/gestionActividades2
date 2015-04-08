@@ -50,6 +50,7 @@ public class MbCursosPublic implements Serializable{
     private Usuario usLogeado;
     private Participante part;
     private List<ActividadImplementada> listAct;
+    private List<ActividadImplementada> listadoFilter;  
     private String mensaje;
     private String respuesta;
     private int registra; // 0=no puede registrar | 1=registra | 2=registrado
@@ -91,6 +92,15 @@ public class MbCursosPublic implements Serializable{
     /*********************
      ** geters y seters **
      *********************/
+    
+    public List<ActividadImplementada> getListadoFilter(){
+        return listadoFilter;
+    }
+
+    public void setListadoFilter(List<ActividadImplementada> listadoFilter) {
+        this.listadoFilter = listadoFilter;
+    }
+
     
     public boolean isResultado(){
         return resultado;
@@ -161,6 +171,15 @@ public class MbCursosPublic implements Serializable{
 
     public void setAmbito(String ambito) {
         this.ambito = ambito;
+    }
+    
+    /**
+     * Método para inicializar el listado de las Actividades
+     * @return acción para el listado de entidades
+     */
+    public String prepareList() {  
+        recreateModel();
+        return "index";
     }
     
     /**
@@ -321,6 +340,12 @@ public class MbCursosPublic implements Serializable{
         return cursoFacade;
     }      
     
+    /**
+     * Restea la entidad
+     */
+    private void recreateModel() {
+        items = null;
+    }
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

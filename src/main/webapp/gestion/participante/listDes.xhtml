@@ -18,9 +18,10 @@
             <h:form style="text-align: left">
                 <p:panel id="partForm" header="#{bundle.ParticipanteListTitle} Deshabilitadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
                     <h:panelGroup>
-                        <h:panelGrid columns="3" id="pnBotones">
+                        <h:panelGrid columns="4" id="pnBotones">
                             <p:commandButton icon="ui-icon-refresh" value="Autorizados" action="#{mbParticipante.prepareList}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Provisorias" action="#{mbParticipante.prepareListProv}" ajax="false"/>
+                            <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbParticipante.prepareListVenc}" ajax="false"/>
                             <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbParticipante.cleanUp}"/>
                         </h:panelGrid>
                         <br/>

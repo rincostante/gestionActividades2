@@ -12,9 +12,16 @@
         <ui:define name="content">
             <h:form style="text-align: left">
                 <br/>
-                <p:dataTable value="#{mbCursosPublic.items}" var="e" >
-                    
-                    <p:column headerText="Actividades disponibles" >
+                <p:dataTable value="#{mbCursosPublic.items}" var="e" id="calseList" rows="5" 
+                             filteredValue="#{mbClase.listadoFilter}"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15" >
+                    <f:facet name="header">
+                        Actividades disponibles
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbCursosPublic.prepareList}" update="calseList" style="margin-left: 10px"/>
+                    </f:facet>                    
+                    <p:column sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains" >
                             <p:outputLabel value="#{e.actividadPlan.nombre}"  style="font-size: 120%"/>
                             <br/><br/>
                             <p:commandButton action="#{mbCursosPublic.prepareInscripcion}" value="Inscripción" style="font-size: 75%">
@@ -40,7 +47,7 @@
                             <br/>
                             <p:outputLabel value="#{e.actividadPlan.resumenAcademico}" style="font-size: 80%; margin-right: 40px"/>
                             <br/>
-                            <p:link value="Ver Más" href="#{e.actividadPlan.verMas}" style="font-size: 80%" />
+                            <p:link value="Ver Más" href="#{e.actividadPlan.link}" target="_blank" style="font-size: 80%" />
                             <br/><br/>
                     </p:column>
                 </p:dataTable>

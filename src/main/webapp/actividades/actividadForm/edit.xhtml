@@ -72,9 +72,7 @@
                         </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_resolucion}" for="resolucion"/>
-                        <p:selectOneMenu id="resolucion" value="#{mbActividadPlan.selected.resolucion}"
-                                         required="true" 
-                                         requiredMessage="#{bundle.ActividadPlanRequire_resolucion}">
+                        <p:selectOneMenu id="resolucion" value="#{mbActividadPlan.selected.resolucion}" >
                             <f:selectItem itemLabel="Seleccione la Resolución" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbActividadPlan.listResoluciones}" var="res" 
                                            itemLabel="#{res.resolucion}, #{res.anio}" 
@@ -119,8 +117,7 @@
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_verMas}" for="verMas"/>
                         <p:inputText id="verMas"
                                      value="#{mbActividadPlan.selected.verMas}" 
-                                     requiredMessage="#{bundle.ActividadPlanRequire_verMas}" 
-                                     required="true" style="width: 500px" />
+                                     style="width: 500px" />
                     </h:panelGrid>
                 </p:panel>
                 

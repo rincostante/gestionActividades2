@@ -112,8 +112,7 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = true "
-                + "AND actImp.suspendido = false "
-                + "AND actImp.fechaFin >= CURRENT_DATE";
+                + "AND actImp.suspendido = false";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -128,7 +127,6 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = true "
                 + "AND actImp.suspendido = false "
-                + "AND actImp.fechaFin >= CURRENT_DATE "
                 + "AND actImp.coordinador = :us";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);

@@ -72,7 +72,7 @@ public class ActividadImplementada implements Serializable {
      * Campo de texto que registra el aula en la cual se desarrolla la actividad
      */      
     @Column (nullable=true, length=120)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 120)
+    @Size(message = "El campo Aula no puede tener más de 120 caracteres", max = 120)
     private String aula;    
     
     /**
@@ -86,7 +86,7 @@ public class ActividadImplementada implements Serializable {
      * Campo de texto que indica a quién está dirigida la Actividad
      */
     @Column (nullable=true, length=1000)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 1000)
+    @Size(message = "El campo Dirigido a, no puede tener más de 1000 caracteres", max = 1000)
     private String dirigidoa; 
     
     /**
@@ -100,16 +100,14 @@ public class ActividadImplementada implements Serializable {
      * Campo de tipo Organismo que registra el Organismo destinatario de la Actividad
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="organismo_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="organismo_id", nullable=true)
     private Organismo organismo;
     
     /**
      * Campo de tipo Resolucion que contiene la resolución que da marco institucional a la Actividad.
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="resolucion_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="resolucion_id", nullable=true)
     private Resolucion resolucion;     
     
     /**
@@ -140,8 +138,7 @@ public class ActividadImplementada implements Serializable {
      * Campo que indica el docente de la actividad
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="docente_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="docente_id", nullable=true)
     private Docente docente; 
     
     /**

@@ -88,11 +88,14 @@
                         <p:outputLabel value="#{e.docente.apYNom}"/>
                     </p:column>
 
-                    <p:column headerText="Acciones" style="width:75px">
+                    <p:column headerText="Acciones" style="width:90px">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadImpl.prepareViewSusp}" title="Ver detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadImpl.actImpSelected}" />
-                        </p:commandButton>             
+                        </p:commandButton>       
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbActividadImpl.prepareEditFinal}" title="Editar">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbActividadImpl.actImpSelected}" />
+                        </p:commandButton>
                     </p:column>                
                 </p:dataTable>
             </h:form>
