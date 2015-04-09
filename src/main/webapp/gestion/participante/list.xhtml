@@ -21,7 +21,8 @@
             <h:form style="text-align: left">
                 <p:panel id="particForm" header="#{bundle.ParticipanteListTitle} Autorizadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
                     <h:panelGroup>
-                        <h:panelGrid columns="4" id="pnBotones">
+                        <h:panelGrid columns="5" id="pnBotones">
+                            <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbParticipante.prepareCreate}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Provisorios" action="#{mbParticipante.prepareListProv}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Vencidos" action="#{mbParticipante.prepareListVenc}" ajax="false"/>
                             <p:commandButton icon="ui-icon-refresh" value="Deshabilitadas" action="#{mbParticipante.prepareListDes}" ajax="false"/>

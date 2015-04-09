@@ -137,7 +137,9 @@ public class MbCursosPublic implements Serializable{
     }
 
     public DataModel getItems(){
-        items = new ListDataModel(getFacade().getHabilitadas());
+        if(items == null){
+            items = new ListDataModel(getFacade().getHabilitadas());
+        }
         return items;
     }
     

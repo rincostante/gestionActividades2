@@ -16,7 +16,7 @@
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}"/>
                         <p:submenu label="Gestión" rendered="#{mbLogin.usLogeado.rol.nombre == 'Supervisor'}">
-                            <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/listProv.xhtml"/>
+                            <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/list.xhtml"/>
                             <p:menuitem value="Clases" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizClase}/list.xhtml"/>
                         </p:submenu>
                         <p:submenu label="Actividades" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">

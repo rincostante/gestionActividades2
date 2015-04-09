@@ -529,7 +529,7 @@ public class MbParticipante implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
                 listAgentes.clear();
                 listActImp.clear();
-                return "viewProv";
+                return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
                 return null;
