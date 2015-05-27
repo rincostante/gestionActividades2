@@ -60,6 +60,16 @@
                         Listado de #{bundle.ParticipanteListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbParticipante.prepareList}" update="particList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="particList" fileName="ListadoInscriptosVendidos" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="particList" fileName="ListadoInscriptosVendidos" preProcessor="#{mbParticipante.preProcessPDF}"/>
+                        </h:commandLink> 
+                        
                         <p:columnToggler datasource="particList" trigger="toggler" />
                     </f:facet>
 
@@ -87,7 +97,7 @@
                         <p:outputLabel value="#{e.agente.referente.apYNom}"/>
                     </p:column> 
                     
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:135px" exportable="false" >
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbParticipante.prepareView}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbParticipante.partSelected}" />

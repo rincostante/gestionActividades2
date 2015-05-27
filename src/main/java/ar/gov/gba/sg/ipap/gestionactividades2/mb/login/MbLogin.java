@@ -158,11 +158,14 @@ public class MbLogin implements Serializable{
             }
         }
         
-        if(usLogeado.getRol().getNombre().equals("Administrador") || usLogeado.getRol().getNombre().equals("Supervisor")){
-            llevaParametros = true;
-        }else{
-            llevaParametros = false;
+        if(logeado){
+            if(usLogeado.getRol().getNombre().equals("Administrador") || usLogeado.getRol().getNombre().equals("Supervisor")){
+                llevaParametros = true;
+            }else{
+                llevaParametros = false;
+            }
         }
+
         
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("estaLogeado", logeado);
@@ -186,7 +189,12 @@ public class MbLogin implements Serializable{
     private boolean validar(){
         String claveEnc = CriptPass.encriptar(clave);
         usLogeado = usuarioFacade.validar(nombre, claveEnc);
-        return usLogeado.getId() != null;
+        if(usLogeado.getId() != null){
+            return true;
+        }else{
+            return false;
+        }
+        
     }
     
     private boolean validarInt(){

@@ -48,7 +48,7 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbActividadImpl.listado}" var="e" id="progList" rows="5" 
+                <p:dataTable value="#{mbActividadImpl.listado}" var="e" id="actImplList" rows="5" 
                              filteredValue="#{mbActividadImpl.listado}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -56,8 +56,18 @@
                     <f:facet name="header">
                         Listado de #{bundle.ActividadImplListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadImpl.prepareListDes}" update="progList" style="margin-left: 10px"/>
-                        <p:columnToggler datasource="progList" trigger="toggler" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadImpl.prepareListDes}" update="actImplList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="actImplList" fileName="ListadoActividadesDispuestasDeshabilitadas" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="actImplList" fileName="ListadoActividadesDispuestasDeshabilitadas" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
+                        <p:columnToggler datasource="actImplList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.ActividadImplLabel_nombre}" sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.actividadPlan.nombre}"/>
@@ -86,7 +96,7 @@
                     <p:column headerText="#{bundle.ActividadImplLabel_docente}" sortBy="#{e.docente.apYNom}" filterBy="#{e.docente.apYNom}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.docente.apYNom}"/>
                     </p:column>
-                    <p:column headerText="Acciones" style="width:90px">
+                    <p:column headerText="Acciones" style="width:90px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadImpl.prepareViewDes}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadImpl.actImpSelected}" />

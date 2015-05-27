@@ -47,7 +47,7 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbSubPrograma.items}" var="e" id="campoList" rows="5"
+                <p:dataTable value="#{mbSubPrograma.items}" var="e" id="subProgList" rows="5"
                              filteredValue="#{mbSubPrograma.listFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -55,8 +55,18 @@
                     <f:facet name="header">
                         Listado de #{bundle.SubProgramaListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSubPrograma.prepareList}" update="campoList" style="margin-left: 10px"/>
-                        <p:columnToggler datasource="campoList" trigger="toggler" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSubPrograma.prepareList}" update="subProgList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="subProgList" fileName="ListadoSubprogramasVencidos" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="subProgList" fileName="ListadoSubprogramasVencidos" preProcessor="#{mbPrograma.preProcessPDF}"/>
+                        </h:commandLink> 
+                        
+                        <p:columnToggler datasource="subProgList" trigger="toggler" />
                     </f:facet>
 
                     <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
@@ -79,7 +89,7 @@
                         <p:outputLabel value="#{e.resolucion.resolucion} / #{e.resolucion.anio}"/>
                     </p:column>  
 
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:135px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbSubPrograma.prepareViewVenc}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbSubPrograma.subProgSelected}" />

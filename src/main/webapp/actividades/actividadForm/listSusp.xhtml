@@ -35,6 +35,16 @@
                         Listado de #{bundle.ActividadPlanListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareListSusp}" update="campoList" style="margin-left: 10px"/>
+                       
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="campoList" fileName="ListadoActividadesFormativasSuspendidas" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="campoList" fileName="ListadoActividadesFormativasSuspendidas" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
+                        </h:commandLink> 
+                        
                         <p:columnToggler datasource="campoList" trigger="toggler" />
                     </f:facet>
 
@@ -62,7 +72,7 @@
                         <p:outputLabel value="#{e.organismo.nombre}"/>
                     </p:column>  
 
-                    <p:column headerText="Acciones" style="width:180px">
+                    <p:column headerText="Acciones" style="width:180px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadPlan.prepareViewSusp}" title="Ver detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />

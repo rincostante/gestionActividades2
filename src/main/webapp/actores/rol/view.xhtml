@@ -28,6 +28,11 @@
                         <p:commandButton icon="ui-icon-refresh" action="#{mbRol.prepareList}" value="Volver" ajax="false"/>
                     </f:facet>
                 </p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                            <p:printer target="pnView" />
+                        </p:commandButton>
+                    </f:facet>
 
             </h:form>
         </ui:define>

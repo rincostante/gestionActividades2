@@ -52,6 +52,16 @@
                         Listado de #{bundle.PersonaListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbPersona.prepareList}" update="perList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="perList" fileName="ListadoPersonas" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="perList" fileName="ListadoPersonas" preProcessor="#{mbPersona.preProcessPDF}"/>
+                        </h:commandLink> 
+                        
                         <p:columnToggler datasource="perList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.PersonaLabel_apellidos}" sortBy="#{e.apellidos}" filterBy="#{e.apellidos}" filterMatchMode="contains">
@@ -78,7 +88,7 @@
                         <p:outputLabel value="#{e.email_1}"/>
                     </p:column>                    
                     
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:135px" exportable="false">
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbPersona.prepareView}" >
                             <f:setPropertyActionListener value="#{e}" target="#{mbPersona.current}" />
                         </p:commandButton>

@@ -55,6 +55,11 @@
                     <f:facet name="right">
                         <p:commandButton icon="ui-icon-refresh" action="#{mbSubPrograma.prepareListVenc}" value="Volver" ajax="false"/>
                     </f:facet>
+                    <f:facet name="left">
+                        <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                            <p:printer target="pnView" />
+                        </p:commandButton>
+                    </f:facet>
                 </p:toolbar>
 
             </h:form>

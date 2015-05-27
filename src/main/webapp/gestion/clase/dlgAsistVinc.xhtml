@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Participantes que asistieron a la clase</title>
         <style type="text/css">
@@ -14,11 +15,21 @@
     <h:body>
         <h:form id="frmAsistVinc">
             <p:dataTable var="part" value="#{mbClase.listPartVinc}" 
-                         filteredValue="#{mbClase.listPartVincFilter}"
+                         filteredValue="#{mbClase.listPartVincFilter}" id="aistList"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
                          rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                        <p:dataExporter type="xls" target="aistList" fileName="ListadoAsistentesPorClase" />
+                    </h:commandLink>   
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                        <p:dataExporter type="pdf" target="aistList" fileName="ListadoAsistentesPorClase" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
+                    </h:commandLink> 
+                </f:facet>
                 <p:column headerText="Nombre" sortBy="#{part.agente.apYNom}" filterBy="#{part.agente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.apYNom}" />
                 </p:column>
@@ -34,7 +45,7 @@
                 <p:column headerText="Referente" sortBy="#{part.agente.referente.apYNom}" filterBy="#{part.agente.referente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.referente.apYNom}" />
                 </p:column>
-                <p:column headerText="Quitar" style="width :45px;" rendered="#{mbClase.asignaPart}">
+                <p:column headerText="Quitar" style="width :45px;" rendered="#{mbClase.asignaPart}"  exportable="false">
                     <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbClase.asignaPart}" 
                                          actionListener="#{mbClase.quitarAsistencia(part)}" />
                 </p:column>
