@@ -59,6 +59,16 @@
                         Listado de #{bundle.DocenteListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbDocente.prepareList}" update="docList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="docList" fileName="ListadoDocentes" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="docList" fileName="ListadoDocentes" preProcessor="#{mbDocente.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
                         <p:columnToggler datasource="docList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.DocenteLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}" filterMatchMode="contains">
@@ -83,7 +93,7 @@
                         <p:outputLabel value="#{e.antigMeses} meses" rendered="#{e.antigMeses > 0}"/>
                         <p:outputLabel value="#{e.antigAnios} años" rendered="#{e.antigAnios > 0}"/>
                     </p:column>
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:135px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbDocente.prepareView}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbDocente.docSelected}" />

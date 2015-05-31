@@ -38,6 +38,16 @@
                         Listado de #{bundle.ResolucionListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbResolucion.prepareList}" update="resList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="resList" fileName="ListadoResoluciones" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="resList" fileName="ListadoResoluciones" preProcessor="#{mbPrograma.preProcessPDF}"/>
+                        </h:commandLink> 
+                        
                         <p:columnToggler datasource="resList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.ResolucionLabel_nombre}" sortBy="#{e.resolucion}" filterBy="#{e.resolucion}" filterMatchMode="contains">
@@ -55,7 +65,7 @@
                     <p:column headerText="#{bundle.ResolucionLabel_foja}" sortBy="#{e.foja}" filterBy="#{e.foja}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.foja}"/>
                     </p:column>
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:135px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbResolucion.prepareView}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbResolucion.resSelected}" />

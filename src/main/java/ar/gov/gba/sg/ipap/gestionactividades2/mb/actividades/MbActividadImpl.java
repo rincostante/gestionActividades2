@@ -26,6 +26,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -424,6 +428,27 @@ public class MbActividadImpl implements Serializable{
     }     
     
     /**
+     * @return acción para la edición de la entidad finalizada
+     */
+    public String prepareEditFinal() {
+        //cargo los list para los combos
+        listResoluciones = resFacade.getHabilitadas();
+        listActPlan = actPlanFacade.getHabilitadas();
+        listOrganismos = organismoFacade.getHabilitados();
+        listSedes = sedeFacade.getHabilitados();
+        listDocentes = docenteFacade.getHabilitadas();
+        
+        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
+        if(!esCoordinador){
+            List<Rol> roles = rolFacade.getXString("Coordinador");
+            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
+        }
+        
+        current = actImpSelected;   
+        return "editFinal";
+    }     
+    
+    /**
      *
      * @return
      */
@@ -687,6 +712,13 @@ public class MbActividadImpl implements Serializable{
         performDestroy();
         recreateModel();
         return "view";
+    }    
+    
+    public void preProcessPDF(Object document) throws DocumentException, IOException {
+        Document pdf = (Document) document;    
+        pdf.open();
+        pdf.setPageSize(PageSize.A4.rotate());
+        pdf.newPage();
     }    
     
     /*************************

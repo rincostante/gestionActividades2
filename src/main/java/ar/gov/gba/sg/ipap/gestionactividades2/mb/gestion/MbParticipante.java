@@ -19,6 +19,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstadoParticipante
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ParticipanteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -521,7 +525,7 @@ public class MbParticipante implements Serializable{
                 current.setAdmin(admEnt);
                 
                 // inserto el estado por defecto: Provisorio
-                List<EstadoParticipante> estParts = estPartFacade.getXString("Provisorio");
+                List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
                 current.setEstado(estParts.get(0));
                 
                 // Inserción
@@ -529,7 +533,7 @@ public class MbParticipante implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
                 listAgentes.clear();
                 listActImp.clear();
-                return "viewProv";
+                return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
                 return null;
@@ -569,7 +573,7 @@ public class MbParticipante implements Serializable{
                 }     
                 if(tipoList == 2){
                     retorno = "viewProv";  
-                }   
+                }                  
                 return retorno;
             }else{
                 if(res.getId().equals(current.getId())){
@@ -636,6 +640,14 @@ public class MbParticipante implements Serializable{
         recreateModel();
         return "view";
     }    
+    
+    public void preProcessPDF(Object document) throws DocumentException, IOException {
+        Document pdf = (Document) document;    
+        pdf.open();
+        pdf.setPageSize(PageSize.A4.rotate());
+        pdf.newPage();
+    }
+    
     
     /*************************
     ** Métodos de selección **

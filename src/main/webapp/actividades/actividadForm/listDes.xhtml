@@ -16,7 +16,7 @@
         <ui:define name="content">
             <br/> 
             <h:form style="text-align: left">
-                <p:panel id="progForm" header="#{bundle.ActividadPlanListTitle} Deshabilitados" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
+                <p:panel id="progForm" header="#{bundle.ActividadPlanListTitle} Deshabilitadas" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar" >
                     <h:panelGroup>
                         <h:panelGrid columns="3" id="pnBotones">
                             <p:commandButton icon="ui-icon-refresh" value="Habilitados" action="#{mbActividadPlan.prepareList}" ajax="false"/>
@@ -26,16 +26,26 @@
                     </h:panelGroup>
                 </p:panel>      
                 
-                <p:dataTable value="#{mbActividadPlan.lstActPlan}" var="e" id="progList" rows="5" 
+                <p:dataTable value="#{mbActividadPlan.lstActPlan}" var="e" id="actPlanList" rows="5" 
                              filteredValue="#{mbActividadPlan.lstActPlan}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
                     <f:facet name="header">
-                        Listado de #{bundle.ActividadPlanListado}
+                        Listado de #{bundle.ActividadPlanListado} Deshabilitadas
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareListDes}" update="progList" style="margin-left: 10px"/>
-                        <p:columnToggler datasource="progList" trigger="toggler" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareListDes}" update="actPlanList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="actPlanList" fileName="ListadoActividadesFormativasDeshabilitadas" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="actPlanList" fileName="ListadoActividadesFormativasDeshabilitadas" />
+                        </h:commandLink>  
+                        
+                        <p:columnToggler datasource="actPlanList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.ActividadPlanLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
@@ -60,7 +70,7 @@
                     <p:column headerText="#{bundle.ActividadPlanLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.organismo.nombre}"/>
                     </p:column> 
-                    <p:column headerText="Acciones" style="width:90px">
+                    <p:column headerText="Acciones" style="width:90px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadPlan.prepareViewDes}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />

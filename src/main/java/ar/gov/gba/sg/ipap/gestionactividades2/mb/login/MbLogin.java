@@ -39,6 +39,7 @@ public class MbLogin implements Serializable{
     @EJB
     private UsuarioFacade usuarioFacade;
     private List<String> listMbActivos;
+    private boolean llevaParametros;
     
     /**
      * Creates a new instance of MbLogin
@@ -52,6 +53,14 @@ public class MbLogin implements Serializable{
     @PostConstruct
     public void init(){
         listMbActivos = new ArrayList();
+    }
+
+    public boolean isLlevaParametros() {
+        return llevaParametros;
+    }
+
+    public void setLlevaParametros(boolean llevaParametros) {
+        this.llevaParametros = llevaParametros;
     }
 
     public List<String> getListMbActivos() {
@@ -149,6 +158,15 @@ public class MbLogin implements Serializable{
             }
         }
         
+        if(logeado){
+            if(usLogeado.getRol().getNombre().equals("Administrador") || usLogeado.getRol().getNombre().equals("Supervisor")){
+                llevaParametros = true;
+            }else{
+                llevaParametros = false;
+            }
+        }
+
+        
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("estaLogeado", logeado);
         clave = "";
@@ -171,7 +189,12 @@ public class MbLogin implements Serializable{
     private boolean validar(){
         String claveEnc = CriptPass.encriptar(clave);
         usLogeado = usuarioFacade.validar(nombre, claveEnc);
-        return usLogeado.getId() != null;
+        if(usLogeado.getId() != null){
+            return true;
+        }else{
+            return false;
+        }
+        
     }
     
     private boolean validarInt(){

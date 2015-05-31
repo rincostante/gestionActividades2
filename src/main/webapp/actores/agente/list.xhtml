@@ -106,6 +106,16 @@
                         Listado de #{bundle.AgenteListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbAgente.prepareList}" update="agList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="agList" fileName="ListadoAgentes" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="agList" fileName="ListadoAgentes" preProcessor="#{mbAgente.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
                         <p:columnToggler datasource="agList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.AgenteLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}" filterMatchMode="contains">
@@ -135,7 +145,7 @@
                         <p:outputLabel value="#{e.antigMeses} meses" rendered="#{e.antigMeses > 0}"/>
                         <p:outputLabel value="#{e.antigAnios} años" rendered="#{e.antigAnios > 0}"/>
                     </p:column>
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:135px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbAgente.prepareView}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbAgente.agSelected}" />

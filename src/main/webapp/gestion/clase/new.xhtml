@@ -21,7 +21,7 @@
                                          required="true" 
                                          requiredMessage="#{bundle.ClaseRequire_curso}"
                                          validator="#{mbClase.actualizarCurso}" >
-                            <f:selectItem itemLabel="Seleccione el Curso" itemValue="" noSelectionOption="true" />
+                            <f:selectItem itemLabel="Seleccione la Actividad Dispuesta" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbClase.listActImp}" var="curso" 
                                            itemLabel="#{curso.actividadPlan.nombre} - #{curso.sede.nombre} - #{curso.strFechaIniVig}" 
                                            itemValue="#{curso}"/>
@@ -61,9 +61,7 @@
                         </p:calendar> 
                         
                         <p:outputLabel value="#{bundle.ClaseLabel_Docente}" for="docente"/>
-                        <p:selectOneMenu id="docente" value="#{mbClase.selected.docente}" 
-                                         required="true" 
-                                         requiredMessage="#{bundle.ClaseRequire_docente}">
+                        <p:selectOneMenu id="docente" value="#{mbClase.selected.docente}" >
                             <f:selectItem itemLabel="Seleccione el Docente" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbClase.listDocentes}" var="docente" 
                                            itemLabel="#{docente.apYNom} - #{docente.documento}" 

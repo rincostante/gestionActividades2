@@ -31,7 +31,7 @@
                 </p:panel>      
                 
                 <p:dataTable value="#{mbActividadPlan.lstActPlan}" var="e" id="actPlanList" rows="5" 
-                             filteredValue="#{mbActividadPlan.lstActPlan}"
+                             filteredValue="#{mbActividadPlan.lstActPlanFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15">
@@ -39,6 +39,16 @@
                         Listado de #{bundle.ActividadPlanListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadPlan.prepareList}" update="actPlanList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="actPlanList" fileName="ListadoActividadesFormativas" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="actPlanList" fileName="ListadoActividadesFormativas" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
                         <p:columnToggler datasource="actPlanList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.ActividadPlanLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
@@ -65,7 +75,7 @@
                         <p:outputLabel value="#{e.organismo.nombre}"/>
                     </p:column> 
 
-                    <p:column headerText="Acciones" style="width:180px">
+                    <p:column headerText="Acciones" style="width:180px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadPlan.prepareView}" title="Ver detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadPlan.actPlanSelected}" />

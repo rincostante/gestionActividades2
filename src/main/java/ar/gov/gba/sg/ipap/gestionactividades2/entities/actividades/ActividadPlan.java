@@ -22,6 +22,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -101,17 +102,14 @@ public class ActividadPlan implements Serializable {
     /**
      * Campo de texto que contiene la url a la informaciación general de la actividad en el centro documental
      */    
-    @Column (nullable=false, length=200)
-    @NotNull(message = "Este campo es obligatorio")
-    @Size(message = "El campo no puede excederse de  los 200 caracteres", max = 200)
+    @Column (nullable=true, length=200)
     private String verMas;        
     
     /**
      * Campo de tipo Resolucion que contiene la resolución que da marco institucional a la Actividad.
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="resolucion_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="resolucion_id", nullable=true)
     private Resolucion resolucion; 
     
     /**
@@ -166,12 +164,28 @@ public class ActividadPlan implements Serializable {
     @OneToMany(mappedBy="actividadPlan")
     private List<ActividadImplementada> actividadesImplementadas;  
     
+    @Transient
+    private String link;
+    
     /**
      * Constructor
      */
     public ActividadPlan(){
         actividadesImplementadas = new ArrayList();
         subprogramas = new ArrayList();
+    }
+
+    public String getLink() {
+        if(this.verMas.equals("")){
+            this.link = "http://www.ipap.sg.gba.gov.ar/";
+        }else{
+            this.link = this.verMas;
+        }
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getVerMas() {

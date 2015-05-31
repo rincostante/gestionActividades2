@@ -11,6 +11,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -247,6 +251,13 @@ public class MbCursoIn implements Serializable{
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgClases", options, null);
     }
+    
+    public void preProcessPDF(Object document) throws DocumentException, IOException {
+        Document pdf = (Document) document;    
+        pdf.open();
+        pdf.setPageSize(PageSize.A4.rotate());
+        pdf.newPage();
+    }   
     
     /*********************
     ** Métodos privados **

@@ -21,10 +21,6 @@
             <h:form style="text-align: left">
                 <p:panel id="actImplForm" header="Listados de Cursos vinculados" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
                     <h:panelGroup>
-                        <h:panelGrid columns="1" id="pnBotones">
-                            <p:commandButton icon="ui-icon-cancel" value="Salir" action="#{mbCursoEx.cleanUp}"/>
-                        </h:panelGrid>
-                        <br/>
                         <h:panelGrid columns="2" id="pnBusqueda">
                             <p:outputLabel for="fDespDe" value="Después de:" />
                             <p:calendar id="fDespDe" value="#{mbCursoEx.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
@@ -57,6 +53,16 @@
                         Listado de #{bundle.ActividadImplListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbCursoEx.prepareList}" update="actImplList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="actImplList" fileName="ListadoCursosDictados" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="actImplList" fileName="ListadoCursosDictados" preProcessor="#{mbCursoEx.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
                         <p:columnToggler datasource="actImplList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.ActividadImplLabel_nombre}" sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains">
@@ -83,7 +89,7 @@
                         <p:outputLabel value="#{e.docente.apYNom} - #{e.docente.documento}"/>
                     </p:column>
                     
-                    <p:column headerText="Acciones" style="width:85px">
+                    <p:column headerText="Acciones" style="width:85px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbCursoEx.prepareView}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbCursoEx.current}" />

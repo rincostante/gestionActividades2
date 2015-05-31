@@ -5,6 +5,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
+      <link rel="shortcut icon" type="image/x-icon" href="#{bundle.Servidor}#{bundle.RutaAplicacion}/faces/resources/img/favicon.ico"/>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
       <title><ui:insert name="title"/></title>
     </h:head>
@@ -21,14 +22,14 @@
                         </p:submenu>
                         <p:submenu label="Actividades" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
                             <p:menuitem value="Actividades Formativas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadPlan}/list.xhtml"/>
-                            <p:menuitem value="Cursos" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
+                            <p:menuitem value="Actividades Dispuestas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
                             <p:menuitem value="Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPrograma}/list.xhtml"/>
                             <p:menuitem value="Resoluciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizResolucion}/list.xhtml"/>
                             <p:menuitem value="Sub Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSubPrograma}/list.xhtml"/>
                         </p:submenu>
                         <p:submenu label="Gestión" rendered="#{mbLogin.usLogeado.rol.nombre == 'Coordinador'}">
-                            <p:menuitem value="Cursos" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
-                            <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/list.xhtml"/>
+                            <p:menuitem value="Actividades Dispuestas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
+                            <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/listProv.xhtml"/>
                             <p:menuitem value="Clases" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizClase}/list.xhtml"/>
                         </p:submenu>
                         <p:submenu label="Actores" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
@@ -38,7 +39,7 @@
                             <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>
                             <p:menuitem value="Usuario" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizUsuario}/list.xhtml"/>  
                         </p:submenu>    
-                        <p:submenu label="Parámetros" rendered="#{mbLogin.usLogeado.rol.nombre == 'Administrador'}">
+                        <p:submenu label="Parámetros" rendered="#{mbLogin.llevaParametros}">
                             <p:menuitem value="Campo Temático" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCampoTematico}/list.xhtml"/>
                             <p:menuitem value="Cargo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCargo}/list.xhtml"/>
                             <p:menuitem value="Estado de Participante" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizEstadoParticipante}/list.xhtml"/>

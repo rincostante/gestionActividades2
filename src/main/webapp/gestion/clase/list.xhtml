@@ -19,7 +19,7 @@
             </f:metadata> 
             <br/> 
             <h:form style="text-align: left">
-                <p:panel id="calseForm" header="#{bundle.ClaseListTitle} de Cursos vigentes" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
+                <p:panel id="calseForm" header="#{bundle.ClaseListTitle} de Actividades Dispuestas vigentes" style="margin-bottom:10px;" toggleable="true" toggleTitle="Ver/Ocultar"  >
                     <h:panelGroup>
                         <h:panelGrid columns="4" id="pnBotones">
                             <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbClase.prepareCreate}"/>
@@ -60,6 +60,16 @@
                         Listado de #{bundle.ClaseListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbClase.prepareList}" update="calseList" style="margin-left: 10px"/>
+                       
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="calseList" fileName="ListadoClases" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="calseList" fileName="ListadoClases" preProcessor="#{mbClase.preProcessPDF}"/>
+                        </h:commandLink> 
+                        
                         <p:columnToggler datasource="calseList" trigger="toggler" />
                     </f:facet>
                     
@@ -83,7 +93,7 @@
                         <p:outputLabel value="#{e.strFechaRealizacion}"/>
                     </p:column>
                     
-                    <p:column headerText="Acciones" style="width:180px">
+                    <p:column headerText="Acciones" style="width:180px" exportable="false" >
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbClase.prepareView}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbClase.current}" />

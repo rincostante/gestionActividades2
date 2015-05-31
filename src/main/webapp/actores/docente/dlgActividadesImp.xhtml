@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Actividades Implementadas que tienen asignado a este Docente</title>
         <style type="text/css">
@@ -14,11 +15,21 @@
     <h:body>
         <h:form id="frmActImp">
             <p:dataTable var="actImp" value="#{mbDocente.listDMActImp}" style="width: 1100px" 
-                         filteredValue="#{mbDocente.listActImpFilter}"
+                         filteredValue="#{mbDocente.listActImpFilter}" id="actImlList"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
                          rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                        <p:dataExporter type="xls" target="actImlList" fileName="ListadoActDispPorDocente" />
+                    </h:commandLink>   
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                        <p:dataExporter type="pdf" target="actImlList" fileName="ListadoActDispPorDocente" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
+                    </h:commandLink> 
+                </f:facet>
                 <p:column headerText="Nombre" sortBy="#{actImp.actividadPlan.nombre}" filterBy="#{actImp.actividadPlan.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.actividadPlan.nombre}" />
                 </p:column>

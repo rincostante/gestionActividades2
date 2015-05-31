@@ -38,6 +38,16 @@
                         Listado de #{bundle.AgenteListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbUsuario.prepareListDes}" update="usList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="usList" fileName="ListadoUsuariosDehabilitados" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="usList" fileName="ListadoUsuariosDehabilitados" preProcessor="#{mbUsuario.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
                         <p:columnToggler datasource="usList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.UsuarioLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}" filterMatchMode="contains"> 
@@ -53,7 +63,7 @@
                         <p:outputLabel value="#{e.rol.nombre}"/>
                     </p:column> 
                     
-                    <p:column headerText="Acciones" style="width:90px">
+                    <p:column headerText="Acciones" style="width:90px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbUsuario.prepareViewDes}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />

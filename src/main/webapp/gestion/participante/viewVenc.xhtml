@@ -12,10 +12,10 @@
         <ui:define name="content">
             <br/>
             <h:form id="frmParticipanteView" style="text-align: left">
-                <p:panel id="pnView" header="#{bundle.ParticipanteViewTitle} Deshabilitadas" style="margin-bottom:10px;">
+                <p:panel id="pnView" header="#{bundle.ParticipanteViewTitle} de la Inscripción de una Actividad Vencida" style="margin-bottom:10px;">
                     <p:messages id="messages" />
                     
-                    <h:panelGrid columns="2">      
+                    <h:panelGrid columns="2">
 
                         <h:outputLabel value="#{bundle.ParticipanteLabel_Agente}"/>
                         <h:outputText value="#{mbParticipante.selected.agente.apYNom} - #{mbParticipante.selected.agente.documento}" 
@@ -49,19 +49,20 @@
                         <h:outputLabel value="#{bundle.ParticipanteLabel_usAlta}"/>
                         <h:outputText value="#{mbParticipante.selected.admin.usAlta.apYNom}" title="#{bundle.ParticipanteTitle_usAlta}"/>     
                         
-                        <h:outputLabel value="#{bundle.ParticipanteLabel_fachaBaja}"/>
-                        <p:calendar id="fechaMod" value="#{mbParticipante.selected.admin.fechaBaja}" 
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_fachaMod}"/>
+                        <p:calendar id="fechaMod" value="#{mbParticipante.selected.admin.fechaModif}" 
                                     pattern="dd/MM/yyyy HH:mm" 
                                     disabled="true"
                                     locale="es"/>
                         
-                        <h:outputLabel value="#{bundle.ParticipanteLabel_usBaja}"/>
-                        <h:outputText value="#{mbParticipante.selected.admin.usBaja.apYNom}" title="#{bundle.ParticipanteTitle_usBaja}"/>                           
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_usMod}"/>
+                        <h:outputText value="#{mbParticipante.selected.admin.usModif.apYNom}" title="#{bundle.ParticipanteTitle_usMod}"/>                       
+                        
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>
                     <f:facet name="right">
-                        <p:commandButton icon="ui-icon-refresh" action="#{mbParticipante.prepareListDes}" value="Volver" ajax="false"/>
+                        <p:commandButton icon="ui-icon-refresh" action="#{mbParticipante.prepareListVenc}" value="Volver" ajax="false"/>
                     </f:facet>
                     <f:facet name="left">
                         <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">

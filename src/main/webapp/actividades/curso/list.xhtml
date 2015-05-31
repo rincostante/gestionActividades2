@@ -61,6 +61,16 @@
                         Listado de #{bundle.ActividadImplListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbActividadImpl.prepareList}" update="actImplList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="actImplList" fileName="ListadoActividadesDispuestas" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="actImplList" fileName="ListadoActividadesDispuestas" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
                         <p:columnToggler datasource="actImplList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.ActividadImplLabel_nombre}" sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains">
@@ -91,7 +101,7 @@
                         <p:outputLabel value="#{e.docente.apYNom} - #{e.docente.documento}"/>
                     </p:column>
                     
-                    <p:column headerText="Acciones" style="width:180px">
+                    <p:column headerText="Acciones" style="width:180px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadImpl.prepareView}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbActividadImpl.actImpSelected}" />

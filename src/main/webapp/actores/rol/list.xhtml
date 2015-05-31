@@ -37,12 +37,22 @@
                         Listado de #{bundle.RolListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbRol.prepareList}" update="rolList"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="rolList" fileName="ListadoRoles" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="rolList" fileName="ListadoRoles" preProcessor="#{mbRol.preProcessPDF}"/>
+                        </h:commandLink>  
+                        
                         <p:columnToggler datasource="rolList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
-                    <p:column headerText="Acciones" style="width:135px">
+                    <p:column headerText="Acciones" style="width:135px" exportable="false">
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbRol.prepareView}" >
                             <f:setPropertyActionListener value="#{e}" target="#{mbRol.current}" />
                         </p:commandButton>

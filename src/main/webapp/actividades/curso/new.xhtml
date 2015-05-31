@@ -34,9 +34,7 @@
                         </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_resolucion}" for="resolucion"/>
-                        <p:selectOneMenu id="resolucion" value="#{mbActividadImpl.selected.resolucion}"
-                                         required="true" 
-                                         requiredMessage="#{bundle.ActividadImplRequire_resolucion}">
+                        <p:selectOneMenu id="resolucion" value="#{mbActividadImpl.selected.resolucion}" >
                             <f:selectItem itemLabel="Seleccione la Resolución" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbActividadImpl.listResoluciones}" var="res" 
                                            itemLabel="#{res.resolucion}, #{res.anio}" 
@@ -54,9 +52,7 @@
                         </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_docente}" for="doc"/>
-                        <p:selectOneMenu id="doc" value="#{mbActividadImpl.selected.docente}"
-                                         required="true" 
-                                         requiredMessage="#{bundle.ActividadImplRequire_docente}">
+                        <p:selectOneMenu id="doc" value="#{mbActividadImpl.selected.docente}" >
                             <f:selectItem itemLabel="Seleccione el Docente" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbActividadImpl.listDocentes}" var="doc" 
                                            itemLabel="#{doc.apYNom} - #{doc.documento}" 
@@ -91,9 +87,7 @@
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_aula}" for="aula"/>
                         <p:inputText id="aula"
-                                     value="#{mbActividadImpl.selected.aula}" 
-                                     requiredMessage="#{bundle.ActividadImplRequire_aula}" 
-                                     required="true"/>                             
+                                     value="#{mbActividadImpl.selected.aula}" />                             
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}" for="dirigA"/>
                         <p:inputText id="dirigA"

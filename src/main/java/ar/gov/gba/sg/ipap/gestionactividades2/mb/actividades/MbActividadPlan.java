@@ -25,6 +25,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFac
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +66,7 @@ public class MbActividadPlan implements Serializable{
     private List<SubPrograma> subProgramasFilter;
     private boolean asignaSub; 
     private List<ActividadPlan> lstActPlan;
+    private List<ActividadPlan> lstActPlanFilter;
     
     @EJB
     private ActividadPlanFacade actividadPlanFacade;
@@ -110,6 +115,15 @@ public class MbActividadPlan implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+ 
+    public List<ActividadPlan> getLstActPlanFilter() {
+        return lstActPlanFilter;
+    }
+
+    public void setLstActPlanFilter(List<ActividadPlan> lstActPlanFilter) {
+        this.lstActPlanFilter = lstActPlanFilter;
+    }
+ 
  
     public List<SubPrograma> getSubVincFilter() {
         return subVincFilter;
@@ -371,7 +385,7 @@ public class MbActividadPlan implements Serializable{
         listResoluciones = resolucionFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
         listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
-        listCamposTematicos = campoTematicoFacade.getHabilitados();
+        listCamposTematicos = campoTematicoFacade.findAll();
         listOrganismos = organismoFacade.getHabilitados();
         
         // cargo la tabla de subProgramas
@@ -389,7 +403,7 @@ public class MbActividadPlan implements Serializable{
         listResoluciones = resolucionFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
         listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
-        listCamposTematicos = campoTematicoFacade.getHabilitados();
+        listCamposTematicos = campoTematicoFacade.findAll();
         listOrganismos = organismoFacade.getHabilitados();
         current = actPlanSelected;
         asignaSub = true;
@@ -635,6 +649,14 @@ public class MbActividadPlan implements Serializable{
         return "view";
     }    
     
+    public void preProcessPDF(Object document) throws DocumentException, IOException {
+        Document pdf = (Document) document;    
+        pdf.open();
+        pdf.setPageSize(PageSize.A4.rotate());
+        pdf.newPage();
+    }
+    
+    
     /*************************
     ** Métodos de selección **
     **************************/
@@ -693,7 +715,6 @@ public class MbActividadPlan implements Serializable{
         if(subDispFilter != null){
             subDispFilter = null;
         }
-        RequestContext.getCurrentInstance().closeDialog("dlgSubProgDisp");
     }
     
     public void quitarSubPrograma(SubPrograma sub){
@@ -705,7 +726,6 @@ public class MbActividadPlan implements Serializable{
         if(subDispFilter != null){
             subDispFilter = null;
         }
-        RequestContext.getCurrentInstance().closeDialog("dlgSubProgVinc");
     }
     
     public void limpiarSubProg(){

@@ -24,12 +24,12 @@
                                      required="true"/>   
                         
                         <h:outputLabel value="#{bundle.ActividadPlanLabel_SubProgramas}"/>
-                        <h:panelGrid id="btnVerSub" columns="2">
-                            <p:commandButton value="Ver/Quitar Asignados" icon="ui-icon-extlink"  
-                                             actionListener="#{mbActividadPlan.verSubProgramas}" />
-                            <p:commandButton value="Ver/Asignar Disponibles" icon="ui-icon-extlink"  
-                                             actionListener="#{mbActividadPlan.verSubProgamasDisp}" />
-                        </h:panelGrid>
+                        <h:panelGrid id="btnVerSubProg" columns="2">                       
+                            <p:commandButton value="Ver/Quitar Asignados" icon="ui-icon-extlink"
+                                         onclick="PF('SubProgVinc').show();"  /> 
+                            <p:commandButton value="Ver/Agregar Disponibles" icon="ui-icon-extlink" 
+                                         onclick="PF('SubProgDisp').show();" />      
+                        </h:panelGrid> 
 
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_modalidad}" for="modalidad"/>
                         <p:selectOneMenu id="modalidad" value="#{mbActividadPlan.selected.modalidad}"
@@ -72,9 +72,7 @@
                         </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_resolucion}" for="resolucion"/>
-                        <p:selectOneMenu id="resolucion" value="#{mbActividadPlan.selected.resolucion}"
-                                         required="true" 
-                                         requiredMessage="#{bundle.ActividadPlanRequire_resolucion}">
+                        <p:selectOneMenu id="resolucion" value="#{mbActividadPlan.selected.resolucion}" >
                             <f:selectItem itemLabel="Seleccione la Resolución" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbActividadPlan.listResoluciones}" var="res" 
                                            itemLabel="#{res.resolucion}, #{res.anio}" 
@@ -119,9 +117,97 @@
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_verMas}" for="verMas"/>
                         <p:inputText id="verMas"
                                      value="#{mbActividadPlan.selected.verMas}" 
-                                     requiredMessage="#{bundle.ActividadPlanRequire_verMas}" 
-                                     required="true" style="width: 500px" />
+                                     style="width: 500px" />
                     </h:panelGrid>
+                    
+                    
+                    
+                        <p:dialog style="font-size: 80%"
+                                  header="Listado de Sub Programas disponibles"
+                                  widgetVar="SubProgDisp"
+                                  showEffect="fade"
+                                  hideEffect="fade"
+                                  height="200"
+                                  width="50%"> 
+                            <p:dataTable var="sub" value="#{mbActividadPlan.subDisp}" 
+                                         filteredValue="#{mbActividadPlan.subDispFilter}"
+                                         rows="5" id="subDispList" 
+                                         paginator="true" 
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                         rowsPerPageTemplate="5,10,15">
+                                <f:facet name="header">
+                                    <h:commandLink>
+                                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                                        <p:dataExporter type="xls" target="subDispList" fileName="subDisp" />
+                                    </h:commandLink>   
+                                    <h:commandLink>
+                                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                                        <p:dataExporter type="pdf" target="subDispList" fileName="subDisp" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
+                                    </h:commandLink> 
+                                </f:facet>                
+                                <p:column headerText="Nombre" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.nombre}" />
+                                </p:column>
+                                <p:column headerText="Programa" sortBy="#{sub.programa.nombre}" filterBy="#{sub.programa.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.programa.nombre}" />
+                                </p:column>
+                                <p:column headerText="Fin vigencia" sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.strFechaFinVig}" />
+                                </p:column>
+                                <p:column headerText="Nombre" sortBy="#{sub.resolucion.resolucion}" filterBy="#{sub.resolucion.resolucion}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.resolucion.resolucion}/#{sub.resolucion.anio}" />
+                                </p:column>
+                                <p:column headerText="Asignar" style="width :45px;" exportable="false">
+                                    <p:commandButton icon="ui-icon-circle-triangle-s" ajax="false" 
+                                                     actionListener="#{mbActividadPlan.asignarSubPrograma(sub)}" />
+                                </p:column>
+                            </p:dataTable>                            
+                        </p:dialog> 
+                    
+                        <p:dialog style="font-size: 80%"
+                                  header="Listado de Sub Programas vinculados"
+                                  widgetVar="SubProgVinc"
+                                  showEffect="fade"
+                                  hideEffect="fade"
+                                  height="200"
+                                  width="50%">
+                            <p:dataTable var="sub" value="#{mbActividadPlan.subVinc}" 
+                                         filteredValue="#{mbActividadPlan.subVincFilter}"
+                                         rows="5" id="subVincList"
+                                         paginator="true" 
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                                         rowsPerPageTemplate="5,10,15">
+                                <f:facet name="header">
+                                    <h:commandLink>
+                                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                                        <p:dataExporter type="xls" target="subVincList" fileName="subVinc" />
+                                    </h:commandLink>   
+                                    <h:commandLink>
+                                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                                        <p:dataExporter type="pdf" target="subVincList" fileName="subVinc" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
+                                    </h:commandLink> 
+                                </f:facet>
+                                <p:column headerText="Nombre" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.nombre}" />
+                                </p:column>
+                                <p:column headerText="Programa" sortBy="#{sub.programa.nombre}" filterBy="#{sub.programa.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.programa.nombre}" />
+                                </p:column>
+                                <p:column headerText="Fin vigencia" sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.strFechaFinVig}" />
+                                </p:column>
+                                <p:column headerText="Nombre" sortBy="#{sub.resolucion.resolucion}" filterBy="#{sub.resolucion.resolucion}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.resolucion.resolucion}/#{sub.resolucion.anio}" />
+                                </p:column>
+                                <p:column headerText="Quitar" style="width :45px;" rendered="#{mbActividadPlan.asignaSub}" exportable="false">
+                                    <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbActividadPlan.asignaSub}" 
+                                                         actionListener="#{mbActividadPlan.quitarSubPrograma(sub)}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:dialog>                    
+                    
+                    
+                    
                 </p:panel>
                 
                 <p:toolbar>

@@ -56,6 +56,16 @@
                         Listado de #{bundle.ProgramaListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbPrograma.prepareListDes}" update="progList" style="margin-left: 10px"/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                            <p:dataExporter type="xls" target="progList" fileName="ListadoProgramasDeshabilitados" />
+                        </h:commandLink>   
+                        <h:commandLink>
+                            <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                            <p:dataExporter type="pdf" target="progList" fileName="ListadoProgramasDeshabilitados" preProcessor="#{mbPrograma.preProcessPDF}"/>
+                        </h:commandLink> 
+                        
                         <p:columnToggler datasource="progList" trigger="toggler" />
                     </f:facet>
                     <p:column headerText="#{bundle.ProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
@@ -73,7 +83,7 @@
                     <p:column headerText="#{bundle.ProgramaLabel_resolucion}" sortBy="#{e.resolucion.resolucion}" filterBy="#{e.resolucion.resolucion}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.resolucion.resolucion} / #{e.resolucion.anio}"/>
                     </p:column>  
-                    <p:column headerText="Acciones" style="width:90px">
+                    <p:column headerText="Acciones" style="width:90px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbPrograma.prepareViewDes}">
                             <f:setPropertyActionListener value="#{e}" target="#{mbPrograma.progSelected}" />
