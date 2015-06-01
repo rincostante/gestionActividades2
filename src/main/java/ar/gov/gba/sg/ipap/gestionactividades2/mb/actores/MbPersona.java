@@ -284,9 +284,14 @@ public class MbPersona implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
-        // seteo la edad de la persona
-        Edad edadUtil = new Edad();
-        edad = edadUtil.calcularEdad(current.getFechaNacimiento());
+        // seteo la edad de la persona si existe la fecha de nacimiento
+        if(current.getFechaNacimiento() != null){
+            Edad edadUtil = new Edad();
+            edad = edadUtil.calcularEdad(current.getFechaNacimiento());
+        }else{
+            edad.setYear(0);
+        }
+
         
         return "view";
     }

@@ -46,21 +46,13 @@
                         </p:inputText>                        
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_telefono}" for="telefono"/>
-                        <p:inputMask id="telefono" value="#{mbPersona.selected.telefono}" mask="(9999) 999-9999"
-                                     required="true"
-                                     requiredMessage="#{bundle.PersonaTelefonoRequiredMessage}"   
-                                     />                      
+                        <p:inputMask id="telefono" value="#{mbPersona.selected.telefono}" mask="(9999) 999-9999" />                      
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_celular}" for="celular"/>
-                        <p:inputMask id="celular" value="#{mbPersona.selected.celular}" mask="(9999) 99-999-9999"
-                                     required="true"
-                                     requiredMessage="#{bundle.PersonaCelularRequiredMessage}"
-                                     />   
+                        <p:inputMask id="celular" value="#{mbPersona.selected.celular}" mask="(9999) 99-999-9999" />   
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_fechaNac}" for="fechaNac"/>
-                        <p:inputMask id="fechaNac" value="#{mbPersona.selected.fechaNacimiento}" mask="99/99/9999" 
-                                     required="true"
-                                     requiredMessage="#{bundle.PersonaFechaNacRequiredMessage}" >
+                        <p:inputMask id="fechaNac" value="#{mbPersona.selected.fechaNacimiento}" mask="99/99/9999" >
                             <f:convertDateTime pattern="dd/MM/yyyy"/>
                         </p:inputMask> 
                         
@@ -81,8 +73,6 @@
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_email_1}" for="email_1" />
                         <p:inputText id="email_1" value="#{mbPersona.selected.email_1}" 
-                                     required="true" 
-                                     requiredMessage="#{bundle.PersonaEmail_1RequiredMessage}" 
                                      validatorMessage="#{bundle.PersonaEmail_1ValidateMessage}">
                             <f:validateRegex
                                 pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
