@@ -73,8 +73,7 @@ public class Programa implements Serializable {
      * Campo de tipo Resolucion que indica la Resolución que le da marco institucional al Programa
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="resolucion_id", nullable=false)
-    @NotNull(message = "{entidades.fieldNotNullError}")
+    @JoinColumn(name="resolucion_id", nullable=true)
     private Resolucion resolucion;
     
     /**

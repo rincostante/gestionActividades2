@@ -385,7 +385,7 @@ public class MbActividadPlan implements Serializable{
         listResoluciones = resolucionFacade.getHabilitadas();
         listModalidades = modalidadFacade.findAll();
         listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
-        listCamposTematicos = campoTematicoFacade.findAll();
+        listCamposTematicos = campoTematicoFacade.getHabilitados();
         listOrganismos = organismoFacade.getHabilitados();
         
         // cargo la tabla de subProgramas

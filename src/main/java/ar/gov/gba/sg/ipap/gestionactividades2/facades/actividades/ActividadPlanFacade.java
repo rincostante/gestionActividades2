@@ -89,7 +89,8 @@ public class ActividadPlanFacade extends AbstractFacade<ActividadPlan> {
         em = getEntityManager();
         String queryString = "SELECT actPlan FROM ActividadPlan actPlan "
                 + "WHERE actPlan.admin.habilitado = true "
-                + "AND actPlan.suspendido = false";
+                + "AND actPlan.suspendido = false "
+                + "ORDER BY actPlan.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -101,7 +102,8 @@ public class ActividadPlanFacade extends AbstractFacade<ActividadPlan> {
     public List<ActividadPlan> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT actPlan FROM ActividadPlan actPlan "
-                + "WHERE actPlan.admin.habilitado = false";
+                + "WHERE actPlan.admin.habilitado = false "
+                + "ORDER BY actPlan.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }          

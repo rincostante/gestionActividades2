@@ -80,8 +80,7 @@ public class SubPrograma implements Serializable {
      * Campo de tipo Resolucion que contiene la Resolución que le da marco institucional al SubPrograma
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="resolucion_id", nullable=false)
-    @NotNull(message = "{entidades.fieldNotNullError}")
+    @JoinColumn(name="resolucion_id", nullable=true)
     private Resolucion resolucion;
     
     /**

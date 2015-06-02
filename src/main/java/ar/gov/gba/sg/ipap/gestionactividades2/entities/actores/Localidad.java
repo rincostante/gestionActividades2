@@ -39,10 +39,24 @@ public class Localidad implements Serializable {
     /**
      * Campo de texto que indica el código postal de la localidad
      */        
-    @Column (nullable=false, length=10, unique=true)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 10)
-    private String codigoPostal;     
+    @Column (nullable=true, length=10)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 10)
+    private String codigoPostal;    
+    
+    /**
+     * Campo de texto que indica el Departamento al cual pertencece la localidad
+     */        
+    @Column (nullable=true, length=50)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 50)
+    private String departamento;      
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
+    }
 
     /**
      *

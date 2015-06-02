@@ -30,6 +30,15 @@ public class SituacionRevistaFacade extends AbstractFacade<SituacionRevista> {
     public SituacionRevistaFacade() {
         super(SituacionRevista.class);
     }
+    
+    @Override
+    public List<SituacionRevista> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT sitRev FROM SituacionRevista sitRev "
+                + "ORDER BY sitRev.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }        
  
     /**
      * Método que devuelve todas las Situaciones de Revista que contienen la cadena recibida como parámetro 

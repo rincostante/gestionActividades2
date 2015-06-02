@@ -122,7 +122,7 @@ public class MbAgente implements Serializable{
         listaTitulos = tituloFacade.findAll();
         listaSitRev = sitRevFacade.findAll();
         listaCargo = cargoFacade.findAll();
-        listaOrganismos = organismoFacade.findAll();
+        listaOrganismos = organismoFacade.getHabilitados();
         habilitadas = true;
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
@@ -401,7 +401,7 @@ public class MbAgente implements Serializable{
         esReferente = false;
         current = new Agente();
         // cargo los list pesados para los combos
-        listaPersonas = personaFacade.findAll();
+        listaPersonas = personaFacade.getHabilitadas();
         return "new";
     }
 
@@ -411,8 +411,8 @@ public class MbAgente implements Serializable{
     public String prepareEdit() {
         current = agSelected;
         // cargo los list pesados para los combos
-        listaPersonas = personaFacade.findAll();
-        listaOrganismos = organismoFacade.findAll();      
+        listaPersonas = personaFacade.getHabilitadas();
+        listaOrganismos = organismoFacade.getHabilitados();
         return "edit";
     }
     

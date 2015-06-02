@@ -65,21 +65,21 @@ public class Docente implements Serializable {
      * Campo de texto que indica el teléfono labural del docente
      */        
     @Column (nullable=true, length=20)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 20)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 20)
     private String telefonoLaboral; 
     
     /**
      * Campo de texto que indica el correo electrónico labural del docente
      */        
     @Column (nullable=true, length=50)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 50)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 50)
     private String emailLaboral; 
     
     /**
      * Campo de texto que indica la especialidad del docente
      */        
     @Column (nullable=true, length=100)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 100)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 100)
     private String especialidad; 
     
     /**

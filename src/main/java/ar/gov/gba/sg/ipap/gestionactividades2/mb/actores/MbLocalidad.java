@@ -22,7 +22,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -161,33 +160,6 @@ public class MbLocalidad implements Serializable{
         }
     }    
     
-    /**
-     * Método para validar que no exista ya una entidad con este nombre al momento de crearla
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarInsert(FacesContext arg0, UIComponent arg1, Object arg2){
-        validarExistente(arg2);
-    }
-    
-    /**
-     * Método para validar que no exista una entidad con este nombre, siempre que dicho nombre no sea el que tenía originalmente
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarUpdate(FacesContext arg0, UIComponent arg1, Object arg2){
-        if(!current.getNombre().equals((String)arg2)){
-            validarExistente(arg2);
-        }
-    }
-    
-    private void validarExistente(Object arg2) throws ValidatorException{
-        if(!getFacade().noExiste((String)arg2)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("CreateLocalidadNombreExistente")));
-        }
-    }    
     
     /*************************
     ** Métodos de operación **
@@ -197,9 +169,14 @@ public class MbLocalidad implements Serializable{
      */
     public String create() {
         try {
-            getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadCreated"));
-            return "view";
+            if(getFacade().noExiste(current.getNombre(), current.getDepartamento())){
+                getFacade().create(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadCreated"));
+                return "view";
+            }else{
+                JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadExistente"));
+                return null;
+            }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadCreatedErrorOccured"));
             return null;
@@ -210,10 +187,24 @@ public class MbLocalidad implements Serializable{
      * @return mensaje que notifica la actualización
      */
     public String update() {
+        Localidad localidad;
+        
         try {
-            getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdated"));
-            return "view";
+            localidad = getFacade().getExistente(current.getNombre(), current.getDepartamento());
+            if(localidad == null){
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdated"));
+                return "view";
+            }else{
+                if(localidad.getId().equals(current.getId())){
+                    getFacade().edit(current);
+                    JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdated"));
+                    return "view";                    
+                }else{
+                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("LocalidadExistente"));
+                    return null;
+                }
+            }
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("LocalidadUpdatedErrorOccured"));
             return null;

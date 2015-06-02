@@ -31,6 +31,15 @@ public class EstudiosCursadosFacade extends AbstractFacade<EstudiosCursados> {
         super(EstudiosCursados.class);
     }
     
+    @Override
+    public List<EstudiosCursados> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT est FROM EstudiosCursados est "
+                + "ORDER BY est.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }     
+    
     /**
      * Método que devuelve todos la Estudios Cursadoses que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

@@ -31,6 +31,15 @@ public class CargoFacade extends AbstractFacade<Cargo> {
         super(Cargo.class);
     }
     
+    @Override
+    public List<Cargo> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT cargo FROM Cargo cargo "
+                + "ORDER BY cargo.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }    
+    
     /**
      * Método que devuelve todos los Cargos que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

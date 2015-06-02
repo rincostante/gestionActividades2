@@ -30,6 +30,15 @@ public class EstadoParticipanteFacade extends AbstractFacade<EstadoParticipante>
     public EstadoParticipanteFacade() {
         super(EstadoParticipante.class);
     }
+    
+    @Override
+    public List<EstadoParticipante> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT estPar FROM EstadoParticipante estPar "
+                + "ORDER BY estPar.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }    
  
     /**
      * Método que devuelve todos los Estados de Participantes que contienen la cadena recibida como parámetro 

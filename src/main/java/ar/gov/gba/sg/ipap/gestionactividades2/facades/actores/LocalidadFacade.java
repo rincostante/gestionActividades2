@@ -31,6 +31,15 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
         super(Localidad.class);
     }
     
+    @Override
+    public List<Localidad> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT loc FROM Localidad loc "
+                + "ORDER BY loc.nombre, loc.departamento";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }      
+    
     /**
      * Método que devuelve todos la Localidades que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.
@@ -63,16 +72,37 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
     } 
     
    /**
-     * Método uitilizado para verificar que el campo unique que se desea insertar no exista ya
-     * @param unique: string con el valor que se desea verificar
+     * Método uitilizado para verificar que la localidad no exista ya
+     * @param nombre
+     * @param departamento
      * @return 
      */
-    public boolean noExiste(String unique){
+    public boolean noExiste(String nombre, String departamento){
         em = getEntityManager();
-        String queryString = "SELECT loc FROM Localidad loc WHERE loc.nombre = :unique";
+        String queryString = "SELECT loc FROM Localidad loc "
+                + "WHERE loc.nombre = :nombre "
+                + "AND loc.departamento = :departamento";
         Query q = em.createQuery(queryString)
-                .setParameter("unique", unique);
+                .setParameter("nombre", nombre)
+                .setParameter("departamento", departamento);
         return q.getResultList().isEmpty();
+    }
+    
+    /**
+     * Método que retorna una localidad con el nombre y departamento recibido como parámetros
+     * @param nombre
+     * @param departamento
+     * @return 
+     */
+    public Localidad getExistente(String nombre, String departamento){
+        em = getEntityManager();
+        String queryString = "SELECT loc FROM Localidad loc "
+                + "WHERE loc.nombre = :nombre "
+                + "AND loc.departamento = :departamento";
+        Query q = em.createQuery(queryString)
+                .setParameter("nombre", nombre)
+                .setParameter("departamento", departamento);
+        return (Localidad)q.getSingleResult();
     }
     
     /**

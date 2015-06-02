@@ -88,7 +88,8 @@ public class OrganismoFacade extends AbstractFacade<Organismo> {
     public List<Organismo> getHabilitados(){
         em = getEntityManager();
         String queryString = "SELECT org FROM Organismo org "
-                + "WHERE org.admin.habilitado = true";
+                + "WHERE org.admin.habilitado = true "
+                + "ORDER BY org.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -100,7 +101,8 @@ public class OrganismoFacade extends AbstractFacade<Organismo> {
     public List<Organismo> getDeshabilitados(){
         em = getEntityManager();
         String queryString = "SELECT org FROM Organismo org "
-                + "WHERE org.admin.habilitado = false";
+                + "WHERE org.admin.habilitado = false "
+                + "ORDER BY org.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }       

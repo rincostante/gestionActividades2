@@ -84,7 +84,7 @@
                     </p:column>  
                     
                     <p:column headerText="#{bundle.SubProgramaLabel_resolucion}" sortBy="#{e.resolucion.resolucion}" filterBy="#{e.resolucion.resolucion}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.resolucion.resolucion} / #{e.resolucion.anio}"/>
+                        <p:outputLabel value="#{e.resolucion.resolucion} / #{e.resolucion.anio}" rendered="#{e.resolucion.anio > 0}"/>
                     </p:column>  
                     <p:column headerText="Acciones" style="width:90px" exportable="false">
                         <p:growl id="messages" showDetail="true" />

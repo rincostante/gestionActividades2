@@ -13,20 +13,24 @@
             <br/>
             <h:form id="frmNew" style="text-align: left">
                 <p:panel id="pnNew" header="#{bundle.LocalidadNewTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
                     <h:panelGrid columns="3">
                         <p:outputLabel value="#{bundle.CreateLocalidadLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre" validator="#{mbLocalidad.validarInsert}" 
-                                     value="#{mbLocalidad.selected.nombre}" 
+                        <p:inputText id="nombre" value="#{mbLocalidad.selected.nombre}" 
                                      requiredMessage="#{bundle.CreateLocalidadRequiredMessage}" 
                                      required="true"/>
                         <p:message for="nombre" />
                         
-                        <p:outputLabel value="#{bundle.CreateLocalidadLabel_codigoPostal}" for="codPostal"/>
-                        <p:inputText id="codPostal" 
-                                     value="#{mbLocalidad.selected.codigoPostal}" 
+                        <p:outputLabel value="#{bundle.CreateLocalidadLabel_departamento}" for="departamento"/>
+                        <p:inputText id="departamento" 
+                                     value="#{mbLocalidad.selected.departamento}" 
                                      requiredMessage="#{bundle.CreateLocalidadRequiredMessage}" 
                                      required="true" />
-                        <p:message for="codPostal" />
+                        <p:message for="departamento" />
+                        
+                        <p:outputLabel value="#{bundle.CreateLocalidadLabel_codigoPostal}" for="codPostal"/>
+                        <p:inputText id="codPostal" 
+                                     value="#{mbLocalidad.selected.codigoPostal}" />
                     </h:panelGrid>
                 </p:panel>
                 <p:toolbar>

@@ -112,7 +112,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = true "
-                + "AND actImp.suspendido = false";
+                + "AND actImp.suspendido = false "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -127,7 +128,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = true "
                 + "AND actImp.suspendido = false "
-                + "AND actImp.coordinador = :us";
+                + "AND actImp.coordinador = :us "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -140,7 +142,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
     public List<ActividadImplementada> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
-                + "WHERE actImp.admin.habilitado = false";
+                + "WHERE actImp.admin.habilitado = false "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }        
@@ -154,7 +157,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = false "
-                + "AND actImp.coordinador = :us";
+                + "AND actImp.coordinador = :us "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -169,7 +173,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = true "
-                + "AND actImp.fechaFin < CURRENT_DATE";
+                + "AND actImp.fechaFin < CURRENT_DATE "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }   
@@ -184,7 +189,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "WHERE actImp.admin.habilitado = true "
                 + "AND actImp.fechaFin < CURRENT_DATE "
-                + "AND actImp.coordinador = :us";
+                + "AND actImp.coordinador = :us "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -230,7 +236,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
                 + "INNER JOIN actImp.participantes part "
-                + "WHERE part.agente = :participante";
+                + "WHERE part.agente = :participante "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("participante", participante);
         return q.getResultList();
@@ -244,7 +251,8 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
     public List<ActividadImplementada> getHabilitadasXDocente(Docente docente){
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
-                + "WHERE actImp.docente = :docente";
+                + "WHERE actImp.docente = :docente "
+                + "ORDER BY actImp.actividadPlan.nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("docente", docente);
         return q.getResultList();

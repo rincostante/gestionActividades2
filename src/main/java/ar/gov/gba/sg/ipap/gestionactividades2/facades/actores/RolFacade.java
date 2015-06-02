@@ -31,6 +31,15 @@ public class RolFacade extends AbstractFacade<Rol> {
         super(Rol.class);
     }
     
+    @Override
+    public List<Rol> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT rol FROM Rol rol "
+                + "ORDER BY rol.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }    
+    
    /**
      * Método que devuelve todos los Roles que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

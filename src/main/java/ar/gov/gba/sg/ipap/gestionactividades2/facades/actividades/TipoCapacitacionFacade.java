@@ -31,6 +31,15 @@ public class TipoCapacitacionFacade extends AbstractFacade<TipoCapacitacion> {
         super(TipoCapacitacion.class);
     }
     
+    @Override
+    public List<TipoCapacitacion> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT tipoCap FROM TipoCapacitacion tipoCap "
+                + "ORDER BY tipoCap.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }    
+    
     /**
      * Método que devuelve todos los Tipos de capacitación que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

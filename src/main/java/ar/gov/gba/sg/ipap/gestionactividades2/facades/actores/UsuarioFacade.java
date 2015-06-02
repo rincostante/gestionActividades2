@@ -72,7 +72,8 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
     public List<Usuario> getHabilitados(){
         em = getEntityManager();
         String queryString = "SELECT us FROM Usuario us "
-                + "WHERE us.admin.habilitado = true";
+                + "WHERE us.admin.habilitado = true "
+                + "ORDER BY us.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -84,7 +85,8 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
     public List<Usuario> getDeshabilitados(){
         em = getEntityManager();
         String queryString = "SELECT us FROM Usuario us "
-                + "WHERE us.admin.habilitado = false";
+                + "WHERE us.admin.habilitado = false "
+                + "ORDER BY us.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }  
@@ -136,7 +138,8 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
     public List<Usuario> getUsuarioXRol(Long idRol){
         em = getEntityManager();
         String queryString = "SELECT us FROM Usuario us "
-                + "WHERE us.rol.id = :idRol";
+                + "WHERE us.rol.id = :idRol "
+                + "ORDER BY us.nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("idRol", idRol);
         return q.getResultList();

@@ -85,7 +85,8 @@ public class CampoTematicoFacade extends AbstractFacade<CampoTematico> {
         em = getEntityManager();
         String queryString = "SELECT campo FROM CampoTematico campo "
                 + "WHERE campo.admin.habilitado = true "
-                + "AND campo.fechaFinVigencia >= CURRENT_DATE";
+                + "AND campo.fechaFinVigencia >= CURRENT_DATE "
+                + "ORDER BY campo.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -110,7 +111,8 @@ public class CampoTematicoFacade extends AbstractFacade<CampoTematico> {
     public List<CampoTematico> getDeshabilitados(){
         em = getEntityManager();
         String queryString = "SELECT campo FROM CampoTematico campo "
-                + "WHERE campo.admin.habilitado = false";
+                + "WHERE campo.admin.habilitado = false "
+                + "ORDER BY campo.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }  

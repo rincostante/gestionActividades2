@@ -88,7 +88,8 @@ public class SubProgramaFacade extends AbstractFacade<SubPrograma> {
         em = getEntityManager();
         String queryString = "SELECT sub FROM SubPrograma sub "
                 + "WHERE sub.admin.habilitado = true "
-                + "AND sub.fechaFinVigencia >= CURRENT_DATE";
+                + "AND sub.fechaFinVigencia >= CURRENT_DATE "
+                + "ORDER BY sub.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -100,7 +101,8 @@ public class SubProgramaFacade extends AbstractFacade<SubPrograma> {
     public List<SubPrograma> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT sub FROM SubPrograma sub "
-                + "WHERE sub.admin.habilitado = false";
+                + "WHERE sub.admin.habilitado = false "
+                + "ORDER BY sub.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }          
@@ -113,7 +115,8 @@ public class SubProgramaFacade extends AbstractFacade<SubPrograma> {
         em = getEntityManager();
         String queryString = "SELECT sub FROM SubPrograma sub "
                 + "WHERE sub.admin.habilitado = true "
-                + "AND sub.fechaFinVigencia < CURRENT_DATE";
+                + "AND sub.fechaFinVigencia < CURRENT_DATE "
+                + "ORDER BY sub.nombre";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }        

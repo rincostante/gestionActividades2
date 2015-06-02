@@ -13,23 +13,26 @@
         <br/>
             <h:form style="text-align: left">
                 <p:panel id="pnEdit" header="#{bundle.LocalidadEditTitle}" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
                     <h:inputHidden id="id" value="#{mbLocalidad.selected.id}" />
                     <h:panelGrid columns="3">
-                        
-                        
+
                         <p:outputLabel value="#{bundle.CreateLocalidadLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre" validator="#{mbLocalidad.validarUpdate}" 
-                                     value="#{mbLocalidad.selected.nombre}" 
+                        <p:inputText id="nombre" value="#{mbLocalidad.selected.nombre}" 
                                      requiredMessage="#{bundle.CreateLocalidadRequiredMessage}" 
                                      required="true"/>
                         <p:message for="nombre" />
                         
-                        <p:outputLabel value="#{bundle.CreateLocalidadLabel_codigoPostal}" for="codPostal"/>
-                        <p:inputText id="codPostal" 
-                                     value="#{mbLocalidad.selected.codigoPostal}" 
+                        <p:outputLabel value="#{bundle.CreateLocalidadLabel_departamento}" for="departamento"/>
+                        <p:inputText id="departamento" 
+                                     value="#{mbLocalidad.selected.departamento}" 
                                      requiredMessage="#{bundle.CreateLocalidadRequiredMessage}" 
                                      required="true" />
-                        <p:message for="codPostal" />                        
+                        <p:message for="departamento" />
+                        
+                        <p:outputLabel value="#{bundle.CreateLocalidadLabel_codigoPostal}" for="codPostal"/>
+                        <p:inputText id="codPostal" 
+                                     value="#{mbLocalidad.selected.codigoPostal}" />                     
                     </h:panelGrid>
                 </p:panel>
                 

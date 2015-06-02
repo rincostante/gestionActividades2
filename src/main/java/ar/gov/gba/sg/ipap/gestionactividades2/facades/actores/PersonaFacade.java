@@ -29,7 +29,7 @@ public class PersonaFacade extends AbstractFacade<Persona> {
 
     public PersonaFacade() {
         super(Persona.class);
-    }   
+    }     
     
     /**
      * Método que verifica si la Personas puede ser eliminada
@@ -86,7 +86,8 @@ public class PersonaFacade extends AbstractFacade<Persona> {
     public List<Persona> getHabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT per FROM Persona per "
-                + "WHERE per.admin.habilitado = true";
+                + "WHERE per.admin.habilitado = true "
+                + "ORDER BY per.apellidos, per.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -98,7 +99,8 @@ public class PersonaFacade extends AbstractFacade<Persona> {
     public List<Persona> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT per FROM Persona per "
-                + "WHERE per.admin.habilitado = false";
+                + "WHERE per.admin.habilitado = false "
+                + "ORDER BY per.apellidos, per.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }

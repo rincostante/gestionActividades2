@@ -39,19 +39,10 @@
                         </p:selectOneMenu>                         
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_telefonoLab}" for="telLab"/>
-                        <p:inputMask id="telLab" value="#{mbDocente.selected.telefonoLaboral}" mask="(9999) 999-9999"
-                                     required="true"
-                                     requiredMessage="#{bundle.DocenteTelefonoLabRequiredMessage}"   
-                                     />                         
+                        <p:inputMask id="telLab" value="#{mbDocente.selected.telefonoLaboral}" mask="(9999) 999-9999" />                         
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_emailLab}" for="emailLab" />
-                        <p:inputText id="emailLab" value="#{mbDocente.selected.emailLaboral}" 
-                                     required="true" 
-                                     requiredMessage="#{bundle.DocenteEmailLabRequiredMessage}" 
-                                     validatorMessage="#{bundle.DocenteEmailLabValidateMessage}">
-                            <f:validateRegex
-                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                        </p:inputText>  
+                        <p:inputText id="emailLab" value="#{mbDocente.selected.emailLaboral}" /> 
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_titulo}" for="titulo"/>
                         <p:selectOneMenu id="titulo" value="#{mbDocente.selected.titulo}"
@@ -65,9 +56,7 @@
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_especialidad}" for="espec"/>
                         <p:inputText id="espec"
-                                     value="#{mbDocente.selected.especialidad}" 
-                                     requiredMessage="#{bundle.DocenteEspecialidadRequiredMessage}" 
-                                     required="true"/>                         
+                                     value="#{mbDocente.selected.especialidad}" />                         
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_fechaInicio}" for="fechaInic"/>
                         <p:inputMask id="fechaInic" value="#{mbDocente.selected.fechaInicioDocencia}" mask="99/99/9999" 

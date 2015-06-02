@@ -30,6 +30,15 @@ public class TipoOrganismoFacade extends AbstractFacade<TipoOrganismo> {
     public TipoOrganismoFacade() {
         super(TipoOrganismo.class);
     }
+    
+    @Override
+    public List<TipoOrganismo> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT tipo FROM TipoOrganismo tipo "
+                + "ORDER BY tipo.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }
  
     /**
      * Método que devuelve todos los Tipos de capacitación que contienen la cadena recibida como parámetro 

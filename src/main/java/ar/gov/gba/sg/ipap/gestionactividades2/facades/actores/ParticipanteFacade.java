@@ -41,7 +41,7 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
      */
     public boolean getUtilizado(Long id){
         em = getEntityManager();
-        String queryString = "SELECT clase.id FROM Calse clase "
+        String queryString = "SELECT clase.id FROM Clase clase "
                 + "INNER JOIN clase.participantes part "
                 + "WHERE part.id = :id";
         Query q = em.createQuery(queryString)
@@ -98,7 +98,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.estado.nombre = 'Inscripto' "
                 + "AND part.admin.habilitado = true "
-                + "AND part.actividad.fechaFin >= CURRENT_DATE";
+                + "AND part.actividad.fechaFin >= CURRENT_DATE "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -114,7 +115,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
                 + "WHERE part.estado.nombre = 'Inscripto' "
                 + "AND part.admin.habilitado = true "
                 + "AND part.actividad.fechaFin >= CURRENT_DATE "
-                + "AND part.actividad.coordinador = :us";
+                + "AND part.actividad.coordinador = :us "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -129,7 +131,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.estado.nombre = 'Provisorio' "
                 + "AND part.admin.habilitado = true "
-                + "AND part.actividad.fechaFin >= CURRENT_DATE";
+                + "AND part.actividad.fechaFin >= CURRENT_DATE "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     } 
@@ -145,7 +148,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
                 + "WHERE part.estado.nombre = 'Provisorio' "
                 + "AND part.admin.habilitado = true "
                 + "AND part.actividad.fechaFin >= CURRENT_DATE "
-                + "AND part.actividad.coordinador = :us";
+                + "AND part.actividad.coordinador = :us "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -158,7 +162,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
     public List<Participante> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
-                + "WHERE part.admin.habilitado = false";
+                + "WHERE part.admin.habilitado = false "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }      
@@ -172,7 +177,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.admin.habilitado = false "
-                + "AND part.actividad.coordinador = :us";
+                + "AND part.actividad.coordinador = :us "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -186,7 +192,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.admin.habilitado = true "
-                + "AND part.actividad.fechaFin < CURRENT_DATE";
+                + "AND part.actividad.fechaFin < CURRENT_DATE "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     } 
@@ -201,7 +208,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.admin.habilitado = true "
                 + "AND part.actividad.fechaFin < CURRENT_DATE "
-                + "AND part.actividad.coordinador = :us";
+                + "AND part.actividad.coordinador = :us "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -217,7 +225,7 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE part.actividad = :curso "
                 + "AND part.estado.nombre = 'Inscripto' "
-                + "ORDER BY part.agente.persona.apellidos";
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString)
                 .setParameter("curso", curso);
         return q.getResultList();
@@ -232,7 +240,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE (part.agente.referente = :referente OR part.agente = :referente )"
-                + "AND part.actividad.fechaFin >= CURRENT_DATE";
+                + "AND part.actividad.fechaFin >= CURRENT_DATE "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString)
                 .setParameter("referente", referente);
         return q.getResultList();
@@ -247,7 +256,8 @@ public class ParticipanteFacade extends AbstractFacade<Participante> {
         em = getEntityManager();
         String queryString = "SELECT part FROM Participante part "
                 + "WHERE (part.agente.referente = :referente OR part.agente = :referente )"
-                + "AND part.actividad.fechaFin < CURRENT_DATE";
+                + "AND part.actividad.fechaFin < CURRENT_DATE "
+                + "ORDER BY part.agente.persona.apellidos, part.agente.persona.nombres";
         Query q = em.createQuery(queryString)
                 .setParameter("referente", referente);
         return q.getResultList();

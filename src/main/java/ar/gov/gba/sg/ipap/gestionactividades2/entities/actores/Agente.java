@@ -57,28 +57,28 @@ public class Agente implements Serializable {
      * Campo de texto que indica el nombre de la calle del lugar de trabajo del agente
      */        
     @Column (nullable=true, length=30)
-    @Size(message = "{endidades.stringSizeError}", max = 30)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 30)
     private String domCalle;    
     
     /**
      * Campo de texto que indica el nombre del número de puerta del lugar de trabajo del agente
      */        
     @Column (nullable=true, length=10)
-    @Size(message = "{endidades.stringSizeError}", max = 10)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 10)
     private String domNumero;        
     
     /**
      * Campo de texto que indica el teléfono del lugar de trabajo del agente
      */        
     @Column (nullable=true, length=20)
-    @Size(message = "{endidades.stringSizeError}", max = 20)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 20)
     private String telefono;    
     
     /**
      * Campo de texto que indica el correo electrónico del lugar de trabajo del agente
      */        
     @Column (nullable=true, length=60)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 60)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 60)
     private String email;  
     
     /**
@@ -92,7 +92,7 @@ public class Agente implements Serializable {
      * Campo de texto que indica los cursos realizados por el agente en el IPAP
      */        
     @Column (nullable=true, length=500)
-    @Size(message = "{endidades.stringSizeError}", max = 500)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 500)
     private String cursosRealizados;  
     
     
@@ -124,16 +124,14 @@ public class Agente implements Serializable {
      * Campo de tipo NivelIpap que contiene los datos de los estudios realizados en el IPAP por el agente.
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="nivelipap_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="nivelipap_id", nullable=true)
     private NivelIpap nivelIpap;
     
     /**
      * Campo de tipo Titulo que contiene el título de educación formal alcanzado por el agente.
      */
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="titulo_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @JoinColumn(name="titulo_id", nullable=true)
     private Titulo titulo;
     
     /**
@@ -163,8 +161,7 @@ public class Agente implements Serializable {
      * Campo entero que indica la antigüedad en años del docente
      */
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable=false)
-    @NotNull(message = "{entidades.fieldNotNullError}")
+    @Column(nullable=true)
     private Date fechaInicioActividades;
     
     /**
@@ -242,10 +239,14 @@ public class Agente implements Serializable {
     }
 
     public int getAntigMeses() {
-        Edad edadUtil = new Edad();
-        antigAnios = edadUtil.calcularEdad(fechaInicioActividades).getYear();
-        if(antigAnios < 1){
-            antigMeses = edadUtil.calcularEdad(fechaInicioActividades).getMonth();
+        if(fechaInicioActividades != null){
+            Edad edadUtil = new Edad();
+            antigAnios = edadUtil.calcularEdad(fechaInicioActividades).getYear();
+            if(antigAnios < 1){
+                antigMeses = edadUtil.calcularEdad(fechaInicioActividades).getMonth();
+            }else{
+                antigMeses = 0;
+            }
         }else{
             antigMeses = 0;
         }
@@ -257,11 +258,15 @@ public class Agente implements Serializable {
     }
 
     public int getAntigAnios() {
-        Edad edadUtil = new Edad();
-        antigAnios = edadUtil.calcularEdad(fechaInicioActividades).getYear();
-        if(antigAnios < 0){
+        if(fechaInicioActividades != null){
+            Edad edadUtil = new Edad();
+            antigAnios = edadUtil.calcularEdad(fechaInicioActividades).getYear();
+            if(antigAnios < 0){
+                antigAnios = 0;
+            }     
+        }else{
             antigAnios = 0;
-        }     
+        }
         return antigAnios;
     }
 

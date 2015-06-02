@@ -42,7 +42,11 @@
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.CreateLocalidadTitle_codigoPostal}" sortBy="#{e.codigoPostal}" filterBy="#{e.codigoPostal}" filterMatchMode="contains">
+                    <p:column headerText="#{bundle.CreateLocalidadLabel_departamento}" sortBy="#{e.departamento}" filterBy="#{e.departamento}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.departamento}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.CreateLocalidadTitle_codigoPostal}" sortBy="#{e.codigoPostal}" filterBy="#{e.codigoPostal}" style="width: 140px" filterMatchMode="contains">
                         <p:outputLabel value="#{e.codigoPostal}"/>
                     </p:column>
                     

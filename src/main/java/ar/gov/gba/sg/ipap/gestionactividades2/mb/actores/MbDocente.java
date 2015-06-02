@@ -327,8 +327,8 @@ public class MbDocente implements Serializable{
         esAgente = true;
         esPersona = true;
         // cargo los list para los combos
-        listaPersonas = personaFacade.findAll();
-        listaAgentes = agenteFacade.findAll();
+        listaPersonas = personaFacade.getHabilitadas();
+        listaAgentes = agenteFacade.getHabilitados();
         return "new";
     }
 

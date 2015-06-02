@@ -60,7 +60,7 @@
                         <p:selectOneMenu id="localidad" value="#{mbPersona.selected.localidad}">
                             <f:selectItem itemLabel="Seleccione la localidad" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbPersona.listaLocalidades}" var="localidad" 
-                                           itemLabel="#{localidad.nombre}" itemValue="#{localidad}"/>
+                                           itemLabel="#{localidad.nombre} - #{localidad.departamento}" itemValue="#{localidad}"/>
                         </p:selectOneMenu>                           
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_sexo}" for="sexo"/>
@@ -72,10 +72,8 @@
                         </p:selectOneMenu>                        
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_email_1}" for="email_1" />
-                        <p:inputText id="email_1" value="#{mbPersona.selected.email_1}" 
-                                     validatorMessage="#{bundle.PersonaEmail_1ValidateMessage}">
-                            <f:validateRegex
-                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                        <p:inputText id="email_1" value="#{mbPersona.selected.email_1}" >
+                            
                         </p:inputText>
                     </h:panelGrid>
                 </p:panel>

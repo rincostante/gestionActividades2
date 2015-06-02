@@ -31,6 +31,15 @@ public class TipoDocumentoFacade extends AbstractFacade<TipoDocumento> {
         super(TipoDocumento.class);
     }
     
+    @Override
+    public List<TipoDocumento> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT tipoDoc FROM TipoDocumento tipoDoc "
+                + "ORDER BY tipoDoc.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }       
+    
     /**
      * Método que devuelve todos los Tipos de Documento que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

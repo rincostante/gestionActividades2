@@ -100,7 +100,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
-                + "AND clase.actividad.fechaFin >= CURRENT_DATE";
+                + "AND clase.actividad.fechaFin >= CURRENT_DATE "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -116,7 +117,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
                 + "AND clase.actividad.fechaFin >= CURRENT_DATE "
-                + "AND clase.actividad.coordinador = :us";
+                + "AND clase.actividad.coordinador = :us "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -129,7 +131,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
     public List<Clase> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
-                + "WHERE clase.admin.habilitado = false";
+                + "WHERE clase.admin.habilitado = false "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }    
@@ -143,7 +146,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = false "
-                + "AND clase.actividad.coordinador = :us";
+                + "AND clase.actividad.coordinador = :us "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -160,7 +164,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
                 + "AND clase.actividad.fechaFin < CURRENT_DATE "
-                + "AND clase.actividad.coordinador = :us";
+                + "AND clase.actividad.coordinador = :us "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString)
                 .setParameter("us", us);
         return q.getResultList();
@@ -175,7 +180,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
                 + "WHERE clase.admin.habilitado = true "
-                + "AND clase.actividad.fechaFin < CURRENT_DATE";
+                + "AND clase.actividad.fechaFin < CURRENT_DATE "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }        
@@ -194,7 +200,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
                 + "WHERE clase.docente = :docente "
                 + "AND clase.fechaRealizacion = :fecha "
                 + "AND clase.horaInicio >= :horaInicial "
-                + "AND clase.horaFin <= :horaFinal";
+                + "AND clase.horaFin <= :horaFinal "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString)
                 .setParameter("docente", docente)
                 .setParameter("fecha", fecha)
@@ -264,7 +271,8 @@ public class ClaseFacade extends AbstractFacade<Clase> {
     public List<Clase> getHabilitadasXDocente(Docente docente){
         em = getEntityManager();
         String queryString = "SELECT clase FROM Clase clase "
-                + "WHERE clase.docente = :docente";
+                + "WHERE clase.docente = :docente "
+                + "ORDER BY clase.numOrden";
         Query q = em.createQuery(queryString)
                 .setParameter("docente", docente);
         return q.getResultList();

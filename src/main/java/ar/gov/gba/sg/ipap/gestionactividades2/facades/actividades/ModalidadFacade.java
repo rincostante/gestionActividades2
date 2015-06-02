@@ -31,6 +31,15 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
         super(Modalidad.class);
     }
     
+    @Override
+    public List<Modalidad> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT modal FROM Modalidad modal "
+                + "ORDER BY modal.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }        
+    
     /**
      * Método que devuelve todos los Tipos de capacitación que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.
@@ -40,8 +49,8 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
     public List<Modalidad> getXString(String stringParam){
         em = getEntityManager();
         List<Modalidad> result;
-        String queryString = "SELECT mod FROM Modalidad mod "
-                + "WHERE mod.nombre LIKE :sParam";
+        String queryString = "SELECT modal FROM Modalidad modal "
+                + "WHERE modal.nombre LIKE :sParam";
         Query q = em.createQuery(queryString)
                 .setParameter("sParam", "%" + stringParam + "%");
         result = q.getResultList();
@@ -69,7 +78,7 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
      */
     public boolean noExiste(String unique){
         em = getEntityManager();
-        String queryString = "SELECT mod FROM Modalidad mod WHERE mod.nombre = :unique";
+        String queryString = "SELECT modal FROM Modalidad modal WHERE modal.nombre = :unique";
         Query q = em.createQuery(queryString)
                 .setParameter("unique", unique);
         return q.getResultList().isEmpty();
@@ -81,7 +90,7 @@ public class ModalidadFacade extends AbstractFacade<Modalidad> {
      */
     public List<String> getNombres(){
         em = getEntityManager();
-        String queryString = "SELECT mod.nombre FROM Modalidad mod";
+        String queryString = "SELECT modal.nombre FROM Modalidad modal";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }    

@@ -90,7 +90,8 @@ public class DocenteFacade extends AbstractFacade<Docente> {
     public List<Docente> getHabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT doc FROM Docente doc "
-                + "WHERE doc.admin.habilitado = true";
+                + "WHERE doc.admin.habilitado = true "
+                + "ORDER BY doc.persona.apellidos, doc.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -102,7 +103,8 @@ public class DocenteFacade extends AbstractFacade<Docente> {
     public List<Docente> getDeshabilitadas(){
         em = getEntityManager();
         String queryString = "SELECT doc FROM Docente doc "
-                + "WHERE doc.admin.habilitado = false";
+                + "WHERE doc.admin.habilitado = false "
+                + "ORDER BY doc.persona.apellidos, doc.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }    

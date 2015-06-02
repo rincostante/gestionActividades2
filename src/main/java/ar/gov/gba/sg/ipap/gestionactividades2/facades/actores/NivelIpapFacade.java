@@ -31,6 +31,15 @@ public class NivelIpapFacade extends AbstractFacade<NivelIpap> {
         super(NivelIpap.class);
     }
     
+    @Override
+    public List<NivelIpap> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT nivIpap FROM NivelIpap nivIpap "
+                + "ORDER BY nivIpap.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }        
+    
    /**
      * Método que devuelve todos la Niveles Ipap que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

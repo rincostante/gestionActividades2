@@ -59,16 +59,12 @@
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle.AgenteLabel_fechaInicAct}" for="fechaInic"/>
-                        <p:inputMask id="fechaInic" value="#{mbAgente.selected.fechaInicioActividades}" mask="99/99/9999" 
-                                     required="true"
-                                     requiredMessage="#{bundle.AgenteFechaInicioRequiredMessage}" >
+                        <p:inputMask id="fechaInic" value="#{mbAgente.selected.fechaInicioActividades}" mask="99/99/9999" >
                             <f:convertDateTime pattern="dd/MM/yyyy"/>
                         </p:inputMask>   
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_nivelIpap}" for="nivIpap" />
-                        <p:selectOneMenu id="nivIpap" value="#{mbAgente.selected.nivelIpap}" 
-                                         required="true" 
-                                         requiredMessage="#{bundle.AgenteNivelIpapRequiredMessage}">
+                        <p:selectOneMenu id="nivIpap" value="#{mbAgente.selected.nivelIpap}" >
                             <f:selectItem itemLabel="Seleccione el Nivel alcanzando en Ipap" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbAgente.listaNivelIpap}" var="nivIpap" 
                                            itemLabel="#{nivIpap.nombre}, #{nivIpap.estado}" 
@@ -86,9 +82,7 @@
                         </p:selectOneMenu>     
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_titulo}" for="titulo"/>
-                        <p:selectOneMenu id="titulo" value="#{mbAgente.selected.titulo}"
-                                         required="true" 
-                                         requiredMessage="#{bundle.AgenteTituloRequiredMessage}">
+                        <p:selectOneMenu id="titulo" value="#{mbAgente.selected.titulo}" >
                             <f:selectItem itemLabel="Seleccione el título" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbAgente.listaTitulos}" var="titulo" 
                                            itemLabel="#{titulo.nombre}, #{titulo.epedidoPor}" 
@@ -108,18 +102,10 @@
                                      value="#{mbAgente.selected.domNumero}"/> 
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_telefono}" for="telLab"/>
-                        <p:inputMask id="telLab" value="#{mbAgente.selected.telefono}" mask="(9999) 999-9999"
-                                     required="true"
-                                     requiredMessage="#{bundle.AgenteTelefonoRequiredMessage}" />   
+                        <p:inputMask id="telLab" value="#{mbAgente.selected.telefono}" mask="(9999) 999-9999" />   
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_emal}" for="emailLab" />
-                        <p:inputText id="emailLab" value="#{mbAgente.selected.email}" 
-                                     required="true" 
-                                     requiredMessage="#{bundle.AgenteEmailLabRequiredMessage}" 
-                                     validatorMessage="#{bundle.AgenteEmailLabValidateMessage}">
-                            <f:validateRegex
-                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                        </p:inputText>  
+                        <p:inputText id="emailLab" value="#{mbAgente.selected.email}" />
                         
                         <p:outputLabel value="Es Referente: " />
                         <p:selectBooleanButton id="esReferente" value="#{mbAgente.selected.esReferente}" 

@@ -31,6 +31,15 @@ public class TituloFacade extends AbstractFacade<Titulo> {
         super(Titulo.class);
     }
     
+    @Override
+    public List<Titulo> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT tit FROM Titulo tit "
+                + "ORDER BY tit.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }     
+    
    /**
      * Método que devuelve todos la Títulos que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

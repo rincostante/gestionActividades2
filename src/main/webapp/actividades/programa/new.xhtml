@@ -38,9 +38,7 @@
                         </p:calendar>
                         
                         <p:outputLabel value="#{bundle.ProgramaLabel_resolucion}" for="resolucion"/>
-                        <p:selectOneMenu id="resolucion" value="#{mbPrograma.selected.resolucion}"
-                                         required="true" 
-                                         requiredMessage="#{bundle.ProgramaRequire_resolucion}">
+                        <p:selectOneMenu id="resolucion" value="#{mbPrograma.selected.resolucion}" >
                             <f:selectItem itemLabel="Seleccione la Resolución" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbPrograma.listResoluciones}" var="res" 
                                            itemLabel="#{res.resolucion}, #{res.anio}" 

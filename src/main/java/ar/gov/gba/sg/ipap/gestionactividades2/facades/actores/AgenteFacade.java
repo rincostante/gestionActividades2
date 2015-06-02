@@ -82,7 +82,8 @@ public class AgenteFacade extends AbstractFacade<Agente> {
     public List<Agente> getHabilitados(){
         em = getEntityManager();
         String queryString = "SELECT ag FROM Agente ag "
-                + "WHERE ag.admin.habilitado = true";
+                + "WHERE ag.admin.habilitado = true "
+                + "ORDER BY ag.persona.apellidos, ag.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }
@@ -94,7 +95,8 @@ public class AgenteFacade extends AbstractFacade<Agente> {
     public List<Agente> getDeshabilitados(){
         em = getEntityManager();
         String queryString = "SELECT ag FROM Agente ag "
-                + "WHERE ag.admin.habilitado = false";
+                + "WHERE ag.admin.habilitado = false "
+                + "ORDER BY ag.persona.apellidos, ag.persona.nombres";
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }      

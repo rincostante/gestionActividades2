@@ -16,6 +16,9 @@
             <h:outputText value="#{bundle.NombreAplicacion}" />
         </ui:define>
         <ui:define name="content">
+            <f:metadata>  
+                <f:event listener="#{mbCursosPublic.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata> 
             <h:form style="text-align: left">
                 <br/>
                 <p:dataTable value="#{mbCursosPublic.items}" var="e" id="calseList" rows="5" 

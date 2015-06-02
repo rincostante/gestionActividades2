@@ -55,6 +55,7 @@ public class MbCursosPublic implements Serializable{
     private String respuesta;
     private int registra; // 0=no puede registrar | 1=registra | 2=registrado
     private boolean resultado; //0=exitoso | 1=error
+    private boolean iniciado;
     
     @EJB
     private ActividadImplementadaFacade cursoFacade;
@@ -74,6 +75,7 @@ public class MbCursosPublic implements Serializable{
      */
     @PostConstruct
     public void init(){
+        iniciado = false;
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
         .getExternalContext().getSession(true);
         Enumeration enume = session.getAttributeNames();
@@ -86,6 +88,26 @@ public class MbCursosPublic implements Serializable{
         usLogeado = login.getUsLogeado();
         agente = usLogeado.getAgente();
         docente = usLogeado.getDocente();
+    }    
+    
+    /**
+     * Método que borra de la memoria los MB innecesarios al cargar el listado 
+     */
+    public void iniciar(){
+        if(!iniciado){
+            String s;
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+            .getExternalContext().getSession(true);
+            Enumeration enume = session.getAttributeNames();
+            while(enume.hasMoreElements()){
+                s = (String)enume.nextElement();
+                if(s.substring(0, 2).equals("mb")){
+                    if(!s.equals("mbCursosPublic") && !s.equals("mbLogin")){
+                        session.removeAttribute(s);
+                    }
+                }
+            }
+        }
     }    
     
 

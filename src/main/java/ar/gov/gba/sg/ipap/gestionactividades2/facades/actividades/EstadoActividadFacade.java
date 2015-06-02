@@ -31,6 +31,15 @@ public class EstadoActividadFacade extends AbstractFacade<EstadoActividad> {
         super(EstadoActividad.class);
     }
     
+    @Override
+    public List<EstadoActividad> findAll(){
+        em = getEntityManager();
+        String queryString = "SELECT estAct FROM EstadoActividad estAct "
+                + "ORDER BY estAct.nombre";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }    
+    
     /**
      * Método que devuelve todos los Estados de Actividad que contienen la cadena recibida como parámetro 
      * dentro de alguno de sus campos string, en este caso el nombre.

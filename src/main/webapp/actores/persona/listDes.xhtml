@@ -28,7 +28,7 @@
                             <p:selectOneMenu id="localidad" value="#{mbPersona.localidad}">
                                 <f:selectItem itemLabel="Seleccione la localidad" itemValue="" noSelectionOption="true" />
                                 <f:selectItems value="#{mbPersona.listaLocalidades}" var="localidad" 
-                                               itemLabel="#{localidad.nombre}" itemValue="#{localidad}"/>
+                                               itemLabel="#{localidad.nombre} - #{localidad.departamento}" itemValue="#{localidad}"/>
                             </p:selectOneMenu>  
                             <p:commandButton icon="ui-icon-close" style="float: right">
                                 <p:ajax update="perForm" resetValues="true" />

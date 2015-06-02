@@ -68,14 +68,14 @@ public class Persona implements Serializable {
      * Campo de texto que indica el número de teléfono fijo
      */        
     @Column (nullable=true, length=20)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 20)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 20)
     private String telefono;   
     
     /**
      * Campo de texto que indica el número de teléfono celular
      */        
     @Column (nullable=true, length=20)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 20)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 20)
     private String celular;   
     
     /**
@@ -96,14 +96,14 @@ public class Persona implements Serializable {
      * Campo de texto que indica el correo electrónico principal
      */        
     @Column (nullable=true, length=50)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 50)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 50)
     private String email_1;
     
     /**
      * Campo de texto que indica el correo electrónico de respaldo
      */        
     @Column (nullable=true, length=50)
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 50)
+    @Size(message = "{endidades.stringSizeErrorMax}", max = 50)
     private String email_2;
     
     /**
