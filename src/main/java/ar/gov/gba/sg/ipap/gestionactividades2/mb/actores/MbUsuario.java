@@ -368,7 +368,7 @@ public class MbUsuario implements Serializable{
                     return null;
                 }
 
-                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated") + " La clave asignada es: " + clave);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated"));
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioExistente"));
