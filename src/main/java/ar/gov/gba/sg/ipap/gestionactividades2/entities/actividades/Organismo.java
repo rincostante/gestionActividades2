@@ -43,9 +43,9 @@ public class Organismo implements Serializable {
     /**
      * Campo de texto que indica el nombre del Organismo
      */
-    @Column (nullable=false, length=60, unique=true)
+    @Column (nullable=false, length=250, unique=true)
     @NotNull(message = "{entidades.fieldNotNullError}")
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 60)
+    @Size(message = "{endidades.stringSizeError}", min = 1, max = 250)
     private String nombre;
     
     /**
