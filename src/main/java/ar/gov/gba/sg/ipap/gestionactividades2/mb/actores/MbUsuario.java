@@ -363,13 +363,22 @@ public class MbUsuario implements Serializable{
                 getFacade().create(current);
                 
                 // envío las credenciales de acceso al correo del usuario
+                /*
                 if(!enviarCorreo()){
                     JsfUtil.addErrorMessage("Hubo un error enviando el correo al usuario. Consulte el log del servidor.");
                     return null;
                 }
-
+                
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated"));
                 return "view";
+                */
+                
+                /**
+                 * temporalmente volvemos a mostrar la clave generada hasta resolver el problema del envío de correos
+                 * rincostante 20150702
+                 */
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioCreated") + " La clave asignada es: " + clave);
+                return "view";                
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioExistente"));
                 return null;
@@ -387,8 +396,17 @@ public class MbUsuario implements Serializable{
      */
     public String update() {
         Usuario us;
-        Long idDocente = current.getDocente().getId();
-        Long idAgente = current.getAgente().getId();      
+        Long idDocente;
+        Long idAgente;
+        
+        if(current.getDocente() != null){
+            idDocente = current.getDocente().getId();
+            idAgente = Long.valueOf(0);
+        }else{
+            idAgente = current.getAgente().getId();   
+            idDocente = Long.valueOf(0);
+        }
+           
         try {
             us = getFacade().getExistente(idDocente, idAgente);
             if(us == null){

@@ -90,10 +90,16 @@ public class MbCambioPass implements Serializable{
             if(usLogeado.isPrimeraVez()){
                 usLogeado.setPrimeraVez(false);
                 usuarioFacade.edit(usLogeado);
+                
+                /**
+                 * temporalmente volvemos a mostrar la clave generada hasta resolver el problema del envío de correos
+                 * rincostante 20150702
                 if(!enviarCorreo()){
                     JsfUtil.addErrorMessage("Hubo un error enviando el correo al usuario. Consulte el log del servidor.");
                     return null;
                 }
+                 */
+
                 JsfUtil.addSuccessMessage("Contraseña actualizada con exito");
                 return "inicio";   
             }else{
