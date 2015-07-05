@@ -69,6 +69,7 @@ public class PersonaFacade extends AbstractFacade<Persona> {
      * @return 
      */
     public Persona getExistente(Long idTipoDoc, int numDoc){
+        List<Persona> lPer;
         em = getEntityManager();
         String queryString = "SELECT per FROM Persona per "
                 + "WHERE per.tipoDocumento.id = :idTipoDoc "
@@ -76,7 +77,12 @@ public class PersonaFacade extends AbstractFacade<Persona> {
         Query q = em.createQuery(queryString)
                 .setParameter("idTipoDoc", idTipoDoc)
                 .setParameter("numDoc", numDoc);
-        return (Persona)q.getSingleResult();
+        lPer = q.getResultList();
+        if(!lPer.isEmpty()){
+            return lPer.get(0);
+        }else{
+            return null;
+        }
     }   
     
     /**

@@ -66,12 +66,18 @@ public class SedeFacade extends AbstractFacade<Sede> {
      * @return 
      */
     public Sede getExistente(String nombre){
+        List<Sede> lSede;
         em = getEntityManager();
         String queryString = "SELECT sede FROM Sede sede "
                 + "WHERE sede.nombre = :nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("nombre", nombre);
-        return (Sede)q.getSingleResult();
+        lSede = q.getResultList();
+        if(!lSede.isEmpty()){
+            return lSede.get(0);
+        }else{
+            return null;
+        }
     }    
     
     /**

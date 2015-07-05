@@ -109,6 +109,7 @@ public class TituloFacade extends AbstractFacade<Titulo> {
      * @return 
      */
     public Titulo getExistente(String nombre, String expedidoPor){
+        List<Titulo> lTit;
         em = getEntityManager();
         String queryString = "SELECT tit FROM Titulo tit "
                 + "WHERE tit.nombre = :nombre "
@@ -116,6 +117,11 @@ public class TituloFacade extends AbstractFacade<Titulo> {
         Query q = em.createQuery(queryString)
                 .setParameter("nombre", nombre)
                 .setParameter("estado", expedidoPor);
-        return (Titulo)q.getSingleResult();
+        lTit = q.getResultList();
+        if(!lTit.isEmpty()){
+            return lTit.get(0);
+        }else{
+            return null;
+        }
     }
 }

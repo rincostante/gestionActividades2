@@ -53,9 +53,7 @@
                         <p:inputMask id="celular" value="#{mbPersona.selected.celular}" mask="(9999) 99-999-9999" />   
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_fechaNac}" for="fechaNac"/>
-                        <p:inputMask id="fechaNac" value="#{mbPersona.selected.fechaNacimiento}" mask="99/99/9999" >
-                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                        </p:inputMask> 
+                        <p:calendar id="fechaNac" value="#{mbPersona.selected.fechaNacimiento}" pattern="dd/MM/yyyy" mask="true" />
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_localidad}" for="localidad"/>
                         <p:selectOneMenu id="localidad" value="#{mbPersona.selected.localidad}">

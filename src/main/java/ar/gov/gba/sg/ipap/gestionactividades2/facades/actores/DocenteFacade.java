@@ -73,6 +73,7 @@ public class DocenteFacade extends AbstractFacade<Docente> {
      * @return 
      */
     public Docente getExistente(Long idAgente, Long idPersona){
+        List<Docente> lDoc;
         em = getEntityManager();
         String queryString = "SELECT doc FROM Docente doc "
                 + "WHERE doc.persona.id = :idPersona "
@@ -80,7 +81,12 @@ public class DocenteFacade extends AbstractFacade<Docente> {
         Query q = em.createQuery(queryString)
                 .setParameter("idPersona", idPersona)
                 .setParameter("idAgente", idAgente);
-        return (Docente)q.getSingleResult();
+        lDoc = q.getResultList();
+        if(!lDoc.isEmpty()){
+            return lDoc.get(0);
+        }else{
+            return null;
+        }
     }   
     
     /**

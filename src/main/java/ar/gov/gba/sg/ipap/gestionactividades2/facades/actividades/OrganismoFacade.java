@@ -71,6 +71,7 @@ public class OrganismoFacade extends AbstractFacade<Organismo> {
      * @return 
      */
     public Organismo getExistente(String nombre, Long idTipoOrg){
+        List<Organismo> lOrg;
         em = getEntityManager();
         String queryString = "SELECT org FROM Organismo org "
                 + "WHERE org.nombre = :nombre "
@@ -78,7 +79,12 @@ public class OrganismoFacade extends AbstractFacade<Organismo> {
         Query q = em.createQuery(queryString)
                 .setParameter("nombre", nombre)
                 .setParameter("idTipoOrg", idTipoOrg);
-        return (Organismo)q.getSingleResult();
+        lOrg = q.getResultList();
+        if(!lOrg.isEmpty()){
+            return lOrg.get(0);
+        }else{
+            return null;
+        }
     }    
     
     /**

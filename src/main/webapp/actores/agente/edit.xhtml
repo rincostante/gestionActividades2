@@ -59,9 +59,7 @@
                         </p:selectOneMenu>
 
                         <p:outputLabel value="#{bundle.AgenteLabel_fechaInicAct}" for="fechaInic"/>
-                        <p:inputMask id="fechaInic" value="#{mbAgente.selected.fechaInicioActividades}" mask="99/99/9999" >
-                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                        </p:inputMask>   
+                        <p:calendar id="fechaInic" value="#{mbAgente.selected.fechaInicioActividades}" pattern="dd/MM/yyyy" mask="true" />
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_nivelIpap}" for="nivIpap" />
                         <p:selectOneMenu id="nivIpap" value="#{mbAgente.selected.nivelIpap}" >

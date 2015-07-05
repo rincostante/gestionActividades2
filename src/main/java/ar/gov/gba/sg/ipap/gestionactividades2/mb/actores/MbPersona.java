@@ -420,6 +420,10 @@ public class MbPersona implements Serializable{
                 admEnt.setUsAlta(usLogeado);
                 current.setAdmin(admEnt);
                 
+                // Formateo el apellido
+                String tempApp = current.getApellidos();
+                current.setApellidos(tempApp.toUpperCase());
+                
                 // Inserción
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaCreated"));
@@ -449,6 +453,10 @@ public class MbPersona implements Serializable{
                 current.getAdmin().setFechaModif(date);
                 current.getAdmin().setUsModif(usLogeado);
                 
+                // Formateo el apellido
+                String tempApp = current.getApellidos();
+                current.setApellidos(tempApp.toUpperCase());
+                
                 // Actualizo
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PersonaUpdated"));
@@ -459,6 +467,10 @@ public class MbPersona implements Serializable{
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
                     current.getAdmin().setUsModif(usLogeado);
+                    
+                    // Formateo el apellido
+                    String tempApp = current.getApellidos();
+                    current.setApellidos(tempApp.toUpperCase());
 
                     // Actualizo
                     getFacade().edit(current);

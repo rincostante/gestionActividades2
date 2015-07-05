@@ -106,6 +106,7 @@ public class NivelIpapFacade extends AbstractFacade<NivelIpap> {
      * @return 
      */
     public NivelIpap getExistente(String nombre, String estado){
+        List<NivelIpap> lNivIp;
         em = getEntityManager();
         String queryString = "SELECT nivIpap FROM NivelIpap nivIpap "
                 + "WHERE nivIpap.nombre = :nombre "
@@ -113,6 +114,11 @@ public class NivelIpapFacade extends AbstractFacade<NivelIpap> {
         Query q = em.createQuery(queryString)
                 .setParameter("nombre", nombre)
                 .setParameter("estado", estado);
-        return (NivelIpap)q.getSingleResult();
+        lNivIp = q.getResultList();
+        if(!lNivIp.isEmpty()){
+            return lNivIp.get(0);
+        }else{
+            return null;
+        }
     }    
 }

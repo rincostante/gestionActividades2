@@ -95,6 +95,7 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
      * @return 
      */
     public Localidad getExistente(String nombre, String departamento){
+        List<Localidad> lLoc;
         em = getEntityManager();
         String queryString = "SELECT loc FROM Localidad loc "
                 + "WHERE loc.nombre = :nombre "
@@ -102,7 +103,12 @@ public class LocalidadFacade extends AbstractFacade<Localidad> {
         Query q = em.createQuery(queryString)
                 .setParameter("nombre", nombre)
                 .setParameter("departamento", departamento);
-        return (Localidad)q.getSingleResult();
+        lLoc = q.getResultList();
+        if(!lLoc.isEmpty()){
+            return lLoc.get(0);
+        }else{
+            return null;
+        }
     }
     
     /**

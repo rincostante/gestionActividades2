@@ -55,6 +55,7 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
      * @return 
      */
     public Usuario getExistente(Long idDocente, Long idAgente){
+        List<Usuario> lUs;
         em = getEntityManager();
         String queryString = "SELECT us FROM Usuario us "
                 + "WHERE us.docente.id = :idDocente "
@@ -62,7 +63,12 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
         Query q = em.createQuery(queryString)
                 .setParameter("idDocente", idDocente)
                 .setParameter("idAgente", idAgente);
-        return (Usuario)q.getSingleResult();
+        lUs = q.getResultList();
+        if(!lUs.isEmpty()){
+            return lUs.get(0);
+        }else{
+            return null;
+        }
     }   
     
     /**

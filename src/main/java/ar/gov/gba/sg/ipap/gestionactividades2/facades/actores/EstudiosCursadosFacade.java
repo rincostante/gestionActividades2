@@ -106,6 +106,7 @@ public class EstudiosCursadosFacade extends AbstractFacade<EstudiosCursados> {
      * @return 
      */
     public EstudiosCursados getExistente(String nombre, String estado){
+        List<EstudiosCursados> lEstCur;
         em = getEntityManager();
         String queryString = "SELECT estCur FROM EstudiosCursados estCur "
                 + "WHERE estCur.nombre = :nombre "
@@ -113,6 +114,11 @@ public class EstudiosCursadosFacade extends AbstractFacade<EstudiosCursados> {
         Query q = em.createQuery(queryString)
                 .setParameter("nombre", nombre)
                 .setParameter("estado", estado);
-        return (EstudiosCursados)q.getSingleResult();
+        lEstCur = q.getResultList();
+        if(!lEstCur.isEmpty()){
+            return lEstCur.get(0);
+        }else{
+            return null;
+        }
     }    
 }

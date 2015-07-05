@@ -59,11 +59,9 @@
                                      value="#{mbDocente.selected.especialidad}" />                         
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_fechaInicio}" for="fechaInic"/>
-                        <p:inputMask id="fechaInic" value="#{mbDocente.selected.fechaInicioDocencia}" mask="99/99/9999" 
+                        <p:calendar id="fechaInic" value="#{mbDocente.selected.fechaInicioDocencia}" pattern="dd/MM/yyyy" mask="true"
                                      required="true"
-                                     requiredMessage="#{bundle.DocenteFechaInicioRequiredMessage}" >
-                            <f:convertDateTime pattern="dd/MM/yyyy"/>
-                        </p:inputMask>    
+                                     requiredMessage="#{bundle.DocenteFechaInicioRequiredMessage}" />
                     </h:panelGrid>
                 </p:panel>
                 

@@ -67,12 +67,18 @@ public class AgenteFacade extends AbstractFacade<Agente> {
      * @return 
      */
     public Agente getExistente(Long idPersona){
+        List<Agente> lAg;
         em = getEntityManager();
         String queryString = "SELECT ag FROM Agente ag "
                 + "WHERE ag.persona.id = :idPersona";
         Query q = em.createQuery(queryString)
                 .setParameter("idPersona", idPersona);
-        return (Agente)q.getSingleResult();
+        lAg = q.getResultList();
+        if(!lAg.isEmpty()){
+            return lAg.get(0);
+        }else{
+            return null;
+        }
     }   
     
     /**

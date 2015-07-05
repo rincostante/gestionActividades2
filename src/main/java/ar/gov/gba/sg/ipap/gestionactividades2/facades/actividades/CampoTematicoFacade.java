@@ -69,12 +69,18 @@ public class CampoTematicoFacade extends AbstractFacade<CampoTematico> {
      * @return 
      */
     public CampoTematico getExistente(String nombre){
+        List<CampoTematico> lCampoTem;
         em = getEntityManager();
         String queryString = "SELECT campo FROM CampoTematico campo "
                 + "WHERE campo.nombre = :nombre";
         Query q = em.createQuery(queryString)
                 .setParameter("nombre", nombre);
-        return (CampoTematico)q.getSingleResult();
+        lCampoTem = q.getResultList();
+        if(!lCampoTem.isEmpty()){
+            return lCampoTem.get(0);
+        }else{
+            return null;
+        }
     }    
     
     /**

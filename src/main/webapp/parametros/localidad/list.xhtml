@@ -38,14 +38,15 @@
                         <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbLocalidad.prepareList}" update="locList"/>
                         <p:columnToggler datasource="locList" trigger="toggler" />
                     </f:facet>
-                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.nombre}"/>
-                    </p:column>
                     
                     <p:column headerText="#{bundle.CreateLocalidadLabel_departamento}" sortBy="#{e.departamento}" filterBy="#{e.departamento}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.departamento}"/>
                     </p:column>
                     
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.nombre}"/>
+                    </p:column>
+
                     <p:column headerText="#{bundle.CreateLocalidadTitle_codigoPostal}" sortBy="#{e.codigoPostal}" filterBy="#{e.codigoPostal}" style="width: 140px" filterMatchMode="contains">
                         <p:outputLabel value="#{e.codigoPostal}"/>
                     </p:column>
