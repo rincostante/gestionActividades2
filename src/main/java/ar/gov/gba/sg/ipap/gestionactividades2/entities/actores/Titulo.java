@@ -36,7 +36,7 @@ public class Titulo implements Serializable {
     /**
      * Campo de texto que indica el nombre de los estudios cursados
      */        
-    @Column (nullable=false, length=50, unique=true)
+    @Column (nullable=false, length=50)
     @NotNull(message = "{entidades.fieldNotNullError}")
     @Size(message = "{endidades.stringSizeError}", min = 1, max = 50)
     private String nombre;   
@@ -44,7 +44,7 @@ public class Titulo implements Serializable {
     /**
      * Campo de texto que indica el organismo que expidió el título
      */        
-    @Column (nullable=false, length=100, unique=true)
+    @Column (nullable=false, length=100)
     @NotNull(message = "{entidades.fieldNotNullError}")
     @Size(message = "{endidades.stringSizeError}", min = 1, max = 100)
     private String epedidoPor;   
