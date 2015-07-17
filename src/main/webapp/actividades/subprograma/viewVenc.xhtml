@@ -22,6 +22,25 @@
                         <h:outputLabel value="#{bundle.SubProgramaLabel_programa}"/>
                         <h:outputText value="#{mbSubPrograma.selected.programa.nombre}" title="#{bundle.SubProgramaTitle_programa}"/>
                         
+                        
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_orientacion}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.orientacion.nombre}" title="#{bundle.SubProgramaTitle_orientacion}"/>
+                        
+                        <h:outputLabel value="#{bundle.SubProgramaLabel_especializacion}"/>
+                        <h:outputText value="#{mbSubPrograma.selected.tipoEspecializacion.nombre}" title="#{bundle.SubProgramaTitle_especializacion}"/>
+                        
+                        <h:outputLabel value="Es Completable:"/>
+                        <h:outputText value="#{mbSubPrograma.selected.completable}" title="Es Completable" /> 
+                        
+                        <h:outputLabel value="Depende de:"/>
+                        <h:outputText value="#{mbSubPrograma.selected.dependeDe.nombre}" title="Depende de" /> 
+                        
+                        <h:outputLabel value="Continúa con:"/>
+                        <h:outputText value="#{mbSubPrograma.selected.continuadoPor.nombre}" title="Continúa con" /> 
+                        
+                        
+                        
                         <h:outputLabel value="#{bundle.SubProgramaLabel_fechaInicioVig}"/>
                         <h:outputText value="#{mbSubPrograma.selected.strFechaIniVig}" title="#{bundle.SubProgramaTitle_fechaInicioVig}"/>
                         

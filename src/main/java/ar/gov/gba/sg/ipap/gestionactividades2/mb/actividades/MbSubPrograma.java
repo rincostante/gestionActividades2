@@ -8,14 +8,18 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Programa;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoEspecializacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ProgramaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoEspecializacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import com.lowagie.text.Document;
@@ -60,11 +64,18 @@ public class MbSubPrograma implements Serializable{
     private ResolucionFacade resolucionFacade;    
     @EJB
     private ProgramaFacade programaFacade;
+    @EJB
+    private OrientacionFacade orientacionFacade;
+    @EJB
+    private TipoEspecializacionFacade especializacionFacade;
     
     private SubPrograma subProgSelected;
     private Usuario usLogeado;     
     private List<Resolucion> listResoluciones;
     private List<Programa> listProgramas;
+    private List<Orientacion> listOrientaciones;
+    private List<TipoEspecializacion> listEspecializaciones;
+    private List<SubPrograma> listSubprogContinuables;
     private Date fAntesDe;
     private Date fDespuesDe;
     private MbLogin login;
@@ -92,6 +103,32 @@ public class MbSubPrograma implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
+    
+    public List<SubPrograma> getListSubprogContinuables() {
+        return listSubprogContinuables;
+    }
+
+    public void setListSubprogContinuables(List<SubPrograma> listSubprogContinuables) {
+        this.listSubprogContinuables = listSubprogContinuables;
+    }
+ 
+    
+    public List<Orientacion> getListOrientaciones() {
+        return listOrientaciones;
+    }
+
+    public void setListOrientaciones(List<Orientacion> listOrientaciones) {
+        this.listOrientaciones = listOrientaciones;
+    }
+
+    public List<TipoEspecializacion> getListEspecializaciones() {
+        return listEspecializaciones;
+    }
+
+    public void setListEspecializaciones(List<TipoEspecializacion> listEspecializaciones) {
+        this.listEspecializaciones = listEspecializaciones;
+    }
+ 
     
     public List<SubPrograma> getListFilter() {
         return listFilter;
@@ -269,6 +306,9 @@ public class MbSubPrograma implements Serializable{
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas();
         listProgramas = programaFacade.getHabilitadas();
+        listOrientaciones = orientacionFacade.findAll();
+        listEspecializaciones = especializacionFacade.findAll();
+        listSubprogContinuables = getFacade().getCompletables();
         current = new SubPrograma();
         return "new";
     }
@@ -280,6 +320,9 @@ public class MbSubPrograma implements Serializable{
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas();
         listProgramas = programaFacade.getHabilitadas();
+        listOrientaciones = orientacionFacade.findAll();
+        listEspecializaciones = especializacionFacade.findAll();    
+        listSubprogContinuables = getFacade().getCompletables();
         current = subProgSelected;
         return "edit";
     }
@@ -291,6 +334,9 @@ public class MbSubPrograma implements Serializable{
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas(); 
         listProgramas = programaFacade.getHabilitadas();
+        listOrientaciones = orientacionFacade.findAll();
+        listEspecializaciones = especializacionFacade.findAll();
+        listSubprogContinuables = getFacade().getCompletables();
         current = subProgSelected;
         // cargo los list para los combos     
         return "editVenc";
@@ -414,6 +460,9 @@ public class MbSubPrograma implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("SubProgramaCreated"));
                 listResoluciones.clear();
                 listProgramas.clear();
+                listOrientaciones.clear();
+                listEspecializaciones.clear();
+                listSubprogContinuables.clear();
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("SubProgramaExistente"));
@@ -463,6 +512,9 @@ public class MbSubPrograma implements Serializable{
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("SubProgramaUpdated"));
                     listResoluciones.clear();
                     listProgramas.clear();
+                    listOrientaciones.clear();
+                    listEspecializaciones.clear();
+                    listSubprogContinuables.clear();
                     if(tipoList == 1){
                         retorno = "view";  
                     }

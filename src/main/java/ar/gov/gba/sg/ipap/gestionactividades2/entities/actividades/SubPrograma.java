@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -70,6 +71,28 @@ public class SubPrograma implements Serializable {
     private Date fechaFinVigencia; 
     
     /**
+     * Campo de tipo boolean que indica si el subprograma es completable, 
+     * como en el caso de las Diplomaturas y Especializaciones
+     */
+    @Column(nullable=false)
+    @NotNull(message = "{entidades.fieldNotNullError}")
+    private boolean completable;    
+    
+    /**
+     * Campo de tipo SubPrograma que indica si la entidad depende de
+     * otro SubPrograma para ser completado
+     */
+    @OneToOne
+    @JoinColumn(name="subproganterior_id")    
+    private SubPrograma dependeDe;
+    
+    /**
+     * Campo de tipo array que contiene los serviocios de atención que dependen de este
+     */            
+    @OneToOne(mappedBy="dependeDe")
+    private SubPrograma continuadoPor;     
+    
+    /**
      * Campo de tipo Programa que contiene el Programa al cual pertenece el SubPrograma
      */
     @ManyToOne
@@ -82,6 +105,22 @@ public class SubPrograma implements Serializable {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="resolucion_id", nullable=true)
     private Resolucion resolucion;
+    
+    /**
+     * Campo de tipo Orientacion que contiene la Orientación del SubPrograma
+     * en el caso que fuera una Diplomatura
+     */
+    @ManyToOne
+    @JoinColumn(name="orientacion_id")
+    private Orientacion orientacion;    
+    
+    /**
+     * Campo de tipo TipoEspecializacion que contiene el Tipo de Especialización del el SubPrograma
+     * en el caso que fuera una Especialización
+     */
+    @ManyToOne
+    @JoinColumn(name="tipoespecializacion_id")
+    private TipoEspecializacion tipoEspecializacion;      
     
     /**
      * Campo de tipo array que contiene las Actividades planificadas que se vinculen con el subprograma
@@ -113,6 +152,46 @@ public class SubPrograma implements Serializable {
     public SubPrograma(){
         actividadesPlan = new ArrayList();
     }    
+
+    public boolean isCompletable() {
+        return completable;
+    }
+
+    public void setCompletable(boolean completable) {
+        this.completable = completable;
+    }
+
+    public SubPrograma getDependeDe() {
+        return dependeDe;
+    }
+
+    public void setDependeDe(SubPrograma dependeDe) {
+        this.dependeDe = dependeDe;
+    }
+
+    public SubPrograma getContinuadoPor() {
+        return continuadoPor;
+    }
+
+    public void setContinuadoPor(SubPrograma continuadoPor) {
+        this.continuadoPor = continuadoPor;
+    }
+
+    public Orientacion getOrientacion() {
+        return orientacion;
+    }
+
+    public void setOrientacion(Orientacion orientacion) {
+        this.orientacion = orientacion;
+    }
+
+    public TipoEspecializacion getTipoEspecializacion() {
+        return tipoEspecializacion;
+    }
+
+    public void setTipoEspecializacion(TipoEspecializacion tipoEspecializacion) {
+        this.tipoEspecializacion = tipoEspecializacion;
+    }
 
     public String getStrFechaIniVig() {
         SimpleDateFormat formateador = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));

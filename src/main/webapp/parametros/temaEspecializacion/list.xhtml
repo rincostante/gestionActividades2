@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+      
+    <h:head>
+        <title>#{bundle.TipoEspTitle}</title>
+    </h:head>
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.TipoEspTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/> 
+            <f:metadata>  
+                <f:event listener="#{mbTipoEspecializacion.iniciar}" type="preRenderView"></f:event>  
+            </f:metadata>
+            <h:form style="text-align: left">
+                <p:panel id="tipoCapForm" header="#{bundle.TipoEspListTitle}" style="margin-bottom:10px;">
+                    <h:panelGrid columns="2">                      
+                        <p:commandButton icon="ui-icon-newwin" value="Agregar Nuevo" action="#{mbTipoEspecializacion.prepareCreate}"/>
+                    </h:panelGrid>
+                </p:panel>
+
+                <br/>           
+
+                <p:dataTable value="#{mbTipoEspecializacion.listado}" var="e" id="tipoCapList" rows="5"
+                             filteredValue="#{mbTipoEspecializacion.listFilter}"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Listado de #{bundle.TipoEspListado}
+                        <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbTipoEspecializacion.prepareList}" update="tipoCapList"/>
+                        <p:columnToggler datasource="tipoCapList" trigger="toggler" />
+                    </f:facet>
+                    <p:column headerText="Nombre" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Acciones" style="width:135px">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbTipoEspecializacion.prepareView}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbTipoEspecializacion.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbTipoEspecializacion.prepareEdit}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbTipoEspecializacion.current}" />
+                        </p:commandButton> 
+                        <p:commandButton icon="ui-icon-trash" action="#{mbTipoEspecializacion.prepareDestroy}" >
+                            <f:setPropertyActionListener value="#{e}" target="#{mbTipoEspecializacion.current}" />
+                        </p:commandButton> 
+                    </p:column>                
+           
+                </p:dataTable>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

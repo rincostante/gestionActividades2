@@ -127,8 +127,8 @@
                                   widgetVar="SubProgDisp"
                                   showEffect="fade"
                                   hideEffect="fade"
-                                  height="200"
-                                  width="50%"> 
+                                  height="250"
+                                  width="85%"> 
                             <p:dataTable var="sub" value="#{mbActividadPlan.subDisp}" 
                                          filteredValue="#{mbActividadPlan.subDispFilter}"
                                          rows="5" id="subDispList" 
@@ -145,17 +145,32 @@
                                         <p:dataExporter type="pdf" target="subDispList" fileName="subDisp" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
                                     </h:commandLink> 
                                 </f:facet>                
-                                <p:column headerText="Nombre" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
-                                    <h:outputText value="#{sub.nombre}" />
-                                </p:column>
                                 <p:column headerText="Programa" sortBy="#{sub.programa.nombre}" filterBy="#{sub.programa.nombre}" filterMatchMode="contains">
                                     <h:outputText value="#{sub.programa.nombre}" />
                                 </p:column>
-                                <p:column headerText="Fin vigencia" sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
+                                <p:column headerText="Subprograma" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.nombre}" />
+                                </p:column>
+                                <p:column headerText="Orientación" sortBy="#{sub.orientacion.nombre}" filterBy="#{sub.orientacion.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.orientacion.nombre}" />
+                                </p:column>
+                                <p:column headerText="Tema Espec." sortBy="#{sub.tipoEspecializacion.nombre}" filterBy="#{sub.tipoEspecializacion.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.tipoEspecializacion.nombre}" />
+                                </p:column>
+                                <p:column headerText="Depende de" sortBy="#{sub.dependeDe.nombre}" filterBy="#{sub.dependeDe.nombre}" filterMatchMode="contains" >
+                                    <h:outputText value="#{sub.dependeDe.nombre}" />
+                                </p:column>
+                                <p:column headerText="Continúa con" sortBy="#{sub.continuadoPor.nombre}" filterBy="#{sub.continuadoPor.nombre}" filterMatchMode="contains" >
+                                    <h:outputText value="#{sub.continuadoPor.nombre}" />
+                                </p:column>
+                                <p:column headerText="Inicio Vig." sortBy="#{sub.strFechaIniVig}" filterBy="#{sub.strFechaIniVig}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.strFechaIniVig}" />
+                                </p:column>    
+                                <p:column headerText="Fin Vig." sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
                                     <h:outputText value="#{sub.strFechaFinVig}" />
                                 </p:column>
-                                <p:column headerText="Nombre" sortBy="#{sub.resolucion.resolucion}" filterBy="#{sub.resolucion.resolucion}" filterMatchMode="contains">
-                                    <h:outputText value="#{sub.resolucion.resolucion}/#{sub.resolucion.anio}" />
+                                <p:column headerText="Haibilitado" sortBy="#{sub.admin.habilitado}" filterBy="#{sub.admin.habilitado}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.admin.habilitado}" />
                                 </p:column>
                                 <p:column headerText="Asignar" style="width :45px;" exportable="false">
                                     <p:commandButton icon="ui-icon-circle-triangle-s" ajax="false" 
@@ -169,8 +184,8 @@
                                   widgetVar="SubProgVinc"
                                   showEffect="fade"
                                   hideEffect="fade"
-                                  height="200"
-                                  width="50%">
+                                  height="250"
+                                  width="85%">
                             <p:dataTable var="sub" value="#{mbActividadPlan.subVinc}" 
                                          filteredValue="#{mbActividadPlan.subVincFilter}"
                                          rows="5" id="subVincList"
@@ -187,17 +202,32 @@
                                         <p:dataExporter type="pdf" target="subVincList" fileName="subVinc" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
                                     </h:commandLink> 
                                 </f:facet>
-                                <p:column headerText="Nombre" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
-                                    <h:outputText value="#{sub.nombre}" />
-                                </p:column>
                                 <p:column headerText="Programa" sortBy="#{sub.programa.nombre}" filterBy="#{sub.programa.nombre}" filterMatchMode="contains">
                                     <h:outputText value="#{sub.programa.nombre}" />
                                 </p:column>
-                                <p:column headerText="Fin vigencia" sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
+                                <p:column headerText="Subprograma" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.nombre}" />
+                                </p:column>
+                                <p:column headerText="Orientación" sortBy="#{sub.orientacion.nombre}" filterBy="#{sub.orientacion.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.orientacion.nombre}" />
+                                </p:column>
+                                <p:column headerText="Tema Espec." sortBy="#{sub.tipoEspecializacion.nombre}" filterBy="#{sub.tipoEspecializacion.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.tipoEspecializacion.nombre}" />
+                                </p:column>
+                                <p:column headerText="Depende de" sortBy="#{sub.dependeDe.nombre}" filterBy="#{sub.dependeDe.nombre}" filterMatchMode="contains" >
+                                    <h:outputText value="#{sub.dependeDe.nombre}" />
+                                </p:column>
+                                <p:column headerText="Continúa con" sortBy="#{sub.continuadoPor.nombre}" filterBy="#{sub.continuadoPor.nombre}" filterMatchMode="contains" >
+                                    <h:outputText value="#{sub.continuadoPor.nombre}" />
+                                </p:column>
+                                <p:column headerText="Inicio Vig." sortBy="#{sub.strFechaIniVig}" filterBy="#{sub.strFechaIniVig}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.strFechaIniVig}" />
+                                </p:column>    
+                                <p:column headerText="Fin Vig." sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
                                     <h:outputText value="#{sub.strFechaFinVig}" />
                                 </p:column>
-                                <p:column headerText="Nombre" sortBy="#{sub.resolucion.resolucion}" filterBy="#{sub.resolucion.resolucion}" filterMatchMode="contains">
-                                    <h:outputText value="#{sub.resolucion.resolucion}/#{sub.resolucion.anio}" />
+                                <p:column headerText="Haibilitado" sortBy="#{sub.admin.habilitado}" filterBy="#{sub.admin.habilitado}" filterMatchMode="contains">
+                                    <h:outputText value="#{sub.admin.habilitado}" />
                                 </p:column>
                                 <p:column headerText="Quitar" style="width :45px;" rendered="#{mbActividadPlan.asignaSub}" exportable="false">
                                     <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbActividadPlan.asignaSub}" 

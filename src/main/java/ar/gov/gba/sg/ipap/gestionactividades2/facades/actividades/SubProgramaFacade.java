@@ -120,4 +120,16 @@ public class SubProgramaFacade extends AbstractFacade<SubPrograma> {
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }        
+    
+    /**
+     * Método que devuelve los Subrpogramas completables
+     * @return 
+     */
+    public List<SubPrograma> getCompletables(){
+        em = getEntityManager();
+        String queryString = "SELECT sub FROM SubPrograma sub "
+                + "WHERE sub.completable = true";
+        Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }
 }

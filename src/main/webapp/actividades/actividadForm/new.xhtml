@@ -114,10 +114,10 @@
                 <p:panel id="pnSubProgramas" 
                          header="Seleccione los Sub Programas para la Actividad Planificada" 
                          toggleable="true" toggleTitle="Ver/Ocultar"
-                         style="width:800px;">
-                    <p:dataTable value="#{mbActividadPlan.subProgramas}" var="e" id="subProgList" rows="5" 
+                         style="width:1200px;">
+                    <p:dataTable value="#{mbActividadPlan.subProgramas}" var="sub" id="subProgList" rows="5" 
                                  filteredValue="#{mbActividadPlan.subProgramasFilter}"
-                                 rowKey="#{e.id}"
+                                 rowKey="#{sub.id}"
                                  selection="#{mbActividadPlan.selected.subprogramas}"
                                  paginator="true"
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -131,20 +131,32 @@
                         </f:facet>
                         <p:column selectionMode="multiple" style="width: 20px"  />  
                         
-                        <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
-                            <p:outputLabel value="#{e.nombre}"/>
+                        <p:column headerText="Programa" sortBy="#{sub.programa.nombre}" filterBy="#{sub.programa.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{sub.programa.nombre}" />
                         </p:column>
-
-                        <p:column headerText="#{bundle.SubProgramaLabel_programa}" sortBy="#{e.programa.nombre}" filterBy="#{e.programa.nombre}" filterMatchMode="contains">
-                            <p:outputLabel value="#{e.programa.nombre}"/>
-                        </p:column>  
-
-                        <p:column headerText="#{bundle.SubProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
-                            <p:outputLabel value="#{e.strFechaIniVig}"/>
-                        </p:column>  
-
-                        <p:column headerText="#{bundle.SubProgramaLabel_fechaFinVig}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
-                            <p:outputLabel value="#{e.strFechaFinVig}"/>
+                        <p:column headerText="Subprograma" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{sub.nombre}" />
+                        </p:column>
+                        <p:column headerText="Orientación" sortBy="#{sub.orientacion.nombre}" filterBy="#{sub.orientacion.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{sub.orientacion.nombre}" />
+                        </p:column>
+                        <p:column headerText="Tema Espec." sortBy="#{sub.tipoEspecializacion.nombre}" filterBy="#{sub.tipoEspecializacion.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{sub.tipoEspecializacion.nombre}" />
+                        </p:column>
+                        <p:column headerText="Depende de" sortBy="#{sub.dependeDe.nombre}" filterBy="#{sub.dependeDe.nombre}" filterMatchMode="contains" >
+                            <h:outputText value="#{sub.dependeDe.nombre}" />
+                        </p:column>
+                        <p:column headerText="Continúa con" sortBy="#{sub.continuadoPor.nombre}" filterBy="#{sub.continuadoPor.nombre}" filterMatchMode="contains" >
+                            <h:outputText value="#{sub.continuadoPor.nombre}" />
+                        </p:column>
+                        <p:column headerText="Inicio Vig." sortBy="#{sub.strFechaIniVig}" filterBy="#{sub.strFechaIniVig}" filterMatchMode="contains">
+                            <h:outputText value="#{sub.strFechaIniVig}" />
+                        </p:column>    
+                        <p:column headerText="Fin Vig." sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
+                            <h:outputText value="#{sub.strFechaFinVig}" />
+                        </p:column>
+                        <p:column headerText="Haibilitado" sortBy="#{sub.admin.habilitado}" filterBy="#{sub.admin.habilitado}" filterMatchMode="contains">
+                            <h:outputText value="#{sub.admin.habilitado}" />
                         </p:column>           
                     </p:dataTable>
                 </p:panel>

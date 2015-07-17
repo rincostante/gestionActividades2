@@ -696,7 +696,7 @@ public class MbActividadPlan implements Serializable{
      */
     public void verSubProgramas(){
         Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 950);
+        options.put("contentWidth", 1200);
         RequestContext.getCurrentInstance().openDialog("dlgSubProgVinc", options, null);
     }
     

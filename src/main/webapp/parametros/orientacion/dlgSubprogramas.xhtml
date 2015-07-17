@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>SubProgramas con esta Orientación</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmAct">
+            <p:dataTable var="sub" value="#{mbOrientacion.selected.subprogramas}"
+                         filteredValue="#{mbOrientacion.listSubpFilter}"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Programa" sortBy="#{sub.programa.nombre}" filterBy="#{sub.programa.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{sub.programa.nombre}" />
+                </p:column>
+                <p:column headerText="Subprograma" sortBy="#{sub.nombre}" filterBy="#{sub.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{sub.nombre}" />
+                </p:column>
+                <p:column headerText="Orientación" sortBy="#{sub.orientacion.nombre}" filterBy="#{sub.orientacion.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{sub.orientacion.nombre}" />
+                </p:column>
+                <p:column headerText="Tema Espec." sortBy="#{sub.tipoEspecializacion.nombre}" filterBy="#{sub.tipoEspecializacion.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{sub.tipoEspecializacion.nombre}" />
+                </p:column>
+                <p:column headerText="Depende de" sortBy="#{sub.dependeDe.nombre}" filterBy="#{sub.dependeDe.nombre}" filterMatchMode="contains" >
+                    <h:outputText value="#{sub.dependeDe.nombre}" />
+                </p:column>
+                <p:column headerText="Continúa con" sortBy="#{sub.continuadoPor.nombre}" filterBy="#{sub.continuadoPor.nombre}" filterMatchMode="contains" >
+                    <h:outputText value="#{sub.continuadoPor.nombre}" />
+                </p:column>
+                <p:column headerText="Inicio Vig." sortBy="#{sub.strFechaIniVig}" filterBy="#{sub.strFechaIniVig}" filterMatchMode="contains">
+                    <h:outputText value="#{sub.strFechaIniVig}" />
+                </p:column>    
+                <p:column headerText="Fin Vig." sortBy="#{sub.strFechaFinVig}" filterBy="#{sub.strFechaFinVig}" filterMatchMode="contains">
+                    <h:outputText value="#{sub.strFechaFinVig}" />
+                </p:column>
+                <p:column headerText="Haibilitado" sortBy="#{sub.admin.habilitado}" filterBy="#{sub.admin.habilitado}" filterMatchMode="contains">
+                    <h:outputText value="#{sub.admin.habilitado}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+
