@@ -142,6 +142,13 @@ public class ActividadImplementada implements Serializable {
     private Docente docente; 
     
     /**
+     * Campo que indica la orientación de la actividad
+     */
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="orientacion_id", nullable=true)
+    private Orientacion orientacion; 
+    
+    /**
      * 
      */
     @OneToMany(mappedBy="actividad")
@@ -180,8 +187,15 @@ public class ActividadImplementada implements Serializable {
     public ActividadImplementada(){
         participantes = new ArrayList();
     }
-    
 
+    public Orientacion getOrientacion() {
+        return orientacion;
+    }
+
+    public void setOrientacion(Orientacion orientacion) {
+        this.orientacion = orientacion;
+    }
+    
     public boolean isSuspendido() {
         return suspendido;
     }

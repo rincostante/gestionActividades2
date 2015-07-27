@@ -24,7 +24,15 @@
                             <f:selectItems value="#{mbActividadImpl.listActPlan}" var="act" 
                                            itemLabel="#{act.nombre}" 
                                            itemValue="#{act}"/>
-                        </p:selectOneMenu>   
+                        </p:selectOneMenu>  
+                        
+                        <p:outputLabel value="#{bundle.ActividadImplLabel_orientacion}" for="orientacion"/>
+                        <p:selectOneMenu id="orientacion" value="#{mbActividadImpl.selected.orientacion}" >
+                            <f:selectItem itemLabel="Seleccione la Orientación" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadImpl.listOrientaciones}" var="orient" 
+                                           itemLabel="#{orient.nombre}" 
+                                           itemValue="#{orient}"/>
+                        </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_organismo}" for="organismo"/>
                         <p:selectOneMenu id="organismo" value="#{mbActividadImpl.selected.organismo}">

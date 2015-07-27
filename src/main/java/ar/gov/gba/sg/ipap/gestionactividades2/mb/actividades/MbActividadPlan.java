@@ -12,6 +12,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
@@ -20,6 +21,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanF
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.CampoTematicoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ModalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
@@ -115,7 +117,7 @@ public class MbActividadPlan implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/ 
- 
+
     public List<ActividadPlan> getLstActPlanFilter() {
         return lstActPlanFilter;
     }

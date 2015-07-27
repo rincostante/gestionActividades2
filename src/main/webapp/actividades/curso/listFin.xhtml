@@ -73,6 +73,10 @@
                         <p:outputLabel value="#{e.actividadPlan.nombre}"/>
                     </p:column>
                     
+                    <p:column headerText="#{bundle.ActividadImplLabel_orientacion}" sortBy="#{e.orientacion.nombre}" filterBy="#{e.orientacion.nombre}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.orientacion.nombre}"/>
+                    </p:column>
+                    
                     <p:column headerText="#{bundle.ActividadImplLabel_fechaInicio}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaIniVig}"/>
                     </p:column>  

@@ -10,6 +10,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImpl
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
@@ -19,6 +20,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SedeFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
@@ -76,6 +78,8 @@ public class MbActividadImpl implements Serializable{
     private DocenteFacade docenteFacade;
     @EJB
     private RolFacade rolFacade;
+    @EJB
+    private OrientacionFacade orientacionFacade;
     
     private ActividadImplementada actImpSelected;
     private Usuario usLogeado;        
@@ -85,6 +89,7 @@ public class MbActividadImpl implements Serializable{
     private List<Sede> listSedes;
     private List<Usuario> listCoordinadores;
     private List<Docente> listDocentes;
+    private List<Orientacion> listOrientaciones;
     private Date fAntesDe;
     private Date fDespuesDe;
     private MbLogin login;          
@@ -114,6 +119,14 @@ public class MbActividadImpl implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public List<Orientacion> getListOrientaciones() {
+        return listOrientaciones;
+    }
+
+    public void setListOrientaciones(List<Orientacion> listOrientaciones) {
+        this.listOrientaciones = listOrientaciones;
+    }    
     
     public List<ActividadImplementada> getListadoFilter() {
         return listadoFilter;
@@ -374,6 +387,7 @@ public class MbActividadImpl implements Serializable{
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
         listDocentes = docenteFacade.getHabilitadas();
+        listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
         if(!esCoordinador){
@@ -395,6 +409,7 @@ public class MbActividadImpl implements Serializable{
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
         listDocentes = docenteFacade.getHabilitadas();
+        listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
         if(!esCoordinador){
@@ -416,6 +431,7 @@ public class MbActividadImpl implements Serializable{
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
         listDocentes = docenteFacade.getHabilitadas();
+        listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
         if(!esCoordinador){
@@ -437,6 +453,7 @@ public class MbActividadImpl implements Serializable{
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
         listDocentes = docenteFacade.getHabilitadas();
+        listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
         if(!esCoordinador){
@@ -628,6 +645,7 @@ public class MbActividadImpl implements Serializable{
                 listOrganismos.clear();
                 listSedes.clear();
                 listDocentes.clear();
+                listOrientaciones.clear();
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
@@ -668,6 +686,7 @@ public class MbActividadImpl implements Serializable{
                 listOrganismos.clear();
                 listSedes.clear();
                 listDocentes.clear();
+                listOrientaciones.clear();
                 if(tipoList == 1){
                     retorno = "view";  
                 }   
