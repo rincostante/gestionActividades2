@@ -81,17 +81,11 @@
                     <p:column headerText="#{bundle.SubProgramaLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
-
-                    <p:column headerText="#{bundle.SubProgramaLabel_orientacion}" sortBy="#{e.orientacion.nombre}" filterBy="#{e.orientacion.nombre}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.orientacion.nombre}"/>
-                    </p:column>  
                     
                     <p:column headerText="#{bundle.SubProgramaLabel_especializacion}" sortBy="#{e.tipoEspecializacion.nombre}" filterBy="#{e.tipoEspecializacion.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.tipoEspecializacion.nombre}"/>
                     </p:column>   
                     
-                    
-
                     <p:column headerText="#{bundle.SubProgramaLabel_fechaInicioVig}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaIniVig}"/>
                     </p:column>  

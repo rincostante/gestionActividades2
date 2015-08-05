@@ -6,6 +6,7 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
@@ -149,10 +150,23 @@ public class ActividadImplementada implements Serializable {
     private Orientacion orientacion; 
     
     /**
-     * 
+     * Campo que indica el Subprograma de la actividad
+     */
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="subprograma_id", nullable=true)
+    private SubPrograma subprograma;     
+    
+    /**
+     * Campo que indica la colección de los participantes de la Actividad
      */
     @OneToMany(mappedBy="actividad")
-    private List<Participante> participantes;    
+    private List<Participante> participantes;  
+    
+    /**
+     * Campo que indica la colección de las Clases de la Actividad
+     */
+    @OneToMany(mappedBy="actividad")
+    private List<Clase> clases;       
     
     /**
      * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
@@ -186,6 +200,23 @@ public class ActividadImplementada implements Serializable {
      */
     public ActividadImplementada(){
         participantes = new ArrayList();
+        clases = new ArrayList();
+    }
+
+    public SubPrograma getSubprograma() {
+        return subprograma;
+    }
+
+    public void setSubprograma(SubPrograma subprograma) {
+        this.subprograma = subprograma;
+    }
+
+    public List<Clase> getClases() {
+        return clases;
+    }
+
+    public void setClases(List<Clase> clases) {
+        this.clases = clases;
     }
 
     public Orientacion getOrientacion() {

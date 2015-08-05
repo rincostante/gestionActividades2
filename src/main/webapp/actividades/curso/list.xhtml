@@ -76,10 +76,14 @@
                         <p:outputLabel value="#{e.actividadPlan.nombre}"/>
                     </p:column>
                     
+                    <p:column headerText="#{bundle.ActividadImplLabel_Subprograma}" sortBy="#{e.subprograma.nombre}" filterBy="#{e.subprograma.nombre}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.subprograma.nombre}"/>
+                    </p:column>     
+                    
                     <p:column headerText="#{bundle.ActividadImplLabel_orientacion}" sortBy="#{e.orientacion.nombre}" filterBy="#{e.orientacion.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.orientacion.nombre}"/>
                     </p:column>
-                    
+
                     <p:column headerText="#{bundle.ActividadImplLabel_fechaInicio}" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaIniVig}"/>
                     </p:column>  
@@ -87,10 +91,6 @@
                     <p:column headerText="#{bundle.ActividadImplLabel_fechaFin}" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.strFechaFinVig}"/>
                     </p:column>    
-
-                    <p:column headerText="#{bundle.ActividadImplLabel_ActividadPlanificada}" sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.actividadPlan.nombre}"/>
-                    </p:column>
                     
                     <p:column headerText="#{bundle.ActividadImplLabel_sede}" sortBy="#{e.sede.nombre}" filterBy="#{e.sede.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.sede.nombre}"/>

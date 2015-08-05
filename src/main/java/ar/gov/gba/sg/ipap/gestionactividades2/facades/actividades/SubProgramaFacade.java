@@ -6,6 +6,7 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -130,6 +131,21 @@ public class SubProgramaFacade extends AbstractFacade<SubPrograma> {
         String queryString = "SELECT sub FROM SubPrograma sub "
                 + "WHERE sub.completable = true";
         Query q = em.createQuery(queryString);
+        return q.getResultList();
+    }
+    
+    /**
+     * Método que devuelve los subrpogramas vinculados a una misma actividad formativa
+     * @param actPlan
+     * @return 
+     */
+    public List<SubPrograma> getPorActFormativa(ActividadPlan actPlan){
+        em = getEntityManager();
+        String queryString = "SELECT sub FROM SubPrograma sub "
+                + "INNER JOIN sub.actividadesPlan actPlan "
+                + "WHERE actPlan = :actPlan";
+        Query q = em.createQuery(queryString)
+                .setParameter("actPlan", actPlan);
         return q.getResultList();
     }
 }

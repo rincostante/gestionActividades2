@@ -33,6 +33,9 @@
                 <p:column headerText="Nombre" sortBy="#{actImp.actividadPlan.nombre}" filterBy="#{actImp.actividadPlan.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.actividadPlan.nombre}" />
                 </p:column>
+                <p:column headerText="Subprograma" sortBy="#{actImp.subprograma.nombre}" filterBy="#{actImp.subprograma.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.subprograma.nombre}" />
+                </p:column>
                 <p:column headerText="Fecha de inicio" filterBy="#{actImp.strFechaIniVig}" sortBy="#{actImp.strFechaIniVig}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.strFechaIniVig}" />
                 </p:column>    

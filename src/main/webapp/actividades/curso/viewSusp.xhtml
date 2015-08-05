@@ -20,6 +20,9 @@
                         <h:outputLabel value="#{bundle.ActividadImplLabel_ActividadPlanificada}"/>
                         <h:outputText value="#{mbActividadImpl.selected.actividadPlan.nombre}" title="#{bundle.ActividadImplTitle_ActividadPlanificada}"/>    
                         
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_Subprograma}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.subprograma.nombre}" title="#{bundle.ActividadImplTitle_Subprograma}"/>  
+                        
                         <h:outputLabel value="#{bundle.ActividadImplLabel_orientacion}"/>
                         <h:outputText value="#{mbActividadImpl.selected.orientacion.nombre}" title="#{bundle.ActividadImplTitle_orientacion}"/> 
                         
@@ -55,6 +58,9 @@
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_participantes}" />
                         <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verParticipantes}" />
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_clases}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verClases}" />
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbActividadImpl.selected.admin.fechaAlta}" 

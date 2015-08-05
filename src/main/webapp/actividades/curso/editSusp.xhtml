@@ -17,14 +17,26 @@
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.ActividadImplLabel_ActividadPlanificada}" for="actPlan"/>
-                        <p:selectOneMenu id="actPlan" value="#{mbActividadImpl.selected.actividadPlan}"
+                        <p:selectOneMenu id="actPlan" value="#{mbActividadImpl.selected.actividadPlan}" 
+                                         valueChangeListener="#{mbActividadImpl.actFormChangeListener}" 
                                          required="true" 
                                          requiredMessage="#{bundle.ActividadImplRequire_actPlan}">
                             <f:selectItem itemLabel="Seleccione la Actividad Formativa" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbActividadImpl.listActPlan}" var="act" 
                                            itemLabel="#{act.nombre}" 
                                            itemValue="#{act}"/>
-                        </p:selectOneMenu>   
+                            <p:ajax event="change" update="subPorg"/>
+                        </p:selectOneMenu> 
+
+                        <p:outputLabel value="#{bundle.ActividadImplLabel_Subprograma}" for="subPorg"/> 
+                        <p:selectOneMenu id="subPorg" value="#{mbActividadImpl.selected.subprograma}" 
+                                         rendered="true" 
+                                         requiredMessage="#{bundle.ActividadImplRequire_subrpograma}" >
+                            <f:selectItem itemLabel="Seleccione el Subprograma" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadImpl.listSubprogramas}" var="sub" 
+                                           itemLabel="#{sub.nombre}" 
+                                           itemValue="#{sub}"/>
+                        </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_orientacion}" for="orientacion"/>
                         <p:selectOneMenu id="orientacion" value="#{mbActividadImpl.selected.orientacion}" >

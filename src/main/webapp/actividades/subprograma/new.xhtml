@@ -31,17 +31,6 @@
                                            itemValue="#{prog}"/>
                         </p:selectOneMenu>  
                         
-                        
-                        
-                        
-                        <p:outputLabel value="#{bundle.SubProgramaLabel_orientacion}" for="orientacion"/>
-                        <p:selectOneMenu id="orientacion" value="#{mbSubPrograma.selected.orientacion}" >
-                            <f:selectItem itemLabel="Seleccione la Orientación" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbSubPrograma.listOrientaciones}" var="orien" 
-                                           itemLabel="#{orien.nombre}" 
-                                           itemValue="#{orien}"/>
-                        </p:selectOneMenu>  
-                        
                         <p:outputLabel value="#{bundle.SubProgramaLabel_especializacion}" for="especializacion"/>
                         <p:selectOneMenu id="especializacion" value="#{mbSubPrograma.selected.tipoEspecializacion}" >
                             <f:selectItem itemLabel="Seleccione la Especialización" itemValue="" noSelectionOption="true" />
@@ -62,9 +51,6 @@
                                            itemLabel="#{esp.nombre}" 
                                            itemValue="#{esp}"/>
                         </p:selectOneMenu>  
-                        
-                        
-                        
 
                         <p:outputLabel for="fechaInic" value="#{bundle.SubProgramaLabel_fechaInicioVig}" />
                         <p:calendar id="fechaInic" value="#{mbSubPrograma.selected.fechaInicioVigencia}" pattern="dd/MM/yyyy" mask="true" 

@@ -13,6 +13,8 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
@@ -23,6 +25,8 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacad
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SedeFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ClaseFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
@@ -47,6 +51,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -61,6 +66,7 @@ public class MbActividadImpl implements Serializable{
     private List<ActividadImplementada> listadoFilter;
     private List<Participante> listPart;
     private List<Participante> listPartFilter;
+    private List<Clase> listClasesFilter;
 
     @EJB
     private ActividadImplementadaFacade actImpFacade;
@@ -80,6 +86,8 @@ public class MbActividadImpl implements Serializable{
     private RolFacade rolFacade;
     @EJB
     private OrientacionFacade orientacionFacade;
+    @EJB
+    private SubProgramaFacade subprogramaFacade;
     
     private ActividadImplementada actImpSelected;
     private Usuario usLogeado;        
@@ -90,6 +98,7 @@ public class MbActividadImpl implements Serializable{
     private List<Usuario> listCoordinadores;
     private List<Docente> listDocentes;
     private List<Orientacion> listOrientaciones;
+    private List<SubPrograma> listSubprogramas;
     private Date fAntesDe;
     private Date fDespuesDe;
     private MbLogin login;          
@@ -120,6 +129,25 @@ public class MbActividadImpl implements Serializable{
      ** Getters y Setters ***********
      ********************************/   
     
+    public List<Clase> getListClasesFilter() {
+        return listClasesFilter;
+    }
+
+    public void setListClasesFilter(List<Clase> listClasesFilter) {
+        this.listClasesFilter = listClasesFilter;
+    }
+
+    public List<SubPrograma> getListSubprogramas() {
+        if(listSubprogramas == null){
+            listSubprogramas = subprogramaFacade.getPorActFormativa(current.getActividadPlan());
+        }
+        return listSubprogramas;
+    }
+
+    public void setListSubprogramas(List<SubPrograma> listSubprogramas) {
+        this.listSubprogramas = listSubprogramas;
+    }
+   
     public List<Orientacion> getListOrientaciones() {
         return listOrientaciones;
     }
@@ -136,7 +164,6 @@ public class MbActividadImpl implements Serializable{
         this.listadoFilter = listadoFilter;
     }
    
-    
     public List<Participante> getListPartFilter() {
         return listPartFilter;
     }
@@ -154,7 +181,6 @@ public class MbActividadImpl implements Serializable{
         this.listPart = listPart;
     }
    
-    
     public boolean isEsCoordinador() {
         return esCoordinador;
     }
@@ -572,6 +598,15 @@ public class MbActividadImpl implements Serializable{
         fAntesDe = null;
     }       
     
+    /**
+     * Método para actualizar los subrpogramas disponibles según la Actividad Formativa seleccionada
+     * @param event 
+     */
+    public void actFormChangeListener(ValueChangeEvent event) {
+        ActividadPlan act = (ActividadPlan) event.getNewValue();
+        listSubprogramas = act.getSubprogramas();
+    }        
+    
    /*********************************************
      ** Métodos de inicialización de búsquedas **
      ********************************************/
@@ -646,6 +681,7 @@ public class MbActividadImpl implements Serializable{
                 listSedes.clear();
                 listDocentes.clear();
                 listOrientaciones.clear();
+                listSubprogramas.clear();
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
@@ -687,6 +723,7 @@ public class MbActividadImpl implements Serializable{
                 listSedes.clear();
                 listDocentes.clear();
                 listOrientaciones.clear();
+                listSubprogramas.clear();
                 if(tipoList == 1){
                     retorno = "view";  
                 }   
@@ -771,6 +808,12 @@ public class MbActividadImpl implements Serializable{
         RequestContext.getCurrentInstance().openDialog("dlgParticipantes", options, null);
     }    
     
+    public void verClases(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgClases", options, null);
+    }       
+    
     /**
      * Método que borra de la memoria los MB innecesarios al cargar el listado 
      */
@@ -805,6 +848,10 @@ public class MbActividadImpl implements Serializable{
      * Restea la entidad
      */
     private void recreateModel() {
+        if(listSubprogramas != null){
+            listSubprogramas.clear();
+            listSubprogramas = null;
+        }
         listado.clear();
         listado = null;
     }      

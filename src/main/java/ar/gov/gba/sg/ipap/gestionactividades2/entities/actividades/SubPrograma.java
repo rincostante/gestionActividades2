@@ -107,14 +107,6 @@ public class SubPrograma implements Serializable {
     private Resolucion resolucion;
     
     /**
-     * Campo de tipo Orientacion que contiene la Orientación del SubPrograma
-     * en el caso que fuera una Diplomatura
-     */
-    @ManyToOne
-    @JoinColumn(name="orientacion_id")
-    private Orientacion orientacion;    
-    
-    /**
      * Campo de tipo TipoEspecializacion que contiene el Tipo de Especialización del el SubPrograma
      * en el caso que fuera una Especialización
      */
@@ -175,14 +167,6 @@ public class SubPrograma implements Serializable {
 
     public void setContinuadoPor(SubPrograma continuadoPor) {
         this.continuadoPor = continuadoPor;
-    }
-
-    public Orientacion getOrientacion() {
-        return orientacion;
-    }
-
-    public void setOrientacion(Orientacion orientacion) {
-        this.orientacion = orientacion;
     }
 
     public TipoEspecializacion getTipoEspecializacion() {

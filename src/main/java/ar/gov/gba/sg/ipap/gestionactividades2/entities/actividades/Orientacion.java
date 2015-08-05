@@ -38,17 +38,25 @@ public class Orientacion implements Serializable {
     private String nombre;    
     
     /**
-     * Campo de tipo Array que contiene el conjunto de Subprogramas con esta Orientación
+     * Campo de tipo Array que contiene el conjunto de Actividades Dispuestas con esta Orientación
      */
     @OneToMany(mappedBy="orientacion")
-    private List<SubPrograma> subprogramas;
+    private List<ActividadImplementada> actividadesDispuestas;
     
     /**
      * Contructor
      */
     public Orientacion(){
-        subprogramas = new ArrayList();
+        actividadesDispuestas = new ArrayList();
     }    
+
+    public List<ActividadImplementada> getActividadesDispuestas() {
+        return actividadesDispuestas;
+    }
+
+    public void setActividadesDispuestas(List<ActividadImplementada> actividadesDispuestas) {
+        this.actividadesDispuestas = actividadesDispuestas;
+    }
 
     public String getNombre() {
         return nombre;
@@ -56,14 +64,6 @@ public class Orientacion implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public List<SubPrograma> getSubprogramas() {
-        return subprogramas;
-    }
-
-    public void setSubprogramas(List<SubPrograma> subprogramas) {
-        this.subprogramas = subprogramas;
     }
 
     public Long getId() {

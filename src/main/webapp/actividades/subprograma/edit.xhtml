@@ -31,18 +31,6 @@
                                            itemLabel="#{prog.nombre}" 
                                            itemValue="#{prog}"/>
                         </p:selectOneMenu>  
-
-                        
-                        
-                        
-                        
-                        <p:outputLabel value="#{bundle.SubProgramaLabel_orientacion}" for="orientacion"/>
-                        <p:selectOneMenu id="orientacion" value="#{mbSubPrograma.selected.orientacion}" >
-                            <f:selectItem itemLabel="Seleccione la Orientación" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbSubPrograma.listOrientaciones}" var="orien" 
-                                           itemLabel="#{orien.nombre}" 
-                                           itemValue="#{orien}"/>
-                        </p:selectOneMenu>  
                         
                         <p:outputLabel value="#{bundle.SubProgramaLabel_especializacion}" for="especializacion"/>
                         <p:selectOneMenu id="especializacion" value="#{mbSubPrograma.selected.tipoEspecializacion}" >

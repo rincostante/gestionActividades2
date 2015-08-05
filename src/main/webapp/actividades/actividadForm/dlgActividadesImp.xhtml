@@ -34,6 +34,9 @@
                 <p:column headerText="Nombre" sortBy="#{actImp.actividadPlan.nombre}" filterBy="#{actImp.actividadPlan.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.actividadPlan.nombre}" />
                 </p:column>
+                <p:column headerText="Subprograma" sortBy="#{actImp.subprograma.nombre}" filterBy="#{actImp.subprograma.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{actImp.subprograma.nombre}" />
+                </p:column>
                 <p:column headerText="Orientación" sortBy="#{actImp.orientacion.nombre}" filterBy="#{actImp.orientacion.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.orientacion.nombre}" />
                 </p:column>
