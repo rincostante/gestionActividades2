@@ -270,8 +270,10 @@ public class MbCursoEx implements Serializable{
      * Restea la entidad
      */
     private void recreateModel() {
-        listado.clear();
-        listado = null;
+        if(listado != null){
+            listado.clear();
+            listado = null;
+        }
     }       
     
     

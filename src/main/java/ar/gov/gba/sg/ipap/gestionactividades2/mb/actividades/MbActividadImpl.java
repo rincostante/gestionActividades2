@@ -852,8 +852,10 @@ public class MbActividadImpl implements Serializable{
             listSubprogramas.clear();
             listSubprogramas = null;
         }
-        listado.clear();
-        listado = null;
+        if(listado != null){
+            listado.clear();
+            listado = null;
+        }
     }      
     
     

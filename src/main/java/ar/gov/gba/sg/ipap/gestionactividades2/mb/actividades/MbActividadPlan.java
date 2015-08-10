@@ -770,8 +770,10 @@ public class MbActividadPlan implements Serializable{
      * Restea la entidad
      */
     private void recreateModel() {
-        lstActPlan.clear();
-        lstActPlan = null;
+        if(lstActPlan != null){
+            lstActPlan.clear();
+            lstActPlan = null;
+        }
         if(subVincFilter != null){
             subVincFilter = null;
         }
