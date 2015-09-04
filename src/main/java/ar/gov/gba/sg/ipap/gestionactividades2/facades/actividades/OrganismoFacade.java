@@ -7,6 +7,7 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -112,4 +113,20 @@ public class OrganismoFacade extends AbstractFacade<Organismo> {
         Query q = em.createQuery(queryString);
         return q.getResultList();
     }       
+    
+    /**
+     * Método que retorna los Organismos según el tipo
+     * @param tipo
+     * @return 
+     */
+    public List<Organismo> getXTipo(TipoOrganismo tipo){
+        em = getEntityManager();
+        String queryString = "SELECT org FROM Organismo org "
+                + "WHERE org.admin.habilitado = true "
+                + "AND org.tipoOrganismo = :tipo "
+                + "ORDER BY org.nombre";
+        Query q = em.createQuery(queryString)
+                .setParameter("tipo", tipo);
+        return q.getResultList();
+    }
 }

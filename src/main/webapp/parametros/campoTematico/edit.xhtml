@@ -17,7 +17,8 @@
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.CampoTematicoLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre"
+                        <p:inputText id="nombre" style="text-transform: uppercase" 
+                                     onkeyup="this.value = this.value.toUpperCase();"
                                      value="#{mbCampoTematico.selected.nombre}" 
                                      requiredMessage="#{bundle.CampoTematicoRequire_nombre}" 
                                      required="true"/>   

@@ -14,7 +14,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoEspecializacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ProgramaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;

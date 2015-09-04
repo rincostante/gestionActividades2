@@ -12,19 +12,19 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.CampoTematicoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ModalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import com.lowagie.text.Document;
@@ -48,6 +48,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -84,6 +85,8 @@ public class MbActividadPlan implements Serializable{
     private CampoTematicoFacade campoTematicoFacade;
     @EJB
     private OrganismoFacade organismoFacade;
+    @EJB
+    private TipoOrganismoFacade tipoOrgFacade;
     
     private ActividadPlan actPlanSelected;
     private Usuario usLogeado;     
@@ -91,12 +94,14 @@ public class MbActividadPlan implements Serializable{
     private List<Modalidad> listModalidades;
     private List<TipoCapacitacion> listTipoCapacitaciones;
     private List<CampoTematico> listCamposTematicos;
+    private List<TipoOrganismo> listTipoOrganismo;
     private List<Organismo> listOrganismos;
     private List<ActividadImplementada> listActImp;
     private MbLogin login;
     private int tipoList; //1=habilitadas | 2=suspendidas | 3=deshabilitadas     
     //private ListDataModel listDMActImp;
     private boolean iniciado;
+    private TipoOrganismo tipoOrg;
 
     /** Creates a new instance of MbActividadPlan */
     public MbActividadPlan() {
@@ -125,7 +130,6 @@ public class MbActividadPlan implements Serializable{
     public void setLstActPlanFilter(List<ActividadPlan> lstActPlanFilter) {
         this.lstActPlanFilter = lstActPlanFilter;
     }
- 
  
     public List<SubPrograma> getSubVincFilter() {
         return subVincFilter;
@@ -278,6 +282,22 @@ public class MbActividadPlan implements Serializable{
     public void setTipoList(int tipoList) {
         this.tipoList = tipoList;
     }
+    
+    public List<TipoOrganismo> getListTipoOrganismo() {
+        return listTipoOrganismo;
+    }
+
+    public void setListTipoOrganismo(List<TipoOrganismo> listTipoOrganismo) {
+        this.listTipoOrganismo = listTipoOrganismo;
+    }
+
+    public TipoOrganismo getTipoOrg() {
+        return tipoOrg;
+    }
+
+    public void setTipoOrg(TipoOrganismo tipoOrg) {
+        this.tipoOrg = tipoOrg;
+    }    
  
     
     /********************************
@@ -388,7 +408,7 @@ public class MbActividadPlan implements Serializable{
         listModalidades = modalidadFacade.findAll();
         listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
         listCamposTematicos = campoTematicoFacade.getHabilitados();
-        listOrganismos = organismoFacade.getHabilitados();
+        listTipoOrganismo = tipoOrgFacade.findAll();
         
         // cargo la tabla de subProgramas
         subProgramas = subProgramaFacade.getHabilitadas();
@@ -406,8 +426,10 @@ public class MbActividadPlan implements Serializable{
         listModalidades = modalidadFacade.findAll();
         listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
         listCamposTematicos = campoTematicoFacade.findAll();
-        listOrganismos = organismoFacade.getHabilitados();
+        listTipoOrganismo = tipoOrgFacade.findAll();
         current = actPlanSelected;
+        tipoOrg = current.getOrganismo().getTipoOrganismo();
+        listOrganismos = organismoFacade.getHabilitados();
         asignaSub = true;
         subVinc = current.getSubprogramas();
         subDisp = cargarSubProgramasDisponibles();
@@ -423,8 +445,10 @@ public class MbActividadPlan implements Serializable{
         listModalidades = modalidadFacade.findAll();
         listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
         listCamposTematicos = campoTematicoFacade.getHabilitados();
-        listOrganismos = organismoFacade.getHabilitados();
+        listTipoOrganismo = tipoOrgFacade.findAll();
         current = actPlanSelected;
+        tipoOrg = current.getOrganismo().getTipoOrganismo();
+        listOrganismos = organismoFacade.getHabilitados();
         asignaSub = true;
         subVinc = current.getSubprogramas();
         subDisp = cargarSubProgramasDisponibles();  
@@ -577,6 +601,8 @@ public class MbActividadPlan implements Serializable{
                     listModalidades.clear();
                     listTipoCapacitaciones.clear();
                     listCamposTematicos.clear();
+                    tipoOrg = null;
+                    listTipoOrganismo.clear();
                     listOrganismos.clear();
                     subProgramas.clear();
                     subVinc = current.getSubprogramas();
@@ -623,6 +649,8 @@ public class MbActividadPlan implements Serializable{
                 listModalidades.clear();
                 listTipoCapacitaciones.clear();
                 listCamposTematicos.clear();
+                tipoOrg = null;
+                listTipoOrganismo.clear();
                 listOrganismos.clear();
                 if(tipoList == 1){
                     retorno = "view";  
@@ -657,6 +685,15 @@ public class MbActividadPlan implements Serializable{
         pdf.setPageSize(PageSize.A4.rotate());
         pdf.newPage();
     }
+    
+    /**
+     * Método para actualizar los Organismos según el tipo seleccionado
+     * @param event
+     */
+    public void tipoOrgChangeListener(ValueChangeEvent event) {   
+        tipoOrg = (TipoOrganismo)event.getNewValue();
+        listOrganismos = organismoFacade.getXTipo(tipoOrg);
+    } 
     
     
     /*************************
@@ -783,6 +820,7 @@ public class MbActividadPlan implements Serializable{
         if(subProgramasFilter != null){
             subProgramasFilter = null;
         }
+        tipoOrg = null;
     }      
     
     
@@ -820,6 +858,7 @@ public class MbActividadPlan implements Serializable{
         }
         return subsSelect;
     }
+
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

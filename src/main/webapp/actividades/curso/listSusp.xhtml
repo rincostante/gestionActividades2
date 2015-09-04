@@ -100,10 +100,6 @@
                     <p:column headerText="#{bundle.ActividadImplTitle_aula}" sortBy="#{e.aula}" filterBy="#{e.aula}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.aula}"/>
                     </p:column>
-                    
-                    <p:column headerText="#{bundle.ActividadImplLabel_docente}" sortBy="#{e.docente.apYNom}" filterBy="#{e.docente.apYNom}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.docente.apYNom}"/>
-                    </p:column>
 
                     <p:column headerText="Acciones" style="width:180px" exportable="false">
                         <p:growl id="messages" showDetail="true" />

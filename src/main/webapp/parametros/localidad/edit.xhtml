@@ -18,8 +18,9 @@
                     <h:panelGrid columns="3">
 
                         <p:outputLabel value="#{bundle.CreateLocalidadLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre" value="#{mbLocalidad.selected.nombre}" 
+                         <p:inputText id="nombre" value="#{mbLocalidad.selected.nombre}" 
                                      requiredMessage="#{bundle.CreateLocalidadRequiredMessage}" 
+                                     style="text-transform: uppercase" onkeyup="this.value = this.value.toUpperCase();"                                   
                                      required="true"/>
                         <p:message for="nombre" />
                         

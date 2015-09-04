@@ -17,7 +17,8 @@
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre" style="width: 500px"
+                        <p:inputText id="nombre" style="width: 500px; text-transform: uppercase" 
+                                     onkeyup="this.value = this.value.toUpperCase();"
                                      value="#{mbActividadPlan.selected.nombre}" 
                                      requiredMessage="#{bundle.ActividadPlanRequire_nombre}" 
                                      required="true"/>   
@@ -51,13 +52,21 @@
                         </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_campoTematico}" for="campoTemat"/>
-                        <p:selectOneMenu id="campoTemat" value="#{mbActividadPlan.selected.campoTematico}"
-                                         required="true" 
-                                         requiredMessage="#{bundle.ActividadPlanRequire_campoTematico}">
+                        <p:selectOneMenu id="campoTemat" value="#{mbActividadPlan.selected.campoTematico}" >
                             <f:selectItem itemLabel="Seleccione el Campo Temático" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbActividadPlan.listCamposTematicos}" var="campoTemat" 
                                            itemLabel="#{campoTemat.nombre}" 
                                            itemValue="#{campoTemat}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_tipoOrg}" for="tipoOrg"/>
+                        <p:selectOneMenu id="tipoOrg" value="#{mbActividadPlan.tipoOrg}" 
+                                         valueChangeListener="#{mbActividadPlan.tipoOrgChangeListener}">
+                            <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadPlan.listTipoOrganismo}" var="tipoOrg" 
+                                           itemLabel="#{tipoOrg.nombre}" 
+                                           itemValue="#{tipoOrg}"/>
+                            <p:ajax event="change" update="organismo"/>
                         </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.ActividadPlanLabel_organismo}" for="organismo"/>

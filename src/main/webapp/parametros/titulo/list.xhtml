@@ -42,11 +42,6 @@
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.CreateTituloTitle_expPor}" sortBy="#{e.epedidoPor}" filterBy="#{e.epedidoPor}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.epedidoPor}"/>
-                    </p:column>
-                    
-                    
                     <p:column headerText="Acciones" style="width:135px">
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbTitulo.prepareView}" >
                             <f:setPropertyActionListener value="#{e}" target="#{mbTitulo.current}" />

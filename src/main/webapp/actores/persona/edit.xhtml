@@ -17,13 +17,15 @@
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.PersonaLabel_apellidos}" for="apellidos"/>
-                        <p:inputText id="apellidos"
+                        <p:inputText id="apellidos" style="text-transform: uppercase"
+                                     onkeyup="this.value = this.value.toUpperCase();"
                                      value="#{mbPersona.selected.apellidos}" 
                                      requiredMessage="#{bundle.PersonaApellidosRequiredMessage}" 
-                                     required="true"/>
+                                     required="true" />
                         
                         <p:outputLabel value="#{bundle.PersonaLabel_nombres}" for="nombres"/>
-                        <p:inputText id="nombres"
+                        <p:inputText id="nombres" style="text-transform: uppercase"
+                                     onkeyup="this.value = this.value.toUpperCase();"
                                      value="#{mbPersona.selected.nombres}" 
                                      requiredMessage="#{bundle.PersonaNombresRequiredMessage}" 
                                      required="true"/>

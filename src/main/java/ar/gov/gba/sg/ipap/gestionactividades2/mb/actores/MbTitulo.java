@@ -225,7 +225,7 @@ public class MbTitulo implements Serializable{
      */
     public String create() {
         try {
-            if(getFacade().noExiste(current.getNombre(), current.getEpedidoPor())){
+            if(getFacade().noExiste(current.getNombre())){
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TituloCreated"));
                 return "view";
@@ -245,7 +245,7 @@ public class MbTitulo implements Serializable{
     public String update() {
         Titulo titulo;
         try {
-            titulo = getFacade().getExistente(current.getNombre(), current.getEpedidoPor());
+            titulo = getFacade().getExistente(current.getNombre());
             if(titulo == null){
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("TituloUpdated"));

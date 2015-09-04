@@ -39,15 +39,7 @@ public class Titulo implements Serializable {
     @Column (nullable=false, length=50)
     @NotNull(message = "{entidades.fieldNotNullError}")
     @Size(message = "{endidades.stringSizeError}", min = 1, max = 50)
-    private String nombre;   
-    
-    /**
-     * Campo de texto que indica el organismo que expidió el título
-     */        
-    @Column (nullable=false, length=100)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 100)
-    private String epedidoPor;   
+    private String nombre;     
     
     /**
      * Campo de tipo Array que contiene el conjunto de los Agentes con un mismo título
@@ -117,22 +109,6 @@ public class Titulo implements Serializable {
      */
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getEpedidoPor() {
-        return epedidoPor;
-    }
-
-    /**
-     *
-     * @param epedidoPor
-     */
-    public void setEpedidoPor(String epedidoPor) {
-        this.epedidoPor = epedidoPor;
     }
 
     /**

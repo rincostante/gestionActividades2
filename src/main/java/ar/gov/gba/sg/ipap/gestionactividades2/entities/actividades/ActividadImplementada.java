@@ -24,6 +24,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -136,13 +138,6 @@ public class ActividadImplementada implements Serializable {
     private Usuario coordinador;
     
     /**
-     * Campo que indica el docente de la actividad
-     */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="docente_id", nullable=true)
-    private Docente docente; 
-    
-    /**
      * Campo que indica la orientación de la actividad
      */
     @ManyToOne(fetch=FetchType.LAZY)
@@ -155,6 +150,28 @@ public class ActividadImplementada implements Serializable {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="subprograma_id", nullable=true)
     private SubPrograma subprograma;     
+    
+    /**
+     * Campo de tipo Array que contiene el conjunto de los Subprogramas que contienen esta Actividad
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "actividadesXOrganismos",
+            joinColumns = @JoinColumn(name = "actividad_fk"),
+            inverseJoinColumns = @JoinColumn(name = "organismo_fk")
+    )
+    private List<Organismo> organismosDestinatarios;    
+    
+    /**
+     * Campo de tipo Array que contiene el conjunto de los Subprogramas que contienen esta Actividad
+     */
+    @ManyToMany
+    @JoinTable(
+            name = "actividadesXDocentes",
+            joinColumns = @JoinColumn(name = "actividad_fk"),
+            inverseJoinColumns = @JoinColumn(name = "docente_fk")
+    )
+    private List<Docente> docentesVinculados;      
     
     /**
      * Campo que indica la colección de los participantes de la Actividad
@@ -201,6 +218,22 @@ public class ActividadImplementada implements Serializable {
     public ActividadImplementada(){
         participantes = new ArrayList();
         clases = new ArrayList();
+    }
+
+    public List<Docente> getDocentesVinculados() {
+        return docentesVinculados;
+    }
+
+    public void setDocentesVinculados(List<Docente> docentesVinculados) {
+        this.docentesVinculados = docentesVinculados;
+    }
+
+    public List<Organismo> getOrganismosDestinatarios() {
+        return organismosDestinatarios;
+    }
+
+    public void setOrganismosDestinatarios(List<Organismo> organismosDestinatarios) {
+        this.organismosDestinatarios = organismosDestinatarios;
     }
 
     public SubPrograma getSubprograma() {
@@ -318,22 +351,6 @@ public class ActividadImplementada implements Serializable {
      */
     public void setCoordinador(Usuario coordinador) {
         this.coordinador = coordinador;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Docente getDocente() {
-        return docente;
-    }
-
-    /**
-     *
-     * @param docente
-     */
-    public void setDocente(Docente docente) {
-        this.docente = docente;
     }
     
     /**

@@ -88,35 +88,29 @@ public class TituloFacade extends AbstractFacade<Titulo> {
     /**
      * Método para validad que no exista un par estudio/estado ya ingresado
      * @param nombre: nombre del estudio
-     * @param expedidoPor: autoridad que expidió el título
      * @return 
      */
-    public boolean noExiste(String nombre, String expedidoPor){
+    public boolean noExiste(String nombre){
         em = getEntityManager();
         String queryString = "SELECT tit FROM Titulo tit "
-                + "WHERE tit.nombre = :nombre "
-                + "AND tit.epedidoPor = :estado";
+                + "WHERE tit.nombre = :nombre";
         Query q = em.createQuery(queryString)
-                .setParameter("nombre", nombre)
-                .setParameter("estado", expedidoPor);
+                .setParameter("nombre", nombre);
         return q.getResultList().isEmpty();
     }
     
     /**
      * Método que obtiene un Título existente según los datos recibidos como parámetro
      * @param nombre: nombre del título
-     * @param expedidoPor: autoridad que expidió el título
      * @return 
      */
-    public Titulo getExistente(String nombre, String expedidoPor){
+    public Titulo getExistente(String nombre){
         List<Titulo> lTit;
         em = getEntityManager();
         String queryString = "SELECT tit FROM Titulo tit "
-                + "WHERE tit.nombre = :nombre "
-                + "AND tit.epedidoPor = :estado";
+                + "WHERE tit.nombre = :nombre";
         Query q = em.createQuery(queryString)
-                .setParameter("nombre", nombre)
-                .setParameter("estado", expedidoPor);
+                .setParameter("nombre", nombre);
         lTit = q.getResultList();
         if(!lTit.isEmpty()){
             return lTit.get(0);

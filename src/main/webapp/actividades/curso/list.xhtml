@@ -100,10 +100,6 @@
                         <p:outputLabel value="#{e.aula}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.ActividadImplLabel_docente}" sortBy="#{e.docente.apYNom}" filterBy="#{e.docente.apYNom}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.docente.apYNom} - #{e.docente.documento}"/>
-                    </p:column>
-                    
                     <p:column headerText="Acciones" style="width:180px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadImpl.prepareView}" title="Ver Detalle">

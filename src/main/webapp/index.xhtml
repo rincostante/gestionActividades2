@@ -22,7 +22,7 @@
             <h:form style="text-align: left">
                 <br/>
                 <p:dataTable value="#{mbCursosPublic.items}" var="e" id="calseList" rows="5" 
-                             filteredValue="#{mbClase.listadoFilter}"
+                             filteredValue="#{mbCursosPublic.listadoFilter}"
                              paginator="true"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                              rowsPerPageTemplate="5,10,15" >
@@ -47,9 +47,6 @@
                                     <br/>
                                     <p:outputLabel value="Carga horaria: " style="font-weight: bold; font-size: 80%"/>
                                     <p:outputLabel value="#{e.actividadPlan.cargaHoraria} horas" style="font-size: 80%"/>
-                                    <br/>
-                                    <p:outputLabel value="Docente: " style="font-weight: bold; font-size: 80%"/>
-                                    <p:outputLabel value="#{e.docente.apYNom}" style="font-size: 80%"/>
                                     <br/>
                                     <p:outputLabel value="Sede: " style="font-weight: bold; font-size: 80%"/>
                                     <p:outputLabel value="#{e.sede.nombre}" style="font-size: 80%"/>

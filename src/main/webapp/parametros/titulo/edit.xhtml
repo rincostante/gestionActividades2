@@ -17,16 +17,12 @@
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="#{bundle.CreateTituloLabel_nombre}" for="nombre"/>
-                        <p:inputText id="nombre" 
+                        <p:inputText id="nombre" style="text-transform: uppercase"
+                                     onkeyup="this.value = this.value.toUpperCase();"
                                      value="#{mbTitulo.selected.nombre}" 
                                      requiredMessage="#{bundle.TituloRequireMessage_nombre}" 
                                      required="true"/>
-                        
-                        <p:outputLabel value="#{bundle.CreateTituloLabel_expPor}" for="expPor"/>
-                        <p:inputText id="expPor"
-                                     value="#{mbTitulo.selected.epedidoPor}" 
-                                     requiredMessage="#{bundle.TituloRequireMessage_exPor}" 
-                                     required="true"/>            
+       
                     </h:panelGrid>
                 </p:panel>
                 

@@ -14,6 +14,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
@@ -26,7 +27,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFac
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SedeFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ClaseFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -67,7 +69,11 @@ public class MbActividadImpl implements Serializable{
     private List<Participante> listPart;
     private List<Participante> listPartFilter;
     private List<Clase> listClasesFilter;
-
+    private List<Organismo> listOrgDisp;
+    private List<Organismo> listOrgFilter;
+    List<Docente> listDocDisp;
+    List<Docente> listDocFilter;
+    
     @EJB
     private ActividadImplementadaFacade actImpFacade;
     @EJB
@@ -88,15 +94,17 @@ public class MbActividadImpl implements Serializable{
     private OrientacionFacade orientacionFacade;
     @EJB
     private SubProgramaFacade subprogramaFacade;
+    @EJB
+    private TipoOrganismoFacade tipoOrgFacade;
     
     private ActividadImplementada actImpSelected;
     private Usuario usLogeado;        
     private List<ActividadPlan> listActPlan;
+    private List<TipoOrganismo> listTipoOrganismo;    
     private List<Organismo> listOrganismos;
     private List<Resolucion> listResoluciones;
     private List<Sede> listSedes;
     private List<Usuario> listCoordinadores;
-    private List<Docente> listDocentes;
     private List<Orientacion> listOrientaciones;
     private List<SubPrograma> listSubprogramas;
     private Date fAntesDe;
@@ -105,6 +113,8 @@ public class MbActividadImpl implements Serializable{
     private int tipoList; //1=habilitadas | 2=finalizadas | 3=suspendidas | 4=deshabilitadas 
     private boolean esCoordinador;
     private boolean iniciado;
+    private TipoOrganismo tipoOrg;
+    private boolean asignaDisp; 
     
     /**
      * Creates a new instance of MbActividadImpl
@@ -128,6 +138,46 @@ public class MbActividadImpl implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public boolean isAsignaDisp() {
+        return asignaDisp;
+    }
+
+    public void setAsignaDisp(boolean asignaDisp) {
+        this.asignaDisp = asignaDisp;
+    }
+    
+    public List<Docente> getListDocDisp() {
+        return listDocDisp;
+    }
+
+    public void setListDocDisp(List<Docente> listDocDisp) {
+        this.listDocDisp = listDocDisp;
+    }
+
+    public List<Docente> getListDocFilter() {
+        return listDocFilter;
+    }
+
+    public void setListDocFilter(List<Docente> listDocFilter) {
+        this.listDocFilter = listDocFilter;
+    }
+    
+    public List<TipoOrganismo> getListTipoOrganismo() {
+        return listTipoOrganismo;
+    }
+
+    public void setListTipoOrganismo(List<TipoOrganismo> listTipoOrganismo) {
+        this.listTipoOrganismo = listTipoOrganismo;
+    }
+
+    public TipoOrganismo getTipoOrg() {
+        return tipoOrg;
+    }
+
+    public void setTipoOrg(TipoOrganismo tipoOrg) {
+        this.tipoOrg = tipoOrg;
+    }
     
     public List<Clase> getListClasesFilter() {
         return listClasesFilter;
@@ -171,8 +221,7 @@ public class MbActividadImpl implements Serializable{
     public void setListPartFilter(List<Participante> listPartFilter) {
         this.listPartFilter = listPartFilter;
     }
-   
-    
+
     public List<Participante> getListPart() {
         return listPart;
     }
@@ -188,7 +237,6 @@ public class MbActividadImpl implements Serializable{
     public void setEsCoordinador(boolean esCoordinador) {
         this.esCoordinador = esCoordinador;
     }
-   
     
     public ActividadImplementada getActImpSelected() {
         return actImpSelected;
@@ -244,14 +292,6 @@ public class MbActividadImpl implements Serializable{
 
     public void setListCoordinadores(List<Usuario> listCoordinadores) {
         this.listCoordinadores = listCoordinadores;
-    }
-
-    public List<Docente> getListDocentes() {
-        return listDocentes;
-    }
-
-    public void setListDocentes(List<Docente> listDocentes) {
-        this.listDocentes = listDocentes;
     }
 
     public Date getfAntesDe() {
@@ -335,6 +375,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareList() {
+        asignaDisp = false;
         iniciado = true;
         tipoList = 1;
         recreateModel();
@@ -346,6 +387,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareListFin() {
+        asignaDisp = false;
         tipoList = 2;
         recreateModel();
         return "listFin";
@@ -356,6 +398,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el listado de entidades
      */
     public String prepareListSusp() {
+        asignaDisp = false;
         tipoList = 3;
         recreateModel();
         return "listSusp";
@@ -366,6 +409,7 @@ public class MbActividadImpl implements Serializable{
      * @return 
      */
     public String prepareListDes() {
+        asignaDisp = false;
         tipoList = 4;
         recreateModel();
         return "listDes";
@@ -375,6 +419,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
+        asignaDisp = false;
         current = actImpSelected;
         return "view";
     }
@@ -383,6 +428,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el detalle de la entidad finalizada
      */
     public String prepareViewFin() {
+        asignaDisp = false;
         current = actImpSelected;
         return "viewFin";
     }    
@@ -391,6 +437,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el detalle de la entidad suspendida
      */
     public String prepareViewSusp() {
+        asignaDisp = false;
         current = actImpSelected;
         return "viewSusp";
     }    
@@ -399,6 +446,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareViewDes() {
+        asignaDisp = false;
         current = actImpSelected;
         return "viewDes";
     }
@@ -407,12 +455,13 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
+        asignaDisp = true;
+        cargarListados();
         //cargo los list para los combos
         listResoluciones = resFacade.getHabilitadas();
         listActPlan = actPlanFacade.getHabilitadas();
-        listOrganismos = organismoFacade.getHabilitados();
+        listTipoOrganismo = tipoOrgFacade.findAll();
         listSedes = sedeFacade.getHabilitados();
-        listDocentes = docenteFacade.getHabilitadas();
         listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
@@ -429,12 +478,13 @@ public class MbActividadImpl implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
+        asignaDisp = true;
+        cargarListados();
         //cargo los list para los combos
         listResoluciones = resFacade.getHabilitadas();
         listActPlan = actPlanFacade.getHabilitadas();
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
-        listDocentes = docenteFacade.getHabilitadas();
         listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
@@ -444,6 +494,9 @@ public class MbActividadImpl implements Serializable{
         }
         
         current = actImpSelected;
+        listTipoOrganismo = tipoOrgFacade.findAll();
+        tipoOrg = current.getOrganismo().getTipoOrganismo();
+        listOrganismos = organismoFacade.getHabilitados();
         return "edit";
     }   
     
@@ -451,12 +504,13 @@ public class MbActividadImpl implements Serializable{
      * @return acción para la edición de la entidad suspendida
      */
     public String prepareEditSusp() {
+        asignaDisp = true;
+        cargarListados();
         //cargo los list para los combos
         listResoluciones = resFacade.getHabilitadas();
         listActPlan = actPlanFacade.getHabilitadas();
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
-        listDocentes = docenteFacade.getHabilitadas();
         listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
@@ -466,6 +520,9 @@ public class MbActividadImpl implements Serializable{
         }
         
         current = actImpSelected;   
+        listTipoOrganismo = tipoOrgFacade.findAll();
+        tipoOrg = current.getOrganismo().getTipoOrganismo();
+        listOrganismos = organismoFacade.getHabilitados();        
         return "editSusp";
     }     
     
@@ -473,12 +530,13 @@ public class MbActividadImpl implements Serializable{
      * @return acción para la edición de la entidad finalizada
      */
     public String prepareEditFinal() {
+        asignaDisp = true;
+        cargarListados();
         //cargo los list para los combos
         listResoluciones = resFacade.getHabilitadas();
         listActPlan = actPlanFacade.getHabilitadas();
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
-        listDocentes = docenteFacade.getHabilitadas();
         listOrientaciones = orientacionFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
@@ -488,6 +546,9 @@ public class MbActividadImpl implements Serializable{
         }
         
         current = actImpSelected;   
+        listTipoOrganismo = tipoOrgFacade.findAll();
+        tipoOrg = current.getOrganismo().getTipoOrganismo();
+        listOrganismos = organismoFacade.getHabilitados();    
         return "editFinal";
     }     
     
@@ -675,13 +736,9 @@ public class MbActividadImpl implements Serializable{
                 // Inserción
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplCreated"));
-                listResoluciones.clear();
-                listActPlan.clear();
-                listOrganismos.clear();
-                listSedes.clear();
-                listDocentes.clear();
-                listOrientaciones.clear();
-                listSubprogramas.clear();
+                tipoOrg = null;
+                asignaDisp = false;
+                limpiarListados();
                 return "view";
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
@@ -717,13 +774,9 @@ public class MbActividadImpl implements Serializable{
                 // Actualizo
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdated"));
-                listResoluciones.clear();
-                listActPlan.clear();
-                listOrganismos.clear();
-                listSedes.clear();
-                listDocentes.clear();
-                listOrientaciones.clear();
-                listSubprogramas.clear();
+                tipoOrg = null;
+                asignaDisp = false;
+                limpiarListados();
                 if(tipoList == 1){
                     retorno = "view";  
                 }   
@@ -741,7 +794,8 @@ public class MbActividadImpl implements Serializable{
                     // Actualizo
                     getFacade().edit(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdated"));
-                    listResoluciones.clear();
+                    asignaDisp = false;
+                    limpiarListados();
                     if(tipoList == 1){
                         retorno = "view";  
                     }   
@@ -776,6 +830,56 @@ public class MbActividadImpl implements Serializable{
         pdf.setPageSize(PageSize.A4.rotate());
         pdf.newPage();
     }    
+    
+    /**
+     * Método para actualizar los Organismos según el tipo seleccionado
+     * @param event
+     */
+    public void tipoOrgChangeListener(ValueChangeEvent event) {   
+        tipoOrg = (TipoOrganismo)event.getNewValue();
+        listOrganismos = organismoFacade.getXTipo(tipoOrg);
+    } 
+    
+    /**
+     * Método para asignar un Organismo destinatario a la Actividad Dispuesta durante su edición
+     * @param org
+     */
+    public void asignarOrgDestinatario(Organismo org){
+        current.getOrganismosDestinatarios().add(org);
+        listOrgDisp.remove(org);
+        listOrgFilter.clear();
+    }  
+    
+    /**
+     * Método para asignar un Docente a la Actividad Dispuesta durante su edición
+     * @param doc
+     */
+    public void asignarDocente(Docente doc){
+        current.getDocentesVinculados().add(doc);
+        listDocDisp.remove(doc);
+        listDocFilter.clear();
+    }     
+    
+    /**
+     * Método para desvincular un Organismo destinatario a la Actividad Dispuesta durante su edición
+     * @param org
+     */
+    public void quitarOrgDestinatario(Organismo org){
+        current.getOrganismosDestinatarios().remove(org);
+        listOrgDisp.add(org);
+        listOrgFilter.clear();
+    }     
+    
+    /**
+     * Método para desvincular un Docente a la Actividad Dispuesta durante su edición
+     * @param doc
+     */
+    public void quitarDocente(Docente doc){
+        current.getDocentesVinculados().remove(doc);
+        listDocDisp.add(doc);
+        listDocFilter.clear();
+    }     
+    
     
     /*************************
     ** Métodos de selección **
@@ -813,6 +917,30 @@ public class MbActividadImpl implements Serializable{
         options.put("contentWidth", 950);
         RequestContext.getCurrentInstance().openDialog("dlgClases", options, null);
     }       
+    
+    public void verOrgDisp(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgOrgDisp", options, null);
+    }
+    
+    public void verOrgVinc(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgOrgVinc", options, null);
+    }    
+    
+    public void verDocDisp(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgDocDisp", options, null);
+    }  
+    
+    public void verDocVinc(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgDocVinc", options, null);
+    }        
     
     /**
      * Método que borra de la memoria los MB innecesarios al cargar el listado 
@@ -856,6 +984,7 @@ public class MbActividadImpl implements Serializable{
             listado.clear();
             listado = null;
         }
+        tipoOrg = null;
     }      
     
     
@@ -878,6 +1007,61 @@ public class MbActividadImpl implements Serializable{
         }
     }        
     
+    /**
+     * Método para llenar los listados de elementos disponibles para su asignación
+     */
+    private void cargarListados(){
+        cargarOrganismosDisponibles();
+        cargarDocentesDisponibles();
+    }
+    
+    /**
+     * Método para limpiar los listados poblados para la edición de la entidad
+     */
+    private void limpiarListados(){
+        listResoluciones.clear();
+        listActPlan.clear();
+        tipoOrg = null;
+        listTipoOrganismo.clear();
+        listOrganismos.clear();
+        listSedes.clear();
+        listOrientaciones.clear();
+        listSubprogramas.clear();
+        listDocDisp.clear();
+    }
+    
+    /**
+     * Mátodo para cargar los Organismos disponibles para asignarlos a una Actividad Dispuesta
+     */
+    private List<Organismo> cargarOrganismosDisponibles(){
+        List<Organismo> orgs = organismoFacade.getHabilitados();
+        List<Organismo> orgSelect = new ArrayList();
+        Iterator itOrg = orgs.listIterator();
+        while(itOrg.hasNext()){
+            Organismo org = (Organismo)itOrg.next();
+            if(!current.getOrganismosDestinatarios().contains(org)){
+                orgSelect.add(org);
+            }
+        }
+        return orgSelect;
+    }  
+    
+    /**
+     * Mátodo para cargar los Docentes disponibles para asignarlos a una Actividad Dispuesta
+     */
+    private List<Docente> cargarDocentesDisponibles(){
+        List<Docente> docs = docenteFacade.getHabilitadas();
+        List<Docente> docSelect = new ArrayList();
+        Iterator itDoc = docs.listIterator();
+        while(itDoc.hasNext()){
+            Docente doc = (Docente)itDoc.next();
+            if(!current.getDocentesVinculados().contains(doc)){
+                docSelect.add(doc);
+            }
+        }
+        return docSelect;
+    }      
+    
     
     /*****************************************************************************
      **** métodos privados para la búsqueda de habiliados por fecha de inicio ****
@@ -892,6 +1076,22 @@ public class MbActividadImpl implements Serializable{
         }        
         listado = actImpls; 
     }     
+
+    public List<Organismo> getListOrgDisp() {
+        return listOrgDisp;
+    }
+
+    public void setListOrgDisp(List<Organismo> listOrgDisp) {
+        this.listOrgDisp = listOrgDisp;
+    }
+
+    public List<Organismo> getListOrgFilter() {
+        return listOrgFilter;
+    }
+
+    public void setListOrgFilter(List<Organismo> listOrgFilter) {
+        this.listOrgFilter = listOrgFilter;
+    }
     
  
     /********************************************************************

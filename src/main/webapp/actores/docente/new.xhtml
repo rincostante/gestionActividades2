@@ -49,7 +49,7 @@
                                      requiredMessage="#{bundle.DocenteTituloRequiredMessage}">
                             <f:selectItem itemLabel="Seleccione el Título" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbDocente.listaTitulos}" var="titulo" 
-                                           itemLabel="#{titulo.nombre} - #{titulo.epedidoPor}" 
+                                           itemLabel="#{titulo.nombre}" 
                                            itemValue="#{titulo}"/>
                         </p:selectOneMenu>                          
                         
