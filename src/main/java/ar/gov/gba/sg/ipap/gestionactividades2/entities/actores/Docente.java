@@ -21,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -125,10 +126,11 @@ public class Docente implements Serializable {
     private Titulo titulo; 
     
     /**
-     * Campo que guarda las actividades que han tenido al docente como profesor
-     */
-    @OneToMany(mappedBy="docente")
-    private List<ActividadImplementada> actividades;   
+     * Campo de tipo array que contiene las Actividades planificadas que se vinculen con el subprograma
+     */    
+    @ManyToMany(mappedBy = "docentesVinculados")
+    private List<ActividadImplementada> actividadesImp;       
+    
     
     /**
      * Campo que guarda las clases que han tenido al docente como profesor
@@ -153,7 +155,7 @@ public class Docente implements Serializable {
      * Constructor
      */
     public Docente(){
-        actividades = new ArrayList();
+        actividadesImp = new ArrayList();
     }
 
     public String getApYNom() {
@@ -222,15 +224,15 @@ public class Docente implements Serializable {
      */
     @XmlTransient
     public List<ActividadImplementada> getActividades() {
-        return actividades;
+        return actividadesImp;
     }
 
     /**
      *
-     * @param actividades
+     * @param actividadesImp
      */
-    public void setActividades(List<ActividadImplementada> actividades) {
-        this.actividades = actividades;
+    public void setActividades(List<ActividadImplementada> actividadesImp) {
+        this.actividadesImp = actividadesImp;
     }
 
     /**

@@ -20,6 +20,8 @@
                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
                         rowsPerPageTemplate="5,10,15">
                 <f:facet name="header">
+                    <p:commandButton icon="ui-icon-newwin" value="Agregar" action="#{mbActividadImpl.agregarClases}" style="margin-left: 10px"/>
+                    <p:commandButton icon="ui-icon-refresh" value="Listar" update="clasesList" style="margin-left: 10px"/>
                     <h:commandLink>
                         <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
                         <p:dataExporter type="xls" target="clasesList" fileName="ListadoClasesVinculadasActDisp" />
@@ -29,14 +31,12 @@
                         <p:dataExporter type="pdf" target="clasesList" fileName="ListadoClasesVinculadasActDisp" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
                     </h:commandLink> 
                 </f:facet>
-                <p:column headerText="Curso" sortBy="#{clase.actividad.actividadPlan.nombre}" filterBy="#{clase.actividad.actividadPlan.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{clase.actividad.actividadPlan.nombre}" />
+
+                <p:column headerText="Nº" sortBy="#{clase.numOrden}" filterBy="#{clase.numOrden}" filterMatchMode="contains" style="width:50px">
+                    <h:outputText value="#{clase.numOrden}" />
                 </p:column>
                 <p:column headerText="Modalidad" sortBy="#{clase.modalidad.nombre}" filterBy="#{clase.modalidad.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{clase.modalidad.nombre}" />
-                </p:column>
-                <p:column headerText="Nº de orden" sortBy="#{clase.numOrden}" filterBy="#{clase.numOrden}" filterMatchMode="contains">
-                    <h:outputText value="#{clase.numOrden}" />
                 </p:column>
                 <p:column headerText="Fecha" sortBy="#{clase.strFechaRealizacion}" filterBy="#{clase.strFechaRealizacion}" filterMatchMode="contains">
                     <h:outputText value="#{clase.strFechaRealizacion}" />
@@ -44,15 +44,33 @@
                 <p:column headerText="Docente" sortBy="#{clase.docente.apYNom}" filterBy="#{clase.docente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{clase.docente.apYNom}" />
                 </p:column>
-                <p:column headerText="Hora inicio" sortBy="#{clase.strHoraInicio}" filterBy="#{clase.strHoraInicio}" filterMatchMode="contains">
+                <p:column headerText="Hora inicio" sortBy="#{clase.strHoraInicio}" filterBy="#{clase.strHoraInicio}" filterMatchMode="contains" >
                     <h:outputText value="#{clase.strHoraInicio}" />
                 </p:column>
-                <p:column headerText="Hora fin" sortBy="#{clase.strHoraFin}" filterBy="#{clase.strHoraFin}" filterMatchMode="contains">
+                <p:column headerText="Hora fin" sortBy="#{clase.strHoraFin}" filterBy="#{clase.strHoraFin}" filterMatchMode="contains" >
                     <h:outputText value="#{clase.strHoraFin}" />
                 </p:column>
-                <p:column headerText="Habilitado" sortBy="#{clase.admin.habilitado}" filterBy="#{clase.admin.habilitado}" filterMatchMode="contains">
-                    <h:outputText value="#{clase.admin.habilitado}" />
-                </p:column>
+                
+                <p:column headerText="Acciones" style="width:100px" exportable="false" >
+                    <p:growl id="messages" showDetail="true" />
+                    <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadImpl.prepareViewClase}" title="Ver Detalle">
+                        <f:setPropertyActionListener value="#{clase}" target="#{mbActividadImpl.clase}" />
+                    </p:commandButton>                   
+                    <p:commandButton icon="ui-icon-pencil" action="#{mbActividadImpl.prepareEditClase}" title="Editar">
+                        <f:setPropertyActionListener value="#{clase}" target="#{mbActividadImpl.clase}" />
+                    </p:commandButton>
+                    <p:commandButton icon="ui-icon-trash" action="#{mbActividadImpl.deleteClase}" update="messages" title="Deshabilitar" >
+                        <f:setPropertyActionListener value="#{clase}" target="#{mbActividadImpl.clase}" />
+                        <p:confirm header="Confirmar" message="¿Desea eliminar esta Clase?" />
+                    </p:commandButton>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                       <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                   </p:confirmDialog>                       
+                </p:column>  
+                
+                
             </p:dataTable>
         </h:form>
     </h:body>

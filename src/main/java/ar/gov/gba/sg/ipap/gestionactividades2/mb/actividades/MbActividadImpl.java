@@ -9,26 +9,34 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstadoParticipante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Rol;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ModalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SedeFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ClaseFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstadoParticipanteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ParticipanteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.RolFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.UsuarioFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
@@ -38,22 +46,27 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
 
@@ -71,8 +84,16 @@ public class MbActividadImpl implements Serializable{
     private List<Clase> listClasesFilter;
     private List<Organismo> listOrgDisp;
     private List<Organismo> listOrgFilter;
-    List<Docente> listDocDisp;
-    List<Docente> listDocFilter;
+    private List<Docente> listDocDisp;
+    private List<Docente> listDocFilter;
+    
+    // variables para la registración de Clases
+    private Clase clase;
+    private List<Clase> listClaseNew;
+    
+    // variables para la registración de Participantes
+    private Participante participante;
+    private List<Participante> listPartNew;
     
     @EJB
     private ActividadImplementadaFacade actImpFacade;
@@ -96,6 +117,16 @@ public class MbActividadImpl implements Serializable{
     private SubProgramaFacade subprogramaFacade;
     @EJB
     private TipoOrganismoFacade tipoOrgFacade;
+    @EJB
+    private ClaseFacade claseFacade;
+    @EJB
+    private ModalidadFacade modalidadFacade;
+    @EJB
+    private ParticipanteFacade participanteFacade;
+    @EJB
+    private AgenteFacade agenteFacade;
+    @EJB
+    private EstadoParticipanteFacade estPartFacade;    
     
     private ActividadImplementada actImpSelected;
     private Usuario usLogeado;        
@@ -107,6 +138,8 @@ public class MbActividadImpl implements Serializable{
     private List<Usuario> listCoordinadores;
     private List<Orientacion> listOrientaciones;
     private List<SubPrograma> listSubprogramas;
+    private List<Modalidad> listModalidades;
+    private List<Agente> listAgentes;
     private Date fAntesDe;
     private Date fDespuesDe;
     private MbLogin login;          
@@ -138,6 +171,48 @@ public class MbActividadImpl implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public Participante getParticipante() {
+        return participante;
+    }
+
+    public void setParticipante(Participante participante) {
+        this.participante = participante;
+    }
+
+    public List<Participante> getListPartNew() {
+        return listPartNew;
+    }
+
+    public void setListPartNew(List<Participante> listPartNew) {
+        this.listPartNew = listPartNew;
+    }
+
+    public List<Agente> getListAgentes() {
+        return listAgentes;
+    }
+
+    public void setListAgentes(List<Agente> listAgentes) {
+        this.listAgentes = listAgentes;
+    }
+   
+    
+    public List<Clase> getListClaseNew() {
+        return listClaseNew;
+    }
+
+    public void setListClaseNew(List<Clase> listClaseNew) {
+        this.listClaseNew = listClaseNew;
+    }
+   
+    
+    public Clase getClase() {
+        return clase;
+    }
+
+    public void setClase(Clase clase) {
+        this.clase = clase;
+    }
     
     public boolean isAsignaDisp() {
         return asignaDisp;
@@ -419,6 +494,19 @@ public class MbActividadImpl implements Serializable{
      * @return acción para el detalle de la entidad
      */
     public String prepareView() {
+        // preparo variables para agregar Clases
+        clase = new Clase();        
+        if(listClaseNew == null){
+            listClaseNew = new ArrayList();
+        }
+        
+        // preparo variables para agregar participantes
+        participante = new Participante();        
+        if(listPartNew == null){
+            listPartNew = new ArrayList();
+        }
+        
+        listModalidades = modalidadFacade.findAll();
         asignaDisp = false;
         current = actImpSelected;
         return "view";
@@ -450,19 +538,41 @@ public class MbActividadImpl implements Serializable{
         current = actImpSelected;
         return "viewDes";
     }
+    
+    /**
+     * Método para abrir el diálogo que muestra el detalle de la clase
+     */
+    public void prepareViewClase(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("clases/dlgViewClase", options, null);
+    }
+    
+    /**
+     * Método para abrir el diálogo que muestra el detalle del Participante
+     */
+    public void prepareViewParticipante(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("participantes/dlgViewPart", options, null);
+    }
+    
+    
 
     /** (Probablemente haya que embeberlo con el listado para una misma vista)
      * @return acción para el formulario de nuevo
      */
     public String prepareCreate() {
         asignaDisp = true;
-        cargarListados();
         //cargo los list para los combos
         listResoluciones = resFacade.getHabilitadas();
         listActPlan = actPlanFacade.getHabilitadas();
         listTipoOrganismo = tipoOrgFacade.findAll();
         listSedes = sedeFacade.getHabilitados();
         listOrientaciones = orientacionFacade.findAll();
+        // cargo los listados de los disponibles
+        listDocDisp = docenteFacade.getHabilitadas();
+        listOrgDisp = organismoFacade.getHabilitados();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
         if(!esCoordinador){
@@ -470,7 +580,22 @@ public class MbActividadImpl implements Serializable{
             listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
         }
         
+        // intancio el current
         current = new ActividadImplementada();
+        
+        // seteo los elementos para agregar clases a la Actividad
+        listModalidades = modalidadFacade.findAll();
+        clase = new Clase();        
+        if(listClaseNew == null){
+            listClaseNew = new ArrayList();
+        }
+        
+        listAgentes = agenteFacade.getHabilitados();
+        participante = new Participante();        
+        if(listPartNew == null){
+            listPartNew = new ArrayList();
+        }
+        
         return "new";
     }
 
@@ -478,25 +603,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para la edición de la entidad
      */
     public String prepareEdit() {
-        asignaDisp = true;
-        cargarListados();
-        //cargo los list para los combos
-        listResoluciones = resFacade.getHabilitadas();
-        listActPlan = actPlanFacade.getHabilitadas();
-        listOrganismos = organismoFacade.getHabilitados();
-        listSedes = sedeFacade.getHabilitados();
-        listOrientaciones = orientacionFacade.findAll();
-        
-        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
-        if(!esCoordinador){
-            List<Rol> roles = rolFacade.getXString("Coordinador");
-            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
-        }
-        
-        current = actImpSelected;
-        listTipoOrganismo = tipoOrgFacade.findAll();
-        tipoOrg = current.getOrganismo().getTipoOrganismo();
-        listOrganismos = organismoFacade.getHabilitados();
+        prepararEdiciones();
         return "edit";
     }   
     
@@ -504,25 +611,7 @@ public class MbActividadImpl implements Serializable{
      * @return acción para la edición de la entidad suspendida
      */
     public String prepareEditSusp() {
-        asignaDisp = true;
-        cargarListados();
-        //cargo los list para los combos
-        listResoluciones = resFacade.getHabilitadas();
-        listActPlan = actPlanFacade.getHabilitadas();
-        listOrganismos = organismoFacade.getHabilitados();
-        listSedes = sedeFacade.getHabilitados();
-        listOrientaciones = orientacionFacade.findAll();
-        
-        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
-        if(!esCoordinador){
-            List<Rol> roles = rolFacade.getXString("Coordinador");
-            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
-        }
-        
-        current = actImpSelected;   
-        listTipoOrganismo = tipoOrgFacade.findAll();
-        tipoOrg = current.getOrganismo().getTipoOrganismo();
-        listOrganismos = organismoFacade.getHabilitados();        
+        prepararEdiciones();     
         return "editSusp";
     }     
     
@@ -530,27 +619,27 @@ public class MbActividadImpl implements Serializable{
      * @return acción para la edición de la entidad finalizada
      */
     public String prepareEditFinal() {
-        asignaDisp = true;
-        cargarListados();
-        //cargo los list para los combos
-        listResoluciones = resFacade.getHabilitadas();
-        listActPlan = actPlanFacade.getHabilitadas();
-        listOrganismos = organismoFacade.getHabilitados();
-        listSedes = sedeFacade.getHabilitados();
-        listOrientaciones = orientacionFacade.findAll();
-        
-        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
-        if(!esCoordinador){
-            List<Rol> roles = rolFacade.getXString("Coordinador");
-            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
-        }
-        
-        current = actImpSelected;   
-        listTipoOrganismo = tipoOrgFacade.findAll();
-        tipoOrg = current.getOrganismo().getTipoOrganismo();
-        listOrganismos = organismoFacade.getHabilitados();    
+        prepararEdiciones(); 
         return "editFinal";
     }     
+    
+    /**
+     * Método para abrir el díálogo para la edición de Clases
+     */
+    public void prepareEditClase(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("clases/dlgEditClase", options, null);
+    }
+    
+    /**
+     * Método para abrir el díálogo para la edición de Participantes
+     */
+    public void prepareEditParticipante(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("participantes/dlgEditPart", options, null);
+    }
     
     /**
      *
@@ -733,7 +822,17 @@ public class MbActividadImpl implements Serializable{
                    current.setCoordinador(usLogeado);
                 }
                 
-                // Inserción
+                // inserto las Clases que se cargaron
+                current.setClases(listClaseNew);
+                
+                // inserto los Participantes que se cargaron
+                current.setParticipantes(listPartNew);
+                
+                // inserto el estado por defecto: Inscripto
+                List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
+                participante.setEstado(estParts.get(0));
+                
+                // Inserto la entidad
                 getFacade().create(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplCreated"));
                 tipoOrg = null;
@@ -749,6 +848,120 @@ public class MbActividadImpl implements Serializable{
             return null;
         }
     }
+    
+    /**
+     * Método para agregar una Clase a la Actividad Dispuesta
+     * @param event
+     */
+    public void createClase(ActionEvent event){
+        // guardo la Clase en el listado si el docente esté disponible
+        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin())){
+            try{
+                // asigno número de orden
+                clase.setNumOrden(getNumOrdenClase(false));
+
+                // asigno Actividad Dispuesta 
+                clase.setActividad(current);
+                
+                // Agrego la Clase en el listado a insertar en la Actividad
+                listClaseNew.add(clase);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseCreated"));
+
+                // reseteo la variable para volverla a poblar con la próxima, si hubiera.
+                clase = null;
+                clase = new Clase();
+            }catch(Exception e){
+                JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseCreatedErrorOccured"));
+            }
+        }else{
+            JsfUtil.addErrorMessage("El docente asignado tiene cubierta esta fecha y rango horario con otra clase, por favor, seleccione otro docente.");
+        }        
+    }
+    
+    /**
+     * Método para agregar un Participante a la Actividad Dispuesta
+     * @param event
+     */
+    public void createParticipante(ActionEvent event){
+        if(validarAgente(participante.getAgente(), participante.getActividad())){
+            try{
+                // asigno Actividad Dispuesta 
+                participante.setActividad(current);
+
+                // Agrego el Participante en el listado a insertar en la Actividad
+                listPartNew.add(participante);
+                JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
+
+                // reseteo la variable para volverla a poblar con la próxima, si hubiera.
+                participante = null;
+                participante = new Participante();
+            }catch(Exception e){
+                JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreatedErrorOccured"));
+            }
+        }else{
+            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteExistente"));
+        }  
+    }
+    
+    /**
+     * Método para agregar una Clase a la Actividad Dispuesta
+     * @param event
+     */
+    public void addClase(ActionEvent event){
+        // guardo la Clase en el listado si el docente esté disponible
+        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin())){
+            try{
+                // asigno número de orden
+                clase.setNumOrden(getNumOrdenClase(true));
+
+                // asigno Actividad Dispuesta 
+                clase.setActividad(current);
+                
+                // Agrego la Clase al listado de Clases de la Actividad
+                current.getClases().add(clase);
+                
+                // Actualizo la Actividad
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage("La nueva Clase se agregó a la Actividad Dispuesta, si lo desea puede seguir agregando, "
+                        + "de lo contrario, por favor cierre el diálogo y actulice el listado de Clases.");
+
+                // reseteo la variable para volverla a poblar con la próxima, si hubiera.
+                clase = null;
+                clase = new Clase();
+            }catch(Exception e){
+                JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseCreatedErrorOccured"));
+            }
+        }else{
+            JsfUtil.addErrorMessage("El docente asignado tiene cubierta esta fecha y rango horario con otra clase, por favor, seleccione otro docente.");
+        }  
+    }    
+    
+    /**
+     * Método para agregar un Participante a la Actividad Dispuesta
+     * @param event
+     */
+    public void addParticipante(ActionEvent event){
+        if(validarAgente(participante.getAgente(), participante.getActividad())){
+            try{
+                // asigno Actividad Dispuesta 
+                participante.setActividad(current);
+                
+                // Agrego el Participante al listado de Participantes de la Actividad
+                current.getParticipantes().add(participante);
+                
+                // Actualizo la Actividad
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage("El nuevo Participante se inscribió en la Actividad Dispuesta, si lo desea puede seguir inscribiendo, "
+                        + "de lo contrario, por favor cierre el diálogo y actulice el listado de Participantes.");
+
+                // reseteo la variable para volverla a poblar con la próxima, si hubiera.
+                participante = null;
+                participante = new Participante();
+            }catch(Exception e){
+                JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreatedErrorOccured"));
+            }
+        }
+    }    
 
     /**
      * Método que actualiza una nueva Actividad Implementada en la base de datos.
@@ -770,7 +983,7 @@ public class MbActividadImpl implements Serializable{
                 if(usLogeado.getRol().getNombre().equals("Coordinador")){
                    current.setCoordinador(usLogeado);
                 }
-                
+
                 // Actualizo
                 getFacade().edit(current);
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdated"));
@@ -790,7 +1003,7 @@ public class MbActividadImpl implements Serializable{
                     Date date = new Date(System.currentTimeMillis());
                     current.getAdmin().setFechaModif(date);
                     current.getAdmin().setUsModif(usLogeado);
-
+                    
                     // Actualizo
                     getFacade().edit(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdated"));
@@ -813,6 +1026,99 @@ public class MbActividadImpl implements Serializable{
             return null;
         }
     }
+    
+    /**
+     * Método para actualizar una Clase
+     */
+    public void updateClase(){
+        boolean docenteOcupado = false;
+        List<Clase> clasesSwap = new ArrayList<>();
+        for (Clase cls : current.getClases()) {
+            if(!cls.getId().equals(clase.getId())){
+                // valido la disponibilidad del docente contra todas las clases persistidas
+                if(!validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin())){
+                    docenteOcupado = true;
+                }
+                
+                clasesSwap.add(cls);
+            }else{
+                clasesSwap.add(clase);
+            }
+        }
+        if(!docenteOcupado){
+            current.setClases(clasesSwap);
+            getFacade().edit(current);
+            // reseteo la variable para volverla a poblar con la próxima, si hubiera.
+            clase = null;
+            clase = new Clase();
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseUpdated"));
+        }else{
+            JsfUtil.addErrorMessage("El docente seleccionado no está disponible para la fecha y horarios seleccionados, por favor, cierre el formulario y vuelvalo a abrir.");
+        }   
+    } 
+    
+    /**
+     * Método para actualizar un Participante
+     */
+    public void updateParticipante(){
+        boolean partInscripto = false;
+        List<Participante> partSwap = new ArrayList<>();
+        for (Participante part : current.getParticipantes()) {
+            if(!part.getId().equals(participante.getId())){
+                // valido la disponibilidad del docente contra todas las clases persistidas
+                if(!validarAgente(participante.getAgente(), current)){
+                    partInscripto = true;
+                }
+                
+                partSwap.add(part);
+            }else{
+                partSwap.add(participante);
+            }
+        }
+        if(!partInscripto){
+            current.setParticipantes(partSwap);
+            getFacade().edit(current);
+            // reseteo la variable para volverla a poblar con la próxima, si hubiera.
+            participante = null;
+            participante = new Participante();
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdated"));
+        }else{
+            JsfUtil.addErrorMessage("El Participante ya ha sido inscripto, por favor, cierre el formulario y vuelvalo a abrir.");
+        }  
+    }
+    
+    /**
+     * Método para eliminar Clases
+     */
+    public void deleteClase(){
+        if(!clase.getParticipantes().isEmpty()){
+            // no elimino
+            JsfUtil.addErrorMessage("La clase que quiere eliminar tiene asistentes.");
+        }else{
+            try{
+                current.getClases().remove(clase);
+                claseFacade.remove(clase);
+                getFacade().edit(current);
+                JsfUtil.addSuccessMessage("Clase eliminada. Por favor, actualice el lsitado de Clases");
+            }catch(Exception e){
+                JsfUtil.addErrorMessage("Hubo un error eliminando la Clase. " + e.getMessage());
+            }
+        }
+    }        
+    
+    /**
+     * Método para eliminar Participantes
+     */
+    public void deleteParticipante(){
+        try{
+            current.getParticipantes().remove(participante);
+            participanteFacade.remove(participante);
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage("Participante eliminado. Por favor, actualice el lsitado de Participantes");
+        }catch(Exception e){
+            JsfUtil.addErrorMessage("Hubo un error eliminando el Participante. " + e.getMessage());
+        }
+    }        
 
     /**
      * @return mensaje que notifica el borrado
@@ -847,7 +1153,9 @@ public class MbActividadImpl implements Serializable{
     public void asignarOrgDestinatario(Organismo org){
         current.getOrganismosDestinatarios().add(org);
         listOrgDisp.remove(org);
-        listOrgFilter.clear();
+        if(listOrgFilter != null){
+            listOrgFilter.clear();
+        }
     }  
     
     /**
@@ -857,7 +1165,9 @@ public class MbActividadImpl implements Serializable{
     public void asignarDocente(Docente doc){
         current.getDocentesVinculados().add(doc);
         listDocDisp.remove(doc);
-        listDocFilter.clear();
+        if(listDocFilter != null){
+            listDocFilter.clear();
+        }
     }     
     
     /**
@@ -867,7 +1177,9 @@ public class MbActividadImpl implements Serializable{
     public void quitarOrgDestinatario(Organismo org){
         current.getOrganismosDestinatarios().remove(org);
         listOrgDisp.add(org);
-        listOrgFilter.clear();
+        if(listOrgFilter != null){
+            listOrgFilter.clear();
+        }
     }     
     
     /**
@@ -877,8 +1189,46 @@ public class MbActividadImpl implements Serializable{
     public void quitarDocente(Docente doc){
         current.getDocentesVinculados().remove(doc);
         listDocDisp.add(doc);
-        listDocFilter.clear();
+        if(listDocFilter != null){
+            listDocFilter.clear();
+        }
     }     
+    
+    /**
+     * Método para mostrar el diálogo que perimtirá crear las Clases y agregarlas a la Actividad Dispuesta que se está creando
+     */
+    public void cargarClases(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("clases/dlgNewClase", options, null);
+    }    
+    
+    /**
+     * Método para mostrar el diálogo que perimtirá crear los Participantes y agregarlos a la Actividad Dispuesta que se está creando
+     */
+    public void cargarParticipantes(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("participantes/dlgNewPart", options, null);
+    }   
+    
+    /**
+     * Método para mostrar el diálogo que perimtirá agregar Clases a la Actividad Dispuesta existente
+     */
+    public void agregarClases(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("clases/dlgAddClase", options, null);
+    }      
+    
+    /**
+     * Método para mostrar el diálogo que perimtirá agregar Participantes a la Actividad Dispuesta existente
+     */
+    public void agregarParticipantes(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("participantes/dlgAddPart", options, null);
+    }      
     
     
     /*************************
@@ -909,13 +1259,14 @@ public class MbActividadImpl implements Serializable{
         listPart = current.getParticipantes();
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 950);
-        RequestContext.getCurrentInstance().openDialog("dlgParticipantes", options, null);
+        RequestContext.getCurrentInstance().openDialog("participantes/dlgParticipantes", options, null);
     }    
     
     public void verClases(){
         Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 950);
-        RequestContext.getCurrentInstance().openDialog("dlgClases", options, null);
+        options.put("contentWidth", 1100);
+        options.put("contentHeight", 500);
+        RequestContext.getCurrentInstance().openDialog("clases/dlgClases", options, null);
     }       
     
     public void verOrgDisp(){
@@ -962,6 +1313,46 @@ public class MbActividadImpl implements Serializable{
         }
     }    
     
+     /**
+     * Método para la fecha de realización de la clase
+     * No deberá ser anterior a la fecha de inicio de la vigencia del curso
+     * ni anterior a la fecha de la clase inmediatemente anterior
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     */
+    public void validarFechaRelizacion(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{   
+        Date fechaInicioCurso = current.getFechaInicio();
+        Date fechaFinCurso = current.getFechaFin();
+        SimpleDateFormat form_1 = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+        String strFechaInicioCurso = form_1.format(fechaInicioCurso);
+        String strFechaFinCurso = form_1.format(fechaFinCurso);
+        Date fechaPropuesta = (Date)arg2;
+        
+        if(claseFacade.isClasesEmpty(current)){
+            if(fechaInicioCurso.after(fechaPropuesta)){
+                FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser anterior a la de inicio del curso " + strFechaInicioCurso);
+                message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                throw new ValidatorException(message);
+            }
+        }else{
+            Date ultimaFecha = claseFacade.getLastFechaRelizacion(current);
+            if(!fechaPropuesta.after(ultimaFecha)){
+                SimpleDateFormat form_2 = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
+                String strUltimaFecha = form_2.format(ultimaFecha);
+                FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior a la fecha de la clase anterior: " + strUltimaFecha);
+                message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                throw new ValidatorException(message);
+            }
+        }
+        if(fechaPropuesta.after(fechaFinCurso)){
+            FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser posterior al fin del curso " + strFechaFinCurso);
+            message.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(message);
+        }
+    }
+    
+    
     /*********************
     ** Métodos privados **
     **********************/
@@ -984,6 +1375,13 @@ public class MbActividadImpl implements Serializable{
             listado.clear();
             listado = null;
         }
+        if(listClaseNew != null){
+            listClaseNew = null;
+        }
+        if(listPartNew != null){
+            listPartNew = null;
+        }
+        actImpSelected = null;
         tipoOrg = null;
     }      
     
@@ -1033,35 +1431,138 @@ public class MbActividadImpl implements Serializable{
     /**
      * Mátodo para cargar los Organismos disponibles para asignarlos a una Actividad Dispuesta
      */
-    private List<Organismo> cargarOrganismosDisponibles(){
-        List<Organismo> orgs = organismoFacade.getHabilitados();
-        List<Organismo> orgSelect = new ArrayList();
-        Iterator itOrg = orgs.listIterator();
-        while(itOrg.hasNext()){
-            Organismo org = (Organismo)itOrg.next();
-            if(!current.getOrganismosDestinatarios().contains(org)){
-                orgSelect.add(org);
+    private void cargarOrganismosDisponibles(){
+        if(!current.getOrganismosDestinatarios().isEmpty()){
+            listOrgDisp = new ArrayList<>();
+            List<Organismo> orgs = organismoFacade.getHabilitados();
+            Iterator itOrg = orgs.listIterator();
+            while(itOrg.hasNext()){
+                Organismo org = (Organismo)itOrg.next();
+                if(!current.getOrganismosDestinatarios().contains(org)){
+                    listOrgDisp.add(org);
+                }
             }
+        }else{
+            listOrgDisp = organismoFacade.getHabilitados();
         }
-        return orgSelect;
     }  
     
     /**
      * Mátodo para cargar los Docentes disponibles para asignarlos a una Actividad Dispuesta
      */
-    private List<Docente> cargarDocentesDisponibles(){
-        List<Docente> docs = docenteFacade.getHabilitadas();
-        List<Docente> docSelect = new ArrayList();
-        Iterator itDoc = docs.listIterator();
-        while(itDoc.hasNext()){
-            Docente doc = (Docente)itDoc.next();
-            if(!current.getDocentesVinculados().contains(doc)){
-                docSelect.add(doc);
+    private void cargarDocentesDisponibles(){
+        if(!current.getDocentesVinculados().isEmpty()){
+            listDocDisp = new ArrayList<>();
+            List<Docente> docs = docenteFacade.getHabilitadas();
+            Iterator itDoc = docs.listIterator();
+            while(itDoc.hasNext()){
+                Docente doc = (Docente)itDoc.next();
+                if(!current.getDocentesVinculados().contains(doc)){
+                    listDocDisp.add(doc);
+                }
+            }     
+        }else{
+            listDocDisp = docenteFacade.getHabilitadas();
+        }
+    }
+    
+    /**
+     * Método para validad que el docente de la Clase no esté ocupado en este horario
+     * Valido tanto en la BD como en el listado de nuevos
+     * 
+     * @param docente
+     * @param fecha
+     * @param horaInicio
+     * @param horaFin
+     * @return 
+     */
+    private boolean validarDocente(Docente docente, Date fecha, Date horaInicio, Date horaFin) {
+        boolean result = true;
+        if(!docenteFacade.isDisponible(docente, fecha, horaInicio, horaFin, current)){
+            result = false;
+        }else{
+            for (Clase cls : listClaseNew) {
+                if(!cls.getId().equals(clase.getId())){
+                    // valido si tienen el mismo docente y fecha de realización
+                    if(cls.getDocente().equals(clase.getDocente()) && cls.getFechaRealizacion().equals(clase.getFechaRealizacion())){
+                        // si hay coincidencia verifico que no se superpongan horarios
+                        if(cls.getHoraFin().after(clase.getHoraInicio()) || cls.getHoraInicio().before(clase.getHoraFin())){
+                            result = false;
+                        }
+                    }
+                }
             }
         }
-        return docSelect;
-    }      
+        return result;
+    }
     
+    /**
+     * Metodo para validar que el Participante no haya sido inscripto en la Actividad Dispuesta
+     * Valido tanto en la BD como en el listado de nuevos
+     */
+    private boolean validarAgente(Agente agente, ActividadImplementada actividad){
+        boolean result = true;
+        if(!participanteFacade.noExiste(agente, actividad)){
+            result = false;
+        }else{
+            for (Participante part : listPartNew) {
+                if(!part.getId().equals(clase.getId())){
+                    // valido si en el listado ya se regsitró ya el agente
+                    if(part.getAgente().equals(participante.getAgente())){
+                        result = false;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Método para obtener el número de orden para la nueva clase
+     * Si update = 1 => la Actividad Dispuesta existe, el número se obtiene de las clases del current.
+     * Si update = 0 => la Actividad Dispuesta está en proceso de registración, el número se obtiene del listado con las Clases ya creadas.
+     */
+    private int getNumOrdenClase(boolean update){
+        int result;
+        if(update){
+            result = current.getClases().size() + 1;
+        }else{
+            if(listClaseNew.isEmpty()){
+                result = 1;
+            }else{
+                result = listClaseNew.size() + 1;
+            }
+        }
+        return result;
+    }    
+    
+    /**
+     * Método para operar los diferentes prepareEdit
+     */
+    private void prepararEdiciones(){
+        asignaDisp = true;
+        
+        //cargo los list para los combos
+        listResoluciones = resFacade.getHabilitadas();
+        listActPlan = actPlanFacade.getHabilitadas();
+        listOrganismos = organismoFacade.getHabilitados();
+        listSedes = sedeFacade.getHabilitados();
+        listOrientaciones = orientacionFacade.findAll();
+        
+        //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
+        if(!esCoordinador){
+            List<Rol> roles = rolFacade.getXString("Coordinador");
+            listCoordinadores = usuarioFacade.getUsuarioXRol(roles.get(0).getId());   
+        }
+        
+        current = actImpSelected;
+        cargarListados();
+        listTipoOrganismo = tipoOrgFacade.findAll();
+        if(current.getOrganismo() != null){
+            tipoOrg = current.getOrganismo().getTipoOrganismo();
+        }
+        listOrganismos = organismoFacade.getHabilitados();
+    }
     
     /*****************************************************************************
      **** métodos privados para la búsqueda de habiliados por fecha de inicio ****
@@ -1091,6 +1592,14 @@ public class MbActividadImpl implements Serializable{
 
     public void setListOrgFilter(List<Organismo> listOrgFilter) {
         this.listOrgFilter = listOrgFilter;
+    }
+
+    public List<Modalidad> getListModalidades() {
+        return listModalidades;
+    }
+
+    public void setListModalidades(List<Modalidad> listModalidades) {
+        this.listModalidades = listModalidades;
     }
     
  

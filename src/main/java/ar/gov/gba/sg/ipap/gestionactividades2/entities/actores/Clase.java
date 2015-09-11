@@ -113,16 +113,9 @@ public class Clase implements Serializable {
     /**
      * Campo que indica la actividad que compone
      */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="actividad_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
-    private ActividadImplementada actividad;   
-    
-    /**
-     * Campo de tipo AdmEntidad que encapsula los datos de administración y trazabilidad de la Clase
-     */   
-    @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    private AdmEntidad admin;  
+    @ManyToOne
+    @JoinColumn(name="actividad_id")
+    private ActividadImplementada actividad;      
     
     /**
      * Campo que indica las los participantes de la clas
@@ -141,14 +134,6 @@ public class Clase implements Serializable {
      */
     public Clase(){
         participantes = new ArrayList();
-    }
-
-    public AdmEntidad getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(AdmEntidad admin) {
-        this.admin = admin;
     }
 
     public String getStrFechaRealizacion() {

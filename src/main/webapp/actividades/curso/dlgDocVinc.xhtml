@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Docentes disponibles para vincularlos a la Actividad Dispuesta</title>
+        <title>Docentes vinculados a la Actividad Dispuesta</title>
         <style type="text/css">
             .ui-widget {
                 font-size: 80%;
@@ -14,8 +14,8 @@
     </h:head>
      
     <h:body>
-        <h:form id="frmDocDisp">
-            <p:dataTable var="doc" value="#{mbActividadImpl.listDocDisp}" 
+        <h:form id="frmDocVinc">
+            <p:dataTable var="doc" value="#{mbActividadImpl.selected.docentesVinculados}" 
                          filteredValue="#{mbActividadImpl.listDocFilter}" id="DocList"
 			 rows="5" 
                          paginator="true" 
@@ -24,11 +24,11 @@
                 <f:facet name="header">
                     <h:commandLink>
                         <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
-                        <p:dataExporter type="xls" target="DocList" fileName="ListadoDocDisponiblesPorActividad" />
+                        <p:dataExporter type="xls" target="DocList" fileName="ListadoDocVinculadosActividad" />
                     </h:commandLink>   
                     <h:commandLink>
                         <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
-                        <p:dataExporter type="pdf" target="DocList" fileName="ListadoDocDisponiblesPorActividad" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
+                        <p:dataExporter type="pdf" target="DocList" fileName="ListadoDocVinculadosActividad" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
                     </h:commandLink> 
                 </f:facet>
                 
@@ -44,20 +44,16 @@
                 <p:column headerText="#{bundle.DocenteTitle_especialidad}" sortBy="#{doc.especialidad}" filterBy="#{doc.especialidad}" filterMatchMode="contains">
                     <p:outputLabel value="#{doc.especialidad}"/>
                 </p:column>
-                <p:column headerText="#{bundle.DocenteTitle_emailLab}" style="width:250px" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}" filterMatchMode="contains">
+                <p:column headerText="#{bundle.DocenteTitle_emailLab}" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}" filterMatchMode="contains">
                     <p:outputLabel value="#{doc.emailLaboral}"/>
                 </p:column>                    
-                <p:column headerText="#{bundle.DocenteTitle_telefonoLab}">
+                <p:column headerText="#{bundle.DocenteTitle_telefonoLab}" style="width : 50px">
                     <p:outputLabel value="#{doc.telefonoLaboral}"/>
                 </p:column>
-                <p:column headerText="Antigüedad">
-                    <p:outputLabel value="#{doc.antigMeses} meses" rendered="#{doc.antigMeses > 0}"/>
-                    <p:outputLabel value="#{doc.antigAnios} años" rendered="#{doc.antigAnios > 0}"/>
-                </p:column>
 
-                <p:column headerText="Asignar" style="width :45px;" rendered="#{mbActividadImpl.asignaDisp}">
-                    <p:commandButton icon="ui-icon-circle-triangle-s" ajax="false" rendered="#{mbActividadImpl.asignaDisp}" 
-                                     actionListener="#{mbActividadImpl.asignarDocente(doc)}" />
+                <p:column headerText="Quitar" style="width :45px;" rendered="#{mbActividadImpl.asignaDisp}">
+                    <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbActividadImpl.asignaDisp}" 
+                                     actionListener="#{mbActividadImpl.quitarDocente(doc)}" />
                 </p:column>
 
             </p:dataTable>

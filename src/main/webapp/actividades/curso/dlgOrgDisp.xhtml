@@ -15,7 +15,7 @@
      
     <h:body>
         <h:form id="frmOrgDisp">
-            <p:dataTable var="org" value="#{mbActividadImpl.listOrgDisp}" 
+            <p:dataTable var="e" value="#{mbActividadImpl.listOrgDisp}" 
                          filteredValue="#{mbActividadImpl.listOrgFilter}" id="OrgList"
 			 rows="5" 
                          paginator="true" 
@@ -31,16 +31,16 @@
                         <p:dataExporter type="pdf" target="OrgList" fileName="ListadoOrgDisponiblesPorActividad" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
                     </h:commandLink> 
                 </f:facet>
-                <p:column headerText="#{bundle.OrganismoLabel_nombre}" sortBy="#{org.nombre}" filterBy="#{org.nombre}" filterMatchMode="contains">
-                    <p:outputLabel value="#{org.nombre}"/>
+                <p:column headerText="#{bundle.OrganismoLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.nombre}"/>
                 </p:column>  
-                <p:column headerText="#{bundle.OrganismoLebel_tipo}" sortBy="#{org.tipoOrganismo.nombre}" filterBy="#{org.tipoOrganismo.nombre}" filterMatchMode="contains">
-                    <p:outputLabel value="#{org.tipoOrganismo.nombre}"/>
+                <p:column headerText="#{bundle.OrganismoLebel_tipo}" sortBy="#{e.tipoOrganismo.nombre}" filterBy="#{e.tipoOrganismo.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.tipoOrganismo.nombre}"/>
                 </p:column>
 
                 <p:column headerText="Asignar" style="width :45px;" rendered="#{mbActividadImpl.asignaDisp}">
                     <p:commandButton icon="ui-icon-circle-triangle-s" ajax="false" rendered="#{mbActividadImpl.asignaDisp}" 
-                                     actionListener="#{mbActividadImpl.asignarOrgDestinatario(org)}" />
+                                     actionListener="#{mbActividadImpl.asignarOrgDestinatario(e)}" />
                 </p:column>
 
             </p:dataTable>

@@ -15,7 +15,7 @@
      
     <h:body>
         <h:form id="frmOrgVinc">
-            <p:dataTable var="org" value="#{mbActividadImpl.selected.organismosDestinatarios}" 
+            <p:dataTable var="e" value="#{mbActividadImpl.selected.organismosDestinatarios}" 
                          filteredValue="#{mbActividadImpl.listOrgFilter}" id="OrgList"
 			 rows="5" 
                          paginator="true" 
@@ -31,16 +31,16 @@
                         <p:dataExporter type="pdf" target="OrgList" fileName="ListadoOrgDestinatariosPorActividad" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
                     </h:commandLink> 
                 </f:facet>
-                <p:column headerText="#{bundle.OrganismoLabel_nombre}" sortBy="#{org.nombre}" filterBy="#{org.nombre}" filterMatchMode="contains">
-                    <p:outputLabel value="#{org.nombre}"/>
+                <p:column headerText="#{bundle.OrganismoLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.nombre}"/>
                 </p:column>  
-                <p:column headerText="#{bundle.OrganismoLebel_tipo}" sortBy="#{org.tipoOrganismo.nombre}" filterBy="#{org.tipoOrganismo.nombre}" filterMatchMode="contains">
-                    <p:outputLabel value="#{org.tipoOrganismo.nombre}"/>
+                <p:column headerText="#{bundle.OrganismoLebel_tipo}" sortBy="#{e.tipoOrganismo.nombre}" filterBy="#{e.tipoOrganismo.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.tipoOrganismo.nombre}"/>
                 </p:column>
 
                 <p:column headerText="Quitar" style="width :45px;" rendered="#{mbActividadImpl.asignaDisp}">
                     <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbActividadImpl.asignaDisp}" 
-                                     actionListener="#{mbActividadImpl.quitarOrgDestinatario(org)}" />
+                                     actionListener="#{mbActividadImpl.quitarOrgDestinatario(e)}" />
                 </p:column>
 
             </p:dataTable>

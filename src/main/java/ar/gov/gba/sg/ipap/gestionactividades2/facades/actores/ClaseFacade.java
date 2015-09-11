@@ -211,27 +211,6 @@ public class ClaseFacade extends AbstractFacade<Clase> {
     }
     
     /**
-     * Método que devuelve el último número de orden asignado para una clase de un mismo curso
-     * @param curso
-     * @return 
-     */
-    public int getUltimoNumeroDeOrden(ActividadImplementada curso){
-        List<Clase> lClases;
-        em = getEntityManager();
-        String queryString = "SELECT clase FROM Clase clase "
-                + "WHERE clase.actividad = :curso "
-                + "ORDER BY clase.numOrden";
-        Query q = em.createQuery(queryString)
-                .setParameter("curso", curso);
-        lClases = q.getResultList();
-        if(!lClases.isEmpty()){
-            return lClases.get(lClases.size() - 1).getNumOrden();
-        }else{
-            return 0;
-        }
-    }
-    
-    /**
      * Método para saber si un curso tiene clases habilitadas registradas
      * @param curso
      * @return 

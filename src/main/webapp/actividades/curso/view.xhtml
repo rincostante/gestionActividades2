@@ -30,10 +30,14 @@
                         <h:outputText value="#{mbActividadImpl.selected.organismo.nombre}" title="#{bundle.ActividadImplTitle_organismo}"/>  
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_resolucion}"/>
-                        <h:outputText value="#{mbActividadImpl.selected.resolucion.resolucion}/#{mbActividadImpl.selected.resolucion.anio}" title="#{bundle.ActividadImplTitle_resolucion}"/>   
-                        
+                        <h:outputText value="#{mbActividadImpl.selected.resolucion.resolucion}/#{mbActividadImpl.selected.resolucion.anio}" title="#{bundle.ActividadImplTitle_resolucion}"/>    
+
                         <h:outputLabel value="#{bundle.ActividadImplLabel_sede}"/>
                         <h:outputText value="#{mbActividadImpl.selected.sede.nombre}" title="#{bundle.ActividadImplTitle_sede}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_docentes}" />
+                        <p:commandButton value="#{bundle.ActividadImplBtn_docentes}" icon="ui-icon-extlink"  
+                                         actionListener="#{mbActividadImpl.verDocVinc}" />
 
                         <h:outputLabel value="#{bundle.ActividadImplLabel_coordinador}"/>
                         <h:outputText value="#{mbActividadImpl.selected.coordinador.apYNom}" title="#{bundle.ActividadImplTitle_coordinador}"/>   
@@ -46,7 +50,11 @@
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_aula}"/>
                         <h:outputText value="#{mbActividadImpl.selected.aula}" title="#{bundle.ActividadImplTitle_aula}"/>  
-                        
+
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_organismosDest}" />
+                        <p:commandButton value="#{bundle.ActividadImplBtn_organismosDest}" icon="ui-icon-extlink"  
+                                         actionListener="#{mbActividadImpl.verOrgVinc}" /> 
+
                         <h:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}"/>
                         <h:outputText value="#{mbActividadImpl.selected.dirigidoa}" title="#{bundle.ActividadImplTitle_dirigidoA}"/> 
 
@@ -57,7 +65,7 @@
                         <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verParticipantes}" />
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_clases}" />
-                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verClases}" />
+                        <p:commandButton value="Ver / Gestionar" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verClases}" />
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbActividadImpl.selected.admin.fechaAlta}" 

@@ -356,6 +356,15 @@ public class MbCursosPublic implements Serializable{
         return getFacade().find(id);
     }   
     
+    /**
+     * Método para ver el listado de docentes vinculados al curso
+     */
+    public void verDocVinc(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 950);
+        RequestContext.getCurrentInstance().openDialog("dlgDocVinc", options, null);
+    }  
+    
     
     /*********************
     ** Métodos privados **

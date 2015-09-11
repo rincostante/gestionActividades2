@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Docentes disponibles para vincularlos a la Actividad Dispuesta</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+     
+    <h:body>
+        <h:form id="frmDocDisp">
+            <p:dataTable var="doc" value="#{mbActividadImpl.listDocDisp}" 
+                         filteredValue="#{mbActividadImpl.listDocFilter}" id="DocList"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                        <p:dataExporter type="xls" target="DocList" fileName="ListadoDocDisponiblesPorActividad" />
+                    </h:commandLink>   
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                        <p:dataExporter type="pdf" target="DocList" fileName="ListadoDocDisponiblesPorActividad" preProcessor="#{mbActividadImpl.preProcessPDF}"/>
+                    </h:commandLink> 
+                </f:facet>
+                
+                <p:column headerText="#{bundle.DocenteLabel_apYNom}" sortBy="#{doc.apYNom}" filterBy="#{doc.apYNom}" filterMatchMode="contains" style="width:160px">
+                    <p:outputLabel value="#{doc.apYNom}"/>
+                </p:column>   
+                <p:column headerText="#{bundle.DocenteLabel_documento}" sortBy="#{doc.documento}" filterBy="#{doc.documento}" filterMatchMode="contains">
+                    <p:outputLabel value="#{doc.documento}"/>
+                </p:column>
+                <p:column headerText="#{bundle.DocenteTitle_titulo}" sortBy="#{doc.titulo.nombre}" filterBy="#{doc.titulo.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{doc.titulo.nombre}"/>
+                </p:column>
+                <p:column headerText="#{bundle.DocenteTitle_especialidad}" sortBy="#{doc.especialidad}" filterBy="#{doc.especialidad}" filterMatchMode="contains">
+                    <p:outputLabel value="#{doc.especialidad}"/>
+                </p:column>
+                <p:column headerText="#{bundle.DocenteTitle_emailLab}" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}" filterMatchMode="contains">
+                    <p:outputLabel value="#{doc.emailLaboral}"/>
+                </p:column>                    
+                <p:column headerText="#{bundle.DocenteTitle_telefonoLab}" style="width : 50px">
+                    <p:outputLabel value="#{doc.telefonoLaboral}"/>
+                </p:column>
+
+                <p:column headerText="Asignar" style="width :45px;" rendered="#{mbActividadImpl.asignaDisp}">
+                    <p:commandButton icon="ui-icon-circle-triangle-s" ajax="false" rendered="#{mbActividadImpl.asignaDisp}" 
+                                     actionListener="#{mbActividadImpl.asignarDocente(doc)}" />
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

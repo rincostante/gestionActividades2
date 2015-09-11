@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Detalle de la clase seleccionada</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+            <h:form id="frmClaseView" style="text-align: left">
+                <p:panel id="pnView" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    <p:dialog id="dlg" resizable="false" />
+                    <h:panelGrid columns="2">
+                        
+                        <h:outputLabel value="#{bundle.ClaseLabel_numOrden}"/>
+                        <h:outputText value="#{mbActividadImpl.clase.numOrden}" 
+                                      title="#{bundle.ClaseTitle_numOrden}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ClaseLable_FechaRealizacion}"/>
+                        <h:outputText value="#{mbActividadImpl.clase.strFechaRealizacion}" 
+                                      title="#{bundle.ClaseTitle_FechaRealizacion}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ClaseLabel_horaInicio}"/>
+                        <h:outputText value="#{mbActividadImpl.clase.strHoraInicio}" 
+                                      title="#{bundle.ClaseTitle_horaInicio}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ClaseLabel_horaFin}"/>
+                        <h:outputText value="#{mbActividadImpl.clase.strHoraFin}" 
+                                      title="#{bundle.ClaseTitle_horaInicio}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ClaseLabel_Docente}"/>
+                        <h:outputText value="#{mbActividadImpl.clase.docente.apYNom} - #{mbActividadImpl.clase.docente.documento}" 
+                                      title="#{bundle.ClaseTitle_Docente}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ClaseLabel_modalidad}"/>
+                        <h:outputText value="#{mbActividadImpl.clase.modalidad.nombre}" 
+                                      title="#{bundle.ClaseTitle_modalidad}"/>  
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                            <p:printer target="pnView" />
+                        </p:commandButton>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+    </h:body> 
+    
+</html>            
+

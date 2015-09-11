@@ -182,8 +182,10 @@ public class ActividadImplementada implements Serializable {
     /**
      * Campo que indica la colección de las Clases de la Actividad
      */
-    @OneToMany(mappedBy="actividad")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "actividad")
     private List<Clase> clases;       
+    
+    
     
     /**
      * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
@@ -216,6 +218,8 @@ public class ActividadImplementada implements Serializable {
      * Constructor 
      */
     public ActividadImplementada(){
+        docentesVinculados = new ArrayList();
+        organismosDestinatarios = new ArrayList();
         participantes = new ArrayList();
         clases = new ArrayList();
     }

@@ -82,6 +82,14 @@
                                            itemValue="#{sede}"/>
                         </p:selectOneMenu> 
                         
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_docentes}"/>
+                        <h:panelGrid id="btnDocentes" columns="2">                       
+                            <p:commandButton value="#{bundle.ActividadImplLabel_inDocentes}" action="#{mbActividadImpl.verDocDisp}" 
+                                             icon="ui-icon-extlink" process="@this" style="width: 200px; text-align: left" /> 
+                            <p:commandButton value="#{bundle.ActividadImplLabel_exDocentes}" action="#{mbActividadImpl.verDocVinc}" 
+                                             icon="ui-icon-extlink" process="@this" style="width: 200px; text-align: left" />      
+                        </h:panelGrid> 
+                        
                         <p:outputLabel value="#{bundle.ActividadImplLabel_coordinador}" for="coor" rendered="#{not mbActividadImpl.esCoordinador}"/>
                         <p:selectOneMenu id="coor" value="#{mbActividadImpl.selected.coordinador}"
                                          required="true" 
@@ -110,7 +118,15 @@
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_aula}" for="aula"/>
                         <p:inputText id="aula"
-                                     value="#{mbActividadImpl.selected.aula}" />                          
+                                     value="#{mbActividadImpl.selected.aula}" />         
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_organismosDest}"/>
+                        <h:panelGrid id="btnOrganismos" columns="2">                       
+                            <p:commandButton value="#{bundle.ActividadImplLabel_inOrganismosDest}" action="#{mbActividadImpl.verOrgDisp}" 
+                                             icon="ui-icon-extlink" process="@this" style="width: 200px; text-align: left" /> 
+                            <p:commandButton value="#{bundle.ActividadImplLabel_exOrganismosDest}" action="#{mbActividadImpl.verOrgVinc}" 
+                                             icon="ui-icon-extlink" process="@this" style="width: 200px; text-align: left" />      
+                        </h:panelGrid> 
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}" for="dirigA"/>
                         <p:inputText id="dirigA"

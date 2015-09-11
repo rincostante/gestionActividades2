@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Editar los datos de la Clase seleccionada</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form style="text-align: left">
+            <p:panel id="pnEdit" style="margin-bottom:10px;">
+                <p:messages id="messages" />
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="#{bundle.ClaseLable_FechaRealizacion}" for="fechaRealiz"/>
+                    <p:calendar id="fechaRealiz" value="#{mbActividadImpl.clase.fechaRealizacion}" 
+                                pattern="dd/MM/yyyy" mask="true" 
+                                required="true" 
+                                requiredMessage="ClaseRequire_fechaRealizaccion" />
+
+                     <p:outputLabel value="#{bundle.ClaseLabel_horaInicio}" for="horaInicio"/>
+                    <p:calendar id="horaInicio" timeOnly="true" locale="es" pattern="HH:mm" minHour="8" maxHour="20" 
+                                value="#{mbActividadImpl.clase.horaInicio}"  
+                                required="true" 
+                                requiredMessage="#{bundle.ClaseRequire_horaInicio}">
+                        <p:ajax event="dateSelect" update="horaFin" />
+                    </p:calendar>  
+
+                    <p:outputLabel value="#{bundle.ClaseLabel_horaFin}" for="horaFin"/>
+                    <p:calendar id="horaFin" timeOnly="true" locale="es" pattern="HH:mm" minHour="8" maxHour="20" 
+                                value="#{mbActividadImpl.clase.horaFin}"  
+                                required="true" 
+                                requiredMessage="#{bundle.ClaseRequire_horaFin}">
+                        <f:attribute name="hinicial" value="#{mbActividadImpl.clase.horaInicio}"/>
+                        <f:validator validatorId="primeTimeRangeValidator" />
+                    </p:calendar> 
+
+                    <p:outputLabel value="#{bundle.ClaseLabel_Docente}" for="docente"/>
+                    <p:selectOneMenu id="docente" value="#{mbActividadImpl.clase.docente}" >
+                        <f:selectItem itemLabel="Seleccione el Docente" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.selected.docentesVinculados}" var="docente" 
+                                       itemLabel="#{docente.apYNom} - #{docente.documento}" 
+                                       itemValue="#{docente}"/>
+                    </p:selectOneMenu> 
+
+                    <p:outputLabel value="#{bundle.ClaseLabel_modalidad}" for="modalidad"/>
+                    <p:selectOneMenu id="modalidad" value="#{mbActividadImpl.clase.modalidad}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.ClaseRequire_modalidad}">
+                        <f:selectItem itemLabel="Seleccione el Modalidad" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listModalidades}" var="modalidad" 
+                                       itemLabel="#{modalidad.nombre}" 
+                                       itemValue="#{modalidad}"/>
+                    </p:selectOneMenu> 
+
+                </h:panelGrid>
+            </p:panel>
+
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandButton icon="ui-icon-pencil"
+                                     actionListener="#{mbActividadImpl.addClase}"
+                                     value="Guardar" 
+                                     style="margin-right:10px;" 
+                                     update="pnEdit"/>
+                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                        <p:ajax update="pnEdit" resetValues="true" />
+                    </p:commandButton>                        
+                </f:facet>                 
+            </p:toolbar>
+        </h:form>
+    </h:body> 
+</html>       
+

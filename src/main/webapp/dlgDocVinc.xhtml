@@ -15,7 +15,7 @@
      
     <h:body>
         <h:form id="frmDocVinc">
-            <p:dataTable var="doc" value="#{mbActividadImpl.selected.docentesVinculados}" 
+            <p:dataTable var="doc" value="#{mbCursosPublic.current.docentesVinculados}" 
                          filteredValue="#{mbActividadImpl.listDocFilter}" id="DocList"
 			 rows="5" 
                          paginator="true" 
@@ -44,15 +44,11 @@
                 <p:column headerText="#{bundle.DocenteTitle_especialidad}" sortBy="#{doc.especialidad}" filterBy="#{doc.especialidad}" filterMatchMode="contains">
                     <p:outputLabel value="#{doc.especialidad}"/>
                 </p:column>
-                <p:column headerText="#{bundle.DocenteTitle_emailLab}" style="width:250px" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}" filterMatchMode="contains">
+                <p:column headerText="#{bundle.DocenteTitle_emailLab}" sortBy="#{doc.emailLaboral}" filterBy="#{doc.emailLaboral}" filterMatchMode="contains">
                     <p:outputLabel value="#{doc.emailLaboral}"/>
                 </p:column>                    
-                <p:column headerText="#{bundle.DocenteTitle_telefonoLab}">
+                <p:column headerText="#{bundle.DocenteTitle_telefonoLab}" style="width : 50px">
                     <p:outputLabel value="#{doc.telefonoLaboral}"/>
-                </p:column>
-                <p:column headerText="Antigüedad">
-                    <p:outputLabel value="#{doc.antigMeses} meses" rendered="#{doc.antigMeses > 0}"/>
-                    <p:outputLabel value="#{doc.antigAnios} años" rendered="#{doc.antigAnios > 0}"/>
                 </p:column>
 
                 <p:column headerText="Quitar" style="width :45px;" rendered="#{mbActividadImpl.asignaDisp}">

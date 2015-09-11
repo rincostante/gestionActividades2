@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Ingrese aquí las Clases asociadas a la Actividad Dispuesta</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    
+    <h:body>
+        <h:form id="frmCls">
+            <p:panel id="prmNew">
+                <p:growl id="messages"/>
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="#{bundle.ClaseLable_FechaRealizacion}" for="fechaRealiz"/>
+                    <p:calendar id="fechaRealiz" value="#{mbActividadImpl.clase.fechaRealizacion}" 
+                                pattern="dd/MM/yyyy" mask="true" 
+                                validator="#{mbActividadImpl.validarFechaRelizacion}"
+                                required="true" 
+                                requiredMessage="ClaseRequire_fechaRealizaccion" />
+
+                     <p:outputLabel value="#{bundle.ClaseLabel_horaInicio}" for="horaInicio"/>
+                    <p:calendar id="horaInicio" timeOnly="true" locale="es" pattern="HH:mm" minHour="8" maxHour="20" 
+                                value="#{mbActividadImpl.clase.horaInicio}"  
+                                required="true" 
+                                requiredMessage="#{bundle.ClaseRequire_horaInicio}">
+                        <p:ajax event="dateSelect" update="horaFin" />
+                    </p:calendar>  
+
+                    <p:outputLabel value="#{bundle.ClaseLabel_horaFin}" for="horaFin"/>
+                    <p:calendar id="horaFin" timeOnly="true" locale="es" pattern="HH:mm" minHour="8" maxHour="20" 
+                                value="#{mbActividadImpl.clase.horaFin}"  
+                                required="true" 
+                                requiredMessage="#{bundle.ClaseRequire_horaFin}">
+                        <f:attribute name="hinicial" value="#{mbActividadImpl.clase.horaInicio}"/>
+                        <f:validator validatorId="primeTimeRangeValidator" />
+                    </p:calendar> 
+
+                    <p:outputLabel value="#{bundle.ClaseLabel_Docente}" for="docente"/>
+                    <p:selectOneMenu id="docente" value="#{mbActividadImpl.clase.docente}" >
+                        <f:selectItem itemLabel="Seleccione el Docente" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.selected.docentesVinculados}" var="docente" 
+                                       itemLabel="#{docente.apYNom} - #{docente.documento}" 
+                                       itemValue="#{docente}"/>
+                    </p:selectOneMenu> 
+
+                    <p:outputLabel value="#{bundle.ClaseLabel_modalidad}" for="modalidad"/>
+                    <p:selectOneMenu id="modalidad" value="#{mbActividadImpl.clase.modalidad}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.ClaseRequire_modalidad}">
+                        <f:selectItem itemLabel="Seleccione el Modalidad" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listModalidades}" var="modalidad" 
+                                       itemLabel="#{modalidad.nombre}" 
+                                       itemValue="#{modalidad}"/>
+                    </p:selectOneMenu> 
+                    
+                    
+                    <p:commandButton icon="ui-icon-check" value="Guardar" actionListener="#{mbActividadImpl.createClase}" update="prmNew" />
+                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" >
+                        <p:ajax update="prmNew" resetValues="true" />
+                    </p:commandButton>
+                </h:panelGrid>
+                
+                <!-- a partir de aquí es el listado de Clases asociadas -->  
+                
+                <p:dataTable id="clases" var="e" value="#{mbActividadImpl.listClaseNew}" >
+
+                    <p:column headerText="#{bundle.ClaseLabel_numOrden}" sortBy="#{e.numOrden}" filterBy="#{e.numOrden}" style="width: 130px" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.numOrden}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.ClaseLabel_Docente}" sortBy="#{e.docente.apYNom}" filterBy="#{e.docente.apYNom}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.docente.apYNom} - #{e.docente.documento}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.ClaseLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.modalidad.nombre}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.ClaseLable_FechaRealizacion}" sortBy="#{e.strFechaRealizacion}" filterBy="#{e.strFechaRealizacion}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.strFechaRealizacion}"/>
+                    </p:column>
+                    
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
+

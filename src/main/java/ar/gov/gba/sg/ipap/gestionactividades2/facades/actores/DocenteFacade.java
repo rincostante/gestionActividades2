@@ -6,6 +6,7 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actores;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import java.util.Date;
 import java.util.List;
@@ -122,20 +123,23 @@ public class DocenteFacade extends AbstractFacade<Docente> {
      * @param fecha
      * @param horaInicio
      * @param horaFin
+     * @param curso
      * @return 
      */
-    public boolean isDisponible(Docente doc, Date fecha, Date horaInicio, Date horaFin){
+    public boolean isDisponible(Docente doc, Date fecha, Date horaInicio, Date horaFin, ActividadImplementada curso){
         em = getEntityManager();
         String queryString = "SELECT clase.id FROM Clase clase "
                 + "WHERE clase.docente = :doc "
                 + "AND clase.fechaRealizacion = :fecha "
-                + "AND clase.horaInicio >= :horaInicio "
-                + "AND clase.horaFin <= :horaFin";
+                + "AND clase.actividad != :curso "
+                + "AND (clase.horaFin > :horaInicio "
+                + "OR clase.horaInicio < :horaFin)";
         Query q = em.createQuery(queryString)
                 .setParameter("doc", doc)
                 .setParameter("fecha", fecha)
                 .setParameter("horaInicio", horaInicio)
-                .setParameter("horaFin", horaFin);
+                .setParameter("horaFin", horaFin)
+                .setParameter("curso", curso);
         return q.getResultList().isEmpty();
     }
 }
