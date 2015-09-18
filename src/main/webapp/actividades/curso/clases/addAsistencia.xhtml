@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Detalle de la clase seleccionada</title>
+        <title>Administre desde aquí las asistencias a la Clase</title>
         <style type="text/css">
             .ui-widget {
                 font-size: 80%;
@@ -43,21 +43,28 @@
                         <h:outputText value="#{mbActividadImpl.clase.modalidad.nombre}" 
                                       title="#{bundle.ClaseTitle_modalidad}"/>  
                         
-                        <h:outputLabel value="#{bundle.ClaseLabel_Asistentes}" />
-                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verAsistentes}" />
+                        <h:outputLabel value="#{bundle.ClaseLabel_Asistentes}"/>
+                        <h:panelGrid id="btnVerAsist" columns="2">
+                            <p:commandButton value="Ver/Asignar Asistentes" icon="ui-icon-extlink"  
+                                             actionListener="#{mbActividadImpl.verParticipantesDisp}" />
+                            <p:commandButton value="Ver/Quitar Asistentes" icon="ui-icon-extlink"  
+                                             actionListener="#{mbActividadImpl.verAsistentes}" />
+                        </h:panelGrid>
                         
                     </h:panelGrid>                    
                 </p:panel>
                 <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
-                            <p:printer target="pnView" />
-                        </p:commandButton>
-                    </f:facet>
+                        <p:commandButton icon="ui-icon-pencil" 
+                                         action="#{mbActividadImpl.registrarAsistencias}" 
+                                         value="Guardar" 
+                                         style="margin-right:10px;" 
+                                         update="pnView"/>                      
+                    </f:facet>                 
                 </p:toolbar>
 
             </h:form>
     </h:body> 
     
-</html>            
+</html>  
 

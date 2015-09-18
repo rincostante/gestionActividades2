@@ -7,7 +7,6 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +24,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;

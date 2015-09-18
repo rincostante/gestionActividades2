@@ -34,6 +34,16 @@
                                 <f:attribute name="finicial" value="#{mbAgente.fDespuesDe}"/>
                                 <f:validator validatorId="primeDateRangeValidator" />
                             </p:calendar>
+                            
+                            <p:outputLabel value="#{bundle.AgenteLabel_tipoOrg}" for="tipoOrg"/>
+                            <p:selectOneMenu id="tipoOrg" value="#{mbAgente.tipoOrg}" 
+                                             valueChangeListener="#{mbAgente.tipoOrgChangeListener}">
+                                <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbAgente.listTipoOrganismo}" var="tipoOrg" 
+                                               itemLabel="#{tipoOrg.nombre}" 
+                                               itemValue="#{tipoOrg}"/>
+                                <p:ajax event="change" update="organismo"/>
+                            </p:selectOneMenu> 
 
                             <p:outputLabel value="#{bundle.AgenteLabel_organismo}" for="organismo" />
                             <p:selectOneMenu id="organismo" value="#{mbAgente.selectOrg}" 

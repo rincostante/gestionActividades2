@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Edite los datos personales del Agente</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    
+    <h:body>
+        <h:form id="frmNew" style="text-align: left">
+            <p:panel id="pnNew" style="margin-bottom:10px;">
+                <p:messages id="messages" />
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="#{bundle.PersonaLabel_apellidos}" for="apellidos"/>
+                    <p:inputText id="apellidos" style="text-transform: uppercase; width: 250px"
+                                 onkeyup="this.value = this.value.toUpperCase();"
+                                 value="#{mbAgente.selected.persona.apellidos}" 
+                                 requiredMessage="#{bundle.PersonaApellidosRequiredMessage}" 
+                                 required="true" />
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_nombres}" for="nombres"/>
+                    <p:inputText id="nombres" style="text-transform: uppercase; width: 250px"
+                                 onkeyup="this.value = this.value.toUpperCase();"
+                                 value="#{mbAgente.selected.persona.nombres}" 
+                                 requiredMessage="#{bundle.PersonaNombresRequiredMessage}" 
+                                 required="true"/>
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_tipoDoc}" for="tipoDoc"/>
+                    <p:selectOneMenu id="tipoDoc" value="#{mbAgente.selected.persona.tipoDocumento}" 
+                                     requiredMessage="#{bundle.PersonaTipoDocRequiredMessage}" 
+                                     required="true">
+                        <f:selectItem itemLabel="Seleccione el tipo de documento" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbAgente.listaTipoDocs}" var="tipoDoc" 
+                                       itemLabel="#{tipoDoc.nombre}" itemValue="#{tipoDoc}"/>
+                    </p:selectOneMenu>    
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_numDoc}" for="numDoc"/>
+                    <p:inputText converter="#{Integer}" id="numDoc"
+                                 value="#{mbAgente.selected.persona.documento}" 
+                                 requiredMessage="#{bundle.PersonaNumDocRequiredMessage}" 
+                                 validatorMessage="#{bundle.PersonaNumDocValidateMessage}" 
+                                 required="true">
+                        <f:validateLength maximum="8" minimum="7" />
+                    </p:inputText>                        
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_telefono}" for="telefono"/>
+                    <p:inputMask id="telefono" value="#{mbAgente.selected.persona.telefono}" mask="(9999) 9999-9999" />                      
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_celular}" for="celular"/>
+                    <p:inputMask id="celular" value="#{mbAgente.selected.persona.celular}" mask="(9999) 99-9999-9999" />   
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_fechaNac}" for="fechaNac"/>
+                    <p:calendar id="fechaNac" value="#{mbAgente.selected.persona.fechaNacimiento}" pattern="dd/MM/yyyy" mask="true" />
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_localidad}" for="localidad"/>
+                    <p:selectOneMenu id="localidad" value="#{mbAgente.selected.persona.localidad}">
+                        <f:selectItem itemLabel="Seleccione la localidad" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbAgente.listaLocalidades}" var="localidad" 
+                                       itemLabel="#{localidad.nombre} - #{localidad.departamento}" itemValue="#{localidad}"/>
+                    </p:selectOneMenu>                           
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_sexo}" for="sexo"/>
+                    <p:selectOneMenu id="sexo" value="#{mbAgente.selected.persona.sexo}" 
+                                     requiredMessage="#{bundle.PersonaSexoRequiredMessage}" 
+                                     required="true">
+                        <f:selectItem itemLabel="Seleccione el sexo" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbAgente.sexos}" />
+                    </p:selectOneMenu>                        
+
+                    <p:outputLabel value="#{bundle.PersonaLabel_email_1}" for="email_1" />
+                    <p:inputText id="email_1" value="#{mbAgente.selected.persona.email_1}" >
+
+                    </p:inputText>
+                </h:panelGrid>
+            </p:panel>
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandButton icon="ui-icon-check" value="Guardar" action="#{mbAgente.updatePersona}" update="pnNew"/>
+                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                        <p:ajax update="pnNew" resetValues="true" />
+                    </p:commandButton>
+                </f:facet>
+            </p:toolbar>
+        </h:form>
+    </h:body>
+</html>
+

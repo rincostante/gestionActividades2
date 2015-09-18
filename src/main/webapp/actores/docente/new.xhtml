@@ -15,16 +15,12 @@
                 <p:panel id="pnNew" header="#{bundle.DocenteNewTitle}" style="margin-bottom:10px;">
                     <p:growl id="messages" />
                     <h:panelGrid columns="2">
-                        <p:outputLabel value="#{bundle.DocenteLabel_persona}" for="persona"/>
-                        <p:selectOneMenu id="persona" value="#{mbDocente.selected.persona}" 
-                                         disabled="#{not mbDocente.esPersona}" 
-                                         valueChangeListener="#{mbDocente.personaChangeListener}">
-                            <f:selectItem itemLabel="Seleccione la Persona" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbDocente.listaPersonas}" var="persona" 
-                                           itemLabel="#{persona.apellidos}, #{persona.nombres} - #{persona.documento}" 
-                                           itemValue="#{persona}"/>
-                            <p:ajax event="change" update="agente"/>
-                        </p:selectOneMenu>  
+                        
+                        <p:outputLabel value="Datos personales: " />
+                        <p:commandButton id="persona" value="Ingresar" action="#{mbDocente.prepareCreatePersona}" 
+                                         disabled="#{not mbDocente.esPersona}" update="agente"
+                                         actionListener="#{mbDocente.personaActionListener}" 
+                                             icon="ui-icon-extlink" process="@this" />   
 
                         <p:outputLabel value="#{bundle.DocenteLabel_agente}" for="agente"/>
                         <p:selectOneMenu id="agente" value="#{mbDocente.selected.agente}" 
@@ -38,7 +34,7 @@
                         </p:selectOneMenu>                         
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_telefonoLab}" for="telLab"/>
-                        <p:inputMask id="telLab" value="#{mbDocente.selected.telefonoLaboral}" mask="(9999) 999-9999" />                         
+                        <p:inputMask id="telLab" value="#{mbDocente.selected.telefonoLaboral}" mask="(9999) 9999-9999" />                         
                         
                         <p:outputLabel value="#{bundle.DocenteLabel_emailLab}" for="emailLab" />
                         <p:inputText id="emailLab" value="#{mbDocente.selected.emailLaboral}" />

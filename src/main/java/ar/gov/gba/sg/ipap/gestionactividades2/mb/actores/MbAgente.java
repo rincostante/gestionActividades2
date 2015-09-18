@@ -8,24 +8,31 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.CargoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstudiosCursadosFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.LocalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.NivelIpapFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.PersonaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.SituacionRevistaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TipoDocumentoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TituloFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.Edad;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -86,7 +93,6 @@ public class MbAgente implements Serializable{
     private List<EstudiosCursados> listaEstudios;
     private List<NivelIpap> listaNivelIpap;
     private List<Titulo> listaTitulos;
-    private List<Persona> listaPersonas;
     private List<Organismo> listaOrganismos;
     private List<SituacionRevista> listaSitRev;
     private List<Agente> listaReferentes;
@@ -105,6 +111,23 @@ public class MbAgente implements Serializable{
     private ListDataModel listDMPart;
     private List<Participante> listPartFilter;
     private boolean iniciado;
+    private TipoOrganismo tipoOrg;
+    private List<TipoOrganismo> listTipoOrganismo; 
+    
+    // datos para el formulario de datos personales
+    private Persona persona;
+    private List<TipoDocumento> listaTipoDocs; 
+    private List<Localidad> listaLocalidades;
+    private Map<String,String> sexos;
+    private Edad edad;
+    @EJB
+    private TipoDocumentoFacade tipoDocFacade;
+    @EJB
+    private LocalidadFacade localidadFacade;    
+    @EJB
+    private TipoOrganismoFacade tipoOrgFacade;    
+    
+    
     /**
      * Creates a new instance of MbAgente
      */
@@ -122,8 +145,11 @@ public class MbAgente implements Serializable{
         listaTitulos = tituloFacade.findAll();
         listaSitRev = sitRevFacade.findAll();
         listaCargo = cargoFacade.findAll();
-        listaOrganismos = organismoFacade.getHabilitados();
+        listTipoOrganismo = tipoOrgFacade.findAll();
         habilitadas = true;
+        sexos  = new HashMap<>();
+        sexos.put("Femenino", "F");
+        sexos.put("Masculino", "M");          
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();    
@@ -132,6 +158,31 @@ public class MbAgente implements Serializable{
     /********************************
      ** Getters y Setters *********** 
      ********************************/
+    
+    public TipoOrganismo getTipoOrg() {
+        return tipoOrg;
+    }
+
+    public void setTipoOrg(TipoOrganismo tipoOrg) {
+        this.tipoOrg = tipoOrg;
+    }
+
+    public List<TipoOrganismo> getListTipoOrganismo() {
+        return listTipoOrganismo;
+    }
+
+    public void setListTipoOrganismo(List<TipoOrganismo> listTipoOrganismo) {
+        this.listTipoOrganismo = listTipoOrganismo;
+    }
+
+    
+    public Edad getEdad() {
+        return edad;
+    }
+
+    public void setEdad(Edad edad) {
+        this.edad = edad;
+    }
     
     public List<Agente> getListFilter() {
         return listFilter;
@@ -157,7 +208,6 @@ public class MbAgente implements Serializable{
         this.listDMPart = listDMPart;
     }
 
-    
     public Usuario getUsLogeado() {
         return usLogeado;
     }
@@ -226,7 +276,6 @@ public class MbAgente implements Serializable{
     public void setListaReferentes(List<Agente> listaReferentes) {
         this.listaReferentes = listaReferentes;
     }
-
     
     public Agente getAgSelected() {
         return agSelected;
@@ -308,14 +357,6 @@ public class MbAgente implements Serializable{
         this.listaTitulos = listaTitulos;
     }
 
-    public List<Persona> getListaPersonas() {
-        return listaPersonas;
-    }
-
-    public void setListaPersonas(List<Persona> listaPersonas) {
-        this.listaPersonas = listaPersonas;
-    }
-
     public List<Organismo> getListaOrganismos() {
         return listaOrganismos;
     }
@@ -323,6 +364,38 @@ public class MbAgente implements Serializable{
     public void setListaOrganismos(List<Organismo> listaOrganismos) {
         this.listaOrganismos = listaOrganismos;
     }
+    
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
+
+    public List<TipoDocumento> getListaTipoDocs() {
+        return listaTipoDocs;
+    }
+
+    public void setListaTipoDocs(List<TipoDocumento> listaTipoDocs) {
+        this.listaTipoDocs = listaTipoDocs;
+    }
+
+    public List<Localidad> getListaLocalidades() {
+        return listaLocalidades;
+    }
+
+    public void setListaLocalidades(List<Localidad> listaLocalidades) {
+        this.listaLocalidades = listaLocalidades;
+    }
+
+    public Map<String,String> getSexos() {
+        return sexos;
+    }
+
+    public void setSexos(Map<String,String> sexos) {
+        this.sexos = sexos;
+    }    
 
     
     /********************************
@@ -400,8 +473,10 @@ public class MbAgente implements Serializable{
     public String prepareCreate() {
         esReferente = false;
         current = new Agente();
-        // cargo los list pesados para los combos
-        listaPersonas = personaFacade.getHabilitadas();
+        persona = new Persona();
+        tipoOrg = null;
+        listaOrganismos = null;
+
         return "new";
     }
 
@@ -410,10 +485,55 @@ public class MbAgente implements Serializable{
      */
     public String prepareEdit() {
         current = agSelected;
+        persona = new Persona();
+        
         // cargo los list pesados para los combos
-        listaPersonas = personaFacade.getHabilitadas();
         listaOrganismos = organismoFacade.getHabilitados();
         return "edit";
+    }
+    
+    /**
+     * Método para abrir el diálogo para la creación de una Persona
+     */
+    public void prepareCreatePersona(){
+        // seteo los elementos para el formulario
+        listaTipoDocs = tipoDocFacade.findAll();
+        listaLocalidades = localidadFacade.findAll();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("persona/dlgNewPersona", options, null);
+    }
+    
+    /**
+     * Método para abrir el diálogo para la edición de una Persona
+     */
+    public void prepareEditPersona(){
+        // seteo los elementos para el formulario
+        listaTipoDocs = tipoDocFacade.findAll();
+        listaLocalidades = localidadFacade.findAll();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("persona/dlgEditPersona", options, null);
+    }
+    
+    /**
+     * Método para abrir el diálogo para la vista detalle de una Persona
+     */
+    public void prepareViewPersona(){
+        // seteo la edad de la persona si existe la fecha de nacimiento
+        if(current.getPersona().getFechaNacimiento() != null){
+            Edad edadUtil = new Edad();
+            edad = edadUtil.calcularEdad(current.getPersona().getFechaNacimiento());
+        }else{
+            edad = new Edad();
+            edad.setYear(0);
+        }
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("persona/dlgViewPersona", options, null);
     }
     
     /**
@@ -693,8 +813,12 @@ public class MbAgente implements Serializable{
                 admEnt.setUsAlta(usLogeado);
                 current.setAdmin(admEnt);
                 
+                // Seteo la condición de referente
+                current.setEsReferente(esReferente);
+                
                 // Inserción
                 getFacade().create(current);
+                tipoOrg = null;
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteCreated"));
                 return "view";
             }else{
@@ -704,6 +828,30 @@ public class MbAgente implements Serializable{
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("AgenteCreatedErrorOccured"));
             return null;
+        }
+    }
+    
+    /**
+     * Método para guardar una Persona durante el registro de un Agente
+     */
+    public void createPersona(){
+        if(current.getPersona() == null){
+            if(personaFacade.noExiste(persona.getTipoDocumento().getId(), persona.getDocumento())){
+
+                // Formateo el apellido
+                String tempApp = persona.getApellidos();
+                persona.setApellidos(tempApp.toUpperCase());
+
+                // Agrego la persona al Agente
+                current.setPersona(persona);
+
+                // Muestro el mensaje correspondiente
+                JsfUtil.addSuccessMessage("Se agregaron los datos personales al Agente que está creando. Por favor, cierre la ventana correspondiente.");
+            }else{
+                JsfUtil.addErrorMessage("Ya se encuentra registrado un Agente con estos datos personales.");
+            }
+        }else{
+            JsfUtil.addErrorMessage("El Agente que está creando ya tiene sus datos personales completos.");
         }
     }
 
@@ -725,6 +873,7 @@ public class MbAgente implements Serializable{
                 
                 // Actualizo
                 getFacade().edit(current);
+                tipoOrg = null;
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteUpdated"));
                 return "view";
             }else{
@@ -746,6 +895,32 @@ public class MbAgente implements Serializable{
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("AgenteUpdatedErrorOccured"));
             return null;
+        }
+    }
+    
+    /**
+     * Método para editar los datos personales del Agente
+     */
+    public void updatePersona(){
+        Persona per = personaFacade.getExistente(current.getPersona().getTipoDocumento().getId(), current.getPersona().getDocumento());
+        if(per == null){
+            // Formateo el apellido
+            String tempApp = current.getPersona().getApellidos();
+            current.getPersona().setApellidos(tempApp.toUpperCase());
+            
+            // Muestro mensaje de actualización
+            JsfUtil.addSuccessMessage("Se actualizaron los datos personales al Agente que está editando. Por favor, cierre la ventana correspondiente.");
+        }else{
+            if(per.getId().equals(current.getPersona().getId())){
+                // Formateo el apellido
+                String tempApp = current.getPersona().getApellidos();
+                current.getPersona().setApellidos(tempApp.toUpperCase());
+
+                // Muestro mensaje de actualización
+                JsfUtil.addSuccessMessage("Se actualizaron los datos personales al Agente que está editando. Por favor, cierre la ventana correspondiente.");
+            }else{
+                JsfUtil.addErrorMessage("Ya existe otro Agente con estos datos personales.");
+            }
         }
     }
 
@@ -837,6 +1012,15 @@ public class MbAgente implements Serializable{
         esReferente = !(boolean)event.getNewValue();
     }
     
+    /**
+     * Método para actualizar los Organismos según el tipo seleccionado
+     * @param event
+     */
+    public void tipoOrgChangeListener(ValueChangeEvent event) {   
+        tipoOrg = (TipoOrganismo)event.getNewValue();
+        listaOrganismos = organismoFacade.getXTipo(tipoOrg);
+    }     
+    
     public void verParticipantes(){
         listDMPart = new ListDataModel(current.getParticipaciones());
         Map<String,Object> options = new HashMap<>();
@@ -893,6 +1077,10 @@ public class MbAgente implements Serializable{
         if(listFilter != null){
             listFilter = null;
         } 
+        if(listaOrganismos != null){
+            listaOrganismos = null;
+        }  
+        tipoOrg = null;
     }      
     
     
@@ -951,6 +1139,7 @@ public class MbAgente implements Serializable{
     private boolean estaSitRev(Agente ag){
         return ag.getSituacionRevista().equals(selectSitRev);
     }
+
     
     /********************************************************************
     ** Converter. Se debe actualizar la entidad y el facade respectivo **

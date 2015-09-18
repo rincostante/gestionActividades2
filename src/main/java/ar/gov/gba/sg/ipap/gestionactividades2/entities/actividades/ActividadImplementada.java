@@ -111,8 +111,50 @@ public class ActividadImplementada implements Serializable {
      */
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="resolucion_id", nullable=true)
-    private Resolucion resolucion;     
+    private Resolucion resolucion; 
     
+    /**
+     * Campo de texto que indica el libro en el que se registró la Resolución
+     */
+    @Column (nullable=true, length=5)
+    @Size(message = "La cantidad máxima de caracteres para el campo libro es 5", max = 5)
+    private String libro;
+
+
+    /**
+     * Campo de texto que indica el acta en el que se registró la Resolución
+     */
+    @Column (nullable=true, length=5)
+    @Size(message = "La cantidad máxima de caracteres para el campo acta es 5", max = 5)
+    private String acta;  
+
+
+    /**
+     * Campo de texto que indica la foja del libro en el que se registró la Resolución
+     */
+    @Column (nullable=true, length=5)
+    @Size(message = "La cantidad máxima de caracteres para el campo foja es 5", max = 5)
+    private String foja;  
+
+    /**
+     * Campo de texto que indica el número de aenxo
+     */
+    @Column (nullable=true, length=5)
+    @Size(message = "La cantidad máxima de caracteres para el campo Número de anexo es 5", max = 5)
+    private String numAnexo;  
+    
+    /**
+     * Campo flotante que indica el porcentaje de asistencia para la Actividad Dispuesta
+     */
+    @Column (nullable=true)
+    private float porcAsistencia;    
+    
+    /**
+     * Campo de tipo booleano que indica si la Actividad Dispuesta es evaluada mediante encuesta
+     */  
+    @Column(nullable=true)
+    private boolean evaluaEncuesta;    
+
     /**
      * Campo de tipo Sede que registra la Sede en la cual se llevará a cabo la Actividad
      */
@@ -176,7 +218,7 @@ public class ActividadImplementada implements Serializable {
     /**
      * Campo que indica la colección de los participantes de la Actividad
      */
-    @OneToMany(mappedBy="actividad")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy = "actividad")
     private List<Participante> participantes;  
     
     /**
@@ -184,8 +226,6 @@ public class ActividadImplementada implements Serializable {
      */
     @OneToMany(cascade=CascadeType.ALL, mappedBy = "actividad")
     private List<Clase> clases;       
-    
-    
     
     /**
      * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
@@ -222,6 +262,54 @@ public class ActividadImplementada implements Serializable {
         organismosDestinatarios = new ArrayList();
         participantes = new ArrayList();
         clases = new ArrayList();
+    }
+
+    public String getNumAnexo() {
+        return numAnexo;
+    }
+
+    public void setNumAnexo(String numAnexo) {
+        this.numAnexo = numAnexo;
+    }
+
+    public float getPorcAsistencia() {
+        return porcAsistencia;
+    }
+
+    public void setPorcAsistencia(float porcAsistencia) {
+        this.porcAsistencia = porcAsistencia;
+    }
+
+    public boolean isEvaluaEncuesta() {
+        return evaluaEncuesta;
+    }
+
+    public void setEvaluaEncuesta(boolean evaluaEncuesta) {
+        this.evaluaEncuesta = evaluaEncuesta;
+    }
+
+    public String getLibro() {
+        return libro;
+    }
+
+    public void setLibro(String libro) {
+        this.libro = libro;
+    }
+
+    public String getActa() {
+        return acta;
+    }
+
+    public void setActa(String acta) {
+        this.acta = acta;
+    }
+
+    public String getFoja() {
+        return foja;
+    }
+
+    public void setFoja(String foja) {
+        this.foja = foja;
     }
 
     public List<Docente> getDocentesVinculados() {

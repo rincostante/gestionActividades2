@@ -17,26 +17,45 @@
         <h:form id="frmNew">
             <p:panel id="prmNew">
                 <p:growl id="messages"/>
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="3">
 
-                    <p:outputLabel value="#{bundle.ParticipanteLabel_Agente}" for="agente"/>
-                    <p:selectOneMenu id="agente" value="#{mbActividadImpl.participante.agente}">
-                        <f:selectItem itemLabel="Seleccione el Agente" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{mbActividadImpl.listAgentes}" var="agente" 
-                                       itemLabel="#{agente.apYNom} - #{agente.documento}" 
-                                       itemValue="#{agente}"/>
-                    </p:selectOneMenu> 
+                    <p:outputLabel value="DNI" for="dni"/>
+                    <p:autoComplete id="dni" value="#{mbActividadImpl.participante.agente}" 
+                                    completeMethod="#{mbActividadImpl.completeAgenteNew}" var="ag" 
+                                    itemLabel="#{ag.documento}" itemValue="#{ag}"
+                                    forceSelection="true" >
+                        <p:column>#{ag.documento}</p:column>
+                        <p:column>#{ag.apYNom}</p:column>
+                    </p:autoComplete>
+                    <p:commandButton icon="ui-icon-newwin" value="Registrar nuevo Agente" action="#{mbActividadImpl.prepareCreateAgente}" 
+                                     process="@this" style="margin-left: 10px"/>
+                    <p:commandButton icon="ui-icon-check" value="Guardar" actionListener="#{mbActividadImpl.createParticipante}" update="prmNew" />
+                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" >
+                        <p:ajax update="prmNew" resetValues="true" />
+                    </p:commandButton>
 
                 </h:panelGrid>
                 
                 <!-- a partir de aquí es el listado de los Participantes -->  
                 
-                <p:dataTable id="clases" var="e" value="#{mbActividadImpl.listPartNew}" >
-
+                <p:dataTable id="parts" var="e" value="#{mbActividadImpl.listPartNew}" >
+                    <f:facet name="header">
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" update="parts" style="margin-left: 10px"/>
+                    </f:facet>
                     <p:column headerText="#{bundle.ParticipanteLabel_Agente}" sortBy="#{e.agente.apYNom}" filterBy="#{e.agente.apYNom}" style="width: 130px" filterMatchMode="contains">
                         <p:outputLabel value="#{e.agente.apYNom}"/>
                     </p:column>
-                    
+                    <p:column headerText="Organismo" sortBy="#{e.agente.organismo.nombre}" filterBy="#{e.agente.organismo.nombre}" style="width: 130px" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.agente.organismo.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Teléfono laboral" sortBy="#{e.agente.telefono}" filterBy="#{e.agente.telefono}" style="width: 130px" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.agente.telefono}"/>
+                    </p:column>
+                    <p:column style="width:12px" >
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbActividadImpl.prepareEditAgente}" process="@this" title="Actualizar Datos">
+                            <f:setPropertyActionListener value="#{e.agente}" target="#{mbActividadImpl.agente}" />
+                        </p:commandButton>                      
+                    </p:column>   
                 </p:dataTable>
             </p:panel>
         </h:form>

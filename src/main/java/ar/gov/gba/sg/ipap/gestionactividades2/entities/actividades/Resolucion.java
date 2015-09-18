@@ -51,30 +51,6 @@ public class Resolucion implements Serializable {
     private int anio;
     
     /**
-     * Campo de texto que indica el libro en el que se registró la Resolución
-     */
-    @Column (nullable=true, length=5)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 5)
-    private String libro;
-
-    /**
-     * Campo de texto que indica el acta en el que se registró la Resolución
-     */
-    @Column (nullable=true, length=5)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 5)
-    private String acta;    
-    
-    /**
-     * Campo de texto que indica la foja del libro en el que se registró la Resolución
-     */
-    @Column (nullable=true, length=5)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    @Size(message = "{endidades.stringSizeError}", min = 1, max = 5)
-    private String foja;    
-    
-    /**
      * Campo de tipo AdmEntidad que encapsula los datos de administración y trazabilidad de la Resolucion
      */  
     @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
@@ -111,55 +87,7 @@ public class Resolucion implements Serializable {
     public void setAnio(int anio) {
         this.anio = anio;
     }
-
-    /**
-     *
-     * @return
-     */
-    public String getLibro() {
-        return libro;
-    }
-
-    /**
-     *
-     * @param libro
-     */
-    public void setLibro(String libro) {
-        this.libro = libro;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getActa() {
-        return acta;
-    }
-
-    /**
-     *
-     * @param acta
-     */
-    public void setActa(String acta) {
-        this.acta = acta;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getFoja() {
-        return foja;
-    }
-
-    /**
-     *
-     * @param foja
-     */
-    public void setFoja(String foja) {
-        this.foja = foja;
-    }
-
+    
     /**
      *
      * @return

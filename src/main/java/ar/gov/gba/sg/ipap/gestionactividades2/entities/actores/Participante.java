@@ -58,9 +58,8 @@ public class Participante implements Serializable {
     /**
      * Campo que indica la actividad de la que participa
      */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="actividad_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
+    @ManyToOne
+    @JoinColumn(name="actividad_id")
     private ActividadImplementada actividad;
     
     /**
@@ -70,6 +69,13 @@ public class Participante implements Serializable {
     @JoinColumn(name="estado_id", nullable=false)
     @NotNull(message = "{entidades.objectNotNullError}")
     private EstadoParticipante estado;
+    
+    /**
+     * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
+     */
+    @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    @NotNull(message = "{enitdades.objectNotNullError}") 
+    private AdmEntidad admin;     
     
     private String autorizacion;
     
@@ -84,13 +90,6 @@ public class Participante implements Serializable {
      */
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAutorizacion;    
-    
-    /**
-     * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
-     */
-    @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    @NotNull(message = "{enitdades.objectNotNullError}") 
-    private AdmEntidad admin;
     
     /**
      * Campo que muestra la fecha de inicio de vigencia de la actividad de la que participa, como string
@@ -115,6 +114,14 @@ public class Participante implements Serializable {
      */
     public Participante(){
         clases = new ArrayList();
+    }
+
+    public AdmEntidad getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(AdmEntidad admin) {
+        this.admin = admin;
     }
 
     public String getStrFechaAutoriz() {
@@ -231,22 +238,6 @@ public class Participante implements Serializable {
      */
     public void setClases(List<Clase> clases) {
         this.clases = clases;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public AdmEntidad getAdmin() {
-        return admin;
-    }
-
-    /**
-     *
-     * @param admin
-     */
-    public void setAdmin(AdmEntidad admin) {
-        this.admin = admin;
     }
     
     /**

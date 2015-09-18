@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Participantes del curso</title>
+        <title>Participantes de la Actividad Dispuesta</title>
         <style type="text/css">
             .ui-widget {
                 font-size: 80%;
@@ -14,14 +14,17 @@
     </h:head>
     <h:body>
         <h:form id="frmPart">
-            <p:dataTable var="part" value="#{mbActividadImpl.listPart}" style="width: 900px" 
+            <p:dataTable var="part" value="#{mbActividadImpl.listPart}"  
                          filteredValue="#{mbActividadImpl.listPartFilter}" id="partList"
                          rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
-                         rowsPerPageTemplate="5,10,15">
+                         rowsPerPageTemplate="5,10,15" widgetVar="impTable">
                 
                 <f:facet name="header">
+                    <p:commandButton icon="ui-icon-newwin" value="Agregar" action="#{mbActividadImpl.agregarParticipantes}" style="margin-left: 10px" 
+                                     rendered="#{mbActividadImpl.selected.admin.habilitado}"/>
+                    <p:commandButton icon="ui-icon-refresh" value="Listar" update="partList" style="margin-left: 10px"/>
                     <h:commandLink>
                         <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
                         <p:dataExporter type="xls" target="partList" fileName="ListadoParticipantesActDisp" />
@@ -38,17 +41,51 @@
                 <p:column headerText="Documento" sortBy="#{part.agente.documento}" filterBy="#{part.agente.documento}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.documento}" />
                 </p:column>
-                <p:column headerText="Organismo" sortBy="#{part.agente.organismo.nombre}" filterBy="#{part.agente.organismo.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.organismo.tipoOrganismo.nombre} #{part.agente.organismo.nombre}" />
-                </p:column>
                 <p:column headerText="Cargo" sortBy="#{part.agente.cargo.nombre}" filterBy="#{part.agente.cargo.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.cargo.nombre}" />
                 </p:column>
                 <p:column headerText="Referente" sortBy="#{part.agente.referente.apYNom}" filterBy="#{part.agente.referente.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{part.agente.referente.apYNom}" />
                 </p:column>
-                <p:column headerText="Habilitado" sortBy="#{part.agente.admin.habilitado}" filterBy="#{part.agente.admin.habilitado}" filterMatchMode="contains">
-                    <h:outputText value="#{part.agente.admin.habilitado}" />
+                
+                <p:column filterBy="#{part.admin.habilitado}" 
+                          headerText="Estado"                            
+                          filterMatchMode="equals">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('impTable').filter()" style="font-size: 80%;">
+                            <f:converter converterId="javax.faces.Boolean" />
+                            <f:selectItem itemLabel="Todos" 
+                                          itemValue="" />
+                            <f:selectItem itemLabel="Habilitados" 
+                                          itemValue="true" />
+                            <f:selectItem itemLabel="Deshabilitados" 
+                                          itemValue="false" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{part.admin.habilitado ? 'Habilitado': 'Deshabilitado'}" />
+                </p:column>
+                
+                <p:column headerText="Acciones" style="width:100px" exportable="false" rendered="#{mbActividadImpl.selected.admin.habilitado}" >
+                    <p:growl id="messages" showDetail="true" />      
+                    <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadImpl.prepareViewParticipante}" title="Ver Detalle">
+                        <f:setPropertyActionListener value="#{part}" target="#{mbActividadImpl.participante}" />
+                    </p:commandButton>    
+                    <p:commandButton icon="ui-icon-pencil" action="#{mbActividadImpl.prepareEditParticipante}" title="Editar">
+                        <f:setPropertyActionListener value="#{part}" target="#{mbActividadImpl.participante}" />
+                    </p:commandButton>
+                    <p:commandButton icon="ui-icon-trash" action="#{mbProcedimiento.deleteParticipante}" rendered="#{part.admin.habilitado == 'true'}" title="Deshabilitar" update="partList">
+                        <f:setPropertyActionListener value="#{part}" target="#{mbActividadImpl.participante}" />
+                        <p:confirm header="Confirmar" message="¿Desea deshabilitar la Inscripción del Participante?" icon="ui-icon-alert" />
+                    </p:commandButton>                
+                    <p:commandButton icon="ui-icon-check" action="#{mbProcedimiento.habilitarParticipante}" rendered="#{part.admin.habilitado == 'false'}" title="Habilitar" update="partList">
+                        <f:setPropertyActionListener value="#{part}" target="#{mbActividadImpl.participante}" />
+                        <p:confirm header="Confirmar" message="¿Desea habilitar la Inscripción del Participante?" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                       <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                       <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                   </p:confirmDialog>                       
                 </p:column> 
             </p:dataTable>
         </h:form>

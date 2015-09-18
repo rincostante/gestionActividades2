@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Participantes que asistieron a la Clase</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="frmAsistVinc">
+            <p:dataTable var="part" value="#{mbActividadImpl.clase.participantes}" 
+                         filteredValue="#{mbActividadImpl.listPartFilter}" id="asistList"
+			 rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    <p:commandButton icon="ui-icon-refresh" value="Listar" update="asistList" style="margin-left: 10px"/>
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                        <p:dataExporter type="xls" target="asistList" fileName="ListadoAsistentesPorClase" />
+                    </h:commandLink>   
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                        <p:dataExporter type="pdf" target="asistList" fileName="ListadoAsistentesPorClase" preProcessor="#{mbActividadPlan.preProcessPDF}"/>
+                    </h:commandLink> 
+                </f:facet>
+                <p:column headerText="Nombre" sortBy="#{part.agente.apYNom}" filterBy="#{part.agente.apYNom}" filterMatchMode="contains">
+                    <h:outputText value="#{part.agente.apYNom}" />
+                </p:column>
+                <p:column headerText="Documento" sortBy="#{part.agente.documento}" filterBy="#{part.agente.documento}" filterMatchMode="contains">
+                    <h:outputText value="#{part.agente.documento}" />
+                </p:column>
+                <p:column headerText="Organismo" sortBy="#{part.agente.organismo.nombre}" filterBy="#{part.agente.organismo.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{part.agente.organismo.nombre}" />
+                </p:column>
+                <p:column headerText="Quitar" style="width :45px;" rendered="#{mbActividadImpl.regAsist}"  exportable="false">
+                    <p:commandButton icon="ui-icon-circle-triangle-n" ajax="false" rendered="#{mbActividadImpl.regAsist}" 
+                                         actionListener="#{mbActividadImpl.quitarAsistencia(part)}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Detalle de la inscripción seleccionada</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+            <h:form id="frmPartView" style="text-align: left">
+                <p:panel id="pnView" style="margin-bottom:10px;">
+                    <p:messages id="messages" />
+                    <p:dialog id="dlg" resizable="false" />
+                    <h:panelGrid columns="2">
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_Agente}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.agente.apYNom} - #{mbActividadImpl.participante.agente.documento}" 
+                                      title="#{bundle.ParticipanteTitle_Agente}"/>     
+                        
+                        <h:outputLabel value="Organismo: "/>
+                        <h:outputText value="#{mbActividadImpl.participante.agente.organismo.nombre}"
+                                      title="Organismo"/>  
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_Autorizacion}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.autorizacion}"
+                                      title="#{bundle.ParticipanteTitle_Autorizacion}"/>  
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLable_FechaAutorizacion}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.strFechaAutoriz}"
+                                      title="#{bundle.ParticipanteTitle_FechaAutorizacion}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="Es" />
+                        </h:outputText>    
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLable_Referente}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.agente.referente.apYNom}"
+                                      title="#{bundle.ParticipanteTitle_Referente}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLable_Clases}" />
+                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verClasesXParticipante}" />
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_fechaAlta}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.admin.fechaAlta}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="Es" />
+                        </h:outputText>
+
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_usAlta}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.admin.usAlta.apYNom}" title="#{bundle.ParticipanteTitle_usAlta}"/>     
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_fachaMod}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.admin.fechaModif}" >
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="Es" />
+                        </h:outputText>
+                        
+                        <h:outputLabel value="#{bundle.ParticipanteLabel_usMod}"/>
+                        <h:outputText value="#{mbActividadImpl.participante.admin.usModif.apYNom}" title="#{bundle.ParticipanteTitle_usMod}"/>                         
+                         
+                        
+                    </h:panelGrid>                    
+                </p:panel>
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                            <p:printer target="pnView" />
+                        </p:commandButton>
+                    </f:facet>
+                </p:toolbar>
+
+            </h:form>
+    </h:body> 
+    
+</html>           
+

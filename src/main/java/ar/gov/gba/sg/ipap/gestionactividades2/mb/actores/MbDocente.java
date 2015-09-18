@@ -11,14 +11,19 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.LocalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.PersonaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TipoDocumentoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TituloFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
+import ar.gov.gba.sg.ipap.gestionactividades2.util.Edad;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -40,6 +45,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
@@ -67,7 +73,6 @@ public class MbDocente implements Serializable{
     private TituloFacade tituloFacade;      
     
     private String selectParam;
-    private List<Persona> listaPersonas;
     private List<Agente> listaAgentes;
     private List<Titulo> listaTitulos;
     private boolean habilitadas;
@@ -86,20 +91,31 @@ public class MbDocente implements Serializable{
     private List<Clase> listClasesFilter;
     private boolean iniciado;
     
+    // datos para el formulario de datos personales
+    private Persona persona;
+    private List<TipoDocumento> listaTipoDocs; 
+    private List<Localidad> listaLocalidades;
+    private Map<String,String> sexos;
+    private Edad edad;
+    @EJB
+    private TipoDocumentoFacade tipoDocFacade;
+    @EJB
+    private LocalidadFacade localidadFacade;        
+    
     /**
      * Creates a new instance of MbDocente
      */
     public MbDocente() {
     }
     
-    /**
-     *
-     */
     @PostConstruct
     public void init(){
         iniciado = false;
         listaTitulos = tituloFacade.findAll();
         habilitadas = true;
+        sexos  = new HashMap<>();
+        sexos.put("Femenino", "F");
+        sexos.put("Masculino", "M"); 
         ExternalContext ctx = FacesContext.getCurrentInstance().getExternalContext();
         login = (MbLogin)ctx.getSessionMap().get("mbLogin");
         usLogeado = login.getUsLogeado();    
@@ -108,9 +124,47 @@ public class MbDocente implements Serializable{
     /********************************
      ** Getters y Setters *********** 
      ********************************/
-    /**
-     *
-     */
+
+    public Map<String, String> getSexos() {
+        return sexos;
+    }
+
+    public void setSexos(Map<String, String> sexos) {
+        this.sexos = sexos;
+    }
+
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
+
+    public List<TipoDocumento> getListaTipoDocs() {
+        return listaTipoDocs;
+    }
+
+    public void setListaTipoDocs(List<TipoDocumento> listaTipoDocs) {
+        this.listaTipoDocs = listaTipoDocs;
+    }
+
+    public List<Localidad> getListaLocalidades() {
+        return listaLocalidades;
+    }
+
+    public void setListaLocalidades(List<Localidad> listaLocalidades) {
+        this.listaLocalidades = listaLocalidades;
+    }
+
+    public Edad getEdad() {
+        return edad;
+    }
+
+    public void setEdad(Edad edad) {
+        this.edad = edad;
+    }
+
 
     public List<ActividadImplementada> getListActImpFilter() {
         return listActImpFilter;
@@ -228,14 +282,6 @@ public class MbDocente implements Serializable{
         this.selectParam = selectParam;
     }
 
-    public List<Persona> getListaPersonas() {
-        return listaPersonas;
-    }
-
-    public void setListaPersonas(List<Persona> listaPersonas) {
-        this.listaPersonas = listaPersonas;
-    }
-
     public List<Agente> getListaAgentes() {
         return listaAgentes;
     }
@@ -324,10 +370,9 @@ public class MbDocente implements Serializable{
      */
     public String prepareCreate() {
         current = new Docente();
+        persona = new Persona();
         esAgente = true;
         esPersona = true;
-        // cargo los list para los combos
-        listaPersonas = personaFacade.getHabilitadas();
         listaAgentes = agenteFacade.getHabilitados();
         return "new";
     }
@@ -344,10 +389,68 @@ public class MbDocente implements Serializable{
             esAgente = false;
             esPersona = true;
         }        
-        // cargo los list para los combos
-        listaPersonas = personaFacade.findAll();
         listaAgentes = agenteFacade.findAll();        
         return "edit";
+    }
+    
+    /**
+     * Método para abrir el diálogo para la creación de una Persona
+     */
+    public void prepareCreatePersona(){
+        // seteo los elementos para el formulario
+        listaTipoDocs = tipoDocFacade.findAll();
+        listaLocalidades = localidadFacade.findAll();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("persona/dlgNewPersona", options, null);
+    }
+    
+    /**
+     * Método para abrir el diálogo para la edición de una Persona
+     */
+    public void prepareEditPersona(){
+        // como no sé si los datos personales corresponden al Docente directamente o al Agente, 
+        // en el caso en que el Docente sea Agente también, llevo todo al campo persona del bean
+        if(current.getPersona() != null){
+            persona = current.getPersona();
+        }else{
+            persona = current.getAgente().getPersona();
+        }        
+        
+        // seteo los elementos para el formulario
+        listaTipoDocs = tipoDocFacade.findAll();
+        listaLocalidades = localidadFacade.findAll();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("persona/dlgEditPersona", options, null);
+    }
+    
+    /**
+     * Método para abrir el diálogo para la vista detalle de una Persona
+     */
+    public void prepareViewPersona(){
+        // como no sé si los datos personales corresponden al Docente directamente o al Agente, 
+        // en el caso en que el Docente sea Agente también, llevo todo al campo persona del bean
+        if(current.getPersona() != null){
+            persona = current.getPersona();
+        }else{
+            persona = current.getAgente().getPersona();
+        }
+        
+        // seteo la edad de la persona si existe la fecha de nacimiento
+        if(persona.getFechaNacimiento() != null){
+            Edad edadUtil = new Edad();
+            edad = edadUtil.calcularEdad(persona.getFechaNacimiento());
+        }else{
+            edad = new Edad();
+            edad.setYear(0);
+        }
+
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("persona/dlgViewPersona", options, null);
     }
     
     /**
@@ -487,6 +590,30 @@ public class MbDocente implements Serializable{
             return null;
         }
     }
+    
+    /**
+     * Método para guardar una Persona durante el registro de un Agente
+     */
+    public void createPersona(){
+        if(current.getPersona() == null){
+            if(personaFacade.noExiste(persona.getTipoDocumento().getId(), persona.getDocumento())){
+
+                // Formateo el apellido
+                String tempApp = persona.getApellidos();
+                persona.setApellidos(tempApp.toUpperCase());
+
+                // Agrego la persona al Agente
+                current.setPersona(persona);
+
+                // Muestro el mensaje correspondiente
+                JsfUtil.addSuccessMessage("Se agregaron los datos personales al Docente que está creando. Por favor, cierre la ventana correspondiente.");
+            }else{
+                JsfUtil.addErrorMessage("Ya se encuentra registrado un Docente con estos datos personales.");
+            }
+        }else{
+            JsfUtil.addErrorMessage("El Agente que está creando ya tiene sus datos personales completos.");
+        }
+    }    
 
     /**
      * Método que actualiza un nuevo Docente en la base de datos.
@@ -537,6 +664,32 @@ public class MbDocente implements Serializable{
             return null;
         }
     }
+    
+    /**
+     * Método para editar los datos personales del Agente
+     */
+    public void updatePersona(){
+        Persona per = personaFacade.getExistente(current.getPersona().getTipoDocumento().getId(), current.getPersona().getDocumento());
+        if(per == null){
+            // Formateo el apellido
+            String tempApp = current.getPersona().getApellidos();
+            current.getPersona().setApellidos(tempApp.toUpperCase());
+            
+            // Muestro mensaje de actualización
+            JsfUtil.addSuccessMessage("Se actualizaron los datos personales al Docente que está editando. Por favor, cierre la ventana correspondiente.");
+        }else{
+            if(per.getId().equals(current.getPersona().getId())){
+                // Formateo el apellido
+                String tempApp = current.getPersona().getApellidos();
+                current.getPersona().setApellidos(tempApp.toUpperCase());
+
+                // Muestro mensaje de actualización
+                JsfUtil.addSuccessMessage("Se actualizaron los datos personales al Docente que está editando. Por favor, cierre la ventana correspondiente.");
+            }else{
+                JsfUtil.addErrorMessage("Ya existe otro Docente con estos datos personales.");
+            }
+        }
+    }    
 
     /**
      * @return mensaje que notifica el borrado
@@ -635,15 +788,9 @@ public class MbDocente implements Serializable{
      * 
      * @param event
      */
-    public void personaChangeListener(ValueChangeEvent event){
-        Persona doc = (Persona)event.getNewValue();
-        if(doc != null){
-            esPersona = true;
-            esAgente = false;
-        }else{
-            esPersona = false;
-            esAgente = true;
-        }
+    public void personaActionListener(ActionEvent event){
+        esPersona = true;
+        esAgente = false;
     }
     
     /*********************

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Datos personales del Agente</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    
+    <h:body>
+        <h:form id="frmPersonaView" style="text-align: left">
+            <p:panel id="pnView" style="margin-bottom:10px;">
+                <p:messages id="messages" />
+
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.PersonaLabel_apellidos}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.apellidos}" title="#{bundle.PersonaTitle_apellidos}"/>
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_nombres}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.nombres}" title="#{bundle.PersonaTitle_nombres}"/>    
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_tipoDoc}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.tipoDocumento.sigla}" title="#{bundle.PersonaTitle_tipoDoc}"/>   
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_numDoc}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.documento}" title="#{bundle.PersonaTitle_numDoc}"/>   
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_telefono}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.telefono}" title="#{bundle.PersonaTitle_telefono}"/>   
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_celular}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.celular}" title="#{bundle.PersonaTitle_celular}"/>   
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_fechaNac}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.fechaNacimiento}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" locale="Es" />
+                    </h:outputText>
+
+                    <h:outputLabel value="Edad:"/>
+                    <h:outputText value="#{mbAgente.edad.year}"/>   
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_localidad}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.localidad.nombre}" title="#{bundle.PersonaTitle_localidad}"/>   
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_sexo}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.sexo}" title="#{bundle.PersonaTitle_sexo}"/>     
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_email_1}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.email_1}" title="#{bundle.PersonaTitle_email_1}"/>     
+
+                    <h:outputLabel value="#{bundle.PersonaLabel_email_2}"/>
+                    <h:outputText value="#{mbAgente.selected.persona.email_2}" title="#{bundle.PersonaTitle_email_2}"/>                              
+                </h:panelGrid>                    
+            </p:panel>
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" style="display:block;margin-bottom: 20px">
+                        <p:printer target="pnView" />
+                    </p:commandButton>
+                </f:facet>
+            </p:toolbar>
+
+        </h:form>
+    </h:body>
+</html>        
+

@@ -55,15 +55,6 @@
                     <p:column headerText="#{bundle.ResolucionLabel_anio}" sortBy="#{e.anio}" filterBy="#{e.anio}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.anio}"/>
                     </p:column>
-                    <p:column headerText="#{bundle.ResolucionLabel_libro}" sortBy="#{e.libro}" filterBy="#{e.libro}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.libro}"/>
-                    </p:column>
-                    <p:column headerText="#{bundle.ResolucionLabel_acta}" sortBy="#{e.acta}" filterBy="#{e.acta}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.acta}"/>
-                    </p:column>
-                    <p:column headerText="#{bundle.ResolucionLabel_foja}" sortBy="#{e.foja}" filterBy="#{e.foja}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.foja}"/>
-                    </p:column>
                     <p:column headerText="Acciones" style="width:135px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbResolucion.prepareView}">

@@ -106,9 +106,9 @@ public class Docente implements Serializable {
     /**
      * Campo de tipo Persona que contiene los datos básicos de la persona del docente.
      */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="persona_id", nullable=true)
-    private Persona persona;  
+    @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    @NotNull(message = "{enitdades.objectNotNullError}") 
+    private Persona persona;          
     
     /**
      * Campo de tipo Agente que contiene los datos básicos de agente del docente que lo es.

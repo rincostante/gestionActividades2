@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Registrar nuevo Agente</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form style="text-align: left">
+            <p:panel id="pnEdit" style="margin-bottom:10px;">
+                <p:messages id="messages" />
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Datos personales: " />
+                    <p:commandButton value="Editar" action="#{mbActividadImpl.prepareEditPersona}" 
+                                         icon="ui-icon-extlink" process="@this" /> 
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_organismo}" for="organismo" />
+                    <p:selectOneMenu id="organismo" value="#{mbActividadImpl.agente.organismo}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.AgenteOrganismoRequiredMessage}" 
+                                     valueChangeListener="#{mbActividadImpl.organismoChangeListener}">
+                        <f:selectItem itemLabel="Seleccione el Organismo" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.selected.organismosDestinatarios}" var="organismo" 
+                                       itemLabel="#{organismo.nombre}" 
+                                       itemValue="#{organismo}"/>
+                        <p:ajax event="change" update="referente"/>
+                    </p:selectOneMenu>  
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_sitRevista}" for="sitRev" />
+                    <p:selectOneMenu id="sitRev" value="#{mbActividadImpl.agente.situacionRevista}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.AgenteSitRevistaRequiredMessage}">
+                        <f:selectItem itemLabel="Seleccione la Situación de Revista" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listaSitRev}" var="sitRev" 
+                                       itemLabel="#{sitRev.nombre}" 
+                                       itemValue="#{sitRev}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_cargo}" for="cargo" />
+                    <p:selectOneMenu id="cargo" value="#{mbActividadImpl.agente.cargo}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.AgenteCargoRequiredMessage}">
+                        <f:selectItem itemLabel="Seleccione el Cargo" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listaCargo}" var="cargo" 
+                                       itemLabel="#{cargo.nombre}" 
+                                       itemValue="#{cargo}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_fechaInicAct}" for="fechaInic"/>
+                    <p:calendar id="fechaInic" value="#{mbActividadImpl.agente.fechaInicioActividades}" pattern="dd/MM/yyyy" mask="true" />
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_nivelIpap}" for="nivIpap" />
+                    <p:selectOneMenu id="nivIpap" value="#{mbActividadImpl.agente.nivelIpap}" >
+                        <f:selectItem itemLabel="Seleccione el Nivel alcanzando en Ipap" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listaNivelIpap}" var="nivIpap" 
+                                       itemLabel="#{nivIpap.nombre}, #{nivIpap.estado}" 
+                                       itemValue="#{nivIpap}"/>
+                    </p:selectOneMenu>  
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_estCursados}" for="estudios"/>
+                    <p:selectOneMenu id="estudios" value="#{mbActividadImpl.agente.estudiosCursados}"
+                                     required="true" 
+                                     requiredMessage="#{bundle.AgenteEstudiosRequiredMessage}">
+                        <f:selectItem itemLabel="Seleccione los estudios" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listaEstudios}" var="estCur" 
+                                       itemLabel="#{estCur.nombre}, #{estCur.estado}" 
+                                       itemValue="#{estCur}"/>
+                    </p:selectOneMenu>     
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_titulo}" for="titulo"/>
+                    <p:selectOneMenu id="titulo" value="#{mbActividadImpl.agente.titulo}" >
+                        <f:selectItem itemLabel="Seleccione el título" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listaTitulos}" var="titulo" 
+                                       itemLabel="#{titulo.nombre}" 
+                                       itemValue="#{titulo}"/>
+                    </p:selectOneMenu>  
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_curReal}" for="curReal"/>
+                    <p:inputText id="curReal"
+                                 value="#{mbActividadImpl.agente.cursosRealizados}"/> 
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_domCalle}" for="domCalle"/>
+                    <p:inputText id="domCalle"
+                                 value="#{mbActividadImpl.agente.domCalle}"/> 
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_domNumero}" for="domNum"/>
+                    <p:inputText id="domNum"
+                                 value="#{mbActividadImpl.agente.domNumero}"/> 
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_telefono}" for="telLab"/>
+                    <p:inputMask id="telLab" value="#{mbActividadImpl.agente.telefono}" mask="(9999) 999-9999" />   
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_emal}" for="emailLab" />
+                    <p:inputText id="emailLab" value="#{mbActividadImpl.agente.email}" />
+
+                    <p:outputLabel value="Es Referente: " />
+                    <p:selectBooleanButton id="esReferente" value="#{mbActividadImpl.agente.esReferente}" 
+                                           onLabel="No" 
+                                           offLabel="Sí" 
+                                           valueChangeListener="#{mbActividadImpl.referenteChangeListener}" >
+                        <p:ajax update="referente" event="change" />
+                    </p:selectBooleanButton>
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_referente}" for="referente" />
+                    <p:selectOneMenu id="referente" value="#{mbActividadImpl.agente.referente}" disabled="#{mbActividadImpl.esReferente}" >
+                        <f:selectItem itemLabel="Seleccione el Referente" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listaReferentes}" var="ref" 
+                                       itemLabel="#{ref.apYNom} - #{ref.cargo.nombre}" 
+                                       itemValue="#{ref}"/>
+                    </p:selectOneMenu>     
+                </h:panelGrid>
+            </p:panel>
+
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandButton icon="ui-icon-pencil" 
+                                     action="#{mbActividadImpl.updateAgente}" 
+                                     value="Guardar" 
+                                     style="margin-right:10px;" 
+                                     update="pnEdit"/>
+                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                        <p:ajax update="pnEdit" resetValues="true" />
+                    </p:commandButton>                        
+                </f:facet>                   
+            </p:toolbar>
+        </h:form>
+    </h:body> 
+</html>       
+

@@ -4,7 +4,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" lang="es">
     <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
         <ui:define name="title">
             <h:outputText value="#{bundle.ActividadImplTitle}" />
@@ -32,6 +32,37 @@
                         <h:outputLabel value="#{bundle.ActividadImplLabel_resolucion}"/>
                         <h:outputText value="#{mbActividadImpl.selected.resolucion.resolucion}/#{mbActividadImpl.selected.resolucion.anio}" title="#{bundle.ActividadImplTitle_resolucion}"/>    
 
+                        
+                        
+                        
+                        
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_numAnexo}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.numAnexo}" title="#{bundle.ActividadImplTitle_numAnexo}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_libro}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.libro}" title="#{bundle.ActividadImplTitle_libro}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_foja}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.foja}" title="#{bundle.ActividadImplTitle_foja}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_acta}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.acta}" title="#{bundle.ActividadImplTitle_acta}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_porcAsist}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.porcAsistencia}" title="#{bundle.ActividadImplTitle_porcAsist}" >
+                            <f:convertNumber type="percent" />
+                        </h:outputText> 
+                        
+                        <h:outputLabel value="#{bundle.ActividadImplLabel_evalEnc}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.evaluaEncuesta}" title="#{bundle.ActividadImplTitle_evalEnc}" /> 
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         <h:outputLabel value="#{bundle.ActividadImplLabel_sede}"/>
                         <h:outputText value="#{mbActividadImpl.selected.sede.nombre}" title="#{bundle.ActividadImplTitle_sede}"/>  
                         
@@ -56,13 +87,13 @@
                                          actionListener="#{mbActividadImpl.verOrgVinc}" /> 
 
                         <h:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}"/>
-                        <h:outputText value="#{mbActividadImpl.selected.dirigidoa}" title="#{bundle.ActividadImplTitle_dirigidoA}"/> 
+                        <h:outputText value="#{mbActividadImpl.selected.dirigidoa}" title="#{bundle.ActividadImplTitle_dirigidoA}" /> 
 
                         <h:outputLabel value="#{bundle.ActividadImplLabel_observaciones}"/>
                         <h:outputText value="#{mbActividadImpl.selected.observaciones}" title="#{bundle.ActividadImplTitle_observaciones}"/>   
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_participantes}" />
-                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verParticipantes}" />
+                        <p:commandButton value="Ver / Gestionar" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verParticipantes}" />
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_clases}" />
                         <p:commandButton value="Ver / Gestionar" icon="ui-icon-extlink"  actionListener="#{mbActividadImpl.verClases}" />

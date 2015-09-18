@@ -16,27 +16,60 @@
         <h:form style="text-align: left">
             <p:panel id="pnEdit" style="margin-bottom:10px;">
                 <p:messages id="messages" />
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="5">
 
-                    <p:outputLabel value="#{bundle.ParticipanteLabel_Agente}" for="agente"/>
-                    <p:selectOneMenu id="agente" value="#{mbActividadImpl.participante.agente}">
-                        <f:selectItem itemLabel="Seleccione el Agente" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{mbActividadImpl.listAgentes}" var="agente" 
-                                       itemLabel="#{agente.apYNom} - #{agente.documento}" 
-                                       itemValue="#{agente}"/>
-                    </p:selectOneMenu> 
+                    <p:outputLabel value="DNI" for="dni"/>
+                    <p:autoComplete id="dni" value="#{mbActividadImpl.participante.agente}" 
+                                    completeMethod="#{mbActividadImpl.completeAgenteEdit}" var="ag" 
+                                    itemLabel="#{ag.documento}" itemValue="#{ag}" >
+                        <p:column>#{ag.documento}</p:column>
+                        <p:column>#{ag.apYNom}</p:column>
+                    </p:autoComplete>
+                    
+                    <p:commandButton icon="ui-icon-refresh" value="Ver Detalle" 
+                                     update="agente, org, estCur, sitRev, telLab"
+                                     onclick="PF('btnAct').show();"
+                                     style="margin-left: 10px"/>
+                    <p:commandButton id="btnAct" icon="ui-icon-refresh" value="Actualizar datos" 
+                                     action="#{mbActividadImpl.prepareEditAgente}"
+                                     rendered="#{mbActividadImpl.participante.agente.admin.habilitado}"
+                                     style="margin-left: 10px"/>
+                    <p:commandButton icon="ui-icon-newwin" value="Registrar nuevo" 
+                                     action="#{mbActividadImpl.prepareCreateAgente}" 
+                                     process="@this" style="margin-left: 10px"/>
 
+                </h:panelGrid>
+            </p:panel>    
+                
+            <p:panel style="margin-bottom:10px;" widgetVar="datosComp">
+                <h:panelGrid columns="2" >
+                    <p:outputLabel value="#{bundle.ParticipanteLabel_Agente}" for="agente" />
+                    <h:outputText id="agente" value="#{mbActividadImpl.participante.agente.apYNom}" />
+                                  
+                    <p:outputLabel value="Organismo: " for="org"/>
+                    <h:outputText id="org" value="#{mbActividadImpl.participante.agente.organismo.nombre}" />
+                    
+                    <p:outputLabel value="Estudios cursados: " for="estCur"/>
+                    <h:outputText id="estCur" value="#{mbActividadImpl.participante.agente.estudiosCursados.nombre}" />
+                    
+                    <p:outputLabel value="Situación de revista: " for="sitRev"/>
+                    <h:outputText id="sitRev" value="#{mbActividadImpl.participante.agente.situacionRevista.nombre}" />
+                    
+                    <p:outputLabel value="Teléfono laboral: " for="telLab"/>
+                    <h:outputText id="telLab" value="#{mbActividadImpl.participante.agente.telefono}" />
                 </h:panelGrid>
             </p:panel>
 
             <p:toolbar>
                 <f:facet name="left">
                     <p:commandButton icon="ui-icon-pencil"
-                                     action="#{mbActividadImpl.updateParticipante}"
+                                     actionListener="#{mbActividadImpl.updateParticipante}"
                                      value="Guardar" 
                                      style="margin-right:10px;" 
                                      update="pnEdit"/>
-                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right" 
+                                     onclick="PF('datosComp').hide();"
+                                     actionListener="#{mbActividadImpl.limpiarParticipante}" >
                         <p:ajax update="pnEdit" resetValues="true" />
                     </p:commandButton>                        
                 </f:facet>                 

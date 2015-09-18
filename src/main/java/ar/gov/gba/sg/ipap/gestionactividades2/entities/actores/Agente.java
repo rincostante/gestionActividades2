@@ -94,16 +94,14 @@ public class Agente implements Serializable {
     @Column (nullable=true, length=500)
     @Size(message = "{endidades.stringSizeErrorMax}", max = 500)
     private String cursosRealizados;  
-    
-    
+
     /**
-     * Campo de tipo Persona que contiene los datos básicos de la persona del agente.
+     * Campo de tipo Persona que encapsula los datos personales del Agente.
      */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="persona_id", nullable=false)
-    @NotNull(message = "{entidades.objectNotNullError}")
-    private Persona persona;   
-    
+    @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    @NotNull(message = "{enitdades.objectNotNullError}") 
+    private Persona persona;    
+
     /**
      * Campo de tipo EstudiosCursados que contiene los datos de los estudios del agente.
      */

@@ -16,15 +16,19 @@
                     <h:inputHidden id="id" value="#{mbAgente.selected.id}" />
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
-                        <p:outputLabel value="#{bundle.AgenteLabel_persona}" for="persona" />
-                        <p:selectOneMenu id="persona" value="#{mbAgente.selected.persona}" 
-                                         required="true" 
-                                         requiredMessage="#{bundle.AgentePersonaRequiredMessage}">
-                            <f:selectItem itemLabel="Seleccione la Persona" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbAgente.listaPersonas}" var="persona" 
-                                           itemLabel="#{persona.apellidos}, #{persona.nombres} - #{persona.documento}" 
-                                           itemValue="#{persona}"/>
-                        </p:selectOneMenu>  
+                        <p:outputLabel value="Datos personales: " />
+                        <p:commandButton value="Editar" action="#{mbAgente.prepareEditPersona}" 
+                                             icon="ui-icon-extlink" process="@this" />
+                        
+                        <p:outputLabel value="#{bundle.AgenteLabel_tipoOrg}" for="tipoOrg"/>
+                        <p:selectOneMenu id="tipoOrg" value="#{mbAgente.tipoOrg}" 
+                                         valueChangeListener="#{mbAgente.tipoOrgChangeListener}">
+                            <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbAgente.listTipoOrganismo}" var="tipoOrg" 
+                                           itemLabel="#{tipoOrg.nombre}" 
+                                           itemValue="#{tipoOrg}"/>
+                            <p:ajax event="change" update="organismo"/>
+                        </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_organismo}" for="organismo" />
                         <p:selectOneMenu id="organismo" value="#{mbAgente.selected.organismo}" 

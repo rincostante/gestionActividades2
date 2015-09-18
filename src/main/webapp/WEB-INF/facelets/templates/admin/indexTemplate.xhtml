@@ -18,10 +18,6 @@
                 <h:form>
                     <p:menubar>
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}" />
-                        <p:submenu label="Gestión" rendered="#{mbLogin.usLogeado.rol.nombre == 'Supervisor'}">
-                            <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/list.xhtml"/>
-                            <p:menuitem value="Clases" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizClase}/list.xhtml"/>
-                        </p:submenu>
                         <p:submenu label="Actividades" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
                             <p:menuitem value="Actividades Formativas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadPlan}/list.xhtml"/>
                             <p:menuitem value="Actividades Dispuestas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
@@ -29,18 +25,17 @@
                             <p:menuitem value="Resoluciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizResolucion}/list.xhtml"/>
                             <p:menuitem value="Sub Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSubPrograma}/list.xhtml"/>
                         </p:submenu>
-                        <p:submenu label="Gestión" rendered="#{mbLogin.usLogeado.rol.nombre == 'Coordinador'}">
-                            <p:menuitem value="Actividades Dispuestas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
-                            <p:menuitem value="Inscripciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizParticipante}/listProv.xhtml"/>
-                            <p:menuitem value="Clases" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizClase}/list.xhtml"/>
-                        </p:submenu>
+                        
+                        <p:menuitem value="Actividades Dispuestas" rendered="#{mbLogin.usLogeado.rol.nombre == 'Coordinador'}"
+                                    url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml" />
+
                         <p:submenu label="Actores" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
                             <p:menuitem value="Agente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizAgente}/list.xhtml"/>
                             <p:menuitem value="Docente" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizDocente}/list.xhtml"/>
-                            <p:menuitem value="Persona" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPersona}/list.xhtml"/>
                             <p:menuitem value="Rol" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizRol}/list.xhtml"/>    
                             <p:menuitem value="Usuario" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizUsuario}/list.xhtml"/>    
                         </p:submenu> 
+                        
                         <p:submenu label="Parámetros" rendered="#{mbLogin.llevaParametros}">
                             <p:menuitem value="Campo Temático" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCampoTematico}/list.xhtml"/>
                             <p:menuitem value="Cargo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizCargo}/list.xhtml"/>
@@ -53,12 +48,13 @@
                             <p:menuitem value="Orientación" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizOrientacion}/list.xhtml"/>
                             <p:menuitem value="Sede" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSede}/list.xhtml"/>
                             <p:menuitem value="Situación de Revista" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSituacionRevista}/list.xhtml"/>
-                             <p:menuitem value="Tema de Especialización" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoEsp}/list.xhtml"/>
+                            <p:menuitem value="Tema de Especialización" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoEsp}/list.xhtml"/>
                             <p:menuitem value="Tipo de Capacitación" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoCap}/list.xhtml"/>
                             <p:menuitem value="Tipo de Documento" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoDocumento}/list.xhtml"/>
                             <p:menuitem value="Tipo de Organismo" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTipoOrg}/list.xhtml"/>
                             <p:menuitem value="Título" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizTitulo}/list.xhtml"/>
-                        </p:submenu>                         
+                        </p:submenu>     
+                        
                         <p:submenu label="#{mbLogin.usLogeado.apYNom} | #{mbLogin.usLogeado.rol.nombre}" >
                             <p:menuitem value="Cambiar contraseña" action="#{mbCambioPass.prepareCambioClave}" />
                             <p:menuitem value="Cerrar sesión" action="#{mbLogin.logout}" oncomplete="logout(xhr, status, args)"/>

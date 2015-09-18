@@ -15,11 +15,9 @@
                 <p:panel id="pnView" header="#{bundle.DocenteViewTitle}" style="margin-bottom:10px;">
                     <p:messages id="messages" />
                     <h:panelGrid columns="2">
-                        <h:outputLabel value="#{bundle.DocenteLabel_apYNom}"/>
-                        <h:outputText value="#{mbDocente.selected.apYNom}" title="#{bundle.DocenteTitle_apYNom}"/>     
-                        
-                        <h:outputLabel value="#{bundle.DocenteLabel_documento}"/>
-                        <h:outputText value="#{mbDocente.selected.documento}" title="#{bundle.DocenteTitle_documento}"/>   
+                        <h:outputLabel value="Datos pesonales: "/>
+                        <p:commandButton value="Ver" action="#{mbDocente.prepareViewPersona}" 
+                                             icon="ui-icon-extlink" process="@this" />  
                         
                         <h:outputLabel value="#{bundle.DocenteLabel_telefonoLab}"/>
                         <h:outputText value="#{mbDocente.selected.telefonoLaboral}" title="#{bundle.DocenteTitle_telefonoLab}"/>   

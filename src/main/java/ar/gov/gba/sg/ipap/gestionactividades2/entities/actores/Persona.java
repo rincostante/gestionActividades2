@@ -6,10 +6,8 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actores;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +16,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -120,13 +117,6 @@ public class Persona implements Serializable {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="localidad_id")
     private Localidad localidad;  
-
-    /**
-     * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
-     */
-    @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    @NotNull(message = "{enitdades.objectNotNullError}") 
-    private AdmEntidad admin;
 
     /**
      *
@@ -302,22 +292,6 @@ public class Persona implements Serializable {
      */
     public void setLocalidad(Localidad localidad) {
         this.localidad = localidad;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public AdmEntidad getAdmin() {
-        return admin;
-    }
-
-    /**
-     *
-     * @param admin
-     */
-    public void setAdmin(AdmEntidad admin) {
-        this.admin = admin;
     }
         
     /**

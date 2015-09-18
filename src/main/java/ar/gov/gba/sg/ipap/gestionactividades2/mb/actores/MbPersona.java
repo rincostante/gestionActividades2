@@ -6,7 +6,6 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actores;
 
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Localidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Persona;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
@@ -357,11 +356,6 @@ public class MbPersona implements Serializable{
         try{
             // Actualización de datos de administración de la entidad
             Date date = new Date(System.currentTimeMillis());
-            current.getAdmin().setFechaModif(date);
-            current.getAdmin().setUsModif(usLogeado);
-            current.getAdmin().setHabilitado(true);
-            current.getAdmin().setUsBaja(null);
-            current.getAdmin().setFechaBaja(null);
 
             // Actualizo
             getFacade().edit(current);
@@ -412,13 +406,6 @@ public class MbPersona implements Serializable{
     public String create() {
         try {
             if(getFacade().noExiste(current.getTipoDocumento().getId(), current.getDocumento())){
-                // Creación de la entidad de administración y asignación
-                Date date = new Date(System.currentTimeMillis());
-                AdmEntidad admEnt = new AdmEntidad();
-                admEnt.setFechaAlta(date);
-                admEnt.setHabilitado(true);
-                admEnt.setUsAlta(usLogeado);
-                current.setAdmin(admEnt);
                 
                 // Formateo el apellido
                 String tempApp = current.getApellidos();
@@ -448,11 +435,6 @@ public class MbPersona implements Serializable{
         try {
             per = getFacade().getExistente(current.getTipoDocumento().getId(), current.getDocumento());
             if(per == null){
-                // Actualización de datos de administración de la entidad
-                Date date = new Date(System.currentTimeMillis());
-                current.getAdmin().setFechaModif(date);
-                current.getAdmin().setUsModif(usLogeado);
-                
                 // Formateo el apellido
                 String tempApp = current.getApellidos();
                 current.setApellidos(tempApp.toUpperCase());
@@ -463,11 +445,7 @@ public class MbPersona implements Serializable{
                 return "view";
             }else{
                 if(per.getId().equals(current.getId())){
-                    // Actualización de datos de administración de la entidad
-                    Date date = new Date(System.currentTimeMillis());
-                    current.getAdmin().setFechaModif(date);
-                    current.getAdmin().setUsModif(usLogeado);
-                    
+
                     // Formateo el apellido
                     String tempApp = current.getApellidos();
                     current.setApellidos(tempApp.toUpperCase());
@@ -638,11 +616,6 @@ public class MbPersona implements Serializable{
      */
     private void performDestroy() {
         try {
-            // Actualización de datos de administración de la entidad
-            Date date = new Date(System.currentTimeMillis());
-            current.getAdmin().setFechaBaja(date);
-            current.getAdmin().setUsBaja(usLogeado);
-            current.getAdmin().setHabilitado(false);
             
             // Deshabilito la entidad
             getFacade().edit(current);

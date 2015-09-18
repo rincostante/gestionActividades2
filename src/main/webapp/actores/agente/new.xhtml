@@ -15,15 +15,19 @@
                 <p:panel id="pnNew" header="#{bundle.AgenteNewTitle}" style="margin-bottom:10px;">
                     <p:growl id="messages" />
                     <h:panelGrid columns="2">
-                        <p:outputLabel value="#{bundle.AgenteLabel_persona}" for="persona" />
-                        <p:selectOneMenu id="persona" value="#{mbAgente.selected.persona}" 
-                                         required="true" 
-                                         requiredMessage="#{bundle.AgentePersonaRequiredMessage}">
-                            <f:selectItem itemLabel="Seleccione la Persona" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbAgente.listaPersonas}" var="persona" 
-                                           itemLabel="#{persona.apellidos}, #{persona.nombres} - #{persona.documento}" 
-                                           itemValue="#{persona}"/>
-                        </p:selectOneMenu>  
+                        <p:outputLabel value="Datos personales: " />
+                        <p:commandButton value="Ingresar" action="#{mbAgente.prepareCreatePersona}" 
+                                             icon="ui-icon-extlink" process="@this" /> 
+                        
+                        <p:outputLabel value="#{bundle.AgenteLabel_tipoOrg}" for="tipoOrg"/>
+                        <p:selectOneMenu id="tipoOrg" value="#{mbAgente.tipoOrg}" 
+                                         valueChangeListener="#{mbAgente.tipoOrgChangeListener}">
+                            <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbAgente.listTipoOrganismo}" var="tipoOrg" 
+                                           itemLabel="#{tipoOrg.nombre}" 
+                                           itemValue="#{tipoOrg}"/>
+                            <p:ajax event="change" update="organismo"/>
+                        </p:selectOneMenu> 
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_organismo}" for="organismo" />
                         <p:selectOneMenu id="organismo" value="#{mbAgente.selected.organismo}" 
@@ -99,21 +103,21 @@
                                      value="#{mbAgente.selected.domNumero}"/> 
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_telefono}" for="telLab"/>
-                        <p:inputMask id="telLab" value="#{mbAgente.selected.telefono}" mask="(9999) 999-9999" />   
+                        <p:inputMask id="telLab" value="#{mbAgente.selected.telefono}" mask="(9999) 9999-9999" />   
                         
                         <p:outputLabel value="#{bundle.AgenteLabel_emal}" for="emailLab" />
                         <p:inputText id="emailLab" value="#{mbAgente.selected.email}" />
                         
                         <p:outputLabel value="Es Referente: " />
                         <p:selectBooleanButton id="esReferente" value="#{mbAgente.selected.esReferente}" 
-                                               onLabel="Sí" 
-                                               offLabel="No" 
+                                               onLabel="No" 
+                                               offLabel="Sí" 
                                                valueChangeListener="#{mbAgente.referenteChangeListener}" >
                             <p:ajax update="referente" event="change" />
                         </p:selectBooleanButton>
 
                         <p:outputLabel value="#{bundle.AgenteLabel_referente}" for="referente" />
-                        <p:selectOneMenu id="referente" value="#{mbAgente.selected.referente}" disabled="#{not mbAgente.esReferente}" >
+                        <p:selectOneMenu id="referente" value="#{mbAgente.selected.referente}" disabled="#{mbAgente.esReferente}" >
                             <f:selectItem itemLabel="Seleccione el Referente" itemValue="" noSelectionOption="true" />
                             <f:selectItems value="#{mbAgente.listaReferentes}" var="ref" 
                                            itemLabel="#{ref.apYNom} - #{ref.cargo.nombre}" 
