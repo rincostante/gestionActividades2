@@ -60,12 +60,15 @@
                                        itemLabel="#{modalidad.nombre}" 
                                        itemValue="#{modalidad}"/>
                     </p:selectOneMenu> 
-                    
-                    
-                    <p:commandButton icon="ui-icon-check" value="Guardar" actionListener="#{mbActividadImpl.createClase}" update="prmNew" />
-                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" >
-                        <p:ajax update="prmNew" resetValues="true" />
-                    </p:commandButton>
+                    <p:outputLabel value=" "/>
+                    <h:panelGrid id="botones" columns="3">
+                        <p:commandButton icon="ui-icon-check" value="Guardar" actionListener="#{mbActividadImpl.createClase}" update="prmNew" />
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" >
+                            <p:ajax update="prmNew" resetValues="true" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" value="Eliminar última" process="@this" actionListener="#{mbActividadImpl.quitarClase}" update="clases" />
+                    </h:panelGrid>
+
                 </h:panelGrid>
                 
                 <!-- a partir de aquí es el listado de Clases asociadas -->  

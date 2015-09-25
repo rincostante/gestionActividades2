@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Editar los datos de la Clase seleccionada</title>
+        <title>Ingresar los datos de la nuva Clase</title>
         <style type="text/css">
             .ui-widget {
                 font-size: 80%;
@@ -22,6 +22,7 @@
                     <p:calendar id="fechaRealiz" value="#{mbActividadImpl.clase.fechaRealizacion}" 
                                 pattern="dd/MM/yyyy" mask="true" 
                                 required="true" 
+                                validator="#{mbActividadImpl.validarFechaRelizacion}"
                                 requiredMessage="ClaseRequire_fechaRealizaccion" />
 
                      <p:outputLabel value="#{bundle.ClaseLabel_horaInicio}" for="horaInicio"/>

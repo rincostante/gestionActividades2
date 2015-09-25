@@ -22,6 +22,10 @@
                 <f:facet name="header">
                     <p:commandButton icon="ui-icon-newwin" value="Agregar" action="#{mbActividadImpl.agregarClases}" style="margin-left: 10px" 
                                      rendered="#{mbActividadImpl.selected.admin.habilitado}"/>
+                    <p:commandButton icon="ui-icon-trash" value="Eliminar última" action="#{mbActividadImpl.deleteClase}" style="margin-left: 10px" 
+                                     rendered="#{mbActividadImpl.selected.admin.habilitado}" >
+                        <p:confirm header="Confirmar" message="¿Desea eliminar la última Clase?" />
+                    </p:commandButton>
                     <p:commandButton icon="ui-icon-refresh" value="Listar" update="clasesList" style="margin-left: 10px"/>
                     <h:commandLink>
                         <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
@@ -52,7 +56,7 @@
                     <h:outputText value="#{clase.strHoraFin}" />
                 </p:column>
                 
-                <p:column headerText="Acciones" style="width:130px" exportable="false" rendered="#{mbActividadImpl.selected.admin.habilitado}" >
+                <p:column headerText="Acciones" style="width:98px" exportable="false" rendered="#{mbActividadImpl.selected.admin.habilitado}" >
                     <p:growl id="messages" showDetail="true" />
                     <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadImpl.prepareViewClase}" title="Ver Detalle">
                         <f:setPropertyActionListener value="#{clase}" target="#{mbActividadImpl.clase}" />
@@ -63,18 +67,13 @@
                     <p:commandButton icon="ui-icon-person" action="#{mbActividadImpl.prepareAddAsistencia}" title="Asignar asistentes">
                         <f:setPropertyActionListener value="#{clase}" target="#{mbActividadImpl.clase}" />
                     </p:commandButton>  
-                    <p:commandButton icon="ui-icon-trash" action="#{mbActividadImpl.deleteClase}" update="messages" title="Deshabilitar" >
-                        <f:setPropertyActionListener value="#{clase}" target="#{mbActividadImpl.clase}" />
-                        <p:confirm header="Confirmar" message="¿Desea eliminar esta Clase?" />
-                    </p:commandButton>
 
                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                    </p:confirmDialog>                       
                 </p:column>  
-                
-                
+
             </p:dataTable>
         </h:form>
     </h:body>

@@ -18,7 +18,8 @@
                         <p:menuitem value="Inicio" url="#{bundle.Servidor}#{bundle.RutaAplicacion}" />
                         <p:submenu label="Actividades" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
                             <p:menuitem value="Actividades Formativas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadPlan}/list.xhtml"/>
-                            <p:menuitem value="Actividades Dispuestas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml"/>
+                            <p:menuitem value="Actividades Dispuestas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizActividadImpl}/list.xhtml" 
+                                        rendered="#{mbLogin.usLogeado.rol.nombre != 'Administrador'}"/>
                             <p:menuitem value="Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizPrograma}/list.xhtml"/>
                             <p:menuitem value="Resoluciones" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizResolucion}/list.xhtml"/>
                             <p:menuitem value="Sub Programas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizSubPrograma}/list.xhtml"/>

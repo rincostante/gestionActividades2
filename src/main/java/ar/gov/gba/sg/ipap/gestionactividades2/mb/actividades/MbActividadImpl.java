@@ -42,7 +42,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFac
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.CargoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.ClaseFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.DocenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstadoParticipanteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstudiosCursadosFacade;
@@ -174,8 +173,6 @@ public class MbActividadImpl implements Serializable{
     private SubProgramaFacade subprogramaFacade;
     @EJB
     private TipoOrganismoFacade tipoOrgFacade;
-    @EJB
-    private ClaseFacade claseFacade;
     @EJB
     private ModalidadFacade modalidadFacade;
     @EJB
@@ -829,12 +826,10 @@ public class MbActividadImpl implements Serializable{
         
         // seteo los elementos para agregar clases a la Actividad
         listModalidades = modalidadFacade.findAll();
-        clase = new Clase();        
         if(listClaseNew == null){
             listClaseNew = new ArrayList();
         }
         
-        participante = new Participante();        
         if(listPartNew == null){
             listPartNew = new ArrayList();
         }
@@ -1149,7 +1144,7 @@ public class MbActividadImpl implements Serializable{
      */
     public void createClase(ActionEvent event){
         // guardo la Clase en el listado si el docente esté disponible
-        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin())){
+        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 0)){
             try{
                 // asigno número de orden
                 clase.setNumOrden(getNumOrdenClase(false));
@@ -1162,8 +1157,7 @@ public class MbActividadImpl implements Serializable{
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseCreated"));
 
                 // reseteo la variable para volverla a poblar con la próxima, si hubiera.
-                clase = null;
-                clase = new Clase();
+                recreateClase();
             }catch(Exception e){
                 JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseCreatedErrorOccured"));
             }
@@ -1198,8 +1192,7 @@ public class MbActividadImpl implements Serializable{
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreated"));
 
             // reseteo la variable para volverla a poblar con la próxima, si hubiera.
-            participante = null;
-            participante = new Participante();
+            recreatePart();
         }catch(Exception e){
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreatedErrorOccured"));
         } 
@@ -1289,7 +1282,7 @@ public class MbActividadImpl implements Serializable{
      */
     public void addClase(ActionEvent event){
         // guardo la Clase en el listado si el docente esté disponible
-        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin())){
+        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 1)){
             try{
                 // asigno número de orden
                 clase.setNumOrden(getNumOrdenClase(true));
@@ -1306,8 +1299,7 @@ public class MbActividadImpl implements Serializable{
                         + "de lo contrario, por favor cierre el diálogo y actulice el listado de Clases.");
 
                 // reseteo la variable para volverla a poblar con la próxima, si hubiera.
-                clase = null;
-                clase = new Clase();
+                recreateClase();
             }catch(Exception e){
                 JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ClaseCreatedErrorOccured"));
             }
@@ -1354,8 +1346,7 @@ public class MbActividadImpl implements Serializable{
                         + "de lo contrario, por favor cierre el diálogo y actulice el listado de Participantes.");
 
                 // reseteo la variable para volverla a poblar con la próxima, si hubiera.
-                participante = null;
-                participante = new Participante();
+                recreatePart();
             }catch(Exception e){
                 JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("ParticipanteCreatedErrorOccured"));
             }
@@ -1440,7 +1431,7 @@ public class MbActividadImpl implements Serializable{
         for (Clase cls : current.getClases()) {
             if(!cls.getId().equals(clase.getId())){
                 // valido la disponibilidad del docente contra todas las clases persistidas
-                if(!validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin())){
+                if(!validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 2)){
                     docenteOcupado = true;
                 }
                 
@@ -1453,8 +1444,7 @@ public class MbActividadImpl implements Serializable{
             current.setClases(clasesSwap);
             getFacade().edit(current);
             // reseteo la variable para volverla a poblar con la próxima, si hubiera.
-            clase = null;
-            clase = new Clase();
+            recreateClase();
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ClaseUpdated"));
         }else{
             JsfUtil.addErrorMessage("El docente seleccionado no está disponible para la fecha y horarios seleccionados, por favor, cierre el formulario y vuelvalo a abrir.");
@@ -1483,8 +1473,7 @@ public class MbActividadImpl implements Serializable{
                 current.setParticipantes(partSwap);
                 getFacade().edit(current);
                 // reseteo la variable para volverla a poblar con la próxima, si hubiera.
-                participante = null;
-                participante = new Participante();
+                recreatePart();
                 JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ParticipanteUpdated"));
             }catch(Exception e){
                 JsfUtil.addErrorMessage("Hubo un error actualizando el Participante. " + e.getMessage());
@@ -1559,18 +1548,16 @@ public class MbActividadImpl implements Serializable{
      * Método para eliminar Clases
      */
     public void deleteClase(){
-        if(!clase.getParticipantes().isEmpty()){
-            // no elimino
-            JsfUtil.addErrorMessage("La clase que quiere eliminar tiene asistentes.");
+        int maxNum = current.getClases().size();
+        Clase cls = current.getClases().get(maxNum - 1);
+        if(cls.getParticipantes().isEmpty()){
+            current.getClases().remove(cls);
+            getFacade().edit(current);
+            FacesMessage message = new FacesMessage(FacesMessage.FACES_MESSAGES, "La Clase ha sido eliminada, por favor actulice el listado para confirmar su eliminación.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }else{
-            try{
-                current.getClases().remove(clase);
-                claseFacade.remove(clase);
-                getFacade().edit(current);
-                JsfUtil.addSuccessMessage("Clase eliminada. Por favor, actualice el lsitado de Clases");
-            }catch(Exception e){
-                JsfUtil.addErrorMessage("Hubo un error eliminando la Clase. " + e.getMessage());
-            }
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Clases", "La Clase que desa eliminar tiene Asistentes registrados, debe borrar las asistencias para poder elimnar la Clase.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }        
     
@@ -1586,9 +1573,11 @@ public class MbActividadImpl implements Serializable{
             participante.getAdmin().setHabilitado(false);
 
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage("Inscripción deshabilitada. Por favor, actualice el lsitado de Participantes");
+            FacesMessage message = new FacesMessage(FacesMessage.FACES_MESSAGES, "El Participante ha sido deshabilitado, por favor actulice el listado para confirmar su estado.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }catch(Exception e){
-            JsfUtil.addErrorMessage("Hubo un error deshabilitando el Participante. " + e.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "Hubo un error deshabilitando la inscripción.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
     
@@ -1606,9 +1595,9 @@ public class MbActividadImpl implements Serializable{
             participante.getAdmin().setFechaBaja(null);
 
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage("Inscripción deshabilitada. Por favor, actualice el lsitado de Participantes");
+            JsfUtil.addSuccessMessage("Inscripción habilitada. Por favor, actualice el lsitado de Participantes");
         }catch(Exception e){
-            JsfUtil.addErrorMessage("Hubo un error deshabilitando el Participante. " + e.getMessage());
+            JsfUtil.addErrorMessage("Hubo un error habilitando el Participante. " + e.getMessage());
         }
     }
     
@@ -1629,11 +1618,13 @@ public class MbActividadImpl implements Serializable{
             current.setClases(clasesSwap);
             getFacade().edit(current);
             // reseteo la variable para volverla a poblar con la próxima, si hubiera.
-            clase = null;
-            clase = new Clase();
-            JsfUtil.addSuccessMessage("Las asistencias se registraron correctamente.");
+            //recreateClase();
+            
+            FacesMessage message = new FacesMessage(FacesMessage.FACES_MESSAGES, "Las asistencias se registraron correctamente, por favor, cierre esta ventana.");
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }catch(Exception e){
-            JsfUtil.addErrorMessage("Hubo un error registrando las asistencias. " + e.getMessage());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "Hubo un error registrando las asistencias. " + e.getMessage());
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
     }
 
@@ -1712,6 +1703,23 @@ public class MbActividadImpl implements Serializable{
     }     
     
     /**
+     * Método para quitar un Participante del listado temporal al dar de alta una AD
+     */
+    public void quitarParticipante(){
+        listPartNew.remove(participante);
+        participante = null;
+    }
+    
+    /**
+     * Mátodo para quitar una Clase del listado temporal al dar de alta una AD
+     */
+    public void quitarClase(){
+        int maxNum = listClaseNew.size();
+        listClaseNew.remove(maxNum - 1);
+        clase = null;
+    }
+    
+    /**
      * Método para desvincular un Docente a la Actividad Dispuesta durante su edición
      * @param doc
      */
@@ -1739,9 +1747,32 @@ public class MbActividadImpl implements Serializable{
      * Método para mostrar el diálogo que perimtirá crear las Clases y agregarlas a la Actividad Dispuesta que se está creando
      */
     public void cargarClases(){
-        Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 700);
-        RequestContext.getCurrentInstance().openDialog("clases/dlgNewClase", options, null);
+        // solo permito acceder al formulario si está seteada la fecha de inicio de la AD y si tiene al menos a un Docente vinculado
+        boolean sinDocente = false;
+        boolean sinFechaInicio = false;
+        if(current.getFechaInicio() == null){
+            sinFechaInicio = true;
+        }
+        if(current.getDocentesVinculados().isEmpty()){
+            sinDocente = true;
+        }
+        if(!sinFechaInicio && !sinDocente){
+            clase = new Clase();
+            Map<String,Object> options = new HashMap<>();
+            options.put("contentWidth", 700);
+            RequestContext.getCurrentInstance().openDialog("clases/dlgNewClase", options, null);              
+        }else{
+            String mensaje;
+            if(sinFechaInicio && sinDocente){
+                mensaje = "Debe vincular al menos a un Docente e ingresar la fecha de inicio de la Actividad Dispuesta.";
+            }else if(!sinFechaInicio && sinDocente){
+                mensaje = "Debe ingresar al menos un Docente vinculado a la Actividad Dispuesta.";
+            }else{
+                mensaje = "Debe ingresar la fecha de inicio de la Actividad Dispuesta.";
+            }
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Clases", mensaje);
+            RequestContext.getCurrentInstance().showMessageInDialog(message);
+        }
     }    
     
     /**
@@ -1749,6 +1780,7 @@ public class MbActividadImpl implements Serializable{
      */
     public void cargarParticipantes(){
         if(!current.getOrganismosDestinatarios().isEmpty()){
+            participante = new Participante();
             Map<String,Object> options = new HashMap<>();
             options.put("contentWidth", 850);
             options.put("contentHeight", 650);
@@ -1777,6 +1809,7 @@ public class MbActividadImpl implements Serializable{
      * Método para mostrar el diálogo que perimtirá agregar Clases a la Actividad Dispuesta existente
      */
     public void agregarClases(){
+        recreateClase();
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 700);
         RequestContext.getCurrentInstance().openDialog("dlgAddClase", options, null);
@@ -1786,7 +1819,7 @@ public class MbActividadImpl implements Serializable{
      * Método para mostrar el diálogo que perimtirá agregar Participantes a la Actividad Dispuesta existente
      */
     public void agregarParticipantes(){
-        participante = new Participante();   
+        recreatePart();
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 850);
         options.put("contentHeight", 650);
@@ -1906,38 +1939,139 @@ public class MbActividadImpl implements Serializable{
      * Método para la fecha de realización de la clase
      * No deberá ser anterior a la fecha de inicio de la vigencia del curso
      * ni anterior a la fecha de la clase inmediatemente anterior
+     * ni posterior a la fecha de la clase inmediatamente siguiente
      * @param arg0
      * @param arg1
      * @param arg2
      */
     public void validarFechaRelizacion(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{   
         Date fechaInicioCurso = current.getFechaInicio();
-        Date fechaFinCurso = current.getFechaFin();
         SimpleDateFormat form_1 = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
         String strFechaInicioCurso = form_1.format(fechaInicioCurso);
-        String strFechaFinCurso = form_1.format(fechaFinCurso);
         Date fechaPropuesta = (Date)arg2;
+        FacesMessage message;
         
-        if(claseFacade.isClasesEmpty(current)){
-            if(fechaInicioCurso.after(fechaPropuesta)){
-                FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser anterior a la de inicio del curso " + strFechaInicioCurso);
-                message.setSeverity(FacesMessage.SEVERITY_ERROR);
-                throw new ValidatorException(message);
+        // verifico si estoy creando la Clase o la estoy editando
+        if(clase.getId() != null){
+            // si la estoy editando verifico si la AD es existente
+            // como la clase existe, puedo referirme a sus atributos
+            if(current.getId() != null){
+                // si la Clase y la AD son existentes, verifico si la Clase es la única o la primera de varias con el current y con el número de orden de la clase.
+                if(current.getClases().size() == 1 || clase.getNumOrden() == 1){
+                    // en cualquier caso, verifico que la fecha no sea anterior a la fecha de inicio de la AD ni posterior a su fecha de fin
+                    // CU 1.1
+                    if(fechaInicioCurso.after(fechaPropuesta)){
+                        message = new FacesMessage("La fecha de realización de la clase no debe ser anterior a la de inicio de la Actividad Dispuesta"
+                                + ": " + strFechaInicioCurso + ", por favor oprima el botón 'Restaurar' para volver a los datos originales.");
+                        message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                        throw new ValidatorException(message);
+                    }
+                    // CU 1.2
+                    if(current.getId() != null){
+                        Date fechaFinCurso = current.getFechaFin();
+                        String strFechaFinCurso = form_1.format(fechaFinCurso);
+                        if(fechaPropuesta.after(fechaFinCurso)){
+                            message = new FacesMessage("La fecha de realización de la clase no debe ser posterior al fin de la Actividad Dispuesta"
+                                    + ": " + strFechaFinCurso + ", por favor oprima el botón 'Restaurar' para volver a los datos originales.");
+                            message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                            throw new ValidatorException(message);
+                        }
+                    }
+                    // si la Clase es la primera de varias, además verifico fechas con las restantes
+                    if(clase.getNumOrden() == 1){
+                        switch(verificarFechaRealizacion(fechaPropuesta, true, true)){
+                            // CU 1.3
+                            case 2:
+                                message = new FacesMessage("La fecha de realización de la Clase debe ser anterior a la de su Clase siguiente"
+                                        + ", por favor oprima el botón 'Restaurar' para volver a los datos originales.");
+                                message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                                throw new ValidatorException(message);
+                        }
+                    }
+                }else{
+                    // si no es la única, solo verifico con las restantes
+                    switch(verificarFechaRealizacion(fechaPropuesta, true, true)){
+                        // CU 2.1
+                        case 1:
+                            message = new FacesMessage("La fecha de realización de la Clase debe ser posterior a la de su Clase anterior"
+                                    + ", por favor oprima el botón 'Restaurar' para volver a los datos originales.");
+                            message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                            throw new ValidatorException(message);
+                        // CU 2.2    
+                        case 2:
+                            message = new FacesMessage("La fecha de realización de la Clase debe ser anterior a la de su Clase siguiente"
+                                    + ", por favor oprima el botón 'Restaurar' para volver a los datos originales.");
+                            message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                            throw new ValidatorException(message);
+                    }
+                }           
             }
         }else{
-            Date ultimaFecha = claseFacade.getLastFechaRelizacion(current);
-            if(!fechaPropuesta.after(ultimaFecha)){
-                SimpleDateFormat form_2 = new SimpleDateFormat("dd'/'MM'/'yyyy", new Locale("es_ES"));
-                String strUltimaFecha = form_2.format(ultimaFecha);
-                FacesMessage message = new FacesMessage("La fecha de realización de la clase debe ser posterior a la fecha de la clase anterior: " + strUltimaFecha);
-                message.setSeverity(FacesMessage.SEVERITY_ERROR);
-                throw new ValidatorException(message);
+            // si la clase es nueva, verifico si la AD existe
+            if(current.getId() != null){
+                // si estoy agregando una clase a una AD existente verifico que no sea la primera
+                if(current.getClases().isEmpty()){
+                    // si es la primera valido que su fecha no sea anterior a la de inicio de ni posterior a la de fin de la AD
+                    // CU 4.1
+                    if(fechaInicioCurso.after(fechaPropuesta)){
+                        message = new FacesMessage("La fecha de realización de la clase no debe ser anterior a la de inicio de la Actividad Dispuesta"
+                                + ": " + strFechaInicioCurso + ", por favor oprima el botón 'Limpiar' para limpiar los campos del formulario.");
+                        message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                        throw new ValidatorException(message);
+                    }
+                    // CU 4.2
+                    if(current.getId() != null){
+                        Date fechaFinCurso = current.getFechaFin();
+                        String strFechaFinCurso = form_1.format(fechaFinCurso);
+                        if(fechaPropuesta.after(fechaFinCurso)){
+                            message = new FacesMessage("La fecha de realización de la clase no debe ser posterior al fin de la Actividad Dispuesta"
+                                    + ": " + strFechaFinCurso + ", por favor oprima el botón 'Limpiar' para limpiar los campos del formulario.");
+                            message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                            throw new ValidatorException(message);
+                        }
+                    }
+                }else{
+                    // si es la última Clase, valido que la fecha no sea posterior a la de finalización de la AD
+                    // CU 5.2
+                    Date fechaFinCurso = current.getFechaFin();
+                    String strFechaFinCurso = form_1.format(fechaFinCurso);
+                    if(fechaPropuesta.after(fechaFinCurso)){
+                        message = new FacesMessage("La fecha de realización de la clase no debe ser posterior al fin de la Actividad Dispuesta"
+                                + ": " + strFechaFinCurso);
+                        message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                        throw new ValidatorException(message);
+                    }
+                    
+                    // valido que su fecha no sea anterior a la fecha de la última Clase registrada
+                    // CU 5.1
+                    if(verificarFechaRealizacion(fechaPropuesta, true, false) == 1){
+                        message = new FacesMessage("La fecha de realización de la Clase debe ser posterior a la de su Clase anterior.");
+                        message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                        throw new ValidatorException(message);
+                    }
+                }
+            }else{
+                // si estoy creando la Clase en una AD nueva, verifico si es la primera Clase
+                if(listClaseNew.isEmpty()){
+                    // si es la primera valido que su fecha no sea anterior a la fecha de inicio de la AD
+                    // CU 6
+                    if(fechaInicioCurso.after(fechaPropuesta)){
+                        message = new FacesMessage("La fecha de realización de la clase no debe ser anterior a la de inicio de la Actividad Dispuesta"
+                                + ": " + strFechaInicioCurso);
+                        message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                        throw new ValidatorException(message);
+                    }
+
+                }else{
+                    // si no es la primera, es la última, valido que su fecha no sea anterior a la fecha de la Clase anterior
+                    // CU 7
+                    if(verificarFechaRealizacion(fechaPropuesta, false, false) == 1){
+                        message = new FacesMessage("La fecha de realización de la Clase debe ser posterior a la de su Clase anterior");
+                        message.setSeverity(FacesMessage.SEVERITY_ERROR);
+                        throw new ValidatorException(message);
+                    }
+                }
             }
-        }
-        if(fechaPropuesta.after(fechaFinCurso)){
-            FacesMessage message = new FacesMessage("La fecha de realización de la clase no debe ser posterior al fin del curso " + strFechaFinCurso);
-            message.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ValidatorException(message);
         }
     }
     
@@ -1948,10 +2082,13 @@ public class MbActividadImpl implements Serializable{
      * @param arg2
      */
     public void validarPorcAsist(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
-        Double valor = (Double)arg2;
-        if(valor < 0 || valor > 1){
-            throw new ValidatorException(new FacesMessage("El valor del porcentaje de asistencia debe ser entre 0,00 y 1,00"));
+        if(arg2.equals(0)){
+            Double valor = (Double)arg2;
+            if(valor < 0 || valor > 1){
+                throw new ValidatorException(new FacesMessage("El valor del porcentaje de asistencia debe ser entre 0,00 y 1,00"));
+            }
         }
+
     }    
     
     /**
@@ -2025,6 +2162,13 @@ public class MbActividadImpl implements Serializable{
         participante = new Participante();
     }
     
+    /**
+     * Método para restaurar la Clase cuando se está editando una existente y surgió un error de validación
+     */
+    public void restaurarClase(){
+        current = getFacade().find(current.getId());
+    }
+    
     
     /*********************
     ** Métodos privados **
@@ -2034,7 +2178,23 @@ public class MbActividadImpl implements Serializable{
      */
     private ActividadImplementadaFacade getFacade() {
         return actImpFacade;
-    }    
+    }  
+    
+    /**
+     * Método para resetear el Carticipante
+     */
+    public void recreatePart(){
+        participante = null;
+        participante = new Participante();
+    }
+    
+    /**
+     * Método para resetear la Clase
+     */
+    public void recreateClase(){
+        clase = null;
+        clase = new Clase();
+    }
     
     /**
      * Restea la entidad
@@ -2156,15 +2316,16 @@ public class MbActividadImpl implements Serializable{
      * @param fecha
      * @param horaInicio
      * @param horaFin
+     * @param operación: 0=nueva; 1=agragada; 2=editada
      * @return 
      */
-    private boolean validarDocente(Docente docente, Date fecha, Date horaInicio, Date horaFin) {
+    private boolean validarDocente(Docente docente, Date fecha, Date horaInicio, Date horaFin, int operacion) {
         boolean result = true;
         if(!docenteFacade.isDisponible(docente, fecha, horaInicio, horaFin, current)){
             result = false;
         }else{
-            for (Clase cls : listClaseNew) {
-                if(!cls.getId().equals(clase.getId())){
+            if(operacion == 0){
+                for (Clase cls : listClaseNew) {
                     // valido si tienen el mismo docente y fecha de realización
                     if(cls.getDocente().equals(clase.getDocente()) && cls.getFechaRealizacion().equals(clase.getFechaRealizacion())){
                         // si hay coincidencia verifico que no se superpongan horarios
@@ -2173,7 +2334,30 @@ public class MbActividadImpl implements Serializable{
                         }
                     }
                 }
+            }else if(operacion == 1){
+                for (Clase cls : current.getClases()) {
+                    // valido si tienen el mismo docente y fecha de realización
+                    if(cls.getDocente().equals(clase.getDocente()) && cls.getFechaRealizacion().equals(clase.getFechaRealizacion())){
+                        // si hay coincidencia verifico que no se superpongan horarios
+                        if(cls.getHoraFin().after(clase.getHoraInicio()) || cls.getHoraInicio().before(clase.getHoraFin())){
+                            result = false;
+                        }
+                    }
+                }
+            }else{
+                for (Clase cls : current.getClases()) {
+                    if(!cls.getId().equals(clase.getId())){
+                        // valido si tienen el mismo docente y fecha de realización
+                        if(cls.getDocente().equals(clase.getDocente()) && cls.getFechaRealizacion().equals(clase.getFechaRealizacion())){
+                            // si hay coincidencia verifico que no se superpongan horarios
+                            if(cls.getHoraFin().after(clase.getHoraInicio()) || cls.getHoraInicio().before(clase.getHoraFin())){
+                                result = false;
+                            }
+                        }
+                    }
+                }
             }
+
         }
         return result;
     }
@@ -2283,17 +2467,76 @@ public class MbActividadImpl implements Serializable{
             listaReferentes = null;   
         }
     }
-    
-    private void limpiarListadosPersona(){
-        if(listaTipoDocs != null){
-            listaTipoDocs = null;
-        }
-        if(listaLocalidades != null){
-            listaLocalidades = null;
-        }
-    }
 
+    /**
+     * Método para verificar fecha de realización entre varias clases
+     * @return: 
+     * Si verifica todo = 0
+     * Si no es posterior a la fecha de realización de la última Clase = 1
+     * Si no es anterior a la fecha de realización de la siguiente = 2
+     */
+    private int verificarFechaRealizacion(Date fecha, boolean editaAD, boolean editaClase){
+        int result = 0;
+        if(editaAD){
+            if(editaClase){
+                // si estoy editando una Clase existente, recorro las Clases de la AD
+                for(Clase cls : current.getClases()){
+                    if(cls.getNumOrden() == clase.getNumOrden() - 1){
+                        // si hay una Clase inmediatamente anterior, verifico que la fecha de realización de la actual sea posterior a la Clase anterior
+                        if(!cls.getFechaRealizacion().before(fecha)){
+                            result = 1;
+                        }
+                    }
+                    if(cls.getNumOrden() == clase.getNumOrden() + 1){
+                        // si hay una Clase inmediatamente posterior, verifico que la fecha de realización de la actual sea anterior a la Clase posterior
+                        if(!fecha.before(cls.getFechaRealizacion())){
+                            result = 2;
+                        }
+                    }
+                }
+            }else{
+                // si estoy registrando una clase nueva, verifico que su fecha de realización sea posterior a la última existente, si la hubiera
+                if(!current.getClases().isEmpty()){
+                    int size = current.getClases().size() - 1;
+                    Clase cls = current.getClases().get(size);
+                    if(!cls.getFechaRealizacion().before(fecha)){
+                        result = 1;
+                    }
+                }
+            }
+        }else{
+            // si estoy registrando un nueva AD hago lo mismo pero recorriendo el listado temporal
+            if(editaClase){
+                // si estoy editando una Clase existente, recorro las Clases de la lista temporal
+                for(Clase cls : listClaseNew){
+                    if(cls.getNumOrden() == clase.getNumOrden() - 1){
+                        // si hay una Clase inmediatamente anterior, verifico que la fecha de realización de la actual sea posterior a la Clase anterior
+                        if(!cls.getFechaRealizacion().before(fecha)){
+                            result = 1;
+                        }
+                    }
+                    if(cls.getNumOrden() == clase.getNumOrden() + 1){
+                        // si hay una Clase inmediatamente posterior, verifico que la fecha de realización de la actual sea anterior a la Clase posterior
+                        if(!fecha.before(cls.getFechaRealizacion())){
+                            result = 2;
+                        }
+                    }
+                }
+            }else{
+                // si estoy registrando una clase nueva, verifico que su fecha de realización sea posterior a la última existente, si la hubiera
+                if(!listClaseNew.isEmpty()){
+                    int size = listClaseNew.size() - 1;
+                    Clase cls = listClaseNew.get(size);
+                    if(!cls.getFechaRealizacion().before(fecha)){
+                        result = 1;
+                    }
+                }
+            }
+        }
+        return result;
+    }
     
+
     /*****************************************************************************
      **** métodos privados para la búsqueda de habiliados por fecha de inicio ****
      *****************************************************************************/

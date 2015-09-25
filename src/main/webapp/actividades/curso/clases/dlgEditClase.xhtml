@@ -73,8 +73,8 @@
                                      value="Guardar" 
                                      style="margin-right:10px;" 
                                      update="pnEdit"/>
-                    <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
-                        <p:ajax update="pnEdit" resetValues="true" />
+                    <p:commandButton icon="ui-icon-cancel" process="@this" action="#{mbActividadImpl.restaurarClase}" value="Restaurar" style="float: right">
+                        <p:ajax update="pnEdit" />
                     </p:commandButton>                        
                 </f:facet>                 
             </p:toolbar>

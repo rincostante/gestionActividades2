@@ -51,10 +51,13 @@
                     <p:column headerText="Teléfono laboral" sortBy="#{e.agente.telefono}" filterBy="#{e.agente.telefono}" style="width: 130px" filterMatchMode="contains">
                         <p:outputLabel value="#{e.agente.telefono}"/>
                     </p:column>
-                    <p:column style="width:12px" >
+                    <p:column style="width:35px" headerText="Acciones" >
                         <p:commandButton icon="ui-icon-pencil" action="#{mbActividadImpl.prepareEditAgente}" process="@this" title="Actualizar Datos">
                             <f:setPropertyActionListener value="#{e.agente}" target="#{mbActividadImpl.agente}" />
-                        </p:commandButton>                      
+                        </p:commandButton>      
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{mbActividadImpl.quitarParticipante}" process="@this" title="Eliminar la Inscripción" update="parts">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbActividadImpl.participante}" />
+                        </p:commandButton>   
                     </p:column>   
                 </p:dataTable>
             </p:panel>

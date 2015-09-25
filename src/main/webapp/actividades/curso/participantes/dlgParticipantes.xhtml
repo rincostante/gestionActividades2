@@ -73,11 +73,11 @@
                     <p:commandButton icon="ui-icon-pencil" action="#{mbActividadImpl.prepareEditParticipante}" title="Editar">
                         <f:setPropertyActionListener value="#{part}" target="#{mbActividadImpl.participante}" />
                     </p:commandButton>
-                    <p:commandButton icon="ui-icon-trash" action="#{mbProcedimiento.deleteParticipante}" rendered="#{part.admin.habilitado == 'true'}" title="Deshabilitar" update="partList">
+                    <p:commandButton icon="ui-icon-trash" action="#{mbActividadImpl.deleteParticipante}" rendered="#{part.admin.habilitado == 'true'}" title="Deshabilitar" update="partList">
                         <f:setPropertyActionListener value="#{part}" target="#{mbActividadImpl.participante}" />
                         <p:confirm header="Confirmar" message="¿Desea deshabilitar la Inscripción del Participante?" icon="ui-icon-alert" />
                     </p:commandButton>                
-                    <p:commandButton icon="ui-icon-check" action="#{mbProcedimiento.habilitarParticipante}" rendered="#{part.admin.habilitado == 'false'}" title="Habilitar" update="partList">
+                    <p:commandButton icon="ui-icon-check" action="#{mbActividadImpl.habilitarParticipante}" rendered="#{part.admin.habilitado == 'false'}" title="Habilitar" update="partList">
                         <f:setPropertyActionListener value="#{part}" target="#{mbActividadImpl.participante}" />
                         <p:confirm header="Confirmar" message="¿Desea habilitar la Inscripción del Participante?" icon="ui-icon-alert" />
                     </p:commandButton>
