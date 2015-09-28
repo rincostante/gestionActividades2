@@ -1295,6 +1295,12 @@ public class MbActividadImpl implements Serializable{
                 
                 // Actualizo la Actividad
                 getFacade().edit(current);
+                
+                // actualizo el current para dejarlo en condiciones de editar la Clase recién creada
+                // para que tenga el id
+                Long idCurrent = current.getId();
+                current = getFacade().find(idCurrent);
+                
                 JsfUtil.addSuccessMessage("La nueva Clase se agregó a la Actividad Dispuesta, si lo desea puede seguir agregando, "
                         + "de lo contrario, por favor cierre el diálogo y actulice el listado de Clases.");
 
@@ -1342,6 +1348,12 @@ public class MbActividadImpl implements Serializable{
 
                 // Actualizo la Actividad
                 getFacade().edit(current);
+                
+                // actualizo el current para que esté en codiciones de ser editado el Participante ingresado,
+                // de lo contrario no tendría id
+                Long idCurrent = current.getId();
+                current = getFacade().find(idCurrent);
+                
                 JsfUtil.addSuccessMessage("El nuevo Participante se inscribió en la Actividad Dispuesta, si lo desea puede seguir inscribiendo, "
                         + "de lo contrario, por favor cierre el diálogo y actulice el listado de Participantes.");
 
@@ -1764,11 +1776,11 @@ public class MbActividadImpl implements Serializable{
         }else{
             String mensaje;
             if(sinFechaInicio && sinDocente){
-                mensaje = "Debe vincular al menos a un Docente e ingresar la fecha de inicio de la Actividad Dispuesta.";
+                mensaje = "Para registrar Clases, debe vincular al menos a un Docente e ingresar la fecha de inicio de la Actividad Dispuesta.";
             }else if(!sinFechaInicio && sinDocente){
-                mensaje = "Debe ingresar al menos un Docente vinculado a la Actividad Dispuesta.";
+                mensaje = "Para registrar Clases, debe ingresar al menos un Docente vinculado a la Actividad Dispuesta.";
             }else{
-                mensaje = "Debe ingresar la fecha de inicio de la Actividad Dispuesta.";
+                mensaje = "Para registrar Clases, debe ingresar la fecha de inicio de la Actividad Dispuesta.";
             }
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Clases", mensaje);
             RequestContext.getCurrentInstance().showMessageInDialog(message);
@@ -2259,15 +2271,32 @@ public class MbActividadImpl implements Serializable{
      * Método para limpiar los listados poblados para la edición de la entidad
      */
     private void limpiarListados(){
-        listResoluciones.clear();
-        listActPlan.clear();
+        if(listResoluciones != null){
+            listResoluciones.clear();
+        }
+        if(listActPlan != null){
+            listActPlan.clear();
+        }        
+        if(listTipoOrganismo != null){
+            listTipoOrganismo.clear();
+        }  
+        if(listOrganismos != null){
+            listOrganismos.clear();
+        }  
+        if(listSedes != null){
+            listSedes.clear();
+        }  
+        if(listOrientaciones != null){
+            listOrientaciones.clear();
+        }  
+        if(listSubprogramas != null){
+            listSubprogramas.clear();
+        } 
+        if(listDocDisp != null){
+            listDocDisp.clear();
+        } 
+
         tipoOrg = null;
-        listTipoOrganismo.clear();
-        listOrganismos.clear();
-        listSedes.clear();
-        listOrientaciones.clear();
-        listSubprogramas.clear();
-        listDocDisp.clear();
     }
     
     /**
