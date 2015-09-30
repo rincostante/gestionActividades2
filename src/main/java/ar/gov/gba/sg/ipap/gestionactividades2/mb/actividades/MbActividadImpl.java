@@ -1791,17 +1791,19 @@ public class MbActividadImpl implements Serializable{
      * Método para mostrar el diálogo que perimtirá crear los Participantes y agregarlos a la Actividad Dispuesta que se está creando
      */
     public void cargarParticipantes(){
-        if(!current.getOrganismosDestinatarios().isEmpty()){
+        //if(!current.getOrganismosDestinatarios().isEmpty()){
             participante = new Participante();
             Map<String,Object> options = new HashMap<>();
             options.put("contentWidth", 850);
             options.put("contentHeight", 650);
             RequestContext.getCurrentInstance().openDialog("participantes/dlgNewPart", options, null);
+        /*
         }else{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "La Actividad debe tener al menos un "
                     + "Organismo destinatario seleccionado para poder inscibir los respectivos Agentes.");
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
+        */
     }   
     
     /**
@@ -2110,7 +2112,18 @@ public class MbActividadImpl implements Serializable{
      */
     public List<Agente> completeAgenteEdit(String query){
         List<Agente> result = new ArrayList<>();
-        List<Agente> agentesVinculados = getFacade().getAgentesXOrganismos(current.getOrganismosDestinatarios());
+        List<Agente> agentesVinculados;
+        boolean sinOrgDestinatarios;
+        
+        // si no tengo ningún organismos destinatario seleccionado, permito seleccionar a cualquier agente habilitado para la inscripción
+        if(!current.getOrganismosDestinatarios().isEmpty()){
+            agentesVinculados = getFacade().getAgentesXOrganismos(current.getOrganismosDestinatarios());
+            sinOrgDestinatarios = false;
+        }else{
+            agentesVinculados = agenteFacade.getHabilitados();
+            sinOrgDestinatarios = true;
+        }
+        
         if(!agentesVinculados.isEmpty()){
             String dni;
             for(Agente ag : agentesVinculados){
@@ -2120,15 +2133,27 @@ public class MbActividadImpl implements Serializable{
                         result.add(ag);
                 }
             }
+
             // Si no encontré Agentes disponibles lo comunico al usuario
             if(result.isEmpty()){
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes disponibles para la inscripción que respondan a la búsqueda, "
-                            + "pertenecientes a los Organismos destinatarios seleccionados.");
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                if(sinOrgDestinatarios){
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes disponibles para la inscripción, con los parámetros ingresados.");
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                }else{
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "Ya no quedan Agentes disponibles para la inscripción con los parámetros ingresados, "
+                                + "pertenecientes a los Organismos destinatarios seleccionados.");
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                }
+
             }
         }else{
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes registrados en los Organismos destinatarios de la Actividad");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+            if(sinOrgDestinatarios){
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes disponibles para su inscripción.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }else{
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes registrados en los Organismos destinatarios de la Actividad.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
         }
 
         return result;
@@ -2141,7 +2166,18 @@ public class MbActividadImpl implements Serializable{
      */
     public List<Agente> completeAgenteNew(String query){
         List<Agente> result = new ArrayList<>();
-        List<Agente> agentesVinculados = getFacade().getAgentesXOrganismos(current.getOrganismosDestinatarios());
+        List<Agente> agentesVinculados;
+        boolean sinOrgDestinatarios;
+        
+        // si no tengo ningún organismos destinatario seleccionado, permito seleccionar a cualquier agente habilitado para la inscripción
+        if(!current.getOrganismosDestinatarios().isEmpty()){
+            agentesVinculados = getFacade().getAgentesXOrganismos(current.getOrganismosDestinatarios());
+            sinOrgDestinatarios = false;
+        }else{
+            agentesVinculados = agenteFacade.getHabilitados();
+            sinOrgDestinatarios = true;
+        }
+
         if(!agentesVinculados.isEmpty()){
             String dni;
             for(Agente ag : agentesVinculados){
@@ -2153,13 +2189,24 @@ public class MbActividadImpl implements Serializable{
             }
             // Si no encontré Agentes disponibles lo comunico al usuario
             if(result.isEmpty()){
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "Ya no quedan Agentes disponibles para la inscripción, "
-                            + "pertenecientes a los Organismos destinatarios seleccionados.");
-                RequestContext.getCurrentInstance().showMessageInDialog(message);
+                if(sinOrgDestinatarios){
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes disponibles para la inscripción, con los parámetros ingresados.");
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                }else{
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "Ya no quedan Agentes disponibles para la inscripción con los parámetros ingresados, "
+                                + "pertenecientes a los Organismos destinatarios seleccionados.");
+                    RequestContext.getCurrentInstance().showMessageInDialog(message);
+                }
+
             }
         }else{
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes registrados en los Organismos destinatarios de la Actividad");
-            RequestContext.getCurrentInstance().showMessageInDialog(message);
+            if(sinOrgDestinatarios){
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes disponibles para su inscripción.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }else{
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Inscripciones", "No hay Agentes registrados en los Organismos destinatarios de la Actividad.");
+                RequestContext.getCurrentInstance().showMessageInDialog(message);
+            }
         }
 
         return result;
