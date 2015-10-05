@@ -101,6 +101,7 @@ public class MbActividadImpl implements Serializable{
     private List<Organismo> listOrgDisp;
     private List<Organismo> listOrgFilter;
     private List<Docente> listDocDisp;
+    private List<Docente> listDocClase;
     private List<Docente> listDocFilter;
     
     // variables para la registración de Clases
@@ -225,6 +226,15 @@ public class MbActividadImpl implements Serializable{
     /********************************
      ** Getters y Setters ***********
      ********************************/   
+    
+    public List<Docente> getListDocClase() {
+        return listDocClase;
+    }
+
+    public void setListDocClase(List<Docente> listDocClase) {
+        this.listDocClase = listDocClase;
+    }
+   
     
     public Persona getPersona() {
         return persona;
@@ -1143,8 +1153,14 @@ public class MbActividadImpl implements Serializable{
      * @param event
      */
     public void createClase(ActionEvent event){
-        // guardo la Clase en el listado si el docente esté disponible
-        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 0)){
+        boolean valida = true;
+        // guardo la Clase en el listado si el docente esté disponible (en caso que la clase tenga docente)
+        if(clase.getDocente() != null){
+            if(!validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 0)){
+                valida = false;
+            }
+        }
+        if(valida){
             try{
                 // asigno número de orden
                 clase.setNumOrden(getNumOrdenClase(false));
@@ -1281,8 +1297,14 @@ public class MbActividadImpl implements Serializable{
      * @param event
      */
     public void addClase(ActionEvent event){
-        // guardo la Clase en el listado si el docente esté disponible
-        if(validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 1)){
+        boolean valida = true;
+        // guardo la Clase en el listado si el docente esté disponible (en caso que la clase tenga docente)
+        if(clase.getDocente() != null){
+            if(!validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 1)){
+                valida = false;
+            }
+        }
+        if(valida){
             try{
                 // asigno número de orden
                 clase.setNumOrden(getNumOrdenClase(true));
@@ -1442,11 +1464,12 @@ public class MbActividadImpl implements Serializable{
         List<Clase> clasesSwap = new ArrayList<>();
         for (Clase cls : current.getClases()) {
             if(!cls.getId().equals(clase.getId())){
-                // valido la disponibilidad del docente contra todas las clases persistidas
-                if(!validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 2)){
-                    docenteOcupado = true;
+                // valido la disponibilidad del docente contra todas las clases persistidas (en caso que la clase tenga docente)
+                if(clase.getDocente() != null){
+                    if(!validarDocente(clase.getDocente(), clase.getFechaRealizacion(), clase.getHoraInicio(), clase.getHoraFin(), 2)){
+                        docenteOcupado = true;
+                    }
                 }
-                
                 clasesSwap.add(cls);
             }else{
                 clasesSwap.add(clase);
@@ -1762,26 +1785,27 @@ public class MbActividadImpl implements Serializable{
         // solo permito acceder al formulario si está seteada la fecha de inicio de la AD y si tiene al menos a un Docente vinculado
         boolean sinDocente = false;
         boolean sinFechaInicio = false;
+        
+        // cargo el listado de docentes para seleccionar, según tenga o no docentes asignados la AD
+        if(current.getDocentesVinculados().isEmpty()){
+            listDocClase = docenteFacade.getHabilitadas();
+        }else{
+            listDocClase = current.getDocentesVinculados();
+        }
         if(current.getFechaInicio() == null){
             sinFechaInicio = true;
         }
         if(current.getDocentesVinculados().isEmpty()){
             sinDocente = true;
         }
-        if(!sinFechaInicio && !sinDocente){
+        if(!sinFechaInicio){
             clase = new Clase();
             Map<String,Object> options = new HashMap<>();
             options.put("contentWidth", 700);
             RequestContext.getCurrentInstance().openDialog("clases/dlgNewClase", options, null);              
         }else{
             String mensaje;
-            if(sinFechaInicio && sinDocente){
-                mensaje = "Para registrar Clases, debe vincular al menos a un Docente e ingresar la fecha de inicio de la Actividad Dispuesta.";
-            }else if(!sinFechaInicio && sinDocente){
-                mensaje = "Para registrar Clases, debe ingresar al menos un Docente vinculado a la Actividad Dispuesta.";
-            }else{
-                mensaje = "Para registrar Clases, debe ingresar la fecha de inicio de la Actividad Dispuesta.";
-            }
+            mensaje = "Para registrar Clases, debe ingresar la fecha de inicio de la Actividad Dispuesta.";
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Clases", mensaje);
             RequestContext.getCurrentInstance().showMessageInDialog(message);
         }
@@ -1823,6 +1847,12 @@ public class MbActividadImpl implements Serializable{
      * Método para mostrar el diálogo que perimtirá agregar Clases a la Actividad Dispuesta existente
      */
     public void agregarClases(){
+        // cargo el listado de docentes para seleccionar, según tenga o no docentes asignados la AD
+        if(current.getDocentesVinculados().isEmpty()){
+            listDocClase = docenteFacade.getHabilitadas();
+        }else{
+            listDocClase = current.getDocentesVinculados();
+        } 
         recreateClase();
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 700);
@@ -2282,6 +2312,9 @@ public class MbActividadImpl implements Serializable{
         if(listPartDisp != null){
             listPartDisp = null;
         }
+        if(listDocClase != null){
+            listDocClase = null;
+        }
         actImpSelected = null;
         tipoOrg = null;
     }      
@@ -2342,7 +2375,9 @@ public class MbActividadImpl implements Serializable{
         if(listDocDisp != null){
             listDocDisp.clear();
         } 
-
+        if(listDocClase != null){
+            listDocClase = null;
+        }
         tipoOrg = null;
     }
     

@@ -45,7 +45,7 @@
                     <p:outputLabel value="#{bundle.ClaseLabel_Docente}" for="docente"/>
                     <p:selectOneMenu id="docente" value="#{mbActividadImpl.clase.docente}" >
                         <f:selectItem itemLabel="Seleccione el Docente" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{mbActividadImpl.selected.docentesVinculados}" var="docente" 
+                        <f:selectItems value="#{mbActividadImpl.listDocClase}" var="docente" 
                                        itemLabel="#{docente.apYNom} - #{docente.documento}" 
                                        itemValue="#{docente}"/>
                     </p:selectOneMenu> 
