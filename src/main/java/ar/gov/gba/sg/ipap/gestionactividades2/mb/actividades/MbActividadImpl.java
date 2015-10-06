@@ -778,6 +778,17 @@ public class MbActividadImpl implements Serializable{
      * Método para abrir el diálogo que permitirá dar de alta un nuevo agente
      */
     public void prepareCreateAgente(){
+        // si la AD no tiene organismos destinatarios asignados, limpio el listado de Organismos y reseteo el tipo
+        // también lleno el listado de tipos si está vacío
+        if(current.getOrganismosDestinatarios().isEmpty()){
+            if(listOrganismos != null){
+                listOrganismos.clear();
+            }
+            tipoOrg = null;
+            if(listTipoOrganismo == null){
+                listTipoOrganismo = tipoOrgFacade.findAll();
+            }
+        }
         // instancio el objeto principal
         agente = new Agente();
         // instancio la Personal
@@ -898,7 +909,18 @@ public class MbActividadImpl implements Serializable{
         if(current.getId() != null){
             agente = participante.getAgente();
         }
-                
+
+        // si la AD no tiene organismos destinatarios asignados, cargo el listado de organismos con todos los habilitados y reseteo el tipo
+        // también lleno el listado de tipos si está vacío
+        if(current.getOrganismosDestinatarios().isEmpty()){
+            // cargo los list pesados para los combos
+            listOrganismos = organismoFacade.getHabilitados();
+            tipoOrg = null;
+            if(listTipoOrganismo == null){
+                listTipoOrganismo = tipoOrgFacade.findAll();
+            }
+        }        
+        
         // seteo los listados para el formulario
         listaEstudios = estCurFacade.findAll();
         listaNivelIpap = nivelIpapFacade.findAll();
@@ -1235,9 +1257,6 @@ public class MbActividadImpl implements Serializable{
                 // Inserción
                 agenteFacade.create(agente);
                 
-                /*********************************************************************
-                 ** Agrego al Agente como nuevo participante en el listado temporal **
-                 *********************************************************************/ 
                 // Creación de la entidad de administración y asignación
                 AdmEntidad admEntPart = new AdmEntidad();
                 admEntPart.setFechaAlta(date);
@@ -1253,13 +1272,22 @@ public class MbActividadImpl implements Serializable{
                 
                 // Inserto el estado por defecto: Inscripto
                 List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
-                participante.setEstado(estParts.get(0));     
+                participante.setEstado(estParts.get(0));   
                 
-                // Agrego el Participante en el listado
-                listPartNew.add(participante);
+                /***********************************************************
+                 ** Agrego al Agente según la AD exista o la esté creando **
+                 ***********************************************************/     
+                if(current.getId() != null){
+                    // si la AD existe, agrgego al participante a la AD y la persisto
+                    current.getParticipantes().add(participante);
+                    getFacade().edit(current);
+                }else{
+                    // si estoy creando la AD, agrego el Participante en el listado temporal
+                    listPartNew.add(participante);
+                }
 
                 JsfUtil.addSuccessMessage("Se creó el Agente y se lo agregó a la Actividad Dispuesta."
-                        + "Por favor, cierre la ventana correspondiente y actualice el listado de Participantes de la Actividad.");
+                        + "Por favor, cierre la/s ventana/s correspondiente/s y actualice el listado de Participantes de la Actividad.");
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteExistente"));
             }

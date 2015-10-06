@@ -21,13 +21,33 @@
                     <p:commandButton value="Ingresar" action="#{mbActividadImpl.prepareCreatePersona}" 
                                      icon="ui-icon-extlink" process="@this" disabled="#{mbActividadImpl.agente.persona.equals(null)}" /> 
 
-                    <p:outputLabel value="#{bundle.AgenteLabel_organismo}" for="organismo" />
-                    <p:selectOneMenu id="organismo" value="#{mbActividadImpl.agente.organismo}" 
+                    <p:outputLabel value="#{bundle.AgenteLabel_tipoOrg}" for="tipoOrg" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() == 0}"/>
+                    <p:selectOneMenu id="tipoOrg" value="#{mbActividadImpl.tipoOrg}" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() == 0}"
+                                     valueChangeListener="#{mbActividadImpl.tipoOrgChangeListener}">
+                        <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listTipoOrganismo}" var="tipoOrg" 
+                                       itemLabel="#{tipoOrg.nombre}" 
+                                       itemValue="#{tipoOrg}"/>
+                        <p:ajax event="change" update="organismoTotal"/>
+                    </p:selectOneMenu> 
+
+                    <p:outputLabel value="#{bundle.AgenteLabel_organismo}" />
+                    <p:selectOneMenu id="organismo" value="#{mbActividadImpl.agente.organismo}" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() != 0}" 
                                      required="true" 
                                      requiredMessage="#{bundle.AgenteOrganismoRequiredMessage}" 
                                      valueChangeListener="#{mbActividadImpl.organismoChangeListener}">
                         <f:selectItem itemLabel="Seleccione el Organismo" itemValue="" noSelectionOption="true" />
                         <f:selectItems value="#{mbActividadImpl.selected.organismosDestinatarios}" var="organismo" 
+                                       itemLabel="#{organismo.nombre}" 
+                                       itemValue="#{organismo}"/>
+                        <p:ajax event="change" update="referente"/>
+                    </p:selectOneMenu>  
+                    <p:selectOneMenu id="organismoTotal" value="#{mbActividadImpl.agente.organismo}" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() == 0}" 
+                                     required="true" 
+                                     requiredMessage="#{bundle.AgenteOrganismoRequiredMessage}" 
+                                     valueChangeListener="#{mbActividadImpl.organismoChangeListener}">
+                        <f:selectItem itemLabel="Seleccione el Organismo" itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{mbActividadImpl.listOrganismos}" var="organismo" 
                                        itemLabel="#{organismo.nombre}" 
                                        itemValue="#{organismo}"/>
                         <p:ajax event="change" update="referente"/>
