@@ -61,32 +61,10 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
      * @param fechaInio
      * @param fechaFin
      * @param idSede
+     * @param listOrgDest
      * @return 
      */
-    public boolean noExiste(String nombre, Date fechaInio, Date fechaFin, Long idSede){
-        em = getEntityManager();
-        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
-                + "WHERE (actImp.fechaInicio >= :fechaInio "
-                + "AND actImp.fechaFin <= :fechaFin) "
-                + "AND actImp.sede.id = :idSede "
-                + "AND actImp.actividadPlan.nombre = :nombre";
-        Query q = em.createQuery(queryString)
-                .setParameter("fechaInio", fechaInio)
-                .setParameter("fechaFin", fechaFin)
-                .setParameter("idSede", idSede)
-                .setParameter("nombre", nombre);
-        return q.getResultList().isEmpty();
-    }
-    
-    /**
-     * Método que obtiene una Actividad Implementada existente según los datos recibidos como parámetro
-     * @param nombre
-     * @param fechaInio
-     * @param fechaFin
-     * @param idSede
-     * @return 
-     */
-    public ActividadImplementada getExistente(String nombre, Date fechaInio, Date fechaFin, Long idSede){
+    public boolean noExiste(String nombre, Date fechaInio, Date fechaFin, Long idSede, List<Organismo> listOrgDest){
         List<ActividadImplementada> lProg;
         em = getEntityManager();
         String queryString = "SELECT actImp FROM ActividadImplementada actImp "
@@ -100,8 +78,52 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
                 .setParameter("idSede", idSede)
                 .setParameter("nombre", nombre);
         lProg = q.getResultList();
+        
         if(!lProg.isEmpty()){
-            return lProg.get(0);
+            if(listOrgDest != null){
+                return !lProg.get(0).getOrganismosDestinatarios().equals(listOrgDest);
+            }else{
+                return false;
+            }
+        }else{
+            return true;
+        }
+    }
+    
+    /**
+     * Método que obtiene una Actividad Implementada existente según los datos recibidos como parámetro
+     * @param nombre
+     * @param fechaInio
+     * @param fechaFin
+     * @param idSede
+     * @param listOrgDest
+     * @return 
+     */
+    public ActividadImplementada getExistente(String nombre, Date fechaInio, Date fechaFin, Long idSede, List<Organismo> listOrgDest){
+        List<ActividadImplementada> lProg;
+        em = getEntityManager();
+        String queryString = "SELECT actImp FROM ActividadImplementada actImp "
+                + "WHERE (actImp.fechaInicio >= :fechaInio "
+                + "AND actImp.fechaFin <= :fechaFin) "
+                + "AND actImp.sede.id = :idSede "
+                + "AND actImp.actividadPlan.nombre = :nombre";
+        Query q = em.createQuery(queryString)
+                .setParameter("fechaInio", fechaInio)
+                .setParameter("fechaFin", fechaFin)
+                .setParameter("idSede", idSede)
+                .setParameter("nombre", nombre);
+        lProg = q.getResultList();
+
+        if(!lProg.isEmpty()){
+            if(listOrgDest != null){
+                if(lProg.get(0).getOrganismosDestinatarios().equals(listOrgDest)){
+                    return lProg.get(0);
+                }else{
+                    return null;
+                }
+            }else{
+                return lProg.get(0);
+            }
         }else{
             return null;
         }

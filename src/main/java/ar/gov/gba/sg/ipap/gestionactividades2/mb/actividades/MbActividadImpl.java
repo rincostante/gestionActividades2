@@ -785,7 +785,7 @@ public class MbActividadImpl implements Serializable{
                 listOrganismos.clear();
             }
             tipoOrg = null;
-            if(listTipoOrganismo == null){
+            if(listTipoOrganismo == null || listTipoOrganismo.isEmpty()){
                 listTipoOrganismo = tipoOrgFacade.findAll();
             }
         }
@@ -916,7 +916,7 @@ public class MbActividadImpl implements Serializable{
             // cargo los list pesados para los combos
             listOrganismos = organismoFacade.getHabilitados();
             tipoOrg = null;
-            if(listTipoOrganismo == null){
+            if(listTipoOrganismo == null || listTipoOrganismo.isEmpty()){
                 listTipoOrganismo = tipoOrgFacade.findAll();
             }
         }        
@@ -1133,7 +1133,7 @@ public class MbActividadImpl implements Serializable{
      */
     public String create() {
         try {
-            if(getFacade().noExiste(current.getActividadPlan().getNombre(), current.getFechaInicio(), current.getFechaFin(), current.getSede().getId())){
+            if(getFacade().noExiste(current.getActividadPlan().getNombre(), current.getFechaInicio(), current.getFechaFin(), current.getSede().getId(), current.getOrganismosDestinatarios())){
                 // Creación de la entidad de administración y asignación
                 Date date = new Date(System.currentTimeMillis());
                 AdmEntidad admEnt = new AdmEntidad();
@@ -1257,6 +1257,7 @@ public class MbActividadImpl implements Serializable{
                 // Inserción
                 agenteFacade.create(agente);
                 
+                /*
                 // Creación de la entidad de administración y asignación
                 AdmEntidad admEntPart = new AdmEntidad();
                 admEntPart.setFechaAlta(date);
@@ -1274,9 +1275,9 @@ public class MbActividadImpl implements Serializable{
                 List<EstadoParticipante> estParts = estPartFacade.getXString("Inscripto");
                 participante.setEstado(estParts.get(0));   
                 
-                /***********************************************************
-                 ** Agrego al Agente según la AD exista o la esté creando **
-                 ***********************************************************/     
+                ***********************************************************
+                ** Agrego al Agente según la AD exista o la esté creando **
+                ***********************************************************
                 if(current.getId() != null){
                     // si la AD existe, agrgego al participante a la AD y la persisto
                     current.getParticipantes().add(participante);
@@ -1285,9 +1286,10 @@ public class MbActividadImpl implements Serializable{
                     // si estoy creando la AD, agrego el Participante en el listado temporal
                     listPartNew.add(participante);
                 }
-
-                JsfUtil.addSuccessMessage("Se creó el Agente y se lo agregó a la Actividad Dispuesta."
-                        + "Por favor, cierre la/s ventana/s correspondiente/s y actualice el listado de Participantes de la Actividad.");
+                */
+                
+                JsfUtil.addSuccessMessage("Se creó el Agente. Por favor, cierre esta y podrá "
+                        + "seleccionarlo por su DNI para inscribirlo a la Actividad Dispuesta.");
             }else{
                 JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("AgenteExistente"));
             }
@@ -1426,7 +1428,7 @@ public class MbActividadImpl implements Serializable{
         ActividadImplementada res;
         String retorno = "";
         try {
-            res = getFacade().getExistente(current.getActividadPlan().getNombre(), current.getFechaInicio(), current.getFechaFin(), current.getSede().getId());
+            res = getFacade().getExistente(current.getActividadPlan().getNombre(), current.getFechaInicio(), current.getFechaFin(), current.getSede().getId(), current.getOrganismosDestinatarios());
             if(res == null){
                 // Actualización de datos de administración de la entidad
                 Date date = new Date(System.currentTimeMillis());
@@ -1471,8 +1473,36 @@ public class MbActividadImpl implements Serializable{
                     }                         
                     return retorno;                   
                 }else{
-                    JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
-                    return null;
+                    // valido los organismos destinatarios. Si tiene y no son los mismos, permito su actualización, si no, no.
+                    if(current.getOrganismosDestinatarios() != null){
+                        if(!current.getOrganismosDestinatarios().equals(res.getOrganismosDestinatarios())){
+                            // todo es igual menos los organismos destinatarios, permito la actualización
+                            Date date = new Date(System.currentTimeMillis());
+                            current.getAdmin().setFechaModif(date);
+                            current.getAdmin().setUsModif(usLogeado);
+
+                            // Actualizo
+                            getFacade().edit(current);
+                            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplUpdated"));
+                            asignaDisp = false;
+                            limpiarListados();
+                            if(tipoList == 1){
+                                retorno = "view";  
+                            }   
+                            if(tipoList == 3){
+                                retorno = "viewSusp";  
+                            }                         
+                            return retorno;   
+                        }else{
+                            // si los organismos destinatarios también son iguales, mando mensaje de no actualización
+                            JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
+                            return null;
+                        }
+                    }else{
+                        // si no tiene organismos destinatarios y todo es igual, ando mensaje de no actualización
+                        JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadImplExistente"));
+                        return null;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -2174,6 +2204,7 @@ public class MbActividadImpl implements Serializable{
         boolean sinOrgDestinatarios;
         
         // si no tengo ningún organismos destinatario seleccionado, permito seleccionar a cualquier agente habilitado para la inscripción
+        /*
         if(!current.getOrganismosDestinatarios().isEmpty()){
             agentesVinculados = getFacade().getAgentesXOrganismos(current.getOrganismosDestinatarios());
             sinOrgDestinatarios = false;
@@ -2181,6 +2212,10 @@ public class MbActividadImpl implements Serializable{
             agentesVinculados = agenteFacade.getHabilitados();
             sinOrgDestinatarios = true;
         }
+        */
+        
+        agentesVinculados = agenteFacade.getHabilitados();
+        sinOrgDestinatarios = true;
         
         if(!agentesVinculados.isEmpty()){
             String dni;
@@ -2228,6 +2263,7 @@ public class MbActividadImpl implements Serializable{
         boolean sinOrgDestinatarios;
         
         // si no tengo ningún organismos destinatario seleccionado, permito seleccionar a cualquier agente habilitado para la inscripción
+        /*
         if(!current.getOrganismosDestinatarios().isEmpty()){
             agentesVinculados = getFacade().getAgentesXOrganismos(current.getOrganismosDestinatarios());
             sinOrgDestinatarios = false;
@@ -2235,6 +2271,10 @@ public class MbActividadImpl implements Serializable{
             agentesVinculados = agenteFacade.getHabilitados();
             sinOrgDestinatarios = true;
         }
+        */
+        
+        agentesVinculados = agenteFacade.getHabilitados();
+        sinOrgDestinatarios = true;
 
         if(!agentesVinculados.isEmpty()){
             String dni;
