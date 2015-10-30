@@ -35,18 +35,11 @@
                 <p:column headerText="Nombre" sortBy="#{act.nombre}" filterBy="#{act.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{act.nombre}" />
                 </p:column>
-                <p:column headerText="Carga horaria" sortBy="#{act.cargaHoraria}" filterBy="#{act.cargaHoraria}" filterMatchMode="contains">
-                    <h:outputText value="#{act.cargaHoraria}" />
-                </p:column>    
-                <p:column headerText="Modalidad" sortBy="#{act.modalidad.nombre}" filterBy="#{act.modalidad.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{act.modalidad.nombre}" />
+                
+                <p:column headerText="Observaciones" sortBy="#{act.observaciones}" filterBy="#{act.observaciones}" filterMatchMode="contains">
+                    <h:outputText value="#{act.observaciones}" />
                 </p:column>
-                <p:column headerText="Organismo solicitante" sortBy="#{act.organismo.nombre}" filterBy="#{act.organismo.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{act.organismo.tipoOrganismo.nombre} #{act.organismo.nombre}" />
-                </p:column>
-                <p:column headerText="Resolución" sortBy="#{act.resolucion.resolucion}" filterBy="#{act.resolucion.resolucion}" filterMatchMode="contains">
-                    <h:outputText value="#{act.resolucion.resolucion} - #{act.resolucion.anio}" />
-                </p:column>
+
                 <p:column headerText="Haibilitada" sortBy="#{act.admin.habilitado}" filterBy="#{act.admin.habilitado}" filterMatchMode="contains">
                     <h:outputText value="#{act.admin.habilitado}" />
                 </p:column>

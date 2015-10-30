@@ -20,9 +20,9 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Entidad paramétrica que indica el Tipo de Capacitación de la Actividad planificada
+ * Entidad paramétrica que indica el Tipo de Capacitación de la Actividad implementada
  * Se vincula a:
- *      ActividadPlan,
+ *      ActividadImpl,
  *      AdmEntidad
  * @author rincostante
  */
@@ -42,10 +42,10 @@ public class TipoCapacitacion implements Serializable {
     private String nombre;
     
     /**
-     * Campo de tipo Array que contiene el conjunto de las Actividades planificadas de este Tipo de Capacitación
+     * Campo de tipo Array que contiene el conjunto de las Actividades implementadas de este Tipo de Capacitación
      */
     @OneToMany(mappedBy="tipoCapacitacion")
-    private List<ActividadPlan> actividades;    
+    private List<ActividadImplementada> actividades;    
     
     /**
      * Contructor
@@ -59,7 +59,7 @@ public class TipoCapacitacion implements Serializable {
      * @return
      */
     @XmlTransient
-    public List<ActividadPlan> getActividades() {
+    public List<ActividadImplementada> getActividades() {
         return actividades;
     }
 
@@ -67,7 +67,7 @@ public class TipoCapacitacion implements Serializable {
      *
      * @param actividades
      */
-    public void setActividades(List<ActividadPlan> actividades) {
+    public void setActividades(List<ActividadImplementada> actividades) {
         this.actividades = actividades;
     }
 

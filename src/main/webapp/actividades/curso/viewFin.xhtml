@@ -26,6 +26,30 @@
                         <h:outputLabel value="#{bundle.ActividadImplLabel_orientacion}"/>
                         <h:outputText value="#{mbActividadImpl.selected.orientacion.nombre}" title="#{bundle.ActividadImplTitle_orientacion}"/> 
                         
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_modalidad}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.modalidad.nombre}" title="#{bundle.ActividadPlanTitle_modalidad}"/>    
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_tipoCapacitacion}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.tipoCapacitacion.nombre}" title="#{bundle.ActividadPlanTitle_tipoCapacitacion}"/>    
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_campoTematico}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.campoTematico.nombre}" title="#{bundle.ActividadPlanTitle_campoTematico}"/>      
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_organismo}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.organismo.nombre}" title="#{bundle.ActividadPlanTitle_organismo}"/>     
+
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_resolucion}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.resolucion.resolucion}/#{mbActividadImpl.selected.resolucion.anio}" title="#{bundle.ActividadPlanTitle_resolucion}"/>    
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_cargaHoraria}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.cargaHoraria}" title="#{bundle.ActividadPlanTitle_cargaHoraria}"/>    
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_evalua}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.evalua}" title="#{bundle.ActividadPlanTitle_evalua}" lang="es" />   
+                        
+                        <h:outputLabel value="#{bundle.ActividadPlanLabel_certifica}"/>
+                        <h:outputText value="#{mbActividadImpl.selected.certifica}" title="#{bundle.ActividadPlanTitle_certifica}"/> 
+                        
                         <h:outputLabel value="#{bundle.ActividadImplLabel_organismo}"/>
                         <h:outputText value="#{mbActividadImpl.selected.organismo.nombre}" title="#{bundle.ActividadImplTitle_organismo}"/>  
                         
@@ -45,9 +69,7 @@
                         <h:outputText value="#{mbActividadImpl.selected.acta}" title="#{bundle.ActividadImplTitle_acta}"/> 
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_porcAsist}"/>
-                        <h:outputText value="#{mbActividadImpl.selected.porcAsistencia}" title="#{bundle.ActividadImplTitle_porcAsist}" >
-                            <f:convertNumber type="percent" />
-                        </h:outputText> 
+                        <h:outputText value="#{mbActividadImpl.selected.porcAsistencia}" title="#{bundle.ActividadImplTitle_porcAsist}" />
                         
                         <h:outputLabel value="#{bundle.ActividadImplLabel_evalEnc}"/>
                         <h:outputText value="#{mbActividadImpl.selected.evaluaEncuesta}" title="#{bundle.ActividadImplTitle_evalEnc}" /> 

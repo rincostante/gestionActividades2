@@ -49,26 +49,9 @@
                     <p:column headerText="#{bundle.ActividadPlanLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
                         <p:outputLabel value="#{e.nombre}"/>
                     </p:column>
-                    
-                    <p:column headerText="#{bundle.ActividadPlanLabel_cargaHoraria}" sortBy="#{e.cargaHoraria}" filterBy="#{e.cargaHoraria}" style="width: 150px" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.cargaHoraria}"/>
-                    </p:column> 
-                    
-                    <p:column headerText="#{bundle.ActividadPlanLabel_modalidad}" sortBy="#{e.modalidad.nombre}" filterBy="#{e.modalidad.nombre}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.modalidad.nombre}"/>
+                    <p:column headerText="Observaciones" sortBy="#{e.observaciones}" filterBy="#{e.observaciones}" filterMatchMode="contains">
+                        <p:outputLabel value="#{e.observaciones}"/>
                     </p:column>
-                    
-                    <p:column headerText="#{bundle.ActividadPlanLabel_tipoCapacitacion}" sortBy="#{e.tipoCapacitacion.nombre}" filterBy="#{e.tipoCapacitacion.nombre}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.tipoCapacitacion.nombre}"/>
-                    </p:column> 
-                    
-                    <p:column headerText="#{bundle.ActividadPlanLabel_campoTematico}" sortBy="#{e.campoTematico.nombre}" filterBy="#{e.campoTematico.nombre}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.campoTematico.nombre}"/>
-                    </p:column> 
-                    
-                    <p:column headerText="#{bundle.ActividadPlanLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}" filterMatchMode="contains">
-                        <p:outputLabel value="#{e.organismo.nombre}"/>
-                    </p:column> 
                     <p:column headerText="Acciones" style="width:90px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
                         <p:commandButton icon="ui-icon-zoomin" action="#{mbActividadPlan.prepareViewDes}" title="Ver Detalle">

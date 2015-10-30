@@ -9,12 +9,14 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Orientacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
@@ -33,12 +35,14 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.CampoTematicoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ModalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrientacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SedeFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.CargoFacade;
@@ -134,6 +138,10 @@ public class MbActividadImpl implements Serializable{
     private Map<String,String> sexos;
     private Edad edad;
     
+    // listados agregados provenientes de Actividad Formativa
+    private List<TipoCapacitacion> listTipoCapacitaciones;    
+    private List<CampoTematico> listCamposTematicos;
+    
     @EJB
     private PersonaFacade personaFacade;
     @EJB
@@ -181,6 +189,12 @@ public class MbActividadImpl implements Serializable{
     @EJB
     private EstadoParticipanteFacade estPartFacade;    
     
+    // EJB Agregados provenientes de Actividad Dispuesta
+    @EJB
+    private TipoCapacitacionFacade tipoCapacitacionFacade;
+    @EJB
+    private CampoTematicoFacade campoTematicoFacade;    
+    
     private ActividadImplementada actImpSelected;
     private Usuario usLogeado;        
     private List<ActividadPlan> listActPlan;
@@ -227,6 +241,22 @@ public class MbActividadImpl implements Serializable{
      ** Getters y Setters ***********
      ********************************/   
     
+    public List<CampoTematico> getListCamposTematicos() {
+        return listCamposTematicos;
+    }
+
+    public void setListCamposTematicos(List<CampoTematico> listCamposTematicos) {
+        this.listCamposTematicos = listCamposTematicos;
+    }
+       
+    public List<TipoCapacitacion> getListTipoCapacitaciones() {
+        return listTipoCapacitaciones;
+    }
+
+    public void setListTipoCapacitaciones(List<TipoCapacitacion> listTipoCapacitaciones) {
+        this.listTipoCapacitaciones = listTipoCapacitaciones;
+    }
+       
     public List<Docente> getListDocClase() {
         return listDocClase;
     }
@@ -780,7 +810,8 @@ public class MbActividadImpl implements Serializable{
     public void prepareCreateAgente(){
         // si la AD no tiene organismos destinatarios asignados, limpio el listado de Organismos y reseteo el tipo
         // también lleno el listado de tipos si está vacío
-        if(current.getOrganismosDestinatarios().isEmpty()){
+        // finalmente se decidió mostrar todos los organismos más allá de que la AD tenga o no Organismos destinatarios asignados.
+        //if(current.getOrganismosDestinatarios().isEmpty()){
             if(listOrganismos != null){
                 listOrganismos.clear();
             }
@@ -788,7 +819,7 @@ public class MbActividadImpl implements Serializable{
             if(listTipoOrganismo == null || listTipoOrganismo.isEmpty()){
                 listTipoOrganismo = tipoOrgFacade.findAll();
             }
-        }
+        //}
         // instancio el objeto principal
         agente = new Agente();
         // instancio la Personal
@@ -835,6 +866,11 @@ public class MbActividadImpl implements Serializable{
         // cargo los listados de los disponibles
         listDocDisp = docenteFacade.getHabilitadas();
         listOrgDisp = organismoFacade.getHabilitados();
+        
+        // agrego carga de combos para los campos que antes estaban en la Actividad Formativa
+        listModalidades = modalidadFacade.findAll();
+        listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
+        listCamposTematicos = campoTematicoFacade.getHabilitados();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
         if(!esCoordinador){
@@ -912,14 +948,15 @@ public class MbActividadImpl implements Serializable{
 
         // si la AD no tiene organismos destinatarios asignados, cargo el listado de organismos con todos los habilitados y reseteo el tipo
         // también lleno el listado de tipos si está vacío
-        if(current.getOrganismosDestinatarios().isEmpty()){
+        // se decidió mostrar todos los organismos más allá de que la AD tenga organismos detinatarios o no
+        //if(current.getOrganismosDestinatarios().isEmpty()){
             // cargo los list pesados para los combos
             listOrganismos = organismoFacade.getHabilitados();
             tipoOrg = null;
             if(listTipoOrganismo == null || listTipoOrganismo.isEmpty()){
                 listTipoOrganismo = tipoOrgFacade.findAll();
             }
-        }        
+        //}        
         
         // seteo los listados para el formulario
         listaEstudios = estCurFacade.findAll();
@@ -2037,7 +2074,20 @@ public class MbActividadImpl implements Serializable{
         }
     }    
     
-     /**
+    /**
+     * Método para validar que la carga horaria sea entre 1 y 500
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */
+    public void validarCargaHoraria(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        Long valor = (Long) arg2;
+        if((valor < 1) || (valor > 500)){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanValadationCargaHoraExcedido")));
+        }
+    }
+    
+    /**
      * Método para la fecha de realización de la clase
      * No deberá ser anterior a la fecha de inicio de la vigencia del curso
      * ni anterior a la fecha de la clase inmediatemente anterior
@@ -2446,6 +2496,18 @@ public class MbActividadImpl implements Serializable{
         if(listDocClase != null){
             listDocClase = null;
         }
+        
+        // agrego la limieza de los listados para los campos que antes estaban en la Actividad Formativa
+        if(listModalidades != null){
+            listModalidades = null;
+        }    
+        if(listTipoCapacitaciones != null){
+            listTipoCapacitaciones = null;
+        }        
+        if(listCamposTematicos != null){
+            listCamposTematicos = null;
+        }  
+        
         tipoOrg = null;
     }
     
@@ -2592,6 +2654,11 @@ public class MbActividadImpl implements Serializable{
         listOrganismos = organismoFacade.getHabilitados();
         listSedes = sedeFacade.getHabilitados();
         listOrientaciones = orientacionFacade.findAll();
+        
+        // agrego carga de combos para los campos que antes estaban en la Actividad Formativa
+        listModalidades = modalidadFacade.findAll();   
+        listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
+        listCamposTematicos = campoTematicoFacade.findAll();
         
         //identifico el rol para la selección del Coordinador solo si no es la interfase de coordinador
         if(!esCoordinador){

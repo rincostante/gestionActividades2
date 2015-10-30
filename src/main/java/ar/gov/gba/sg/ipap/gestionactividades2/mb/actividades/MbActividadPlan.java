@@ -9,21 +9,13 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.CampoTematico;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Resolucion;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadPlanFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.CampoTematicoFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ModalidadFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ResolucionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFacade;
-import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.mb.login.MbLogin;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
@@ -48,7 +40,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 import org.primefaces.context.RequestContext;
@@ -78,12 +69,6 @@ public class MbActividadPlan implements Serializable{
     @EJB
     private ResolucionFacade resolucionFacade; 
     @EJB
-    private ModalidadFacade modalidadFacade;
-    @EJB
-    private TipoCapacitacionFacade tipoCapacitacionFacade;
-    @EJB
-    private CampoTematicoFacade campoTematicoFacade;
-    @EJB
     private OrganismoFacade organismoFacade;
     @EJB
     private TipoOrganismoFacade tipoOrgFacade;
@@ -91,17 +76,11 @@ public class MbActividadPlan implements Serializable{
     private ActividadPlan actPlanSelected;
     private Usuario usLogeado;     
     private List<Resolucion> listResoluciones;
-    private List<Modalidad> listModalidades;
-    private List<TipoCapacitacion> listTipoCapacitaciones;
-    private List<CampoTematico> listCamposTematicos;
-    private List<TipoOrganismo> listTipoOrganismo;
-    private List<Organismo> listOrganismos;
     private List<ActividadImplementada> listActImp;
     private MbLogin login;
     private int tipoList; //1=habilitadas | 2=suspendidas | 3=deshabilitadas     
     //private ListDataModel listDMActImp;
     private boolean iniciado;
-    private TipoOrganismo tipoOrg;
 
     /** Creates a new instance of MbActividadPlan */
     public MbActividadPlan() {
@@ -217,39 +196,6 @@ public class MbActividadPlan implements Serializable{
     public void setSubDisp(List<SubPrograma> subDisp) {
         this.subDisp = subDisp;
     }
- 
-    public List<Modalidad> getListModalidades() {
-        return listModalidades;
-    }
-
-    public void setListModalidades(List<Modalidad> listModalidades) {
-        this.listModalidades = listModalidades;
-    }
-
-    public List<TipoCapacitacion> getListTipoCapacitaciones() {
-        return listTipoCapacitaciones;
-    }
-
-    public void setListTipoCapacitaciones(List<TipoCapacitacion> listTipoCapacitaciones) {
-        this.listTipoCapacitaciones = listTipoCapacitaciones;
-    }
-
-    public List<CampoTematico> getListCamposTematicos() {
-        return listCamposTematicos;
-    }
-
-    public void setListCamposTematicos(List<CampoTematico> listCamposTematicos) {
-        this.listCamposTematicos = listCamposTematicos;
-    }
-
-    public List<Organismo> getListOrganismos() {
-        return listOrganismos;
-    }
-
-    public void setListOrganismos(List<Organismo> listOrganismos) {
-        this.listOrganismos = listOrganismos;
-    }
- 
     
     public ActividadPlan getActPlanSelected() {
         return actPlanSelected;
@@ -283,22 +229,6 @@ public class MbActividadPlan implements Serializable{
         this.tipoList = tipoList;
     }
     
-    public List<TipoOrganismo> getListTipoOrganismo() {
-        return listTipoOrganismo;
-    }
-
-    public void setListTipoOrganismo(List<TipoOrganismo> listTipoOrganismo) {
-        this.listTipoOrganismo = listTipoOrganismo;
-    }
-
-    public TipoOrganismo getTipoOrg() {
-        return tipoOrg;
-    }
-
-    public void setTipoOrg(TipoOrganismo tipoOrg) {
-        this.tipoOrg = tipoOrg;
-    }    
- 
     
     /********************************
      ** Métodos para el datamodel **
@@ -405,10 +335,6 @@ public class MbActividadPlan implements Serializable{
     public String prepareCreate() {
         // cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas();
-        listModalidades = modalidadFacade.findAll();
-        listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
-        listCamposTematicos = campoTematicoFacade.getHabilitados();
-        listTipoOrganismo = tipoOrgFacade.findAll();
         
         // cargo la tabla de subProgramas
         subProgramas = subProgramaFacade.getHabilitadas();
@@ -423,13 +349,7 @@ public class MbActividadPlan implements Serializable{
     public String prepareEdit() {
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas();
-        listModalidades = modalidadFacade.findAll();
-        listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
-        listCamposTematicos = campoTematicoFacade.findAll();
-        listTipoOrganismo = tipoOrgFacade.findAll();
         current = actPlanSelected;
-        tipoOrg = current.getOrganismo().getTipoOrganismo();
-        listOrganismos = organismoFacade.getHabilitados();
         asignaSub = true;
         subVinc = current.getSubprogramas();
         subDisp = cargarSubProgramasDisponibles();
@@ -442,13 +362,7 @@ public class MbActividadPlan implements Serializable{
     public String prepareEditSusp() {
         //cargo los list para los combos
         listResoluciones = resolucionFacade.getHabilitadas(); 
-        listModalidades = modalidadFacade.findAll();
-        listTipoCapacitaciones = tipoCapacitacionFacade.findAll();
-        listCamposTematicos = campoTematicoFacade.getHabilitados();
-        listTipoOrganismo = tipoOrgFacade.findAll();
         current = actPlanSelected;
-        tipoOrg = current.getOrganismo().getTipoOrganismo();
-        listOrganismos = organismoFacade.getHabilitados();
         asignaSub = true;
         subVinc = current.getSubprogramas();
         subDisp = cargarSubProgramasDisponibles();  
@@ -557,19 +471,6 @@ public class MbActividadPlan implements Serializable{
         }
     }
     
-    /**
-     * Método para validar que la carga horaria sea entre 1 y 500
-     * @param arg0: vista jsf que llama al validador
-     * @param arg1: objeto de la vista que hace el llamado
-     * @param arg2: contenido del campo de texto a validar 
-     */
-    public void validarCargaHoraria(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
-        Long valor = (Long) arg2;
-        if((valor < 1) || (valor > 500)){
-            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanValadationCargaHoraExcedido")));
-        }
-    }
-    
 
     /*************************
     ** Métodos de operación **
@@ -598,12 +499,6 @@ public class MbActividadPlan implements Serializable{
                     getFacade().create(current);
                     JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("ActividadPlanCreated"));
                     listResoluciones.clear();
-                    listModalidades.clear();
-                    listTipoCapacitaciones.clear();
-                    listCamposTematicos.clear();
-                    tipoOrg = null;
-                    listTipoOrganismo.clear();
-                    listOrganismos.clear();
                     subProgramas.clear();
                     subVinc = current.getSubprogramas();
                     return "view";
@@ -646,12 +541,6 @@ public class MbActividadPlan implements Serializable{
                 listResoluciones.clear();
                 asignaSub = false;
                 subDisp.clear();
-                listModalidades.clear();
-                listTipoCapacitaciones.clear();
-                listCamposTematicos.clear();
-                tipoOrg = null;
-                listTipoOrganismo.clear();
-                listOrganismos.clear();
                 if(tipoList == 1){
                     retorno = "view";  
                 }
@@ -685,15 +574,6 @@ public class MbActividadPlan implements Serializable{
         pdf.setPageSize(PageSize.A4.rotate());
         pdf.newPage();
     }
-    
-    /**
-     * Método para actualizar los Organismos según el tipo seleccionado
-     * @param event
-     */
-    public void tipoOrgChangeListener(ValueChangeEvent event) {   
-        tipoOrg = (TipoOrganismo)event.getNewValue();
-        listOrganismos = organismoFacade.getXTipo(tipoOrg);
-    } 
     
     
     /*************************
@@ -820,7 +700,6 @@ public class MbActividadPlan implements Serializable{
         if(subProgramasFilter != null){
             subProgramasFilter = null;
         }
-        tipoOrg = null;
     }      
     
     

@@ -40,8 +40,15 @@ import javax.xml.bind.annotation.XmlTransient;
  * Entidad que modela las distintas Implementaciones de una misma actividad.
  * Se vincula con:
  *      ActividadPlan,
- *      Organismo,
+ *      TipoCapacitacion,
+ *      Modalidad,
+ *      CampoTematico,
+ *      Organismo (solicitante y destinatarios),
  *      Sede,
+ *      TipoCapacitacion,
+ *      Modalidad,
+ *      CampoTematico,
+ *      Organismo,
  *      EstadoActividad,
  *      Resolucion,
  *      Agente,
@@ -254,6 +261,52 @@ public class ActividadImplementada implements Serializable {
     private boolean suspendido = false;   
     
     
+    /*********************************************************************************
+     ** Campos agregados que anteriormente formaban parte de la Actividad Formativa **
+     *********************************************************************************/
+    
+    /**
+     * Campo de tipo Modalidad que indica la modalidad de la Actividad
+     */
+    @ManyToOne
+    @JoinColumn(name="modalidad_id")
+    private Modalidad modalidad;    
+    
+    /**
+     * Campo de tipo TipoCapacitacion que indica su tipo
+     */
+    @ManyToOne
+    @JoinColumn(name="tipocapacitacion_id")
+    private TipoCapacitacion tipoCapacitacion;
+    
+    /**
+     * Campo de tipo CampoTematico que indica el campo temático de la Actividad
+     */
+    @ManyToOne
+    @JoinColumn(name="campotematico_id")
+    private CampoTematico campoTematico;
+    
+    /**
+     * Campo entero que indica la carga horaria asignada a la actividad
+     */
+    @Column (nullable=false)
+    @NotNull(message = "{entidades.fieldNotNullError}")
+    private int cargaHoraria;
+    
+    /**
+     * Campo binario que indica si la Actividad será con evaluación
+     */
+    @Column (nullable=false)
+    @NotNull(message = "{entidades.fieldNotNullError}")
+    private boolean evalua = false;
+    
+    /**
+     * Campo binario que indica si la Actividad conlleva una certificación
+     */
+    @Column (nullable=false)
+    @NotNull(message = "{entidades.fieldNotNullError}")
+    private boolean certifica = false;    
+    
     /**
      * Constructor 
      */
@@ -262,6 +315,54 @@ public class ActividadImplementada implements Serializable {
         organismosDestinatarios = new ArrayList();
         participantes = new ArrayList();
         clases = new ArrayList();
+    }
+
+    public Modalidad getModalidad() {
+        return modalidad;
+    }
+
+    public void setModalidad(Modalidad modalidad) {
+        this.modalidad = modalidad;
+    }
+
+    public TipoCapacitacion getTipoCapacitacion() {
+        return tipoCapacitacion;
+    }
+
+    public void setTipoCapacitacion(TipoCapacitacion tipoCapacitacion) {
+        this.tipoCapacitacion = tipoCapacitacion;
+    }
+
+    public CampoTematico getCampoTematico() {
+        return campoTematico;
+    }
+
+    public void setCampoTematico(CampoTematico campoTematico) {
+        this.campoTematico = campoTematico;
+    }
+
+    public int getCargaHoraria() {
+        return cargaHoraria;
+    }
+
+    public void setCargaHoraria(int cargaHoraria) {
+        this.cargaHoraria = cargaHoraria;
+    }
+
+    public boolean isEvalua() {
+        return evalua;
+    }
+
+    public void setEvalua(boolean evalua) {
+        this.evalua = evalua;
+    }
+
+    public boolean isCertifica() {
+        return certifica;
+    }
+
+    public void setCertifica(boolean certifica) {
+        this.certifica = certifica;
     }
 
     public String getNumAnexo() {

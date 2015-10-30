@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Registrar nuevo Agente</title>
+        <title>Editar los datos del Agente</title>
         <style type="text/css">
             .ui-widget {
                 font-size: 80%;
@@ -21,8 +21,8 @@
                     <p:commandButton value="Editar" action="#{mbActividadImpl.prepareEditPersona}" 
                                          icon="ui-icon-extlink" process="@this" /> 
                     
-                    <p:outputLabel value="#{bundle.AgenteLabel_tipoOrg}" for="tipoOrg" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() == 0}"/>
-                    <p:selectOneMenu id="tipoOrg" value="#{mbActividadImpl.tipoOrg}" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() == 0}"
+                    <p:outputLabel value="#{bundle.AgenteLabel_tipoOrg}" for="tipoOrg" />
+                    <p:selectOneMenu id="tipoOrg" value="#{mbActividadImpl.tipoOrg}" 
                                      valueChangeListener="#{mbActividadImpl.tipoOrgChangeListener}">
                         <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
                         <f:selectItems value="#{mbActividadImpl.listTipoOrganismo}" var="tipoOrg" 
@@ -32,17 +32,7 @@
                     </p:selectOneMenu> 
 
                     <p:outputLabel value="#{bundle.AgenteLabel_organismo}" />
-                    <p:selectOneMenu id="organismo" value="#{mbActividadImpl.agente.organismo}" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() != 0}" 
-                                     required="true" 
-                                     requiredMessage="#{bundle.AgenteOrganismoRequiredMessage}" 
-                                     valueChangeListener="#{mbActividadImpl.organismoChangeListener}">
-                        <f:selectItem itemLabel="Seleccione el Organismo" itemValue="" noSelectionOption="true" />
-                        <f:selectItems value="#{mbActividadImpl.selected.organismosDestinatarios}" var="organismo" 
-                                       itemLabel="#{organismo.nombre}" 
-                                       itemValue="#{organismo}"/>
-                        <p:ajax event="change" update="referente"/>
-                    </p:selectOneMenu>  
-                    <p:selectOneMenu id="organismoTotal" value="#{mbActividadImpl.agente.organismo}" rendered="#{mbActividadImpl.selected.organismosDestinatarios.size() == 0}" 
+                    <p:selectOneMenu id="organismoTotal" value="#{mbActividadImpl.agente.organismo}"  
                                      required="true" 
                                      requiredMessage="#{bundle.AgenteOrganismoRequiredMessage}" 
                                      valueChangeListener="#{mbActividadImpl.organismoChangeListener}">

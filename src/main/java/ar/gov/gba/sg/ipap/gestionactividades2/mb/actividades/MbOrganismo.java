@@ -7,7 +7,6 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.AdmEntidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
@@ -55,8 +54,6 @@ public class MbOrganismo implements Serializable{
     private List<TipoOrganismo> listaTipoOrg;
     private Usuario usLogeado;
     private MbLogin login;    
-    private ListDataModel listDMActPlan;
-    private List<ActividadPlan> listActPlanFilter;
     private ListDataModel listDMActImp;
     private List<ActividadImplementada> listActImpFilter;
     private boolean iniciado;
@@ -92,29 +89,12 @@ public class MbOrganismo implements Serializable{
         this.listFilter = listFilter;
     }
 
-    public List<ActividadPlan> getListActPlanFilter() {
-        return listActPlanFilter;
-    }
-
-    public void setListActPlanFilter(List<ActividadPlan> listActPlanFilter) {
-        this.listActPlanFilter = listActPlanFilter;
-    }
-
     public List<ActividadImplementada> getListActImpFilter() {
         return listActImpFilter;
     }
 
     public void setListActImpFilter(List<ActividadImplementada> listActImpFilter) {
         this.listActImpFilter = listActImpFilter;
-    }
-    
-    
-    public ListDataModel getListDMActPlan() {
-        return listDMActPlan;
-    }
-
-    public void setListDMActPlan(ListDataModel listDMActPlan) {
-        this.listDMActPlan = listDMActPlan;
     }
 
     public ListDataModel getListDMActImp() {
@@ -400,17 +380,7 @@ public class MbOrganismo implements Serializable{
         session.removeAttribute("mbOrganismo");
   
         return "inicio";
-    }  
-    
-    /**
-     * Método para mostrar las Actividades Planificadas vinculadas a este Organismo
-     */
-    public void verActividadesPlan(){
-        listDMActPlan = new ListDataModel(current.getActividadesPlan());
-        Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 950);
-        RequestContext.getCurrentInstance().openDialog("dlgActividadesPlan", options, null);
-    }      
+    }     
     
     /**
      * Método para mostrar las Actividades Implementadas vinculadas a este Organismo
@@ -458,13 +428,9 @@ public class MbOrganismo implements Serializable{
      */
     private void recreateModel() {
         items = null;
-        listDMActPlan = null;
         listDMActImp = null;
         if(listFilter != null){
             listFilter = null;
-        }
-        if(listActPlanFilter != null){
-            listActPlanFilter = null;
         }
         if(listActImpFilter != null){
             listActImpFilter = null;

@@ -57,12 +57,6 @@ public class Organismo implements Serializable {
     private TipoOrganismo tipoOrganismo;
     
     /**
-     * Campo de tipo Array que contiene el conjunto de Actividades planificadas solicitadas por el Organismo
-     */
-    @OneToMany(mappedBy="organismo")
-    private List<ActividadPlan> actividadesPlan;    
-    
-    /**
      * Campo de tipo Array que contiene el conjunto de las Actividades implementadas que tienen al Organismo como destinatario
      */
     @OneToMany(mappedBy="organismo")
@@ -73,14 +67,6 @@ public class Organismo implements Serializable {
      */
     @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private AdmEntidad admin;   
-    
-    /**
-     * Constructor
-     */
-    public Organismo(){
-        actividadesPlan = new ArrayList();
-        actividadesImplementadas = new ArrayList();
-    }
 
     /**
      *
@@ -97,23 +83,6 @@ public class Organismo implements Serializable {
      */
     public void setActividadesImplementadas(List<ActividadImplementada> actividadesImplementadas) {
         this.actividadesImplementadas = actividadesImplementadas;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @XmlTransient
-    public List<ActividadPlan> getActividadesPlan() {
-        return actividadesPlan;
-    }
-
-    /**
-     *
-     * @param actividadesPlan
-     */
-    public void setActividadesPlan(List<ActividadPlan> actividadesPlan) {
-        this.actividadesPlan = actividadesPlan;
     }
 
     /**

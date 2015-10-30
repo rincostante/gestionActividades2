@@ -19,11 +19,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * Entidad que modela las Rsoluciones que dan marco institucional al conjunto de Programas y Actividades gestionadas
+ * Entidad que modela las Resoluciones que dan marco institucional al conjunto de Programas y Actividades gestionadas
  * Se vincula a:
  *      Programa,
  *      SubPrograma,
- *      ActividadPlan,
  *      ActividadImplementada,
  *      AdmEntidad
  * @author rincostante

@@ -45,6 +45,53 @@
                                            itemValue="#{orient}"/>
                         </p:selectOneMenu> 
                         
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_modalidad}" for="modalidad"/>
+                        <p:selectOneMenu id="modalidad" value="#{mbActividadImpl.selected.modalidad}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_modalidad}">
+                            <f:selectItem itemLabel="Seleccione la Modalidad" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadImpl.listModalidades}" var="modal" 
+                                           itemLabel="#{modal.nombre}" 
+                                           itemValue="#{modal}"/>
+                        </p:selectOneMenu>  
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_tipoCapacitacion}" for="tipoCap"/>
+                        <p:selectOneMenu id="tipoCap" value="#{mbActividadImpl.selected.tipoCapacitacion}"
+                                         required="true" 
+                                         requiredMessage="#{bundle.ActividadPlanRequire_tipoCap}">
+                            <f:selectItem itemLabel="Seleccione el Tipo de Capacitacón" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadImpl.listTipoCapacitaciones}" var="tipoCap" 
+                                           itemLabel="#{tipoCap.nombre}" 
+                                           itemValue="#{tipoCap}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_campoTematico}" for="campoTemat"/>
+                        <p:selectOneMenu id="campoTemat" value="#{mbActividadImpl.selected.campoTematico}" >
+                            <f:selectItem itemLabel="Seleccione el Campo Temático" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{mbActividadImpl.listCamposTematicos}" var="campoTemat" 
+                                           itemLabel="#{campoTemat.nombre}" 
+                                           itemValue="#{campoTemat}"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ActividadPlanLabel_cargaHoraria}" for="cargaHoraria"/>
+                        <p:inputText id="cargaHoraria"
+                                     value="#{mbActividadImpl.selected.cargaHoraria}" 
+                                     requiredMessage="#{bundle.ActividadPlanRequire_cargaHoraria}" 
+                                     required="true" 
+                                     validator="#{mbActividadImpl.validarCargaHoraria}" >
+                            <f:convertNumber integerOnly="true" type="number" />
+                        </p:inputText>  
+                        
+                        <p:outputLabel value="Evalúa: " />
+                        <p:selectBooleanButton id="evalua" value="#{mbActividadImpl.selected.evalua}" 
+                                               onLabel="Sí" 
+                                               offLabel="No" />
+                        
+                        <p:outputLabel value="Certifica: " />
+                        <p:selectBooleanButton id="certifica" value="#{mbActividadImpl.selected.certifica}" 
+                                               onLabel="Sí" 
+                                               offLabel="No" />
+
                         <p:outputLabel value="#{bundle.ActividadImplLabel_tipoOrganismo}" for="tipoOrg"/>
                         <p:selectOneMenu id="tipoOrg" value="#{mbActividadImpl.tipoOrg}" 
                                          valueChangeListener="#{mbActividadImpl.tipoOrgChangeListener}">
@@ -71,7 +118,7 @@
                                            itemValue="#{res}"/>
                         </p:selectOneMenu> 
 
-                        <p:outputLabel value="#{bundle.ActividadImplLabel_dirigidoA}" for="numAnexo"/>
+                        <p:outputLabel value="#{bundle.ActividadImplLabel_numAnexo}" for="numAnexo"/>
                         <p:inputText id="numAnexo" value="#{mbActividadImpl.selected.numAnexo}"/>
                         
                         <p:outputLabel value="#{bundle.ActividadImplLabel_libro}" for="libro"/>
@@ -89,8 +136,8 @@
                             <f:convertNumber maxFractionDigits="2" />
                         </p:inputText> 
                         
-                        <p:outputLabel value="#{bundle.ActividadImplLabel_evalEnc}" for="evalua" />
-                        <p:selectBooleanButton id="evalua" value="#{mbActividadImpl.selected.evaluaEncuesta}" 
+                        <p:outputLabel value="#{bundle.ActividadImplLabel_evalEnc}" for="evaluaEnc" />
+                        <p:selectBooleanButton id="evaluaEnc" value="#{mbActividadImpl.selected.evaluaEncuesta}" 
                                                onLabel="Sí" 
                                                offLabel="No" />
 

@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  * Entidad paramétrica que indica el campo temático de las Actividades 
  * Se vincula a:
- *      ActividadPlan,
+ *      ActividadImpl,
  *      AdmEntidad
  * @author rincostante
  */
@@ -67,10 +67,10 @@ public class CampoTematico implements Serializable {
     private Date fechaFinVigencia;  
     
     /**
-     * Campo de tipo Array que contiene las ACtividades planificadas de este Campo temático
+     * Campo de tipo Array que contiene las ACtividades implementadas de este Campo temático
      */
     @OneToMany(mappedBy="campoTematico")
-    private List<ActividadPlan> actividades;  
+    private List<ActividadImplementada> actividades;  
     
     /**
      * Campo de tipo AdmEntidad que encapsula los datos de administración y trazabilidad del Campo temático
@@ -126,7 +126,7 @@ public class CampoTematico implements Serializable {
      * @return 
      */
     @XmlTransient
-    public List<ActividadPlan> getActividades() {
+    public List<ActividadImplementada> getActividades() {
         return actividades;
     }
 
@@ -134,7 +134,7 @@ public class CampoTematico implements Serializable {
      *
      * @param actividades
      */
-    public void setActividades(List<ActividadPlan> actividades) {
+    public void setActividades(List<ActividadImplementada> actividades) {
         this.actividades = actividades;
     }
 

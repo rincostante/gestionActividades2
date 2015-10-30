@@ -19,7 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -32,12 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * Cada una de estas Actividades podrá implementarse todas las veces que sea necesario, siendo cada una de estas una Actividad Implementada.
  * Se vincula con:
  *      SubPrograma,
- *      TipoCapacitacion,
- *      Modalidad,
- *      CampoTematico,
- *      Organismo,
  *      ActividadImplementada,
- *      Resolucion,
  *      ADmEntidad
  * @author rincostante
  */
@@ -55,28 +49,7 @@ public class ActividadPlan implements Serializable {
     @NotNull(message = "{entidades.fieldNotNullError}")
     @Size(message = "{endidades.stringSizeError}", min = 1, max = 200)
     private String nombre;
-    
-    /**
-     * Campo entero que indica la carga horaria asignada a la actividad
-     */
-    @Column (nullable=false)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    private int cargaHoraria;
-    
-    /**
-     * Campo binario que indica si la Actividad será con evaluación
-     */
-    @Column (nullable=false)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    private boolean evalua = false;
-    
-    /**
-     * Campo binario que indica si la Actividad conlleva una certificación
-     */
-    @Column (nullable=false)
-    @NotNull(message = "{entidades.fieldNotNullError}")
-    private boolean certifica = false;
-    
+
     /**
      * Campo binario que indica si la actividad está o no suspendida
      */
@@ -106,25 +79,11 @@ public class ActividadPlan implements Serializable {
     private String verMas;        
     
     /**
-     * Campo de tipo Resolucion que contiene la resolución que da marco institucional a la Actividad.
-     */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="resolucion_id", nullable=true)
-    private Resolucion resolucion; 
-    
-    /**
      * Campo de tipo AdmEntidad que encapsula los datos propios para su trazabilidad.
      */
     @OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     @NotNull(message = "{enitdades.objectNotNullError}") 
     private AdmEntidad admin;
-    
-    /**
-     * Campo de tipo Organismo que consigna el Organismo que solicitó la Actividad
-     */
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="organismo_id", nullable=true)
-    private Organismo organismo;
 
     /**
      * Campo de tipo Array que contiene el conjunto de los Subprogramas que contienen esta Actividad
@@ -136,27 +95,6 @@ public class ActividadPlan implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "subprograma_fk")
     )
     private List<SubPrograma> subprogramas;
-    
-    /**
-     * Campo de tipo TipoCapacitacion que indica su tipo
-     */
-    @ManyToOne
-    @JoinColumn(name="tipocapacitacion_id")
-    private TipoCapacitacion tipoCapacitacion;
-    
-    /**
-     * Campo de tipo Modalidad que indica la modalidad de la Actividad
-     */
-    @ManyToOne
-    @JoinColumn(name="modalidad_id")
-    private Modalidad modalidad;
-    
-    /**
-     * Campo de tipo CampoTematico que indica el campo temático de la Actividad
-     */
-    @ManyToOne
-    @JoinColumn(name="campotematico_id")
-    private CampoTematico campoTematico;
     
     /**
      * Campo de tipo Array que contiene las implementaciones de la Actividad
@@ -225,54 +163,6 @@ public class ActividadPlan implements Serializable {
      *
      * @return
      */
-    public CampoTematico getCampoTematico() {
-        return campoTematico;
-    }
-
-    /**
-     *
-     * @param campoTematico
-     */
-    public void setCampoTematico(CampoTematico campoTematico) {
-        this.campoTematico = campoTematico;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Modalidad getModalidad() {
-        return modalidad;
-    }
-
-    /**
-     *
-     * @param modalidad
-     */
-    public void setModalidad(Modalidad modalidad) {
-        this.modalidad = modalidad;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public TipoCapacitacion getTipoCapacitacion() {
-        return tipoCapacitacion;
-    }
-
-    /**
-     *
-     * @param tipoCapacitacion
-     */
-    public void setTipoCapacitacion(TipoCapacitacion tipoCapacitacion) {
-        this.tipoCapacitacion = tipoCapacitacion;
-    }
-
-    /**
-     *
-     * @return
-     */
     @XmlTransient
     public List<SubPrograma> getSubprogramas() {
         return subprogramas;
@@ -300,54 +190,6 @@ public class ActividadPlan implements Serializable {
      */
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getCargaHoraria() {
-        return cargaHoraria;
-    }
-
-    /**
-     *
-     * @param cargaHoraria
-     */
-    public void setCargaHoraria(int cargaHoraria) {
-        this.cargaHoraria = cargaHoraria;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public boolean isEvalua() {
-        return evalua;
-    }
-
-    /**
-     *
-     * @param evalua
-     */
-    public void setEvalua(boolean evalua) {
-        this.evalua = evalua;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public boolean isCertifica() {
-        return certifica;
-    }
-
-    /**
-     *
-     * @param certifica
-     */
-    public void setCertifica(boolean certifica) {
-        this.certifica = certifica;
     }
 
     /**
@@ -386,22 +228,6 @@ public class ActividadPlan implements Serializable {
      *
      * @return
      */
-    public Resolucion getResolucion() {
-        return resolucion;
-    }
-
-    /**
-     *
-     * @param resolucion
-     */
-    public void setResolucion(Resolucion resolucion) {
-        this.resolucion = resolucion;
-    }
-
-    /**
-     *
-     * @return
-     */
     public AdmEntidad getAdmin() {
         return admin;
     }
@@ -412,22 +238,6 @@ public class ActividadPlan implements Serializable {
      */
     public void setAdmin(AdmEntidad admin) {
         this.admin = admin;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Organismo getOrganismo() {
-        return organismo;
-    }
-
-    /**
-     *
-     * @param organismo
-     */
-    public void setOrganismo(Organismo organismo) {
-        this.organismo = organismo;
     }
 
     /**
