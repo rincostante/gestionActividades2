@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <ui:composition template="/WEB-INF/facelets/templates/admin/entidadTemplate.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ReqActividadDispTitle}" />
+        </ui:define>
+        <ui:define name="content">
+            <br/>
+            <h:form id="frmQuery" style="text-align: left">
+                <p:panel id="pnQuery" header="#{bundle.ReqActividadDispQueryTitle}" style="margin-bottom:10px;">
+                    <p:growl id="messages" />
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="#{bundle.ReqActividades_programa}" for="programa"/>
+                        <p:selectOneMenu id="programa" value="" 
+                                         valueChangeListener="" 
+                            <f:selectItem itemLabel="Seleccione un Programa" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="" var="prog" 
+                                           itemLabel="#{prog.nombre}" 
+                                           itemValue="#{prog}"/>
+                            <p:ajax event="change" update="subPorg"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ReqActividades_subprograma}" for="subPorg"/>
+                        <p:selectOneMenu id="subPorg" value="" 
+                                         valueChangeListener="" 
+                            <f:selectItem itemLabel="Seleccione un Sub Programa" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="" var="sub" 
+                                           itemLabel="#{sub.nombre}" 
+                                           itemValue="#{sub}"/>
+                            <p:ajax event="change" update="actForm"/>
+                        </p:selectOneMenu> 
+                        
+                        <p:outputLabel value="#{bundle.ReqActividades_subprograma}" for="actForm"/>
+                        <p:selectOneMenu id="actForm" value="" 
+                                         valueChangeListener="" 
+                            <f:selectItem itemLabel="Seleccione una Actividad Formativa" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="" var="actForm" 
+                                           itemLabel="#{actForm.nombre}" 
+                                           itemValue="#{actForm}"/>
+                        </p:selectOneMenu> 
+                    </h:panelGrid>
+                </p:panel>
+
+                <p:toolbar>
+                    <f:facet name="left">
+                        <p:commandButton icon="ui-icon-check" value="Consultar" action="#" update="pnQuery"/>
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
+                            <p:ajax update="pnQuery" resetValues="true" />
+                        </p:commandButton>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
+                                         action="#" 
+                                         value="Volver" 
+                                         immediate="true" 
+                                         ajax="false"/>
+                    </f:facet>
+                </p:toolbar>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
