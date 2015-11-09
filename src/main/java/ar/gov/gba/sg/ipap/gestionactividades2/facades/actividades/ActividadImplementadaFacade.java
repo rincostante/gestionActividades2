@@ -7,7 +7,14 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades;
 
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadPlan;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Modalidad;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Programa;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
@@ -365,4 +372,47 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         }
         return resultListTotal;
     }    
+    
+    /**
+     * Método para la selección de AD seegún parámetros de consulta
+     * Primero pregunto por las fechas, si vienen nulas seteo incial 01/01/1900 y final hoy
+     * De esta forma siempre habra un parámetro luego del WHERE para después poder incluir AND o OR según corresponda.
+     * Para eso debo agregar los if correspondientes a cada parámetro.
+     */
+    public List<ActividadImplementada> getXConsulta(
+        Programa programa,
+        SubPrograma subprograma,
+        ActividadPlan actForm,
+        Organismo organismoSol,
+        Sede sede,
+        Modalidad modalidad,
+        TipoCapacitacion tipoCap,
+        Date fDespuesDe,
+        Date fAntesDe
+    ){    
+        List<ActividadImplementada> resultListTotal = new ArrayList<>();
+        em = getEntityManager();
+        String queryString = "SELECT act FROM ActividadImplementada act WHERE ";  
+        int largo = queryString.length();
+        
+        // armo la query en función de los valores recibidos
+        if(programa != null && queryString.length() == 48){
+            queryString = queryString + "act.subprograma.programa = :programa ";
+        }else if(programa != null && queryString.length() > 48){
+            queryString = queryString + "AND act.subprograma.programa = :programa ";
+        }
+        
+        if(subprograma != null && queryString.length() == 48){
+            queryString = queryString + "act.subprograma = :subprograma ";
+        }else if(subprograma != null && queryString.length() > 48){
+            queryString = queryString + "AND act.subprograma = :subprograma ";
+        }
+        
+        Query q = em.createQuery(queryString)
+                .setParameter("programa", programa)
+                .setParameter("subprograma", subprograma);
+        resultListTotal = q.getResultList();
+        
+        return resultListTotal;
+    }
 }
