@@ -20,6 +20,10 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.SubProgramaFac
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoCapacitacionFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.PageSize;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Enumeration;
@@ -31,6 +35,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpSession;
 
@@ -65,6 +70,7 @@ public class MbReqActividadesDispuestas implements Serializable{
     private List<ActividadImplementada> listActDisp;
     private List<ActividadImplementada> listActDispFilter;
     private ActividadImplementada current;
+    private boolean consultado;
     
     // Campos de uso interno
     private boolean iniciado;
@@ -98,6 +104,15 @@ public class MbReqActividadesDispuestas implements Serializable{
     /***********************************
      * métodos de acceso a los campos **
      ***********************************/
+    
+    public boolean isConsultado() {
+        return consultado;
+    }
+
+    public void setConsultado(boolean consultado) {
+        this.consultado = consultado;
+    }
+
     
     public Programa getPrograma() {
         return programa;
@@ -293,6 +308,7 @@ public class MbReqActividadesDispuestas implements Serializable{
     @PostConstruct
     public void init(){
         iniciado = false;
+        consultado = false;
         cargarListados();
     }
     
@@ -328,6 +344,13 @@ public class MbReqActividadesDispuestas implements Serializable{
         listModalidades = modalidadFacade.findAll();
         listTipoCap = tipoCapFacade.findAll();
     }    
+    
+    public void preProcessPDF(Object document) throws DocumentException, IOException {
+        Document pdf = (Document) document;    
+        pdf.open();
+        pdf.setPageSize(PageSize.A4.rotate());
+        pdf.newPage();
+    }       
     
     /***********************************
      * Métodos para actualizar combos **
@@ -379,17 +402,19 @@ public class MbReqActividadesDispuestas implements Serializable{
         sede = null;
         modalidad = null;
         tipoCap = null;
+        consultado = false;
         cargarListados();
     }  
     
     /**
      * Método para realizar la búsqueda
      */
-    public void buscar(){
+    public void buscar(ActionEvent event){
         if(programa == null && subprograma == null && actForm == null && organismoSol == null && sede == null && modalidad == null && tipoCap == null && fDespuesDe == null && fAntesDe == null){
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ReqActividades_consultaIncompleta"));
         }else{
             listActDisp = actImpFacade.getXConsulta(programa, subprograma, actForm, organismoSol, sede, modalidad, tipoCap, fDespuesDe, fAntesDe);    
+            consultado = true;
         }
     }
     
@@ -415,7 +440,7 @@ public class MbReqActividadesDispuestas implements Serializable{
     ** Converter. Se debe actualizar la entidad y el facade respectivo **
     *********************************************************************/
     @FacesConverter(forClass = ActividadImplementada.class)
-    public static class ActividadImplementadaControllerConverter implements Converter {
+    public static class ReqActDispControllerConverter implements Converter {
 
         /**
          *
@@ -474,3 +499,4 @@ public class MbReqActividadesDispuestas implements Serializable{
         }
     }                 
 }
+

@@ -21,6 +21,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Usuario;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -375,44 +376,93 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
     
     /**
      * Método para la selección de AD seegún parámetros de consulta
-     * Primero pregunto por las fechas, si vienen nulas seteo incial 01/01/1900 y final hoy
+     * Primero pregunto por la fecha de inicio de vigencia, si viene nula seteo 01/01/1900
      * De esta forma siempre habra un parámetro luego del WHERE para después poder incluir AND o OR según corresponda.
      * Para eso debo agregar los if correspondientes a cada parámetro.
+     * @param programa
+     * @param subprograma
+     * @param actividadPlan
+     * @param organismo
+     * @param sede
+     * @param modalidad
+     * @param tipoCapacitacion
+     * @param fechaInicio
+     * @param fechaFin
+     * @return 
      */
     public List<ActividadImplementada> getXConsulta(
         Programa programa,
         SubPrograma subprograma,
-        ActividadPlan actForm,
-        Organismo organismoSol,
+        ActividadPlan actividadPlan,
+        Organismo organismo,
         Sede sede,
         Modalidad modalidad,
-        TipoCapacitacion tipoCap,
-        Date fDespuesDe,
-        Date fAntesDe
+        TipoCapacitacion tipoCapacitacion,
+        Date fechaInicio,
+        Date fechaFin
     ){    
         List<ActividadImplementada> resultListTotal = new ArrayList<>();
+        List<String> paramValor = new ArrayList<>();
+        List<String> paramNulos = new ArrayList<>();
+        String campoSimple;
+        String operador;
+        
+        // Separo los parámetros nulos de los que vienen con valor
+        if(programa == null) paramNulos.add("subprograma.programa"); else paramValor.add("subprograma.programa");
+        if(subprograma == null) paramNulos.add("subprograma"); else paramValor.add("subprograma");
+        if(actividadPlan == null) paramNulos.add("actividadPlan"); else paramValor.add("actividadPlan");
+        if(organismo == null) paramNulos.add("organismo"); else paramValor.add("organismo");
+        if(sede == null) paramNulos.add("sede"); else paramValor.add("sede");
+        if(modalidad == null) paramNulos.add("modalidad"); else paramValor.add("modalidad");
+        if(tipoCapacitacion == null) paramNulos.add("tipoCapacitacion"); else paramValor.add("tipoCapacitacion");
+        if(fechaFin == null) paramNulos.add("fechaFin"); else paramValor.add("fechaFin");
+        
+        
         em = getEntityManager();
         String queryString = "SELECT act FROM ActividadImplementada act WHERE ";  
-        int largo = queryString.length();
         
-        // armo la query en función de los valores recibidos
-        if(programa != null && queryString.length() == 48){
-            queryString = queryString + "act.subprograma.programa = :programa ";
-        }else if(programa != null && queryString.length() > 48){
-            queryString = queryString + "AND act.subprograma.programa = :programa ";
+        // valido la fecha de inicio, si viene nula seteo 01/01/1900
+        if(fechaInicio == null){
+            Calendar tmpCal = Calendar.getInstance();
+            tmpCal.set(1900, 1, 1);
+            fechaInicio = tmpCal.getTime();
         }
         
-        if(subprograma != null && queryString.length() == 48){
-            queryString = queryString + "act.subprograma = :subprograma ";
-        }else if(subprograma != null && queryString.length() > 48){
-            queryString = queryString + "AND act.subprograma = :subprograma ";
+        // agrego fDespuesDe a la query
+        queryString = queryString + "act.fechaInicio >= :fechaInicio ";
+        
+        // agrego los campos que contienen valor, antes del útlimo le abro un paréntesis. 
+        //Verifico los objetos de objetos y los operadores.
+        for(String campo : paramValor){
+            if(campo.equals("subprograma.programa")) campoSimple = "programa"; else campoSimple = campo;
+            if(campo.equals("fechaFin")) operador = " <= :"; else operador = " = :";
+            if(!campo.equals(paramValor.get(paramValor.size() - 1))) queryString = queryString + "AND act." + campo + operador + campoSimple + " ";
+            else queryString = queryString + "AND (act." + campo + operador + campoSimple + " ";
         }
         
+        // agrego los campos que contienen nulos, al último lo completo cerrando el paréntesis
+        for(String campo : paramNulos){
+            if(campo.equals("subprograma.programa")) campoSimple = "programa"; else campoSimple = campo;
+            if(!campo.equals(paramNulos.get(paramNulos.size() - 1))) queryString = queryString + "OR act." + campo + " = :" + campoSimple + " ";
+            else queryString = queryString + "OR act." + campo + " = :" + campoSimple + ") ";
+        }
+        
+        // cierro la query ordenando por nombre "ORDER BY actImp.actividadPlan.nombre"
+        queryString = queryString + "ORDER BY act.actividadPlan.nombre";
+        
+        // seteo los parámetros
         Query q = em.createQuery(queryString)
+                .setParameter("fechaInicio", fechaInicio)
                 .setParameter("programa", programa)
-                .setParameter("subprograma", subprograma);
+                .setParameter("subprograma", subprograma)
+                .setParameter("actividadPlan", actividadPlan)
+                .setParameter("organismo", organismo)
+                .setParameter("sede", sede)
+                .setParameter("modalidad", modalidad)
+                .setParameter("tipoCapacitacion", tipoCapacitacion)
+                .setParameter("fechaFin", fechaFin);
         resultListTotal = q.getResultList();
         
         return resultListTotal;
-    }
+    }    
 }

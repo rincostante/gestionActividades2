@@ -254,6 +254,18 @@ public class ActividadImplementada implements Serializable {
     String strFechaFinVig;   
     
     /**
+     * Campo que muestra la cantidad de Inscriptos aprobados
+     */
+    @Transient
+    private int aprobados;
+    
+    /**
+     * Campo que muestra el estado de cursado de la AD
+     */
+    @Transient
+    private boolean finalizada;
+           
+    /**
      * Campo binario que indica si la actividad está o no suspendida
      */
     @Column (nullable=false)
@@ -707,6 +719,65 @@ public class ActividadImplementada implements Serializable {
     }
 
     /**
+     * Método que calcula la cantidad de Inscriptos aprobados en función del porcentaje de asistencia de la AD
+     * y la asistencia a clases del Inscripto
+     * @return 
+     */
+    public int getAprobados() {
+        // inicializo los aprobados
+        aprobados = 0;
+        
+        // si la AD tiene porcentaje de asistencia y tiene clases registradas
+        if(porcAsistencia > 0 && !clases.isEmpty()){
+            float porcAsist;
+            // por cada inscripto recorro las clases
+            if(!participantes.isEmpty()){
+                for(Participante part : participantes){
+                    // si asistió a alguna, recorro las clases asistidas por el agente
+                    if(!part.getClases().isEmpty()){
+                        // si, la AD tiene clases, divido la cantidad de clases del participante, sobre la cantidad de clases de la AD
+                        porcAsist = part.getClases().size() / clases.size();
+                        
+                        // comparo los porcentajes
+                        if(porcAsist >= (porcAsistencia / 100)){
+                            // si aprueba, agrego
+                            aprobados = + 1; 
+                        }
+                    }
+                }
+            }else{
+                aprobados = 0;
+            } 
+        }else{
+            if(!clases.isEmpty()){
+                // solo actúo si la AD tiene clases vinculadas
+                aprobados = participantes.size();
+            }
+        }
+
+        return aprobados;
+    }
+
+    public void setAprobados(int aprobados) {
+        this.aprobados = aprobados;
+    }
+    
+
+    public boolean isFinalizada() {
+        Date actual = new Date(System.currentTimeMillis());
+        if(fechaFin.after(actual)){
+            finalizada = false;
+        }else{
+            finalizada = true;
+        }
+        return finalizada;
+    }
+
+    public void setFinalizada(boolean finalizada) {
+        this.finalizada = finalizada;
+    }    
+    
+    /**
      *
      * @return
      */
@@ -743,5 +814,4 @@ public class ActividadImplementada implements Serializable {
     public String toString() {
         return "ar.gov.gba.sg.ipap.gestionactividades.entities.actividades.ActividadImplementada[ id=" + id + " ]";
     }
-    
 }

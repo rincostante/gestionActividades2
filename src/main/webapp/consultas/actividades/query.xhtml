@@ -15,103 +15,197 @@
             </f:metadata>
             <br/>
             <h:form id="frmQuery" style="text-align: left">
-                <p:panel id="pnQuery" header="#{bundle.ReqActividadDispQueryTitle}" style="margin-bottom:10px;">
-                    <p:growl id="messages" />
-                    <h:panelGrid columns="2">
-                        <p:outputLabel value="#{bundle.ReqActividades_programa} :" for="programa"/>
-                        <p:selectOneMenu id="programa" value="#{mbReqActividadesDispuestas.programa}" 
-                                         valueChangeListener="#{mbReqActividadesDispuestas.progChangeListener}" >
-                            <f:selectItem itemLabel="Seleccione un Programa" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listProgramas}" var="prog" 
-                                           itemLabel="#{prog.nombre}" 
-                                           itemValue="#{prog}"/>
-                            <p:ajax event="change" update="subPorg"/>
-                        </p:selectOneMenu> 
+                <h:panelGroup id="pnGral" >
+                    <p:panel id="pnQuery" header="#{bundle.ReqActividadDispQueryTitle}" style="margin-bottom:10px;">
+                        <p:growl id="messages" />
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="#{bundle.ReqActividades_programa} :" for="programa"/>
+                            <p:selectOneMenu id="programa" value="#{mbReqActividadesDispuestas.programa}" 
+                                             valueChangeListener="#{mbReqActividadesDispuestas.progChangeListener}" >
+                                <f:selectItem itemLabel="Seleccione un Programa" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listProgramas}" var="prog" 
+                                               itemLabel="#{prog.nombre}" 
+                                               itemValue="#{prog}"/>
+                                <p:ajax event="change" update="subPorg"/>
+                            </p:selectOneMenu> 
 
-                        <p:outputLabel value="#{bundle.ReqActividades_subprograma} :" for="subPorg"/>
-                        <p:selectOneMenu id="subPorg" value="#{mbReqActividadesDispuestas.subprograma}" 
-                                         valueChangeListener="#{mbReqActividadesDispuestas.subChangeListener}" >
-                            <f:selectItem itemLabel="Seleccione un Sub Programa" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listSubProgramas}" var="sub" 
-                                           itemLabel="#{sub.nombre}" 
-                                           itemValue="#{sub}"/>
-                            <p:ajax event="change" update="actForm"/>
-                        </p:selectOneMenu> 
-                        
-                        <p:outputLabel value="#{bundle.ReqActividades_af} :" for="actForm"/>
-                        <p:selectOneMenu id="actForm" value="#{mbReqActividadesDispuestas.actForm}" >
-                            <f:selectItem itemLabel="Seleccione una Actividad Formativa" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listActForm}" var="actForm" 
-                                           itemLabel="#{actForm.nombre}" 
-                                           itemValue="#{actForm}"/>
-                        </p:selectOneMenu> 
-                        
-                        <p:outputLabel value="#{bundle.ReqActividades_tipoOrg} :" for="tipoOrg"/>
-                        <p:selectOneMenu id="tipoOrg" value="#{mbReqActividadesDispuestas.tipoOrg}" 
-                                         valueChangeListener="#{mbReqActividadesDispuestas.tipoOrgChangeListener}">
-                            <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listTipoOrg}" var="tipoOrg" 
-                                           itemLabel="#{tipoOrg.nombre}" 
-                                           itemValue="#{tipoOrg}"/>
-                            <p:ajax event="change" update="organismo"/>
-                        </p:selectOneMenu> 
-                        
-                        <p:outputLabel value="#{bundle.ReqActividades_organismo} :" for="organismo"/>
-                        <p:selectOneMenu id="organismo" value="#{mbReqActividadesDispuestas.organismoSol}">
-                            <f:selectItem itemLabel="Seleccione el Organismo solicitante" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listOrgSol}" var="organismo" 
-                                           itemLabel="#{organismo.nombre}" 
-                                           itemValue="#{organismo}"/>
-                        </p:selectOneMenu> 
-                        
-                        <p:outputLabel value="#{bundle.ReqActividades_sede} :" for="sede"/>
-                        <p:selectOneMenu id="sede" value="#{mbReqActividadesDispuestas.sede}">
-                            <f:selectItem itemLabel="Seleccione la Sede" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listSedes}" var="sede" 
-                                           itemLabel="#{sede.nombre}" 
-                                           itemValue="#{sede}"/>
-                        </p:selectOneMenu> 
-                        
-                        <p:outputLabel value="#{bundle.ReqActividades_modalidad} :" for="modalidad"/>
-                        <p:selectOneMenu id="modalidad" value="#{mbReqActividadesDispuestas.modalidad}">
-                            <f:selectItem itemLabel="Seleccione la Modalidad" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listModalidades}" var="modalidad" 
-                                           itemLabel="#{modalidad.nombre}" 
-                                           itemValue="#{modalidad}"/>
-                        </p:selectOneMenu> 
-                        
-                        <p:outputLabel value="#{bundle.ReqActividades_tipoCap} :" for="tipoCap"/>
-                        <p:selectOneMenu id="tipoCap" value="#{mbReqActividadesDispuestas.tipoCap}">
-                            <f:selectItem itemLabel="Seleccione el Tipo de Capacitación" itemValue="" noSelectionOption="true" />
-                            <f:selectItems value="#{mbReqActividadesDispuestas.listTipoCap}" var="tipoCap" 
-                                           itemLabel="#{tipoCap.nombre}" 
-                                           itemValue="#{tipoCap}"/>
-                        </p:selectOneMenu> 
-                        
-                        <p:outputLabel for="fDespDe" value="#{bundle.ReqActividades_fechaInicio} :" />
-                        <p:calendar id="fDespDe" value="#{mbReqActividadesDispuestas.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
-                            <p:ajax event="dateSelect" update="fAntesDe" />
-                        </p:calendar>
+                            <p:outputLabel value="#{bundle.ReqActividades_subprograma} :" for="subPorg"/>
+                            <p:selectOneMenu id="subPorg" value="#{mbReqActividadesDispuestas.subprograma}" 
+                                             valueChangeListener="#{mbReqActividadesDispuestas.subChangeListener}" >
+                                <f:selectItem itemLabel="Seleccione un Sub Programa" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listSubProgramas}" var="sub" 
+                                               itemLabel="#{sub.nombre}" 
+                                               itemValue="#{sub}"/>
+                                <p:ajax event="change" update="actForm"/>
+                            </p:selectOneMenu> 
 
-                        <p:outputLabel for="fAntesDe" value="#{bundle.ReqActividades_fechafin} :" />
-                        <p:calendar id="fAntesDe" value="#{mbReqActividadesDispuestas.fAntesDe}" pattern="dd/MM/yyyy" mask="true" 
-                                    mindate="#{mbReqActividadesDispuestas.fDespuesDe}" >
-                            <f:attribute name="finicial" value="#{mbReqActividadesDispuestas.fDespuesDe}"/>
-                            <f:validator validatorId="primeDateRangeValidator" />
-                        </p:calendar>
-                        
-                    </h:panelGrid>
-                </p:panel>
+                            <p:outputLabel value="#{bundle.ReqActividades_af} :" for="actForm"/>
+                            <p:selectOneMenu id="actForm" value="#{mbReqActividadesDispuestas.actForm}" >
+                                <f:selectItem itemLabel="Seleccione una Actividad Formativa" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listActForm}" var="actForm" 
+                                               itemLabel="#{actForm.nombre}" 
+                                               itemValue="#{actForm}"/>
+                            </p:selectOneMenu> 
 
+                            <p:outputLabel value="#{bundle.ReqActividades_tipoOrg} :" for="tipoOrg"/>
+                            <p:selectOneMenu id="tipoOrg" value="#{mbReqActividadesDispuestas.tipoOrg}" 
+                                             valueChangeListener="#{mbReqActividadesDispuestas.tipoOrgChangeListener}">
+                                <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listTipoOrg}" var="tipoOrg" 
+                                               itemLabel="#{tipoOrg.nombre}" 
+                                               itemValue="#{tipoOrg}"/>
+                                <p:ajax event="change" update="organismo"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="#{bundle.ReqActividades_organismo} :" for="organismo"/>
+                            <p:selectOneMenu id="organismo" value="#{mbReqActividadesDispuestas.organismoSol}">
+                                <f:selectItem itemLabel="Seleccione el Organismo solicitante" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listOrgSol}" var="organismo" 
+                                               itemLabel="#{organismo.nombre}" 
+                                               itemValue="#{organismo}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="#{bundle.ReqActividades_sede} :" for="sede"/>
+                            <p:selectOneMenu id="sede" value="#{mbReqActividadesDispuestas.sede}">
+                                <f:selectItem itemLabel="Seleccione la Sede" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listSedes}" var="sede" 
+                                               itemLabel="#{sede.nombre}" 
+                                               itemValue="#{sede}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="#{bundle.ReqActividades_modalidad} :" for="modalidad"/>
+                            <p:selectOneMenu id="modalidad" value="#{mbReqActividadesDispuestas.modalidad}">
+                                <f:selectItem itemLabel="Seleccione la Modalidad" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listModalidades}" var="modalidad" 
+                                               itemLabel="#{modalidad.nombre}" 
+                                               itemValue="#{modalidad}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="#{bundle.ReqActividades_tipoCap} :" for="tipoCap"/>
+                            <p:selectOneMenu id="tipoCap" value="#{mbReqActividadesDispuestas.tipoCap}">
+                                <f:selectItem itemLabel="Seleccione el Tipo de Capacitación" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqActividadesDispuestas.listTipoCap}" var="tipoCap" 
+                                               itemLabel="#{tipoCap.nombre}" 
+                                               itemValue="#{tipoCap}"/>
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel for="fDespDe" value="#{bundle.ReqActividades_fechaInicio} :" />
+                            <p:calendar id="fDespDe" value="#{mbReqActividadesDispuestas.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
+                                <p:ajax event="dateSelect" update="fAntesDe" />
+                            </p:calendar>
+
+                            <p:outputLabel for="fAntesDe" value="#{bundle.ReqActividades_fechafin} :" />
+                            <p:calendar id="fAntesDe" value="#{mbReqActividadesDispuestas.fAntesDe}" pattern="dd/MM/yyyy" mask="true" 
+                                        mindate="#{mbReqActividadesDispuestas.fDespuesDe}" >
+                                <f:attribute name="finicial" value="#{mbReqActividadesDispuestas.fDespuesDe}"/>
+                                <f:validator validatorId="primeDateRangeValidator" />
+                            </p:calendar>
+
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <p:panel header="Resultados de la Búsqueda" rendered="#{mbReqActividadesDispuestas.consultado}" toggleable="true" style="font-size: 80%" >
+                        <p:dataTable id="actImplList" value="#{mbReqActividadesDispuestas.listActDisp}" var="e" rows="5"  
+                                     filteredValue="#{mbReqActividadesDispuestas.listActDispFilter}" 
+                                     paginator="true"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                            <f:facet name="header">
+                                <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                                <p:commandButton icon="ui-icon-refresh" value="Listar" update="actImplList" style="margin-left: 10px"/>
+
+                                <h:commandLink>
+                                    <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                                    <p:dataExporter type="xls" target="actImplList" fileName="ListadoActividadesDispuestasConsulta" />
+                                </h:commandLink>   
+                                <h:commandLink>
+                                    <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                                    <p:dataExporter type="pdf" target="actImplList" fileName="ListadoActividadesDispuestasConsulta" preProcessor="#{mbReqActividadesDispuestas.preProcessPDF}"/>
+                                </h:commandLink>  
+
+                                <p:columnToggler datasource="actImplList" trigger="toggler" />
+                            </f:facet>
+                            <p:column headerText="#{bundle.ActividadImplLabel_nombre}" sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.actividadPlan.nombre}"/>
+                            </p:column>
+
+                            <p:column headerText="SubProg." sortBy="#{e.subprograma.nombre}" filterBy="#{e.subprograma.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.subprograma.nombre}"/>
+                            </p:column>     
+
+                            <p:column headerText="#{bundle.ActividadImplLabel_orientacion}" sortBy="#{e.orientacion.nombre}" filterBy="#{e.orientacion.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.orientacion.nombre}"/>
+                            </p:column>
+
+                            <p:column headerText="Inicio" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.strFechaIniVig}"/>
+                            </p:column>  
+
+                            <p:column headerText="Fin" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.strFechaFinVig}"/>
+                            </p:column>    
+
+                            <p:column headerText="#{bundle.ActividadImplLabel_sede}" sortBy="#{e.sede.nombre}" filterBy="#{e.sede.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.sede.nombre}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle.ActividadImplTitle_aula}" sortBy="#{e.aula}" filterBy="#{e.aula}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.aula}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Clases" sortBy="#{e.clases.size()}" filterBy="#{e.clases.size()}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.clases.size()}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Inscriptos" sortBy="#{e.participantes.size()}" filterBy="#{e.participantes.size()}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.participantes.size()}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Aprobados" sortBy="#{e.aprobados}" filterBy="#{e.aprobados}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.aprobados}"/>
+                            </p:column>
+                            
+                            <p:column headerText="Finalizada" sortBy="#{e.finalizada}" filterBy="#{e.finalizada}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.finalizada}"/>
+                            </p:column>
+
+                            <p:column headerText="Acciones" style="width:130px" exportable="false">
+                                <p:growl id="messages" showDetail="true" />
+                                <p:commandButton icon="ui-icon-zoomin" action="#" title="Ver Detalle">
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                </p:commandButton>
+                                <p:commandButton icon="ui-icon-pencil" action="#" title="Editar">
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                </p:commandButton>
+                                <p:commandButton icon="ui-icon-cancel" action="#" update="messages" title="Suspender" >
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                    <p:confirm header="Confirmar" message="¿Desea suspender esta Implementación?" />
+                                </p:commandButton>
+                                <p:commandButton icon="ui-icon-trash" action="#" update="messages" title="Deshabilitar" >
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                    <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Curso?" />
+                                </p:commandButton>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                   <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                   <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                               </p:confirmDialog>                       
+                            </p:column>                
+                        </p:dataTable>
+                    </p:panel>
+                </h:panelGroup>
+             
                 <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton icon="ui-icon-check" value="Consultar" action="#{mbReqActividadesDispuestas.buscar}" update="@form"/>
-                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" action="#{mbReqActividadesDispuestas.reset}"  update="pnQuery" style="float: right">
+                        <p:commandButton icon="ui-icon-check" value="Consultar" actionListener="#{mbReqActividadesDispuestas.buscar}" update="pnGral" />
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" action="#{mbReqActividadesDispuestas.reset}" update="pnGral" style="float: right">
                             <p:ajax resetValues="true" />
                         </p:commandButton>
                     </f:facet>
                 </p:toolbar>
+                
             </h:form>
         </ui:define>
     </ui:composition>
 </html>
+
