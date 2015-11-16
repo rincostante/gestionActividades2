@@ -726,20 +726,29 @@ public class ActividadImplementada implements Serializable {
     public int getAprobados() {
         // inicializo los aprobados
         aprobados = 0;
+        int clasesPart;
+        int clasesGral;
+        double dPorcAsistAD;
         
         // si la AD tiene porcentaje de asistencia y tiene clases registradas
         if(porcAsistencia > 0 && !clases.isEmpty()){
-            float porcAsist;
+            double porcAsist;
             // por cada inscripto recorro las clases
             if(!participantes.isEmpty()){
                 for(Participante part : participantes){
+                    if(part.getAgente().getApYNom().equals("AIELLO, Teresa Haydeé")){
+                        int i = 2;
+                    }
+                    
                     // si asistió a alguna, recorro las clases asistidas por el agente
                     if(!part.getClases().isEmpty()){
+                        clasesPart = part.getClases().size();
+                        clasesGral = clases.size();
                         // si, la AD tiene clases, divido la cantidad de clases del participante, sobre la cantidad de clases de la AD
-                        porcAsist = part.getClases().size() / clases.size();
-                        
+                        porcAsist = ((double)clasesPart) / clasesGral;
+                        dPorcAsistAD = ((double)porcAsistencia) / 100;
                         // comparo los porcentajes
-                        if(porcAsist >= (porcAsistencia / 100)){
+                        if(porcAsist >= (dPorcAsistAD)){
                             // si aprueba, agrego
                             aprobados = + 1; 
                         }

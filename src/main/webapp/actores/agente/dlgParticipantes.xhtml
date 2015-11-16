@@ -45,10 +45,6 @@
                 <p:column headerText="Sede" sortBy="#{part.actividad.sede.nombre}" filterBy="#{part.actividad.sede.nombre}" filterMatchMode="contains">
                     <h:outputText value="#{part.actividad.sede.nombre}" />
                 </p:column>
-                
-                <p:column headerText="Docente" sortBy="#{part.actividad.docente.apYNom}" filterBy="#{part.actividad.docente.apYNom}" filterMatchMode="contains">
-                    <h:outputText value="#{part.actividad.docente.apYNom}" />
-                </p:column>
                  
             </p:dataTable>
         </h:form>
