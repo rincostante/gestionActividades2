@@ -21,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -81,7 +82,12 @@ public class Participante implements Serializable {
     /**
      * Campo que indica las clases del participante
      */    
-    @ManyToMany(mappedBy = "participantes")
+    @ManyToMany
+    @JoinTable(
+            name = "participantesXClases",
+            joinColumns = {@JoinColumn(name = "participante_fk", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "clase_fk", referencedColumnName = "id")}
+    )
     private List<Clase> clases;
     
     /**
@@ -109,10 +115,64 @@ public class Participante implements Serializable {
     String strFechaAutoriz;          
     
     /**
+     * Campo que registra la condición de aprobado o no del participante para una consulta
+     */
+    @Transient
+    private boolean aprobado;      
+    
+    /**
+     * Campo que registra la cantidad de clases a tomar para las AD de una consulta
+     */
+    @Transient
+    private int clasesATomar;      
+    
+    /**
+     * Campo que registra la cantidad de clases tomadas para todas las AD de una consulta
+     */
+    @Transient
+    private int clasesTomadas;     
+    
+    /**
+     * Campo que registra las AD cursadas para una consulta determinada
+     */
+    @Transient
+    private int adCursadas;           
+    
+    /**
+     * Campo que registra las AD aprobadas para una consulta determinada
+     */
+    @Transient
+    private int adAprobadas;              
+    
+    /**
      * Constructor
      */
     public Participante(){
         clases = new ArrayList();
+    }
+
+    public int getClasesATomar() {
+        return clasesATomar;
+    }
+
+    public void setClasesATomar(int clasesATomar) {
+        this.clasesATomar = clasesATomar;
+    }
+
+    public int getAdAprobadas() {
+        return adAprobadas;
+    }
+
+    public void setAdAprobadas(int adAprobadas) {
+        this.adAprobadas = adAprobadas;
+    }
+
+    public int getAdCursadas() {
+        return adCursadas;
+    }
+
+    public void setAdCursadas(int adCursadas) {
+        this.adCursadas = adCursadas;
     }
 
     public AdmEntidad getAdmin() {
@@ -255,6 +315,14 @@ public class Participante implements Serializable {
         this.id = id;
     }
 
+    public boolean isAprobado() {
+        return aprobado;
+    }
+
+    public void setAprobado(boolean aprobado) {
+        this.aprobado = aprobado;
+    }
+
     /**
      *
      * @return
@@ -291,6 +359,14 @@ public class Participante implements Serializable {
     @Override
     public String toString() {
         return "ar.gov.gba.sg.ipap.gestionactividades.entities.actores.Participante[ id=" + id + " ]";
+    }
+
+    public int getClasesTomadas() {
+        return clasesTomadas;
+    }
+
+    public void setClasesTomadas(int clasesTomadas) {
+        this.clasesTomadas = clasesTomadas;
     }
     
 }

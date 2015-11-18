@@ -465,4 +465,24 @@ public class ActividadImplementadaFacade extends AbstractFacade<ActividadImpleme
         
         return resultListTotal;
     }    
+    
+    /**
+     * Metodo para obtener las clases participadas por un inscripto
+     * @param ad
+     * @param part
+     * @return 
+     */
+    public int getClasesXInscripto(ActividadImplementada ad, Participante part){
+        List<Clase> clases;
+        em = getEntityManager();
+        String queryString = "SELECT clase FROM Clase clase "
+                + "INNER JOIN clase.participantes part "
+                + "WHERE part = :part "
+                + "AND part.actividad = :ad";
+        Query q = em.createQuery(queryString)
+                .setParameter("part", part)
+                .setParameter("ad", ad);
+        clases = q.getResultList();
+        return clases.size();
+    }
 }

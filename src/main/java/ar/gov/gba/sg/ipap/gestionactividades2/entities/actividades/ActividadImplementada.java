@@ -260,6 +260,12 @@ public class ActividadImplementada implements Serializable {
     private int aprobados;
     
     /**
+     * Campo que muestra el promedio de participantes por clase
+     */
+    @Transient
+    private double promPartXClase;    
+    
+    /**
      * Campo que muestra el estado de cursado de la AD
      */
     @Transient
@@ -725,21 +731,23 @@ public class ActividadImplementada implements Serializable {
      */
     public int getAprobados() {
         // inicializo los aprobados
-        aprobados = 0;
+        //aprobados = 0;
         int clasesPart;
         int clasesGral;
         double dPorcAsistAD;
+        double promedio;
         
         // si la AD tiene porcentaje de asistencia y tiene clases registradas
         if(porcAsistencia > 0 && !clases.isEmpty()){
             double porcAsist;
+
             // por cada inscripto recorro las clases
             if(!participantes.isEmpty()){
                 for(Participante part : participantes){
-                    if(part.getAgente().getApYNom().equals("AIELLO, Teresa Haydeé")){
+                    if(part.getId().equals(Long.valueOf(36)) || part.getId().equals(Long.valueOf(43))){
                         int i = 2;
                     }
-                    
+
                     // si asistió a alguna, recorro las clases asistidas por el agente
                     if(!part.getClases().isEmpty()){
                         clasesPart = part.getClases().size();
@@ -750,7 +758,7 @@ public class ActividadImplementada implements Serializable {
                         // comparo los porcentajes
                         if(porcAsist >= (dPorcAsistAD)){
                             // si aprueba, agrego
-                            aprobados = + 1; 
+                            aprobados += 1; 
                         }
                     }
                 }
@@ -785,6 +793,24 @@ public class ActividadImplementada implements Serializable {
     public void setFinalizada(boolean finalizada) {
         this.finalizada = finalizada;
     }    
+
+    public double getPromPartXClase() {
+        if(!clases.isEmpty()){
+            int asist = 0;
+            for(Clase clase : clases){
+                asist = asist + clase.getParticipantes().size();
+            }
+            promPartXClase = (double)asist / clases.size();
+        }   
+        
+        return promPartXClase;
+    }
+
+    public void setPromPartXClase(double promPartXClase) {
+        this.promPartXClase = promPartXClase;
+    }
+    
+    
     
     /**
      *

@@ -120,10 +120,16 @@ public class Clase implements Serializable {
     @ManyToMany
     @JoinTable(
             name = "participantesXClases",
-            joinColumns = @JoinColumn(name = "clase_fk"),
-            inverseJoinColumns = @JoinColumn(name = "participante_fk")
+            joinColumns = {@JoinColumn(name = "clase_fk", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "participante_fk", referencedColumnName = "id")}
     )
     private List<Participante> participantes;
+    
+    /**
+     * Campo que indica la cantidad de participantes aprobados
+     */
+    @Transient
+    private int aprobados;
     
     
     /**
@@ -312,6 +318,14 @@ public class Clase implements Serializable {
     @Override
     public String toString() {
         return "ar.gov.gba.sg.ipap.gestionactividades.entities.actores.Clase[ id=" + id + " ]";
+    }
+
+    public int getAprobados() {
+        return aprobados;
+    }
+
+    public void setAprobados(int aprobados) {
+        this.aprobados = aprobados;
     }
     
 }

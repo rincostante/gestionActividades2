@@ -7,7 +7,6 @@
 package ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -76,11 +76,68 @@ public class Organismo implements Serializable {
     public List<ActividadImplementada> getActividadesImplementadas() {
         return actividadesImplementadas;
     }
+    
+    /**
+     * Campo que registra la cantidad de AD recibidas por el organismo para una consulta
+     */
+    @Transient
+    private int adRecibidas;       
+    
+    /**
+     * Campo que registra la cantidad de agentes del organismo inscriptos para las AD de una consulta
+     */
+    @Transient
+    private int agInscriptos;      
+    
+    /**
+     * Campo que registra la cantidad de agentes del organismo participantes para las AD de una consulta 
+     * (que al menos estuvieron presentes en una clase)
+     */
+    @Transient
+    private int agParticipantes;  
+    
+    /**
+     * Campo que registra la cantidad de agentes del organismo que aprobaron para una sAD de una consulta
+     */
+    @Transient
+    private int agAprobados;          
 
     /**
      *
      * @param actividadesImplementadas
      */
+    public int getAdRecibidas() {
+        return adRecibidas;
+    }
+
+    public void setAdRecibidas(int adRecibidas) {
+        this.adRecibidas = adRecibidas;
+    }
+
+    public int getAgInscriptos() {
+        return agInscriptos;
+    }
+
+    public void setAgInscriptos(int agInscriptos) {
+        this.agInscriptos = agInscriptos;
+    }
+
+    public int getAgParticipantes() {
+        return agParticipantes;
+    }
+
+    public void setAgParticipantes(int agParticipantes) {
+        this.agParticipantes = agParticipantes;
+    }
+
+    public int getAgAprobados() {
+        return agAprobados;
+    }
+
+    public void setAgAprobados(int agAprobados) {
+        this.agAprobados = agAprobados;
+    }
+
     public void setActividadesImplementadas(List<ActividadImplementada> actividadesImplementadas) {
         this.actividadesImplementadas = actividadesImplementadas;
     }

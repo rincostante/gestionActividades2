@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado de Participantes de las Actividades seleccionadas</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+     
+    <h:body>
+        <h:form id="frmPart">
+            <p:dataTable var="part" value="#{mbReqActividadesDispuestas.listAgList}"  
+                         filteredValue="#{mbReqActividadesDispuestas.listAgListFilter}" id="partList"
+                         rows="5" 
+                         paginator="true" 
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
+                         rowsPerPageTemplate="5,10,15" widgetVar="impTable">
+                
+                <f:facet name="header">
+                    <p:commandButton icon="ui-icon-refresh" value="Listar" update="partList" style="margin-left: 10px"/>
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                        <p:dataExporter type="xls" target="partList" fileName="ListadoPartADConsulta" />
+                    </h:commandLink>   
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                        <p:dataExporter type="pdf" target="partList" fileName="ListadoPartADConsulta" preProcessor="#{mbReqActividadesDispuestas.preProcessPDF}"/>
+                    </h:commandLink> 
+                </f:facet> 
+                
+                <p:column headerText="Nombre" sortBy="#{part.agente.apYNom}" filterBy="#{part.agente.apYNom}" filterMatchMode="contains">
+                    <h:outputText value="#{part.agente.apYNom}" />
+                </p:column>
+                <p:column headerText="Documento" sortBy="#{part.agente.documento}" filterBy="#{part.agente.documento}" filterMatchMode="contains">
+                    <h:outputText value="#{part.agente.documento}" />
+                </p:column>
+                <p:column headerText="Cargo" sortBy="#{part.agente.cargo.nombre}" filterBy="#{part.agente.cargo.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{part.agente.cargo.nombre}" />
+                </p:column>
+                <p:column headerText="Organismo" sortBy="#{part.agente.organismo.nombre}" filterBy="#{part.agente.organismo.nombre}" filterMatchMode="contains">
+                    <h:outputText value="#{part.agente.organismo.nombre}" />
+                </p:column>
+                <p:column headerText="Actividades participadas" sortBy="#{part.adCursadas}" filterBy="#{part.adCursadas}" filterMatchMode="contains">
+                    <h:outputText value="#{part.adCursadas}" />
+                </p:column>
+                <p:column headerText="Actividades aprobadas" sortBy="#{part.adAprobadas}" filterBy="#{part.adAprobadas}" filterMatchMode="contains">
+                    <h:outputText value="#{part.adAprobadas}" />
+                </p:column>
+                <p:column headerText="Clases a tomar" sortBy="#{part.clasesATomar}" filterBy="#{part.clasesATomar}" filterMatchMode="contains">
+                    <h:outputText value="#{part.clasesATomar}" />
+                </p:column>
+                <p:column headerText="Clases tomadas" sortBy="#{part.clasesTomadas}" filterBy="#{part.clasesTomadas}" filterMatchMode="contains">
+                    <h:outputText value="#{part.clasesTomadas}" />
+                </p:column>
+                
+                <p:column headerText="Amp." style="width:30px" exportable="false" > 
+                    <p:commandButton icon="ui-icon-zoomin" action="#{mbReqActividadesDispuestas.verAgSel}" title="Ver Resumen">
+                        <f:setPropertyActionListener value="#{part}" target="#{mbReqActividadesDispuestas.partSel}" />
+                    </p:commandButton>   
+                </p:column> 
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>

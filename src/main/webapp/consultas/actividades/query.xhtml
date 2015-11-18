@@ -100,6 +100,18 @@
                                 <f:attribute name="finicial" value="#{mbReqActividadesDispuestas.fDespuesDe}"/>
                                 <f:validator validatorId="primeDateRangeValidator" />
                             </p:calendar>
+                            
+                            <h:outputLabel value="Resumen general: " rendered="#{mbReqActividadesDispuestas.consultado}" />
+                            <p:commandButton value="Ver" icon="ui-icon-extlink" rendered="#{mbReqActividadesDispuestas.consultado}"  
+                                             actionListener="#{mbReqActividadesDispuestas.verResGral}" />  
+                            
+                            <h:outputLabel value="Agentes capacitados: " rendered="#{mbReqActividadesDispuestas.consultado}" />
+                            <p:commandButton value="Listar" icon="ui-icon-extlink" rendered="#{mbReqActividadesDispuestas.consultado}"  
+                                             actionListener="#{mbReqActividadesDispuestas.verListPartGral}" />  
+                            
+                            <h:outputLabel value="Organismos destinatarios: " rendered="#{mbReqActividadesDispuestas.consultado}" />
+                            <p:commandButton value="Listar" icon="ui-icon-extlink" rendered="#{mbReqActividadesDispuestas.consultado}"  
+                                             actionListener="#{mbReqActividadesDispuestas.verListOrgGral}" />  
 
                         </h:panelGrid>
                     </p:panel>
@@ -116,11 +128,11 @@
 
                                 <h:commandLink>
                                     <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
-                                    <p:dataExporter type="xls" target="actImplList" fileName="ListadoActividadesDispuestasConsulta" />
+                                    <p:dataExporter type="xls" target="actImplList" fileName="ListadoADConsulta" />
                                 </h:commandLink>   
                                 <h:commandLink>
                                     <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
-                                    <p:dataExporter type="pdf" target="actImplList" fileName="ListadoActividadesDispuestasConsulta" preProcessor="#{mbReqActividadesDispuestas.preProcessPDF}"/>
+                                    <p:dataExporter type="pdf" target="actImplList" fileName="ListadoADConsulta" preProcessor="#{mbReqActividadesDispuestas.preProcessPDF}"/>
                                 </h:commandLink>  
 
                                 <p:columnToggler datasource="actImplList" trigger="toggler" />
@@ -153,43 +165,35 @@
                                 <p:outputLabel value="#{e.aula}"/>
                             </p:column>
                             
-                            <p:column headerText="Clases" sortBy="#{e.clases.size()}" filterBy="#{e.clases.size()}" filterMatchMode="contains">
+                            <p:column headerText="#{bundle.ReqActividades_clases}" sortBy="#{e.clases.size()}" filterBy="#{e.clases.size()}" filterMatchMode="contains">
                                 <p:outputLabel value="#{e.clases.size()}"/>
                             </p:column>
                             
-                            <p:column headerText="Inscriptos" sortBy="#{e.participantes.size()}" filterBy="#{e.participantes.size()}" filterMatchMode="contains">
+                            <p:column headerText="#{bundle.ReqActividades_inscriptos}" sortBy="#{e.participantes.size()}" filterBy="#{e.participantes.size()}" filterMatchMode="contains">
                                 <p:outputLabel value="#{e.participantes.size()}"/>
                             </p:column>
                             
-                            <p:column headerText="Aprobados" sortBy="#{e.aprobados}" filterBy="#{e.aprobados}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.aprobados}"/>
+                            <p:column headerText="#{bundle.ReqActividades_partXClase}" sortBy="#{e.promPartXClase}" filterBy="#{e.promPartXClase}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.promPartXClase}" >
+                                    <f:convertNumber pattern="#0.00" />
+                                </p:outputLabel>
                             </p:column>
                             
-                            <p:column headerText="Finalizada" sortBy="#{e.finalizada}" filterBy="#{e.finalizada}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.finalizada}"/>
+                            <p:column headerText="#{bundle.ReqActividades_finalizada}" sortBy="#{e.finalizada}" filterBy="#{e.finalizada}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.finalizada}" />
                             </p:column>
 
-                            <p:column headerText="Acciones" style="width:130px" exportable="false">
+                            <p:column headerText="Ampliar" style="width:100px" exportable="false">
                                 <p:growl id="messages" showDetail="true" />
-                                <p:commandButton icon="ui-icon-zoomin" action="#" title="Ver Detalle">
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                <p:commandButton icon="ui-icon-zoomin" action="#{mbReqActividadesDispuestas.verResGralAD}" title="Ver Resumen">
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-pencil" action="#" title="Editar">
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                <p:commandButton icon="ui-icon-suitcase" action="#{mbReqActividadesDispuestas.verListClases}" title="Ver Clases">
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-cancel" action="#" update="messages" title="Suspender" >
+                                <p:commandButton icon="ui-icon-home" action="#" update="messages" title="Ver Organismos destinatarios" >
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
-                                    <p:confirm header="Confirmar" message="¿Desea suspender esta Implementación?" />
-                                </p:commandButton>
-                                <p:commandButton icon="ui-icon-trash" action="#" update="messages" title="Deshabilitar" >
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
-                                    <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Curso?" />
-                                </p:commandButton>
-
-                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                   <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                   <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                               </p:confirmDialog>                       
+                                </p:commandButton>                     
                             </p:column>                
                         </p:dataTable>
                     </p:panel>
