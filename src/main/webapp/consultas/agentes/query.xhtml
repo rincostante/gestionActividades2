@@ -11,7 +11,7 @@
         </ui:define>
         <ui:define name="content">
             <f:metadata>  
-                <f:event listener="#{mbReqActividadesDispuestas.iniciar}" type="preRenderView"></f:event>  
+                <f:event listener="#{mbReqAgentes.iniciar}" type="preRenderView"></f:event>  
             </f:metadata>
             <br/>
             <h:form id="frmQuery" style="text-align: left">
@@ -20,214 +20,152 @@
                         <p:growl id="messages" />
                         <h:panelGrid columns="2">
                             <p:outputLabel value="#{bundle.ReqActividades_tipoOrg} :" for="tipoOrg"/>
-                            <p:selectOneMenu id="tipoOrg" value="#{mbReqActividadesDispuestas.tipoOrg}" 
-                                             valueChangeListener="#{mbReqActividadesDispuestas.tipoOrgChangeListener}">
-                                <f:selectItem itemLabel="Seleccione el Tipo de Organismo" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listTipoOrg}" var="tipoOrg" 
+                            <p:selectOneMenu id="tipoOrg" value="#{mbReqAgentes.tipoOrg}" 
+                                             valueChangeListener="#{mbReqAgentes.tipoOrgChangeListener}">
+                                <f:selectItem itemLabel="Seleccione el Tipo de Organismo del Agente" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqAgentes.listTipoOrg}" var="tipoOrg" 
                                                itemLabel="#{tipoOrg.nombre}" 
                                                itemValue="#{tipoOrg}"/>
                                 <p:ajax event="change" update="organismo"/>
                             </p:selectOneMenu> 
 
                             <p:outputLabel value="Organismo :" for="organismo"/>
-                            <p:selectOneMenu id="organismo" value="#{mbReqActividadesDispuestas.organismoSol}">
-                                <f:selectItem itemLabel="Seleccione el Organismo solicitante" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listOrgSol}" var="organismo" 
+                            <p:selectOneMenu id="organismo" value="#{mbReqAgentes.organismo}">
+                                <f:selectItem itemLabel="Seleccione el Organismo del Agente" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqAgentes.listOrg}" var="organismo" 
                                                itemLabel="#{organismo.nombre}" 
                                                itemValue="#{organismo}"/>
                             </p:selectOneMenu> 
                             
-                            <p:outputLabel value="Situación de revista :" for="modalidad"/>
-                            <p:selectOneMenu id="modalidad" value="#{mbReqActividadesDispuestas.modalidad}">
-                                <f:selectItem itemLabel="Seleccione una situación" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listModalidades}" var="modalidad" 
-                                               itemLabel="#{modalidad.nombre}" 
-                                               itemValue="#{modalidad}"/>
+                            <p:outputLabel value="Situación de revista :" for="sitRevista"/>
+                            <p:selectOneMenu id="sitRevista" value="#{mbReqAgentes.sitRevista}">
+                                <f:selectItem itemLabel="Seleccione una situación de revista" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqAgentes.listSitRevista}" var="sitRevista" 
+                                               itemLabel="#{sitRevista.nombre}" 
+                                               itemValue="#{sitRevista}"/>
                             </p:selectOneMenu> 
 
-                            <p:outputLabel value="Cargo :" for="tipoCap"/>
-                            <p:selectOneMenu id="tipoCap" value="#{mbReqActividadesDispuestas.tipoCap}">
+                            <p:outputLabel value="Cargo :" for="cargo"/>
+                            <p:selectOneMenu id="cargo" value="#{mbReqAgentes.cargo}">
                                 <f:selectItem itemLabel="Seleccione un cargo" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listTipoCap}" var="tipoCap" 
-                                               itemLabel="#{tipoCap.nombre}" 
-                                               itemValue="#{tipoCap}"/>
-                            </p:selectOneMenu> 
-
-                            <p:outputLabel value="Estudios cursados :" for="subPorg"/>
-                            <p:selectOneMenu id="subPorg" value="#{mbReqActividadesDispuestas.subprograma}" 
-                                             valueChangeListener="#{mbReqActividadesDispuestas.subChangeListener}" >
-                                <f:selectItem itemLabel="Seleccione un Estudio cursado" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listSubProgramas}" var="sub" 
-                                               itemLabel="#{sub.nombre}" 
-                                               itemValue="#{sub}"/>
-                                <p:ajax event="change" update="actForm"/>
+                                <f:selectItems value="#{mbReqAgentes.listCargo}" var="cargo" 
+                                               itemLabel="#{cargo.nombre}" 
+                                               itemValue="#{cargo}"/>
                             </p:selectOneMenu> 
                             
-                            <p:outputLabel value="Nivel IPAP :" for="sede"/>
-                            <p:selectOneMenu id="sede" value="#{mbReqActividadesDispuestas.sede}">
+                            <p:outputLabel for="fInicioAct" value="Fecha de incio de actividades :" />
+                            <p:calendar id="fInicioAct" value="#{mbReqAgentes.fInicioAct}" pattern="dd/MM/yyyy" mask="true" />  
+                            
+                            <p:outputLabel value="Nivel IPAP :" for="nivelIpap"/>
+                            <p:selectOneMenu id="nivelIpap" value="#{mbReqAgentes.nivelIpap}">
                                 <f:selectItem itemLabel="Seleccione el nivel alcanzado en el IPAP" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listSedes}" var="sede" 
-                                               itemLabel="#{sede.nombre}" 
-                                               itemValue="#{sede}"/>
+                                <f:selectItems value="#{mbReqAgentes.listNivelIpap}" var="nivelIpap" 
+                                               itemLabel="#{nivelIpap.nombre}" 
+                                               itemValue="#{nivelIpap}"/>
                             </p:selectOneMenu> 
                             
                             <p:outputLabel value="Estudios cursados :" for="estCur"/>
-                            <p:selectOneMenu id="estCur" value="#">
-                                <f:selectItem itemLabel="Seleccione los estudios cursados" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listSedes}" var="sede" 
-                                               itemLabel="#{sede.nombre}" 
-                                               itemValue="#{sede}"/>
+                            <p:selectOneMenu id="estCur" value="#{mbReqAgentes.estCursados}" >
+                                <f:selectItem itemLabel="Seleccione un Estudio cursado" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{mbReqAgentes.listEstCursados}" var="estCur" 
+                                               itemLabel="#{estCur.nombre} - #{estCur.estado}" 
+                                               itemValue="#{estCur}"/>
                             </p:selectOneMenu> 
 
-                            <p:outputLabel value="Titulo :" for="actForm"/>
-                            <p:selectOneMenu id="actForm" value="#{mbReqActividadesDispuestas.actForm}" >
+                            <p:outputLabel value="Titulo :" for="titulo"/>
+                            <p:selectOneMenu id="titulo" value="#{mbReqAgentes.titulo}" >
                                 <f:selectItem itemLabel="Seleccione un Título" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#" var="actForm" 
-                                               itemLabel="#{actForm.nombre}" 
-                                               itemValue="#{actForm}"/>
+                                <f:selectItems value="#{mbReqAgentes.listTitulos}" var="titulo" 
+                                               itemLabel="#{titulo.nombre}" 
+                                               itemValue="#{titulo}"/>
                             </p:selectOneMenu> 
                             
-                            <p:outputLabel value="Sexo" for="sexo"/>
-                            <p:selectOneMenu id="sexo" value="#" >
-                                <f:selectItem itemLabel="Seleccione el sexo" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#" />
-                            </p:selectOneMenu>        
-
-                            <p:outputLabel value="Agente :" for="agente"/>
-                            <p:selectOneMenu id="agente" value="#{mbReqActividadesDispuestas.programa}" 
-                                             valueChangeListener="#{mbReqActividadesDispuestas.progChangeListener}" >
-                                <f:selectItem itemLabel="Seleccione un Agente" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#{mbReqActividadesDispuestas.listProgramas}" var="prog" 
-                                               itemLabel="#{prog.nombre}" 
-                                               itemValue="#{prog}"/>
-                                <p:ajax event="change" update="subPorg"/>
-                            </p:selectOneMenu> 
+                            <p:outputLabel value="Es Referente: " />
+                            <p:selectBooleanButton id="esReferente" value="#{mbReqAgentes.esReferente}" 
+                                               onLabel="No" 
+                                               offLabel="Sí" />       
 
                             <p:outputLabel for="fDespDe" value="Fecha inicial de capacitación :" />
-                            <p:calendar id="fDespDe" value="#{mbReqActividadesDispuestas.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
+                            <p:calendar id="fDespDe" value="#{mbReqAgentes.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
                                 <p:ajax event="dateSelect" update="fAntesDe" />
                             </p:calendar>
                             
                             <p:outputLabel for="fAntesDe" value="Fecha final de capacitación :" />
-                            <p:calendar id="fAntesDe" value="#{mbReqActividadesDispuestas.fAntesDe}" pattern="dd/MM/yyyy" mask="true" 
-                                        mindate="#{mbReqActividadesDispuestas.fDespuesDe}" >
-                                <f:attribute name="finicial" value="#{mbReqActividadesDispuestas.fDespuesDe}"/>
+                            <p:calendar id="fAntesDe" value="#{mbReqAgentes.fAntesDe}" pattern="dd/MM/yyyy" mask="true" 
+                                        mindate="#{mbReqAgentes.fDespuesDe}" >
+                                <f:attribute name="finicial" value="#{mbReqAgentes.fDespuesDe}"/>
                                 <f:validator validatorId="primeDateRangeValidator" />
                             </p:calendar>
-         
-
-
-
-
-
                             
-                            <h:outputLabel value="Resumen general: "  />
-                            <p:commandButton value="Ver" icon="ui-icon-extlink"  
-                                             actionListener="#{mbReqActividadesDispuestas.verResGral}" />  
+                            <h:outputLabel value="Resumen general: " rendered="#{mbReqAgentes.consultado}" />
+                            <p:commandButton value="Ver" icon="ui-icon-extlink" rendered="#{mbReqAgentes.consultado}"  
+                                             actionListener="#" />  
                             
-                            <h:outputLabel value="Programas vinculados: "  />
-                            <p:commandButton value="Listar" icon="ui-icon-extlink" 
-                                             actionListener="#{mbReqActividadesDispuestas.verListPartGral}" />  
-                            
-                            <h:outputLabel value="Subprogramas vinculados: "  />
-                            <p:commandButton value="Listar" icon="ui-icon-extlink" 
-                                             actionListener="#{mbReqActividadesDispuestas.verListOrgGral}" />  
-                            
-                            <h:outputLabel value="Actividades Dispuestas involucradas: "  />
-                            <p:commandButton value="Listar" icon="ui-icon-extlink" 
-                                             actionListener="#{mbReqActividadesDispuestas.verListOrgGral}" />  
-                            
-                            <h:outputLabel value="Prog: "  />
-                            <p:commandButton icon="ui-icon-bookmark" style="font-size: 80%"
-                                             actionListener="#{mbReqActividadesDispuestas.verListOrgGral}" />  
-                            <h:outputLabel value="Subprog: "  />
-                            <p:commandButton icon="ui-icon-tag" style="font-size: 80%" 
-                                             actionListener="#{mbReqActividadesDispuestas.verListOrgGral}" />  
-                            <h:outputLabel value="AD: "  />
-                            <p:commandButton icon="ui-icon-clipboard" style="font-size: 80%"
-                                             actionListener="#{mbReqActividadesDispuestas.verListOrgGral}" />  
-
+                            <h:outputLabel value="Actividades Dispuestas recibidas: " rendered="#{mbReqAgentes.consultado}" />
+                            <p:commandButton value="Listar" icon="ui-icon-extlink" rendered="#{mbReqAgentes.consultado}"  
+                                             actionListener="#" />  
 
                         </h:panelGrid>
                     </p:panel>
 
-                    <p:panel header="Resultados de la Búsqueda" rendered="#{mbReqActividadesDispuestas.consultado}" toggleable="true" style="font-size: 80%" >
-                        <p:dataTable id="actImplList" value="#{mbReqActividadesDispuestas.listActDisp}" var="e" rows="5"  
-                                     filteredValue="#{mbReqActividadesDispuestas.listActDispFilter}" 
+                    <p:panel header="Resultados de la Búsqueda" rendered="#{mbReqAgentes.consultado}" toggleable="true" style="font-size: 80%" >
+                        <p:dataTable id="agetList" value="#{mbReqAgentes.listAgentes}" var="e" rows="5"  
+                                     filteredValue="#{mbReqAgentes.listAgentesFilter}" 
                                      paginator="true"
                                      paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      rowsPerPageTemplate="5,10,15">
                             <f:facet name="header">
                                 <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                                <p:commandButton icon="ui-icon-refresh" value="Listar" update="actImplList" style="margin-left: 10px"/>
+                                <p:commandButton icon="ui-icon-refresh" value="Listar" update="agetList" style="margin-left: 10px"/>
 
                                 <h:commandLink>
                                     <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
-                                    <p:dataExporter type="xls" target="actImplList" fileName="ListadoADConsulta" />
+                                    <p:dataExporter type="xls" target="agetList" fileName="ListadoAgentesConsulta" />
                                 </h:commandLink>   
                                 <h:commandLink>
                                     <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
-                                    <p:dataExporter type="pdf" target="actImplList" fileName="ListadoADConsulta" preProcessor="#{mbReqActividadesDispuestas.preProcessPDF}"/>
+                                    <p:dataExporter type="pdf" target="agetList" fileName="ListadoAgentesConsulta" preProcessor="#{mbReqAgentes.preProcessPDF}"/>
                                 </h:commandLink>  
 
-                                <p:columnToggler datasource="actImplList" trigger="toggler" />
+                                <p:columnToggler datasource="agetList" trigger="toggler" />
                             </f:facet>
-                            <p:column headerText="#{bundle.ActividadImplLabel_nombre}" sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.actividadPlan.nombre}"/>
+                            
+                            <p:column headerText="#{bundle.AgenteLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}" filterMatchMode="contains" style="width:160px">
+                                <p:outputLabel value="#{e.apYNom}"/>
+                            </p:column>   
+                            <p:column headerText="#{bundle.AgenteLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.documento}"/>
                             </p:column>
-
-                            <p:column headerText="SubProg." sortBy="#{e.subprograma.nombre}" filterBy="#{e.subprograma.nombre}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.subprograma.nombre}"/>
-                            </p:column>     
-
-                            <p:column headerText="#{bundle.ActividadImplLabel_orientacion}" sortBy="#{e.orientacion.nombre}" filterBy="#{e.orientacion.nombre}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.orientacion.nombre}"/>
+                            <p:column headerText="#{bundle.AgenteLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.organismo.nombre}"/>
                             </p:column>
-
-                            <p:column headerText="Inicio" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.strFechaIniVig}"/>
+                            <p:column headerText="#{bundle.AgenteLabel_estCursados}" sortBy="#{e.estudiosCursados.nombre}" filterBy="#{e.estudiosCursados.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.estudiosCursados.nombre}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle.AgenteLabel_estCursadosEstado}" sortBy="#{e.estudiosCursados.estado}" filterBy="#{e.estudiosCursados.estado}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.estudiosCursados.estado}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle.AgenteLabel_titulo}" sortBy="#{e.titulo.nombre}" filterBy="#{e.titulo.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.titulo.nombre}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle.AgenteLabel_nivelIpap}" sortBy="#{e.nivelIpap.nombre}" filterBy="#{e.nivelIpap.nombre}" filterMatchMode="contains">
+                                <p:outputLabel value="#{e.nivelIpap.nombre}"/>
                             </p:column>  
-
-                            <p:column headerText="Fin" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.strFechaFinVig}"/>
-                            </p:column>    
-
-                            <p:column headerText="#{bundle.ActividadImplLabel_sede}" sortBy="#{e.sede.nombre}" filterBy="#{e.sede.nombre}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.sede.nombre}"/>
-                            </p:column>
-
-                            <p:column headerText="#{bundle.ActividadImplTitle_aula}" sortBy="#{e.aula}" filterBy="#{e.aula}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.aula}"/>
-                            </p:column>
-                            
-                            <p:column headerText="#{bundle.ReqActividades_clases}" sortBy="#{e.clases.size()}" filterBy="#{e.clases.size()}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.clases.size()}"/>
-                            </p:column>
-                            
-                            <p:column headerText="#{bundle.ReqActividades_inscriptos}" sortBy="#{e.participantes.size()}" filterBy="#{e.participantes.size()}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.participantes.size()}"/>
-                            </p:column>
-                            
-                            <p:column headerText="#{bundle.ReqActividades_partXClase}" sortBy="#{e.promPartXClase}" filterBy="#{e.promPartXClase}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.promPartXClase}" >
-                                    <f:convertNumber pattern="#0.00" />
-                                </p:outputLabel>
-                            </p:column>
-                            
-                            <p:column headerText="#{bundle.ReqActividades_finalizada}" sortBy="#{e.finalizada}" filterBy="#{e.finalizada}" filterMatchMode="contains">
-                                <p:outputLabel value="#{e.finalizada}" />
+                            <p:column headerText="Antigüedad">
+                                <p:outputLabel value="#{e.antigMeses} meses" rendered="#{e.antigMeses > 0}"/>
+                                <p:outputLabel value="#{e.antigAnios} años" rendered="#{e.antigAnios > 0}"/>
                             </p:column>
 
                             <p:column headerText="Ampliar" style="width:100px" exportable="false">
                                 <p:growl id="messages" showDetail="true" />
-                                <p:commandButton icon="ui-icon-zoomin" action="#{mbReqActividadesDispuestas.verResGralAD}" title="Ver Resumen">
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.current}" />
+                                <p:commandButton icon="ui-icon-zoomin" action="#" title="Ver Resumen">
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-suitcase" action="#{mbReqActividadesDispuestas.verListClases}" title="Ver Clases">
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.current}" />
+                                <p:commandButton icon="ui-icon-suitcase" action="#" title="Ver Programas">
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-home" action="#" update="messages" title="Ver Organismos destinatarios" >
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                <p:commandButton icon="ui-icon-home" action="#" update="messages" title="Ver Sedes" >
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>                     
                             </p:column>                
                         </p:dataTable>
@@ -236,8 +174,8 @@
              
                 <p:toolbar>
                     <f:facet name="left">
-                        <p:commandButton icon="ui-icon-check" value="Consultar" actionListener="#{mbReqActividadesDispuestas.buscar}" update="pnGral" />
-                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" action="#{mbReqActividadesDispuestas.reset}" update="pnGral" style="float: right">
+                        <p:commandButton icon="ui-icon-check" value="Consultar" actionListener="#{mbReqAgentes.buscar}" update="pnGral" />
+                        <p:commandButton icon="ui-icon-cancel" value="Limpiar" action="#{mbReqAgentes.reset}" update="pnGral" style="float: right">
                             <p:ajax resetValues="true" />
                         </p:commandButton>
                     </f:facet>

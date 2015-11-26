@@ -120,6 +120,11 @@ public class MbReqActividadesDispuestas implements Serializable{
     private List<Clase> listClasesFilter;
     
     /**
+     * Campos para el listado de Organismos para una AD seleccionada
+     */
+    private boolean porAd;
+    
+    /**
      * Campos de uso interno
      */
     private boolean iniciado;
@@ -156,6 +161,14 @@ public class MbReqActividadesDispuestas implements Serializable{
      * métodos de acceso a los campos **
      * @return 
      ***********************************/
+    
+    public boolean isPorAd() {
+        return porAd;
+    }
+
+    public void setPorAd(boolean porAd) {
+        this.porAd = porAd;
+    }
     
     public List<Organismo> getListOrgList() {
         return listOrgList;
@@ -575,7 +588,7 @@ public class MbReqActividadesDispuestas implements Serializable{
      */
     public void progChangeListener(ValueChangeEvent event) {
         Programa prog = (Programa) event.getNewValue();
-        listSubProgramas = prog.getSubProgramas();
+        if(prog != null){listSubProgramas = prog.getSubProgramas();}
     }       
     
     /**
@@ -584,7 +597,7 @@ public class MbReqActividadesDispuestas implements Serializable{
      */
     public void subChangeListener(ValueChangeEvent event) {
         SubPrograma sub = (SubPrograma) event.getNewValue();
-        listActForm = sub.getActividadesPlan();
+        if(sub != null){listActForm = sub.getActividadesPlan();}
     }     
     
     /**
@@ -593,7 +606,7 @@ public class MbReqActividadesDispuestas implements Serializable{
      */
     public void tipoOrgChangeListener(ValueChangeEvent event) {   
         tipoOrg = (TipoOrganismo)event.getNewValue();
-        listOrgSol = organismoFacade.getXTipo(tipoOrg);
+        if(tipoOrg != null){listOrgSol = organismoFacade.getXTipo(tipoOrg);}
     }     
     
     
@@ -633,12 +646,15 @@ public class MbReqActividadesDispuestas implements Serializable{
     }
     
     /**
-     * Método para ver el listado de los organismos de las AD seleccionadas en el consulta general
+     * Método para ver el listado de los organismos con agentes capacitados de las AD seleccionadas en el consulta general
      */
     public void verListOrgGral(){    
         // reseteo el listado
         if(listOrgList != null) listOrgList = null;
         if(listOrgListFilter != null) listOrgList = null;
+        
+        // seteo el flag
+        porAd = false;
         
         // inicializo los organismos capacitados por las AD seleccionadas
         inicOrgList();
@@ -648,6 +664,26 @@ public class MbReqActividadesDispuestas implements Serializable{
         options.put("contentHeight", 600);
         RequestContext.getCurrentInstance().openDialog("organismos/dlgOrgList", options, null);
     }
+    
+    /**
+     * Método para ver el listado de los organismos con agentes capacitados para una AD seleccionada
+     */
+    public void verListOrgPorAd(){    
+        // reseteo el listado
+        if(listOrgList != null) listOrgList = null;
+        if(listOrgListFilter != null) listOrgList = null;
+        
+        // seteo el flag
+        porAd = true;
+        
+        // inicializo los organismos capacitados de la AD seleccionada
+        inicOrgListPorAd();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 800);
+        options.put("contentHeight", 600);
+        RequestContext.getCurrentInstance().openDialog("organismos/dlgOrgList", options, null);
+    }    
     
     /**
      * Método para ver el listado de las clases de la AD seleccionada
@@ -871,10 +907,10 @@ public class MbReqActividadesDispuestas implements Serializable{
         for(ActividadImplementada ad : listActDisp){
             // ontengo las clases da la AD
             if(!ad.getClases().isEmpty()){
-                for(Clase clase : ad.getClases()){
+                for(Clase cls : ad.getClases()){
                     // de cada clase de la AD obtengo los participantes que cursaron
-                    if(!clase.getParticipantes().isEmpty()){
-                        for(Participante part : clase.getParticipantes()){
+                    if(!cls.getParticipantes().isEmpty()){
+                        for(Participante part : cls.getParticipantes()){
                             // si no está, agrego al participante a la lita temporal
                             if(!listPartXAD.contains(part)){
                                 listPartXAD.add(part);
@@ -978,6 +1014,128 @@ public class MbReqActividadesDispuestas implements Serializable{
     }
     
     /**
+     * Método para inicializar el listado de Organismos participantes de la AD seleccionada
+     */    
+    private void inicOrgListPorAd(){
+        int agInscriptos;
+        int agParticipantes;
+        int agAprobados;
+        List<Participante> listPartXAD = new ArrayList<>();
+        List<Participante> listAprobXAD = new ArrayList<>();
+        double porcAsist;
+        double dPorcAsistAD;
+        Organismo organismo;
+        
+        if(listOrgList == null) listOrgList = new ArrayList<>();
+
+        // recorro los inscriptos para poblar la lista de organismos
+        if(!current.getParticipantes().isEmpty()){
+            for(Participante part : current.getParticipantes()){
+                // si no guardé el organismo del participante, lo agrego a la lista
+                if(!listOrgList.contains(part.getAgente().getOrganismo())){
+                    organismo = part.getAgente().getOrganismo();
+                    // reseteo los totales del organismo
+                    organismo.setAdRecibidas(0);
+                    organismo.setAgAprobados(0);
+                    organismo.setAgInscriptos(0);
+                    organismo.setAgParticipantes(0);
+                    listOrgList.add(organismo);
+                }
+            }
+        }
+        
+        // ontengo las clases da la AD
+        if(!current.getClases().isEmpty()){
+            for(Clase cls : current.getClases()){
+                // de cada clase de la AD obtengo los participantes que cursaron
+                if(!cls.getParticipantes().isEmpty()){
+                    for(Participante part : cls.getParticipantes()){
+                        // si no está, agrego al participante a la lita temporal
+                        if(!listPartXAD.contains(part)){
+                            listPartXAD.add(part);
+                        }
+                    }   
+                }
+            }
+        }
+        
+        // recorro la lista de participantes para buscar los que aprobaron y agregarlos a la lista temporal
+        if(!listPartXAD.isEmpty()){
+            for(Participante part : listPartXAD){
+                // solo continúo si el participante está inscripto en la AD
+                if(current.getParticipantes().contains(part)){
+                    // verifico si aprobó la AD. En caso que la AD no tenga porcentaje de asistencia, la doy por aprobada
+                    if(current.getPorcAsistencia() > 0){
+                        // obtengo las clases tomadas por el participante
+                        part.setClasesTomadas(getFacade().getClasesXInscripto(current, part));
+                        // calculo el porcentaje de asistencia del participante
+                        porcAsist = (double)part.getClasesTomadas() / current.getClases().size();
+                        // formateo el porcentaje de asistencia de la AD
+                        dPorcAsistAD = (double)current.getPorcAsistencia() / 100;
+                        // valido los porcentajes
+                        if(porcAsist >= (dPorcAsistAD)){
+                            // si aprobó lo agrego a la lista
+                            listAprobXAD.add(part);
+                        } 
+                    }else{
+                        // si no tiene porcentaje de asistencia la doy por aprobada
+                        listAprobXAD.add(part);
+                    }
+                }
+            }
+        }
+        
+        // seteo los inscriptos del organismo
+        if(!listOrgList.isEmpty()){
+            for(Organismo org : listOrgList){
+                // recorro los inscriptos para asignarlos a cada organismo
+                if(!current.getParticipantes().isEmpty()){
+                    for(Participante part : current.getParticipantes()){
+                        // si el inscripto pertenece al organismo, lo agrego a la cuenta
+                        if(part.getAgente().getOrganismo().equals(org)){
+                            agInscriptos = org.getAgInscriptos();
+                            org.setAgInscriptos(agInscriptos + 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        // recorro los organismos
+        if(!listOrgList.isEmpty()){
+            for(Organismo org : listOrgList){
+                // recorro el listado de participantes
+                if(!listPartXAD.isEmpty()){
+                    for(Participante part : listPartXAD){
+                        // si el participante pertenece al organismo, acutalizo los totales
+                        if(part.getAgente().getOrganismo().equals(org)){
+                            agParticipantes = org.getAgParticipantes();
+                            org.setAgParticipantes(agParticipantes + 1);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // seteo los aprobados
+        if(!listAprobXAD.isEmpty()){
+            for(Participante part : listAprobXAD){
+                // con el participante recorro los organismos
+                if(!listOrgList.isEmpty()){
+                    for(Organismo org : listOrgList){
+                        // el participante pertenece al organismo, acutalizo los totales
+                        if(part.getAgente().getOrganismo().equals(org)){
+                            agAprobados = org.getAgAprobados();
+                            org.setAgAprobados(agAprobados + 1);
+                        }
+                    }
+                }
+            }
+        }
+    }    
+    
+    /**
      * Método para inicializar la cantidad de Agentes aprobados para la AD
      */
     private void inicAprobadosAD(){
@@ -990,9 +1148,9 @@ public class MbReqActividadesDispuestas implements Serializable{
         current.setAprobados(0);
         
         if(!current.getClases().isEmpty()){
-            for(Clase clase : current.getClases()){
-                if(!clase.getParticipantes().isEmpty()){
-                    for(Participante part : clase.getParticipantes()){
+            for(Clase cls : current.getClases()){
+                if(!cls.getParticipantes().isEmpty()){
+                    for(Participante part : cls.getParticipantes()){
                         if(!listPart.contains(part)){
                             // verifico si aprobó solo si la AD tiene porcentaje de asistencia
                             if(current.getPorcAsistencia() > 0){
@@ -1016,13 +1174,12 @@ public class MbReqActividadesDispuestas implements Serializable{
         }        
         //current.setAprobados(listAprob.size());
     }
-    
 
     /**
      * Método para inicializar los totales del resumen general
      */
     private void inicTotalesGrales(){
-        if(subprograma == null){
+        if(subProgramas == 0){
             inicSubProgramas();
         }
         if(sede == null){

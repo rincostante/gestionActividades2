@@ -191,8 +191,8 @@
                                 <p:commandButton icon="ui-icon-suitcase" action="#{mbReqActividadesDispuestas.verListClases}" title="Ver Clases">
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-home" action="#" update="messages" title="Ver Organismos destinatarios" >
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.selected}" />
+                                <p:commandButton icon="ui-icon-home" action="#{mbReqActividadesDispuestas.verListOrgPorAd}" update="messages" title="Ver Organismos destinatarios" > 
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqActividadesDispuestas.current}" />
                                 </p:commandButton>                     
                             </p:column>                
                         </p:dataTable>

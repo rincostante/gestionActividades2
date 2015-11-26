@@ -42,7 +42,7 @@
                     <h:outputText value="#{orga.nombre}" />
                 </p:column>
 
-                <p:column headerText="AD recibidas" sortBy="#{orga.adRecibidas}" filterBy="#{orga.adRecibidas}" filterMatchMode="contains">
+                <p:column headerText="AD recibidas" sortBy="#{orga.adRecibidas}" filterBy="#{orga.adRecibidas}" filterMatchMode="contains" rendered="#{not mbReqActividadesDispuestas.porAd}">
                     <h:outputText value="#{orga.adRecibidas}" />
                 </p:column>
                 
