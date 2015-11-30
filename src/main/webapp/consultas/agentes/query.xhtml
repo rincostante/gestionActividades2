@@ -136,6 +136,12 @@
                             <p:column headerText="#{bundle.AgenteLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}" filterMatchMode="contains">
                                 <p:outputLabel value="#{e.documento}"/>
                             </p:column>
+                            <p:column headerText="#{bundle.AgenteLabel_sitRevista}" sortBy="#{e.situacionRevista}" filterBy="#{e.situacionRevista}" filterMatchMode="contains" style="width:160px">
+                                <p:outputLabel value="#{e.situacionRevista}"/>
+                            </p:column>   
+                            <p:column headerText="#{bundle.AgenteLabel_cargo}" sortBy="#{e.cargo}" filterBy="#{e.cargo}" filterMatchMode="contains" style="width:160px">
+                                <p:outputLabel value="#{e.cargo}"/>
+                            </p:column>   
                             <p:column headerText="#{bundle.AgenteLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}" filterMatchMode="contains">
                                 <p:outputLabel value="#{e.organismo.nombre}"/>
                             </p:column>

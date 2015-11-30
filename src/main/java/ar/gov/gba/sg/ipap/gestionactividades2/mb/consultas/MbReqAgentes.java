@@ -2,12 +2,16 @@
 
 package ar.gov.gba.sg.ipap.gestionactividades2.mb.consultas;
 
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Programa;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
@@ -24,9 +28,12 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -37,6 +44,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpSession;
+import org.primefaces.context.RequestContext;
 
 /**
  * Bean de respaldo para gestionar las consultas sobre Agentes capacitados
@@ -79,6 +87,21 @@ public class MbReqAgentes implements Serializable{
     private boolean consultado;
     
     /**
+     * Campos para los totales del resumen general
+     */
+    private int programas;
+    private int subprogramas;
+    private int actividadesDispuestas;     
+    private int agentes;
+    private Map<String, Integer> mSitRevista;
+    private Map<String, Integer> mCargo;
+    private int estCurPrim;
+    private Map<String, Integer> mEstCurSec;
+    private Map<String, Integer> mEstCurTer;
+    private Map<String, Integer> mEstCurUniv;
+    private List<ActividadImplementada> listADTotal;
+    
+    /**
      * Campos de uso interno
      */
     private boolean iniciado;    
@@ -112,6 +135,94 @@ public class MbReqAgentes implements Serializable{
      * @return 
      ***********************************/
     
+    public List<ActividadImplementada> getListADTotal() {
+        return listADTotal;
+    }
+
+    public void setListADTotal(List<ActividadImplementada> listADTotal) {
+        this.listADTotal = listADTotal;
+    }
+    
+    public int getProgramas() {
+        return programas;
+    }
+
+    public void setProgramas(int programas) {
+        this.programas = programas;
+    }
+
+    public int getSubprogramas() {
+        return subprogramas;
+    }
+
+    public void setSubprogramas(int subprogramas) {
+        this.subprogramas = subprogramas;
+    }
+
+    public int getActividadesDispuestas() {
+        return actividadesDispuestas;
+    }
+
+    public void setActividadesDispuestas(int actividadesDispuestas) {
+        this.actividadesDispuestas = actividadesDispuestas;
+    }
+
+    public int getAgentes() {
+        return agentes;
+    }
+
+    public void setAgentes(int agentes) {
+        this.agentes = agentes;
+    }
+
+    public Map<String, Integer> getmSitRevista() {
+        return mSitRevista;
+    }
+
+    public void setmSitRevista(Map<String, Integer> mSitRevista) {
+        this.mSitRevista = mSitRevista;
+    }
+
+    public Map<String, Integer> getmCargo() {
+        return mCargo;
+    }
+
+    public void setmCargo(Map<String, Integer> mCargo) {
+        this.mCargo = mCargo;
+    }
+
+    public int getEstCurPrim() {
+        return estCurPrim;
+    }
+
+    public void setEstCurPrim(int estCurPrim) {
+        this.estCurPrim = estCurPrim;
+    }
+
+    public Map<String, Integer> getmEstCurSec() {
+        return mEstCurSec;
+    }
+
+    public void setmEstCurSec(Map<String, Integer> mEstCurSec) {
+        this.mEstCurSec = mEstCurSec;
+    }
+
+    public Map<String, Integer> getmEstCurTer() {
+        return mEstCurTer;
+    }
+
+    public void setmEstCurTer(Map<String, Integer> mEstCurTer) {
+        this.mEstCurTer = mEstCurTer;
+    }
+
+    public Map<String, Integer> getmEstCurUniv() {
+        return mEstCurUniv;
+    }
+
+    public void setmEstCurUniv(Map<String, Integer> mEstCurUniv) {
+        this.mEstCurUniv = mEstCurUniv;
+    }
+
     public boolean isConsultado() {
         return consultado;
     }
@@ -368,6 +479,25 @@ public class MbReqAgentes implements Serializable{
     }   
     
     
+    /**************************
+     * Métodos de navegación **
+     **************************/
+    /**
+     * Método para ver el resumen de la consulta general
+     */
+    public void verResGral(){        
+        // reseteo los totales del resumen
+        resetTotales();
+        
+        // inicializo los totalse del resumen
+        inicTotalesGrales();        
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 800);
+        RequestContext.getCurrentInstance().openDialog("dlgResumenGral", options, null);
+    }          
+    
+    
     /*************************
      * Métodos de operación **
      *************************/
@@ -400,7 +530,7 @@ public class MbReqAgentes implements Serializable{
         if(organismo == null && sitRevista == null && cargo == null && fInicioAct == null && nivelIpap == null && estCursados == null && titulo == null && fDespuesDe == null && fAntesDe == null){
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ReqActividades_consultaIncompleta"));
         }else{
-            //listActDisp = actImpFacade.getXConsulta(programa, subprograma, actForm, organismoSol, sede, modalidad, tipoCap, fDespuesDe, fAntesDe);    
+            listAgentes = getFacade().getXConsulta(organismo, sitRevista, cargo, fInicioAct, nivelIpap, estCursados, titulo, esReferente, fDespuesDe, fAntesDe);    
             consultado = true;
         }
     }    
@@ -416,8 +546,166 @@ public class MbReqAgentes implements Serializable{
         return agenteFacade;
     }       
     
+    /**
+     * Método para resetear los totales del resumen general
+     */
+    private void resetTotales(){
+        programas = 0;
+        subprogramas = 0;
+        actividadesDispuestas = 0;
+        agentes = 0;
+        estCurPrim = 0;
+        mSitRevista.clear();
+        mCargo.clear();
+        mEstCurSec.clear();
+        mEstCurTer.clear();
+        mEstCurUniv.clear();
+    } 
     
+    /**
+     * Método para inicializar los totales del resumen general
+     */
+    private void inicTotalesGrales(){
+        inicProgramas();
+        inicSubprogramas();
+        inicAD();
+        inicAgentes();
+        inicEstCurPrim();
+        inicMSitRevista();
+        inicMCargo();
+        inicMEstCurSec();
+        inicMEstCurTer();
+        inicMEstCurUniv();
+    }    
     
+    /**
+     * Método para inicializar total de Programas de la consulta general
+     */
+    private void inicProgramas(){
+        List<Programa> tempProgramas = new ArrayList<>();
+        
+        // recorro los Agentes obtenidos en la consulta general
+        for(Agente ag : listAgentes){
+            // por cada Agente recorro sus participaciones
+            for(Participante part : ag.getParticipaciones()){
+                // leo el Programa de su AD, si no está incluido en la lista temporal de programas, lo agrego
+                if(!tempProgramas.contains(part.getActividad().getSubprograma().getPrograma())){
+                    tempProgramas.add(part.getActividad().getSubprograma().getPrograma());
+                }
+            }
+        }
+        programas = tempProgramas.size();
+    }
+    
+    /**
+     * Método para inicializar total de Subprogramas de la consulta general
+     */
+    private void inicSubprogramas(){
+        List<SubPrograma> tempSub = new ArrayList<>();
+        
+        // recorro los Agentes obtenidos en la consulta general
+        for(Agente ag : listAgentes){
+            // por cada Agente recorro sus participaciones
+            for(Participante part : ag.getParticipaciones()){
+                // leo el SubPrograma de su AD, si no está incluido en la lista temporal de SubProgramas, lo agrego
+                if(!tempSub.contains(part.getActividad().getSubprograma())){
+                    tempSub.add(part.getActividad().getSubprograma());
+                }
+            }
+        }
+        subprogramas = tempSub.size();
+    }  
+    
+    /**
+     * Método para inicializar total de Actividades Dispuestas de la consulta general
+     */
+    private void inicAD(){
+        // recorro los Agentes obtenidos en la consulta general
+        for(Agente ag : listAgentes){
+            // por cada Agente recorro sus participaciones
+            for(Participante part : ag.getParticipaciones()){
+                // leo el SubPrograma de su AD, si no está incluido en la lista temporal de SubProgramas, lo agrego
+                if(!listADTotal.contains(part.getActividad())){
+                    listADTotal.add(part.getActividad());
+                }
+            }
+        }
+        actividadesDispuestas = listADTotal.size();
+    }    
+    
+    /**
+     * Método para inicializar total de Agentes de la consulta general
+     */
+    private void inicAgentes(){
+        agentes = listAgentes.size();
+    }  
+    
+    /**
+     * Método para inicializar total de Agentes con estudios primarios de la consulta general
+     */
+    private void inicEstCurPrim(){
+        // recorro los Agentes obtenidos en la consulta general
+        for(Agente ag : listAgentes){
+            if(ag.getEstudiosCursados().getNombre().equals("Primario")){
+                estCurPrim += 1;
+            }
+        }
+    }        
+    
+    /**
+     * Método para inicializar total de Agentes según su situación de revista, de la consulta general
+     */
+    private void inicMSitRevista(){
+        mSitRevista = new HashMap<>();
+        int iPp = 0, iPt = 0, iCont = 0;
+        // recorro los Agentes obtenidos en la consulta general
+        for(Agente ag : listAgentes){
+            switch (ag.getSituacionRevista().getNombre()) {
+                case "Planta Transitoria":
+                    iPt += 1;
+                    break;
+                case "Planta Permanente":
+                    iPp += 1;
+                    break;
+                case "Contratado":
+                    iCont += 0;
+                    break;
+            }
+        }
+        
+        // guardo los valores en el hashmap
+        mSitRevista.put("Planta Transitoria", iPt);
+        mSitRevista.put("Planta Permanente", iPp);
+        mSitRevista.put("Contratado", iCont);
+    }     
+    
+    /**
+     * Método para inicializar total de Agentes según su cargo, de la consulta general
+     */
+    private void inicMCargo(){
+        
+    }       
+    
+    /**
+     * Método para inicializar total de Agentes según el estado alcanzado de sus estudios secundarios, de la consulta general
+     */
+    private void inicMEstCurSec(){
+        
+    }        
+    
+    /**
+     * Método para inicializar total de Agentes según el estado alcanzado de sus estudios terciarios, de la consulta general
+     */
+    private void inicMEstCurTer(){
+        
+    }  
+    
+    /**
+     * Método para inicializar total de Agentes según el estado alcanzado de sus estudios universitarios, de la consulta general
+     */
+    private void inicMEstCurUniv(){
+        
+    }             
     
     
     

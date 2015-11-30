@@ -14,7 +14,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Programa;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoCapacitacion;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Docente;
