@@ -95,11 +95,16 @@ public class MbReqAgentes implements Serializable{
     private int agentes;
     private Map<String, Integer> mSitRevista;
     private Map<String, Integer> mCargo;
-    private int estCurPrim;
-    private Map<String, Integer> mEstCurSec;
-    private Map<String, Integer> mEstCurTer;
-    private Map<String, Integer> mEstCurUniv;
+    private Map<String, Integer> mEstCur;
+    private Map<String, Integer> mTitulos;
     private List<ActividadImplementada> listADTotal;
+    
+    /**
+     * Campos para el listado de Actividades Dispuestas de los Agentes seleccionados
+     */
+    private List<ActividadImplementada> listAdList;
+    private List<ActividadImplementada> listAdListFilter;
+    private ActividadImplementada aDSel;    
     
     /**
      * Campos de uso interno
@@ -134,6 +139,46 @@ public class MbReqAgentes implements Serializable{
      * métodos de acceso a los campos **
      * @return 
      ***********************************/
+    
+    public List<ActividadImplementada> getListAdList() {
+        return listAdList;
+    }
+
+    public void setListAdList(List<ActividadImplementada> listAdList) {
+        this.listAdList = listAdList;
+    }
+
+    public List<ActividadImplementada> getListAdListFilter() {
+        return listAdListFilter;
+    }
+
+    public void setListAdListFilter(List<ActividadImplementada> listAdListFilter) {
+        this.listAdListFilter = listAdListFilter;
+    }
+
+    public ActividadImplementada getaDSel() {
+        return aDSel;
+    }
+
+    public void setaDSel(ActividadImplementada aDSel) {
+        this.aDSel = aDSel;
+    }
+
+    public Map<String, Integer> getmTitulos() {
+        return mTitulos;
+    }
+
+    public void setmTitulos(Map<String, Integer> mTitulos) {
+        this.mTitulos = mTitulos;
+    }
+    
+    public Map<String, Integer> getmEstCur() {
+        return mEstCur;
+    }
+
+    public void setmEstCur(Map<String, Integer> mEstCur) {
+        this.mEstCur = mEstCur;
+    }
     
     public List<ActividadImplementada> getListADTotal() {
         return listADTotal;
@@ -189,38 +234,6 @@ public class MbReqAgentes implements Serializable{
 
     public void setmCargo(Map<String, Integer> mCargo) {
         this.mCargo = mCargo;
-    }
-
-    public int getEstCurPrim() {
-        return estCurPrim;
-    }
-
-    public void setEstCurPrim(int estCurPrim) {
-        this.estCurPrim = estCurPrim;
-    }
-
-    public Map<String, Integer> getmEstCurSec() {
-        return mEstCurSec;
-    }
-
-    public void setmEstCurSec(Map<String, Integer> mEstCurSec) {
-        this.mEstCurSec = mEstCurSec;
-    }
-
-    public Map<String, Integer> getmEstCurTer() {
-        return mEstCurTer;
-    }
-
-    public void setmEstCurTer(Map<String, Integer> mEstCurTer) {
-        this.mEstCurTer = mEstCurTer;
-    }
-
-    public Map<String, Integer> getmEstCurUniv() {
-        return mEstCurUniv;
-    }
-
-    public void setmEstCurUniv(Map<String, Integer> mEstCurUniv) {
-        this.mEstCurUniv = mEstCurUniv;
     }
 
     public boolean isConsultado() {
@@ -495,7 +508,27 @@ public class MbReqAgentes implements Serializable{
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 800);
         RequestContext.getCurrentInstance().openDialog("dlgResumenGral", options, null);
-    }          
+    }    
+    
+    /**
+     * Método para ver el listado de las Actividades Dispuestas recibidas por los Agentes seleccionados en la consulta general
+     */
+    public void verListAdGral(){    
+        // reseteo el listado
+        if(listAdList != null) listAdList = null;
+        if(listAdListFilter != null) listAdListFilter = null;
+        
+        // seteo el flag
+        //porAd = false;
+        
+        // inicializo los organismos capacitados por las AD seleccionadas
+        inicActList();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 800);
+        options.put("contentHeight", 600);
+        RequestContext.getCurrentInstance().openDialog("actividades/dlgActList", options, null);
+    }    
     
     
     /*************************
@@ -518,7 +551,7 @@ public class MbReqAgentes implements Serializable{
         titulo = null;
         esReferente = false;
         consultado = false;
-        //resetTotales();
+        resetTotales();
         cargarListados();
     }     
     
@@ -554,12 +587,16 @@ public class MbReqAgentes implements Serializable{
         subprogramas = 0;
         actividadesDispuestas = 0;
         agentes = 0;
-        estCurPrim = 0;
-        mSitRevista.clear();
-        mCargo.clear();
-        mEstCurSec.clear();
-        mEstCurTer.clear();
-        mEstCurUniv.clear();
+
+        if(mSitRevista != null){
+            mSitRevista.clear();
+        }
+        if(mCargo != null){
+            mCargo.clear();
+        }
+        if(mEstCur != null){
+            mEstCur.clear();
+        }
     } 
     
     /**
@@ -570,12 +607,10 @@ public class MbReqAgentes implements Serializable{
         inicSubprogramas();
         inicAD();
         inicAgentes();
-        inicEstCurPrim();
         inicMSitRevista();
         inicMCargo();
-        inicMEstCurSec();
-        inicMEstCurTer();
-        inicMEstCurUniv();
+        inicMEstCur();
+        inicMTitulos();
     }    
     
     /**
@@ -620,6 +655,9 @@ public class MbReqAgentes implements Serializable{
      * Método para inicializar total de Actividades Dispuestas de la consulta general
      */
     private void inicAD(){
+        // inicializo la lista
+        listADTotal = new ArrayList<>();
+        
         // recorro los Agentes obtenidos en la consulta general
         for(Agente ag : listAgentes){
             // por cada Agente recorro sus participaciones
@@ -638,74 +676,101 @@ public class MbReqAgentes implements Serializable{
      */
     private void inicAgentes(){
         agentes = listAgentes.size();
-    }  
-    
-    /**
-     * Método para inicializar total de Agentes con estudios primarios de la consulta general
-     */
-    private void inicEstCurPrim(){
-        // recorro los Agentes obtenidos en la consulta general
-        for(Agente ag : listAgentes){
-            if(ag.getEstudiosCursados().getNombre().equals("Primario")){
-                estCurPrim += 1;
-            }
-        }
-    }        
+    }   
     
     /**
      * Método para inicializar total de Agentes según su situación de revista, de la consulta general
      */
     private void inicMSitRevista(){
         mSitRevista = new HashMap<>();
-        int iPp = 0, iPt = 0, iCont = 0;
-        // recorro los Agentes obtenidos en la consulta general
-        for(Agente ag : listAgentes){
-            switch (ag.getSituacionRevista().getNombre()) {
-                case "Planta Transitoria":
-                    iPt += 1;
-                    break;
-                case "Planta Permanente":
-                    iPp += 1;
-                    break;
-                case "Contratado":
-                    iCont += 0;
-                    break;
-            }
-        }
+        int i = 0;
         
-        // guardo los valores en el hashmap
-        mSitRevista.put("Planta Transitoria", iPt);
-        mSitRevista.put("Planta Permanente", iPp);
-        mSitRevista.put("Contratado", iCont);
+        // recorro las distintas situaciones de revista
+        for(SituacionRevista st : listSitRevista){
+            // por cada situación de revista recorro el listado de Agentes para ir cargando el map
+            i = 0;
+            for(Agente ag : listAgentes){
+                if(ag.getSituacionRevista().equals(st)){
+                    i += 1;
+                }
+            }
+            // si se encontró algún Agente con esta situación, la guardo en el map con sus totales
+            if(i > 0) mSitRevista.put(st.getNombre(), i);
+        }
     }     
     
     /**
      * Método para inicializar total de Agentes según su cargo, de la consulta general
      */
     private void inicMCargo(){
+        mCargo = new HashMap<>();
+        int i = 0;
         
+        // recorro los distintos cargos
+        for(Cargo crg : listCargo){
+            // por cada cargo recorro el listado de Agentes para ir cargando el map
+            i = 0;
+            for(Agente ag : listAgentes){
+                if(ag.getCargo().equals(crg)){
+                    i += 1;
+                }
+            }
+            // si se encontró algún Agente con este Cargo, lo guardo en el map con sus totales
+            if(i > 0) mCargo.put(crg.getNombre(), i);
+        }
     }       
     
     /**
      * Método para inicializar total de Agentes según el estado alcanzado de sus estudios secundarios, de la consulta general
      */
-    private void inicMEstCurSec(){
+    private void inicMEstCur(){
+        mEstCur = new HashMap<>();
+        int i = 0;
         
+        // recorro los distintos estudios cursados
+        for(EstudiosCursados ec : listEstCursados){
+            // por cada estudio cursado recorro el listado de Agentes para ir cargando el map
+            i = 0;
+            for(Agente ag : listAgentes){
+                if(ag.getEstudiosCursados().equals(ec)){
+                    i += 1;
+                }
+            }
+            // si se encontró algún Agente con este Estudio cursado, lo guardo en el map con sus totales
+            if(i > 0) mEstCur.put(ec.getNombre() + " " + ec.getEstado(), i);
+        }        
     }        
     
     /**
-     * Método para inicializar total de Agentes según el estado alcanzado de sus estudios terciarios, de la consulta general
+     * Método para inicializar total de Agentes según su Título oficial, de la consulta general
      */
-    private void inicMEstCurTer(){
+    private void inicMTitulos(){
+        mTitulos = new HashMap<>();
+        int i = 0;
         
-    }  
+        // recorro los distintos Titulos registrados
+        for(Titulo tit : listTitulos){
+            // por cada Título recorro el listado de Agentes para ir cargando el map
+            i = 0;
+            for(Agente ag : listAgentes){
+                if(ag.getTitulo() != null){
+                    if(ag.getTitulo().equals(tit)){
+                        i += 1;
+                    }
+                }
+            }
+            // si se encontró algún Agente con este Título, lo guardo en el map con sus totales
+            if(i > 0) mTitulos.put(tit.getNombre(), i);
+        }        
+    }       
     
     /**
-     * Método para inicializar total de Agentes según el estado alcanzado de sus estudios universitarios, de la consulta general
-     */
-    private void inicMEstCurUniv(){
+     * Método para inicializar el listado de Actividades Dispuestas recibidas por los Agentes seleccionados
+     */   
+    private void inicActList(){
         
-    }             
+    }
+            
     
     
     

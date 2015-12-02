@@ -12,43 +12,33 @@
         <ui:define name="content">
         <br/>
             <h:form style="text-align: left">
-                <h:panelGrid columns="1" rendered="#{mbLogin.usLogeado.primeraVez}">
-                    <p:outputLabel value="Por favor, ingrese una contraseña de su elección para poder continuar." />
-                    <br/>
-                </h:panelGrid>
-                <p:panel id="pnEdit" header="Actualice aquí si contraseña, deberá ser distinta de la existente, tener (8) caracteres y al menos (2) de ellos numéricos." style="margin-bottom:10px;">
-                    <h:inputHidden id="id" value="#{mbCambioPass.usLogeado.id}" />
+                <p:panel id="pnEdit" header="Actualice aquí la contraseña del usuario, tener (8) caracteres y al menos (2) de ellos numéricos." style="margin-bottom:10px;">
+                    <h:inputHidden id="id" value="#{mbUsuario.usSelected.id}" />
                     <p:growl id="messages" />
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Apellidos y nombres: " />
-                        <h:outputText value="#{mbCambioPass.usLogeado.apYNom}" />
+                        <h:outputText value="#{mbUsuario.usSelected.apYNom}" />
                         
                         <p:outputLabel value="#{bundle.UsuarioLabel_documento}" />
-                        <h:outputText value="#{mbCambioPass.usLogeado.documento}" />
+                        <h:outputText value="#{mbUsuario.usSelected.documento}" />
 
                         <p:outputLabel value="#{bundle.UsuarioLable_rol}" />
-                        <h:outputText value="#{mbCambioPass.usLogeado.rol.nombre}" />
+                        <h:outputText value="#{mbUsuario.usSelected.rol.nombre}" />
                         
                         <p:outputLabel value="#{bundle.UsuarioLabel_nombre}" />
-                        <h:outputText value="#{mbCambioPass.usLogeado.nombre}"/> 
-                        
-                        <p:outputLabel value="Contraseña anterior:" for="claveAnt" />
-                        <p:password id="claveAnt" value="#{mbCambioPass.claveAnterior}" 
-                                    validator="#{mbCambioPass.validarClaveVieja}" 
-                                     required="true" 
-                                     requiredMessage="#{bundle.UsuarioContraseniaActualRequiredMessage}"/>  
+                        <h:outputText value="#{mbUsuario.usSelected.nombre}"/> 
                         
                         <p:outputLabel value="Ingrese la nueva contraseña:" for="claveNueva_1" />
-                        <p:password id="claveNueva_1" value="#{mbCambioPass.claveNueva_1}" 
-                                     validator="#{mbCambioPass.validarClaveNueva}"
+                        <p:password id="claveNueva_1" value="#{mbUsuario.claveNueva_1}" 
+                                     validator="#{mbUsuario.validarClaveNueva}"
                                      required="true" 
                                      requiredMessage="#{bundle.UsuarioContraseniaNuevaRequiredMessage}" >
                             <f:validateLength maximum="8" minimum="8" />
                         </p:password>  
                         
                         <p:outputLabel value="Repitia la contraseña ingresada:" for="claveNueva_2" />
-                        <p:password id="claveNueva_2" value="#{mbCambioPass.claveNueva_2}" 
-                                     validator="#{mbCambioPass.validarClaveNueva_2}"
+                        <p:password id="claveNueva_2" value="#{mbUsuario.claveNueva_2}" 
+                                     validator="#{mbUsuario.validarClaveNueva_2}"
                                      required="true" 
                                      requiredMessage="#{bundle.UsuarioContraseniaNueva2RequiredMessage}" >
                         </p:password>    
@@ -59,14 +49,14 @@
                 <p:toolbar>
                     <f:facet name="left">
                         <p:commandButton icon="ui-icon-pencil" 
-                                         action="#{mbCambioPass.update}" 
+                                         action="#{mbUsuario.updatePass}" 
                                          value="Guardar" 
                                          style="margin-right:10px;" 
                                          update="pnEdit"/>
                         <p:commandButton icon="ui-icon-cancel" value="Limpiar" style="float: right">
                             <p:ajax update="pnEdit" resetValues="true" />
                         </p:commandButton>                        
-                    </f:facet>    
+                    </f:facet>           
                     <f:facet name="right">
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
                                          action="#{mbUsuario.prepareList}" 
@@ -79,4 +69,3 @@
         </ui:define>
     </ui:composition>
 </html>
-

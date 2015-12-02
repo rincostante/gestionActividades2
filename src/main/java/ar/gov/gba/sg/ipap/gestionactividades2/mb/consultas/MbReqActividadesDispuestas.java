@@ -651,7 +651,7 @@ public class MbReqActividadesDispuestas implements Serializable{
     public void verListOrgGral(){    
         // reseteo el listado
         if(listOrgList != null) listOrgList = null;
-        if(listOrgListFilter != null) listOrgList = null;
+        if(listOrgListFilter != null) listOrgListFilter = null;
         
         // seteo el flag
         porAd = false;
@@ -671,7 +671,7 @@ public class MbReqActividadesDispuestas implements Serializable{
     public void verListOrgPorAd(){    
         // reseteo el listado
         if(listOrgList != null) listOrgList = null;
-        if(listOrgListFilter != null) listOrgList = null;
+        if(listOrgListFilter != null) listOrgListFilter = null;
         
         // seteo el flag
         porAd = true;

@@ -19,6 +19,19 @@
                     <p:panel id="pnQuery" header="Ingrese los parámetros para la consulta inicial sobre Agentes capacitados" style="margin-bottom:10px;" toggleable="true">
                         <p:growl id="messages" />
                         <h:panelGrid columns="2">
+                            <p:outputLabel value="#{bundle.PersonaLabel_tipoDoc}" for="tipoDoc"/>
+                            <p:selectOneMenu id="tipoDoc" value="#" >
+                                <f:selectItem itemLabel="Seleccione el tipo de documento" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#" var="tipoDoc" 
+                                               itemLabel="#" itemValue="#"/>
+                            </p:selectOneMenu>    
+
+                            <p:outputLabel value="#{bundle.PersonaLabel_numDoc}" for="numDoc"/>
+                            <p:inputText converter="#{Integer}" id="numDoc"
+                                         value="#" >
+                                <f:validateLength maximum="8" minimum="7" />
+                            </p:inputText>     
+                            
                             <p:outputLabel value="#{bundle.ReqActividades_tipoOrg} :" for="tipoOrg"/>
                             <p:selectOneMenu id="tipoOrg" value="#{mbReqAgentes.tipoOrg}" 
                                              valueChangeListener="#{mbReqAgentes.tipoOrgChangeListener}">
@@ -99,7 +112,7 @@
                             
                             <h:outputLabel value="Resumen general: " rendered="#{mbReqAgentes.consultado}" />
                             <p:commandButton value="Ver" icon="ui-icon-extlink" rendered="#{mbReqAgentes.consultado}"  
-                                             actionListener="#" />  
+                                             actionListener="#{mbReqAgentes.verResGral}" />  
                             
                             <h:outputLabel value="Actividades Dispuestas recibidas: " rendered="#{mbReqAgentes.consultado}" />
                             <p:commandButton value="Listar" icon="ui-icon-extlink" rendered="#{mbReqAgentes.consultado}"  
@@ -136,11 +149,11 @@
                             <p:column headerText="#{bundle.AgenteLabel_documento}" sortBy="#{e.documento}" filterBy="#{e.documento}" filterMatchMode="contains">
                                 <p:outputLabel value="#{e.documento}"/>
                             </p:column>
-                            <p:column headerText="#{bundle.AgenteLabel_sitRevista}" sortBy="#{e.situacionRevista}" filterBy="#{e.situacionRevista}" filterMatchMode="contains" style="width:160px">
-                                <p:outputLabel value="#{e.situacionRevista}"/>
+                            <p:column headerText="#{bundle.AgenteLabel_sitRevista}" sortBy="#{e.situacionRevista.nombre}" filterBy="#{e.situacionRevista.nombre}" filterMatchMode="contains" style="width:160px">
+                                <p:outputLabel value="#{e.situacionRevista.nombre}"/>
                             </p:column>   
-                            <p:column headerText="#{bundle.AgenteLabel_cargo}" sortBy="#{e.cargo}" filterBy="#{e.cargo}" filterMatchMode="contains" style="width:160px">
-                                <p:outputLabel value="#{e.cargo}"/>
+                            <p:column headerText="#{bundle.AgenteLabel_cargo}" sortBy="#{e.cargo.nombre}" filterBy="#{e.cargo.nombre}" filterMatchMode="contains" style="width:160px">
+                                <p:outputLabel value="#{e.cargo.nombre}"/>
                             </p:column>   
                             <p:column headerText="#{bundle.AgenteLabel_organismo}" sortBy="#{e.organismo.nombre}" filterBy="#{e.organismo.nombre}" filterMatchMode="contains">
                                 <p:outputLabel value="#{e.organismo.nombre}"/>

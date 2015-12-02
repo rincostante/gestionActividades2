@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -40,6 +41,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.validator.ValidatorException;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -62,6 +64,9 @@ public class MbUsuario implements Serializable{
     private MbLogin login;   
     private boolean iniciado;
     private String clave;
+    
+    private String claveNueva_1;
+    private String claveNueva_2;    
     
     @EJB
     private UsuarioFacade usuarioFacade;   
@@ -97,6 +102,22 @@ public class MbUsuario implements Serializable{
     /********************************
      ** Getters y Setters *********** 
      ********************************/
+    
+    public String getClaveNueva_1() {
+        return claveNueva_1;
+    }
+
+    public void setClaveNueva_1(String claveNueva_1) {
+        this.claveNueva_1 = claveNueva_1;
+    }
+
+    public String getClaveNueva_2() {
+        return claveNueva_2;
+    }
+
+    public void setClaveNueva_2(String claveNueva_2) {
+        this.claveNueva_2 = claveNueva_2;
+    }
     
     public List<Usuario> getListFilter() {
         return listFilter;
@@ -282,6 +303,14 @@ public class MbUsuario implements Serializable{
     }
     
     /**
+     * 
+     */
+    public String prepareEditPass(){
+        current = usSelected;
+        return "editPass";
+    }
+    
+    /**
      *
      * @return
      */
@@ -440,6 +469,44 @@ public class MbUsuario implements Serializable{
             return null;
         }
     }
+    
+    /**
+     * Método para actualizar la contraseña de un usuario
+     * @return 
+     */
+    public String updatePass(){
+        String claveEncriptada = CriptPass.encriptar(claveNueva_2);
+        try {
+            current.setCalve(claveEncriptada);
+            
+            // Actualización de datos de administración de la entidad
+            Date date = new Date(System.currentTimeMillis());
+            current.getAdmin().setFechaModif(date);
+            current.getAdmin().setUsModif(usLogeado);
+
+            usuarioFacade.edit(current);
+            
+            /**
+             * temporalmente volvemos a mostrar la clave generada hasta resolver el problema del envío de correos
+             * rincostante 20150702
+             */
+            /*
+            if(!enviarCorreo()){
+                JsfUtil.addErrorMessage("Hubo un error enviando el correo al usuario. Consulte el log del servidor.");
+                return null;
+            }else{
+                JsfUtil.addSuccessMessage("Contraseña actualizada con exito");
+                return "view";   
+            }*/
+            
+            JsfUtil.addSuccessMessage("Se actualizó la contraseña del usuario, la nueva clave asignada es: " + claveNueva_2);
+            return "view";  
+
+        }catch (Exception e) {
+            JsfUtil.addErrorMessage(e, "Hubo un error actualizando la contraseña");
+            return null;
+        }
+    }
 
     /**
      * @return mensaje que notifica el borrado
@@ -457,6 +524,71 @@ public class MbUsuario implements Serializable{
         pdf.setPageSize(PageSize.A4.rotate());
         pdf.newPage();
     }    
+    
+    /**
+     * Método para validar que la clave a modificar estrita por primera vez, sea la que corresponda
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */
+    public void validarClaveVieja(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        String claveEncriptada = CriptPass.encriptar((String)arg2); 
+        if(!usLogeado.getCalve().equals(claveEncriptada)){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioContraseniaInvalida")));
+        }
+    }    
+
+    /**
+     * Método para validar que la clave nueva no esté siento utilizada ni sea igual a la anterior
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */
+    public void validarClaveNueva(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        int i = 0;
+        int num = 0;        
+        String pass = (String)arg2;
+        String claveEncriptada = CriptPass.encriptar(pass); 
+        if(usLogeado.getCalve().equals(claveEncriptada)){
+            throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioContraseniaNuevaIgual")));
+        }else{
+            if(!usuarioFacade.verificarContrasenia(claveEncriptada)){
+                throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioContraseniaNuevaExistente")));
+            }else{
+                if(pass.length() == 8){
+                    while(i < pass.length()){
+                        if(pass.charAt(i) > 47 && pass.charAt(i) < 58){
+                            num ++;
+                        }
+                        i ++;
+                    }
+
+                    if(num < 2){
+                        throw new ValidatorException(new FacesMessage("La contraseña debe incluir al menos 2 números."));
+                    }else{
+                        claveNueva_1 = (String)arg2;
+                    }
+                }else{
+                    throw new ValidatorException(new FacesMessage("La contraseña debe tener 8 dígitos."));
+                }
+            }
+        }
+    }
+    
+    /**
+     * Método para validar que la clave repetida sea igual a la primera
+     * @param arg0: vista jsf que llama al validador
+     * @param arg1: objeto de la vista que hace el llamado
+     * @param arg2: contenido del campo de texto a validar 
+     */
+    public void validarClaveNueva_2(FacesContext arg0, UIComponent arg1, Object arg2) throws ValidatorException{
+        if(claveNueva_1 != null){
+            if(!claveNueva_1.equals((String)arg2)){
+                throw new ValidatorException(new FacesMessage(ResourceBundle.getBundle("/Bundle").getString("UsuarioContrasenia2Distinta")));
+            }   
+        }
+    } 
+    
     
     /*************************
     ** Métodos de selección **

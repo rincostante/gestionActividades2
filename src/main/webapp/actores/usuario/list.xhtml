@@ -62,15 +62,18 @@
                         <p:outputLabel value="#{e.rol.nombre}"/>
                     </p:column>    
                    
-                    <p:column headerText="Acciones" style="width:135px" exportable="false">
+                    <p:column headerText="Acciones" style="width:180px" exportable="false">
                         <p:growl id="messages" showDetail="true" />
-                        <p:commandButton icon="ui-icon-zoomin" action="#{mbUsuario.prepareView}">
+                        <p:commandButton icon="ui-icon-zoomin" action="#{mbUsuario.prepareView}" title="Ver Detalle">
                             <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-pencil" action="#{mbUsuario.prepareEdit}">
+                        <p:commandButton icon="ui-icon-pencil" action="#{mbUsuario.prepareEdit}" title="Editar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" action="#{mbUsuario.destroy}" update="messages">
+                        <p:commandButton icon="ui-icon-key" action="#{mbUsuario.prepareEditPass}" update="messages" title="Cambiar contraseña">
+                            <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" action="#{mbUsuario.destroy}" update="messages" title="Deshabilitar">
                             <f:setPropertyActionListener value="#{e}" target="#{mbUsuario.usSelected}" />
                             <p:confirm header="Confirmar" message="¿Desea deshabiltar el registro de este Usuario?" />
                         </p:commandButton>
