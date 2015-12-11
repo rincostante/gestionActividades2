@@ -1,12 +1,87 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Listado de Actividades Dispuestas recibidas por los Agenges seleccionados</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
     </h:head>
+     
     <h:body>
-        Hello from Facelets
+        <h:form id="frmAd">
+            <p:dataTable id="actImplList" value="#{mbReqAgentes.listAdList}" var="e" rows="5"  
+                         filteredValue="#{mbReqAgentes.listAdListFilter}" 
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                    <p:commandButton icon="ui-icon-refresh" value="Listar" update="actImplList" style="margin-left: 10px"/>
+
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                        <p:dataExporter type="xls" target="actImplList" fileName="ListadoAdRecibidasPorConsultaAg" />
+                    </h:commandLink>   
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                        <p:dataExporter type="pdf" target="actImplList" fileName="ListadoAdRecibidasPorConsultaAg" preProcessor="#{mbReqAgentes.preProcessPDF}"/>
+                    </h:commandLink>  
+
+                    <p:columnToggler datasource="actImplList" trigger="toggler" />
+                </f:facet>
+                <p:column headerText="Programa" sortBy="#{e.subprograma.programa.nombre}" filterBy="#{e.subprograma.programa.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.subprograma.programa.nombre}"/>
+                </p:column> 
+                
+                <p:column headerText="SubProg." sortBy="#{e.subprograma.nombre}" filterBy="#{e.subprograma.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.subprograma.nombre}"/>
+                </p:column> 
+                
+                <p:column headerText="AD" sortBy="#{e.actividadPlan.nombre}" filterBy="#{e.actividadPlan.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.actividadPlan.nombre}"/>
+                </p:column>    
+
+                <p:column headerText="#{bundle.ActividadImplLabel_orientacion}" sortBy="#{e.orientacion.nombre}" filterBy="#{e.orientacion.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.orientacion.nombre}"/>
+                </p:column>
+
+                <p:column headerText="Inicio" sortBy="#{e.strFechaIniVig}" filterBy="#{e.strFechaIniVig}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.strFechaIniVig}"/>
+                </p:column>  
+
+                <p:column headerText="Fin" sortBy="#{e.strFechaFinVig}" filterBy="#{e.strFechaFinVig}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.strFechaFinVig}"/>
+                </p:column>    
+
+                <p:column headerText="#{bundle.ActividadImplLabel_sede}" sortBy="#{e.sede.nombre}" filterBy="#{e.sede.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.sede.nombre}"/>
+                </p:column>
+
+                <p:column headerText="#{bundle.ActividadImplTitle_aula}" sortBy="#{e.aula}" filterBy="#{e.aula}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.aula}"/>
+                </p:column>
+
+                <p:column headerText="#{bundle.ReqActividades_clases}" sortBy="#{e.clases.size()}" filterBy="#{e.clases.size()}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.clases.size()}"/>
+                </p:column>
+
+                <p:column headerText="#{bundle.ReqActividades_finalizada}" sortBy="#{e.finalizada}" filterBy="#{e.finalizada}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.finalizada}" />
+                </p:column>
+
+                <p:column headerText="Amp." style="width:35px" exportable="false">
+                    <p:growl id="messages" showDetail="true" />
+                    <p:commandButton icon="ui-icon-zoomin" action="#{mbReqAgentes.verAdSel}" title="Ver Resumen">
+                        <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.ADSel}" />
+                    </p:commandButton>                 
+                </p:column>                
+            </p:dataTable>
+        </h:form>
     </h:body>
 </html>
-

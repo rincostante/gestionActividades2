@@ -12,6 +12,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -121,6 +122,8 @@ public class AgenteFacade extends AbstractFacade<Agente> {
      * Primero pregunto por la fecha inicial de capacitación, si viene nula seteo 01/01/1900
      * Según los parámetros restantes sean nulos o no, los guardo en el listado respectivos
      * para luego asignarlos a la querry
+     * @param tipoDocumento
+     * @param documento
      * @param organismo: Organismo en el que se desempeña el Agente
      * @param situacionRevista: Situación de revista del Agente
      * @param cargo: Cargo con el que se desempeña el Agente
@@ -134,6 +137,8 @@ public class AgenteFacade extends AbstractFacade<Agente> {
      * @return 
      */    
     public List<Agente> getXConsulta(
+        TipoDocumento tipoDocumento,
+        int documento,
         Organismo organismo,
         SituacionRevista situacionRevista,
         Cargo cargo,
@@ -152,6 +157,10 @@ public class AgenteFacade extends AbstractFacade<Agente> {
         String operador;
         
         // Separo los parámetros nulos de los que vienen con valor
+        if(tipoDocumento == null) paramNulos.add("persona.tipoDocumento"); else paramValor.add("persona.tipoDocumento");
+        if(documento == 0) paramNulos.add("persona.documento"); else paramValor.add("persona.documento");
+        
+        
         if(organismo == null) paramNulos.add("organismo"); else paramValor.add("organismo");
         if(situacionRevista == null) paramNulos.add("situacionRevista"); else paramValor.add("situacionRevista");
         if(cargo == null) paramNulos.add("cargo"); else paramValor.add("cargo");
@@ -162,8 +171,9 @@ public class AgenteFacade extends AbstractFacade<Agente> {
         if(fechaFin == null) paramNulos.add("actividad.fechaFin"); else paramValor.add("actividad.fechaFin");    
         
         em = getEntityManager();
-        String queryString = "SELECT agente FROM Agente agente "
+        String queryString = "SELECT DISTINCT(agente) FROM Agente agente "
                 + "INNER JOIN agente.participaciones part "
+                + "INNER JOIN part.clases cls "
                 + "WHERE agente.esReferente = :referente ";  
         
         // valido la fecha de inicio, si viene nula seteo 01/01/1900
@@ -189,7 +199,18 @@ public class AgenteFacade extends AbstractFacade<Agente> {
                 operador = " >= :";
                 if(!campo.equals(paramValor.get(paramValor.size() - 1))) queryString = queryString + "AND agente." + campo + operador + campoSimple + " ";
                 else queryString = queryString + "AND (agente." + campo + operador + campoSimple + " ";
-            }else{
+            }else if(campo.equals("persona.tipoDocumento")){
+                campoSimple = "tipoDocumento";
+                operador = " = :";
+                if(!campo.equals(paramValor.get(paramValor.size() - 1))) queryString = queryString + "AND agente." + campo + operador + campoSimple + " ";
+                else queryString = queryString + "AND (agente." + campo + operador + campoSimple + " ";
+            }else if(campo.equals("persona.documento")){
+                campoSimple = "documento";
+                operador = " = :";
+                if(!campo.equals(paramValor.get(paramValor.size() - 1))) queryString = queryString + "AND agente." + campo + operador + campoSimple + " ";
+                else queryString = queryString + "AND (agente." + campo + operador + campoSimple + " ";
+            }
+            else{
                 campoSimple = campo;
                 operador = " = :";
                 if(!campo.equals(paramValor.get(paramValor.size() - 1))) queryString = queryString + "AND agente." + campo + operador + campoSimple + " ";
@@ -202,8 +223,17 @@ public class AgenteFacade extends AbstractFacade<Agente> {
             if(campo.equals("actividad.fechaFin")){
                 campoSimple = "fechaFin"; 
                 if(!campo.equals(paramNulos.get(paramNulos.size() - 1))) queryString = queryString + "OR part." + campo + " = :" + campoSimple + " ";
-                else queryString = queryString + "OR part." + campo + " = :" + campoSimple + ") ";                
-            }else{
+                else queryString = queryString + "OR part." + campo + " = :" + campoSimple + ") ";     
+            }else if(campo.equals("persona.tipoDocumento")){
+                campoSimple = "tipoDocumento";
+                if(!campo.equals(paramNulos.get(paramNulos.size() - 1))) queryString = queryString + "OR agente." + campo + " = :" + campoSimple + " ";
+                else queryString = queryString + "OR agente." + campo + " = :" + campoSimple + ") ";               
+            }else if(campo.equals("persona.documento")){
+                campoSimple = "documento";
+                if(!campo.equals(paramNulos.get(paramNulos.size() - 1))) queryString = queryString + "OR agente." + campo + " = :" + campoSimple + " ";
+                else queryString = queryString + "OR agente." + campo + " = :" + campoSimple + ") "; 
+            }
+            else{
                 campoSimple = campo;
                 if(!campo.equals(paramNulos.get(paramNulos.size() - 1))) queryString = queryString + "OR agente." + campo + " = :" + campoSimple + " ";
                 else queryString = queryString + "OR agente." + campo + " = :" + campoSimple + ") ";
@@ -215,6 +245,8 @@ public class AgenteFacade extends AbstractFacade<Agente> {
         
         // seteo los parámetros
         Query q = em.createQuery(queryString)
+                .setParameter("tipoDocumento", tipoDocumento)
+                .setParameter("documento", documento)
                 .setParameter("fechaInicio", fechaInicio)
                 .setParameter("organismo", organismo)
                 .setParameter("situacionRevista", situacionRevista)

@@ -20,16 +20,16 @@
                         <p:growl id="messages" />
                         <h:panelGrid columns="2">
                             <p:outputLabel value="#{bundle.PersonaLabel_tipoDoc}" for="tipoDoc"/>
-                            <p:selectOneMenu id="tipoDoc" value="#" >
+                            <p:selectOneMenu id="tipoDoc" value="#{mbReqAgentes.tipoDoc}" >
                                 <f:selectItem itemLabel="Seleccione el tipo de documento" itemValue="" noSelectionOption="true" />
-                                <f:selectItems value="#" var="tipoDoc" 
-                                               itemLabel="#" itemValue="#"/>
+                                <f:selectItems value="#{mbReqAgentes.listTipoDoc}" var="tipoDoc" 
+                                               itemLabel="#{tipoDoc.nombre}" itemValue="#{tipoDoc}" />
+                                <p:ajax event="change" update="numDoc"/>
                             </p:selectOneMenu>    
 
                             <p:outputLabel value="#{bundle.PersonaLabel_numDoc}" for="numDoc"/>
-                            <p:inputText converter="#{Integer}" id="numDoc"
-                                         value="#" >
-                                <f:validateLength maximum="8" minimum="7" />
+                            <p:inputText converter="#{Integer}" id="numDoc" disabled="#{mbReqAgentes.tipoDoc == null}"
+                                         value="#{mbReqAgentes.numDoc}" >
                             </p:inputText>     
                             
                             <p:outputLabel value="#{bundle.ReqActividades_tipoOrg} :" for="tipoOrg"/>
@@ -95,8 +95,8 @@
                             
                             <p:outputLabel value="Es Referente: " />
                             <p:selectBooleanButton id="esReferente" value="#{mbReqAgentes.esReferente}" 
-                                               onLabel="No" 
-                                               offLabel="Sí" />       
+                                               onLabel="Sí" 
+                                               offLabel="No" />       
 
                             <p:outputLabel for="fDespDe" value="Fecha inicial de capacitación :" />
                             <p:calendar id="fDespDe" value="#{mbReqAgentes.fDespuesDe}" pattern="dd/MM/yyyy" mask="true" >
@@ -116,7 +116,7 @@
                             
                             <h:outputLabel value="Actividades Dispuestas recibidas: " rendered="#{mbReqAgentes.consultado}" />
                             <p:commandButton value="Listar" icon="ui-icon-extlink" rendered="#{mbReqAgentes.consultado}"  
-                                             actionListener="#" />  
+                                             actionListener="#{mbReqAgentes.verListAdGral}" />  
 
                         </h:panelGrid>
                     </p:panel>
@@ -142,7 +142,7 @@
 
                                 <p:columnToggler datasource="agetList" trigger="toggler" />
                             </f:facet>
-                            
+
                             <p:column headerText="#{bundle.AgenteLabel_apYNom}" sortBy="#{e.apYNom}" filterBy="#{e.apYNom}" filterMatchMode="contains" style="width:160px">
                                 <p:outputLabel value="#{e.apYNom}"/>
                             </p:column>   
@@ -175,15 +175,18 @@
                                 <p:outputLabel value="#{e.antigAnios} años" rendered="#{e.antigAnios > 0}"/>
                             </p:column>
 
-                            <p:column headerText="Ampliar" style="width:100px" exportable="false">
+                            <p:column headerText="Ampliar" style="width:130px" exportable="false">
                                 <p:growl id="messages" showDetail="true" />
-                                <p:commandButton icon="ui-icon-zoomin" action="#" title="Ver Resumen">
+                                <p:commandButton icon="ui-icon-zoomin" action="#{mbReqAgentes.verResGralAgente}" title="Ver Resumen">
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-suitcase" action="#" title="Ver Programas">
+                                <p:commandButton icon="ui-icon-lightbulb" action="#" update="messages" title="Ver Actividades recibidas" >
+                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
+                                </p:commandButton>  
+                                <p:commandButton icon="ui-icon-suitcase" action="#" title="Ver Programas vinculados">
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-home" action="#" update="messages" title="Ver Sedes" >
+                                <p:commandButton icon="ui-icon-home" action="#" update="messages" title="Ver Sedes asistidas" >
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>                     
                             </p:column>                

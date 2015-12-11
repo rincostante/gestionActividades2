@@ -3,10 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Resumen general de la Consulta realizada</title>
+        <title>Resumen general de la Actividad Dispuesta seleccionada</title>
         <style type="text/css">
             .ui-widget {
                 font-size: 80%;
@@ -15,14 +14,7 @@
     </h:head>
      
     <h:body>
-        <h:form id="frmResGral" >
-            <p:toolbar>
-                <f:facet name="left">
-                    <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" >
-                        <p:printer target="pnGral" />
-                    </p:commandButton>
-                </f:facet>
-            </p:toolbar>            
+        <h:form id="frmResActSel">
             <h:panelGroup id="pnGral" >
                 <p:panel id="pnParam" header="#{bundle.ReqAgentesResumenGral_param}" toggleable="true" >
                     <h:panelGrid columns="2">
@@ -73,55 +65,62 @@
                     </h:panelGrid>
                 </p:panel>
                 
-                <p:panel id="pnResumen" header="#{bundle.ReqAgentesResumenGral_resPanelGral}" toggleable="true" >
+                <p:panel id="pnResumen" header="Resumen de los totales de la Actividad Dispuesta seleccionada" >
                     <h:panelGrid columns="2">
-                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_resProg}: " />
-                        <h:outputText value="#{mbReqAgentes.programas}" />  
+                        <h:outputLabel value="Nombre: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.actividadPlan.nombre}" />  
                         
-                        <h:outputLabel value="#{bundle.ReqActResumenGral_resSubp}: " />
-                        <h:outputText value="#{mbReqAgentes.subprogramas}" />  
+                        <h:outputLabel value="Sub Programa: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.subprograma.nombre}" />  
                         
-                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_resAD}: " />
-                        <h:outputText value="#{mbReqAgentes.actividadesDispuestas}" />  
+                        <h:outputLabel value="Orientación: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.orientacion.nombre}" />  
                         
-                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_resAgentes}: " />
-                        <h:outputText value="#{mbReqAgentes.agentes}" /> 
+                        <h:outputLabel value="Fecha de inicio: " />
+                        <p:calendar id="fechaInicioAD" value="#{mbReqAgentes.ADSel.fechaInicio}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="Fecha de fin: " />
+                        <p:calendar id="fechaDinAD" value="#{mbReqAgentes.ADSel.fechaFin}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="Sede en la que se realizó: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.sede.nombre}" /> 
+                        
+                        <h:outputLabel value="Aula utilizada: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.aula}" /> 
+                        
+                        <h:outputLabel value="Total de Clases dictadas: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.clases.size()}" /> 
+                        
+                        <h:outputLabel value="Total de Agentes inscriptos: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.participantes.size()}" /> 
+                        
+                        <h:outputLabel value="Promedio de participanes por clase: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.promPartXClase}" >
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText> 
+                        
+                        <h:outputLabel value="Total de Agentes aprobados: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.aprobados}" /> 
+                        
+                        <h:outputLabel value="Finalizada: " />
+                        <h:outputText value="#{mbReqAgentes.ADSel.finalizada}" /> 
+                        
                     </h:panelGrid>
-                </p:panel>
-                <p:panel id="pnSitRev" header="#{bundle.ReqAgentesResumenGral_resPanelSitRev}" toggleable="true" >
-                    <c:forEach items="#{mbReqAgentes.mSitRevista}" var="sitRev">
-                        <h:panelGrid columns="2">
-                            <h:outputLabel value="#{sitRev.key}: "  />
-                            <h:outputText value="#{sitRev.value}" /> 
-                        </h:panelGrid>
-                    </c:forEach>
-                </p:panel>
-                <p:panel id="pnCargo" header="#{bundle.ReqAgentesResumenGral_resPanelCargo}" toggleable="true" >
-                    <c:forEach items="#{mbReqAgentes.mCargo}" var="cargo">
-                        <h:panelGrid columns="2">
-                            <h:outputLabel value="#{cargo.key}: "  />
-                            <h:outputText value="#{cargo.value}" /> 
-                        </h:panelGrid>
-                    </c:forEach>
-                </p:panel>
-                <p:panel id="pnEstCur" header="#{bundle.ReqAgentesResumenGral_resPanelEstCur}" toggleable="true" >
-                    <c:forEach items="#{mbReqAgentes.mEstCur}" var="estCur">
-                        <h:panelGrid columns="2">
-                            <h:outputLabel value="#{estCur.key}: "  />
-                            <h:outputText value="#{estCur.value}" /> 
-                        </h:panelGrid>
-                    </c:forEach>
-                </p:panel>
-                <p:panel id="pnTitulos" header="#{bundle.ReqAgentesResumenGral_resPanelTitulos}" toggleable="true" >
-                    <c:forEach items="#{mbReqAgentes.mTitulos}" var="titulo">
-                        <h:panelGrid columns="2">
-                            <h:outputLabel value="#{titulo.key}: " />
-                            <h:outputText value="#{titulo.value}" /> 
-                        </h:panelGrid>
-                    </c:forEach>
-                </p:panel>
+                </p:panel>                
             </h:panelGroup>
-
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" >
+                        <p:printer target="pnGral" />
+                    </p:commandButton>
+                </f:facet>
+            </p:toolbar>
         </h:form>
     </h:body>
 </html>

@@ -13,6 +13,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
@@ -21,6 +22,7 @@ import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.CargoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.EstudiosCursadosFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.NivelIpapFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.SituacionRevistaFacade;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TipoDocumentoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.TituloFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.util.JsfUtil;
 import com.lowagie.text.Document;
@@ -49,12 +51,34 @@ import org.primefaces.context.RequestContext;
 /**
  * Bean de respaldo para gestionar las consultas sobre Agentes capacitados
  * @author rincostante
+    Parámetros de la consulta
+
+    Datos del Agente
+
+    Programas desde los que se capacitó
+    Subprogramas desde los que se capacitó
+    AD en las que se inscribió
+    AD en las que se capacitó
+    AD aprobadas
+    Clases tomadas
+    Sedes a las que concurrió
+
+        private int progVinc;
+        private int subProgVinc;
+        private int adInscriptas;
+        private int adRecibidas;
+        private int adAprobadas;
+        private int clasesTomadas;
+        private int sedesConcurridas;
+
  */
 public class MbReqAgentes implements Serializable{
     
     /**
      * campos para los parámetros de búsqueda
      */
+    private TipoDocumento tipoDoc;
+    private int numDoc;
     private TipoOrganismo tipoOrg;
     private Organismo organismo;
     private SituacionRevista sitRevista;
@@ -70,6 +94,7 @@ public class MbReqAgentes implements Serializable{
     /**
      * listados para poblar los combos que permitirán la selección de parámetros
      */
+    private List<TipoDocumento> listTipoDoc;
     private List<TipoOrganismo> listTipoOrg;
     private List<Organismo> listOrg;
     private List<SituacionRevista> listSitRevista;
@@ -104,7 +129,19 @@ public class MbReqAgentes implements Serializable{
      */
     private List<ActividadImplementada> listAdList;
     private List<ActividadImplementada> listAdListFilter;
-    private ActividadImplementada aDSel;    
+    private ActividadImplementada aDSel;  
+    
+    /**
+     * Campos para el detalle de la AD seleccionada
+     */
+    private int progVinc;
+    private int subProgVinc;
+    private int adInscriptas;
+    private int adRecibidas;
+    private int adAprobadas;
+    private int clasesTomadas;
+    private int sedesConcurridas;
+    
     
     /**
      * Campos de uso interno
@@ -114,6 +151,8 @@ public class MbReqAgentes implements Serializable{
     /**
      * Inyección de EJB's
      */    
+    @EJB
+    private TipoDocumentoFacade tipoDocFacade;
     @EJB
     private AgenteFacade agenteFacade;     
     @EJB
@@ -140,6 +179,87 @@ public class MbReqAgentes implements Serializable{
      * @return 
      ***********************************/
     
+    public int getProgVinc() {
+        return progVinc;
+    }
+
+    public void setProgVinc(int progVinc) {
+        this.progVinc = progVinc;
+    }
+
+    public int getSubProgVinc() {
+        return subProgVinc;
+    }
+
+    public void setSubProgVinc(int subProgVinc) {
+        this.subProgVinc = subProgVinc;
+    }
+
+    public int getAdInscriptas() {
+        return adInscriptas;
+    }
+
+    public void setAdInscriptas(int adInscriptas) {
+        this.adInscriptas = adInscriptas;
+    }
+
+    public int getAdRecibidas() {
+        return adRecibidas;
+    }
+
+    public void setAdRecibidas(int adRecibidas) {
+        this.adRecibidas = adRecibidas;
+    }
+
+    public int getAdAprobadas() {
+        return adAprobadas;
+    }
+
+    public void setAdAprobadas(int adAprobadas) {
+        this.adAprobadas = adAprobadas;
+    }
+
+    public int getSedesConcurridas() {
+        return sedesConcurridas;
+    }
+
+    public void setSedesConcurridas(int sedesConcurridas) {
+        this.sedesConcurridas = sedesConcurridas;
+    }
+
+    
+    public int getClasesTomadas() {
+        return clasesTomadas;
+    }
+
+    public void setClasesTomadas(int clasesTomadas) {
+        this.clasesTomadas = clasesTomadas;
+    }
+    
+    public List<TipoDocumento> getListTipoDoc() {
+        return listTipoDoc;
+    }
+
+    public void setListTipoDoc(List<TipoDocumento> listTipoDoc) {
+        this.listTipoDoc = listTipoDoc;
+    }
+    
+    public TipoDocumento getTipoDoc() {
+        return tipoDoc;
+    }
+
+    public void setTipoDoc(TipoDocumento tipoDoc) {
+        this.tipoDoc = tipoDoc;
+    }
+
+    public int getNumDoc() {
+        return numDoc;
+    }
+
+    public void setNumDoc(int numDoc) {
+        this.numDoc = numDoc;
+    }
+
     public List<ActividadImplementada> getListAdList() {
         return listAdList;
     }
@@ -156,11 +276,11 @@ public class MbReqAgentes implements Serializable{
         this.listAdListFilter = listAdListFilter;
     }
 
-    public ActividadImplementada getaDSel() {
+    public ActividadImplementada getADSel() {
         return aDSel;
     }
 
-    public void setaDSel(ActividadImplementada aDSel) {
+    public void setADSel(ActividadImplementada aDSel) {
         this.aDSel = aDSel;
     }
 
@@ -456,6 +576,7 @@ public class MbReqAgentes implements Serializable{
      * Método para cargar los listados de los combos
      */
     public void cargarListados(){
+        listTipoDoc = tipoDocFacade.findAll();
         listTipoOrg = tipoOrgFacade.findAll();
         listSitRevista = sitRevFacade.findAll();
         listCargo = cargoFacade.findAll();
@@ -525,9 +646,30 @@ public class MbReqAgentes implements Serializable{
         inicActList();
         
         Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 800);
-        options.put("contentHeight", 600);
+        options.put("contentWidth", 1100);
+        options.put("contentHeight", 700);
         RequestContext.getCurrentInstance().openDialog("actividades/dlgActList", options, null);
+    }    
+    
+    /**
+     * Método para ver el resumen de la AD seleccionada
+     */
+    public void verAdSel(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 800);
+        RequestContext.getCurrentInstance().openDialog("dlgActView", options, null);
+    }    
+    
+    /**
+     * Método para ver el resumen de uno del Agente seleccionado
+     */
+    public void verResGralAgente(){
+        // inicializar los totales para el Agente
+        inicTotalesAgente();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 800);
+        RequestContext.getCurrentInstance().openDialog("dlgResGralAgente", options, null);
     }    
     
     
@@ -539,6 +681,8 @@ public class MbReqAgentes implements Serializable{
      * Método para resetear elementos
      */
     public void reset(){
+        tipoDoc = null;
+        numDoc = 0;
         fDespuesDe = null;
         fAntesDe = null;
         tipoOrg = null;
@@ -560,10 +704,10 @@ public class MbReqAgentes implements Serializable{
      * @param event
      */
     public void buscar(ActionEvent event){
-        if(organismo == null && sitRevista == null && cargo == null && fInicioAct == null && nivelIpap == null && estCursados == null && titulo == null && fDespuesDe == null && fAntesDe == null){
+        if(tipoDoc == null && numDoc == 0 && organismo == null && sitRevista == null && cargo == null && fInicioAct == null && nivelIpap == null && estCursados == null && titulo == null && fDespuesDe == null && fAntesDe == null){
             JsfUtil.addErrorMessage(ResourceBundle.getBundle("/Bundle").getString("ReqActividades_consultaIncompleta"));
         }else{
-            listAgentes = getFacade().getXConsulta(organismo, sitRevista, cargo, fInicioAct, nivelIpap, estCursados, titulo, esReferente, fDespuesDe, fAntesDe);    
+            listAgentes = getFacade().getXConsulta(tipoDoc, numDoc, organismo, sitRevista, cargo, fInicioAct, nivelIpap, estCursados, titulo, esReferente, fDespuesDe, fAntesDe);    
             consultado = true;
         }
     }    
@@ -623,10 +767,16 @@ public class MbReqAgentes implements Serializable{
         for(Agente ag : listAgentes){
             // por cada Agente recorro sus participaciones
             for(Participante part : ag.getParticipaciones()){
-                // leo el Programa de su AD, si no está incluido en la lista temporal de programas, lo agrego
-                if(!tempProgramas.contains(part.getActividad().getSubprograma().getPrograma())){
-                    tempProgramas.add(part.getActividad().getSubprograma().getPrograma());
+                // solo leo la participación si es activa (tiene clases)
+                if(!part.getClases().isEmpty()){
+                    // leo el Programa de su AD, si no está incluido en la lista temporal de programas, lo agrego
+                    if(part.getActividad().getSubprograma() != null){
+                        if(!tempProgramas.contains(part.getActividad().getSubprograma().getPrograma())){
+                            tempProgramas.add(part.getActividad().getSubprograma().getPrograma());
+                        }   
+                    }
                 }
+
             }
         }
         programas = tempProgramas.size();
@@ -642,9 +792,12 @@ public class MbReqAgentes implements Serializable{
         for(Agente ag : listAgentes){
             // por cada Agente recorro sus participaciones
             for(Participante part : ag.getParticipaciones()){
-                // leo el SubPrograma de su AD, si no está incluido en la lista temporal de SubProgramas, lo agrego
-                if(!tempSub.contains(part.getActividad().getSubprograma())){
-                    tempSub.add(part.getActividad().getSubprograma());
+                // solo leo la participación si es activa (tiene clases)
+                if(!part.getClases().isEmpty()){
+                    // leo el SubPrograma de su AD, si no está incluido en la lista temporal de SubProgramas, lo agrego
+                    if(!tempSub.contains(part.getActividad().getSubprograma())){
+                        tempSub.add(part.getActividad().getSubprograma());
+                    }
                 }
             }
         }
@@ -662,9 +815,12 @@ public class MbReqAgentes implements Serializable{
         for(Agente ag : listAgentes){
             // por cada Agente recorro sus participaciones
             for(Participante part : ag.getParticipaciones()){
-                // leo el SubPrograma de su AD, si no está incluido en la lista temporal de SubProgramas, lo agrego
-                if(!listADTotal.contains(part.getActividad())){
-                    listADTotal.add(part.getActividad());
+                // solo leo la participación si es activa (tiene clases)
+                if(!part.getClases().isEmpty()){
+                    // leo el SubPrograma de su AD, si no está incluido en la lista temporal de SubProgramas, lo agrego
+                    if(!listADTotal.contains(part.getActividad())){
+                        listADTotal.add(part.getActividad());
+                    } 
                 }
             }
         }
@@ -768,7 +924,73 @@ public class MbReqAgentes implements Serializable{
      * Método para inicializar el listado de Actividades Dispuestas recibidas por los Agentes seleccionados
      */   
     private void inicActList(){
+        if(listAdList == null) listAdList = new ArrayList<>();
         
+        // recorro el listado de Agentes obtenidos en la consulta general
+        for(Agente ag : listAgentes){
+            
+            // por cada agente, recorro sus participaciones
+            for(Participante part : ag.getParticipaciones()){
+                
+                // verifico si la participación, tiene al menos una clase asociada
+                if(!part.getClases().isEmpty()){
+                    
+                    // si la AD vinculada a la participación no está ingresada en el listado, la agrego
+                    if(!listAdList.contains(part.getActividad())){
+                        listAdList.add(part.getActividad());
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Método para inicializar los totales del Agente seleccionado
+     */
+    private void inicTotalesAgente(){
+        // inicializo las AD en las que se capacitó
+        List<ActividadImplementada> listAd = new ArrayList<>();
+        
+        // recorro las participaciones del agente
+        for(Participante part : current.getParticipaciones()){
+            // verifico si la participación, tiene al menos una clase asociada
+            if(!part.getClases().isEmpty()){
+                // si la AD no se encuetra en la lista temporal, la agrego
+                if(!listAd.contains(part.getActividad())){
+                    listAd.add(part.getActividad());
+                }
+            }
+        }
+        
+        if(!listAd.isEmpty()){
+            adRecibidas = listAd.size();
+        }else{
+            adRecibidas = 0;
+        }
+        
+        // inicializo Programas y Subprogramas vinculados
+        List<Programa> listProg = new ArrayList<>();
+        List<SubPrograma> listSubp = new ArrayList<>();
+        
+        // recorro el listado de AD, si no está vacío
+        if(!listAd.isEmpty()){
+            for(ActividadImplementada ad : listAd){
+                // si el SubPrograma no se encuentra en la lista temporal, lo agrego
+                if(!listSubp.contains(ad.getSubprograma())){
+                    listSubp.add(ad.getSubprograma());
+                }
+                
+                // si el Programa no se encuentra en la lista temporal, lo agrego
+                if(!listProg.contains(ad.getSubprograma().getPrograma())){
+                    listProg.add(ad.getSubprograma().getPrograma());
+                }
+            }
+            subProgVinc = listSubp.size();
+            progVinc = listProg.size();
+        }else{
+            subProgVinc = 0;
+            progVinc = 0;
+        }
     }
             
     
