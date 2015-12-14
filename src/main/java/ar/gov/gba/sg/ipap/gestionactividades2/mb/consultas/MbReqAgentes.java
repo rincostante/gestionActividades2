@@ -5,16 +5,19 @@ package ar.gov.gba.sg.ipap.gestionactividades2.mb.consultas;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.ActividadImplementada;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Organismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Programa;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.Sede;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
+import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.SituacionRevista;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.TipoDocumento;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Titulo;
+import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.ActividadImplementadaFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.OrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actividades.TipoOrganismoFacade;
 import ar.gov.gba.sg.ipap.gestionactividades2.facades.actores.AgenteFacade;
@@ -169,6 +172,8 @@ public class MbReqAgentes implements Serializable{
     private EstudiosCursadosFacade estCurFacade;
     @EJB
     private TituloFacade titulosFacade;
+    @EJB
+    private ActividadImplementadaFacade adFacade;
     
     public MbReqAgentes() {
         
@@ -536,6 +541,17 @@ public class MbReqAgentes implements Serializable{
         return getFacade().find(id);
     }     
     
+    /**
+     * Método para gestionar la Actividad Dispuesta seleccionada
+     * @return
+     */
+    public Agente getSelected() {
+        if (current == null) {
+            current = new Agente();
+        }
+        return current;
+    }      
+    
     
     /******************************
      * Métodos de inicialización **
@@ -664,6 +680,8 @@ public class MbReqAgentes implements Serializable{
      * Método para ver el resumen de uno del Agente seleccionado
      */
     public void verResGralAgente(){
+        resetTotalesAgente();
+        
         // inicializar los totales para el Agente
         inicTotalesAgente();
         
@@ -742,6 +760,19 @@ public class MbReqAgentes implements Serializable{
             mEstCur.clear();
         }
     } 
+    
+    /**
+     * Método para resetear los totales por Agente
+     */
+    private void resetTotalesAgente(){
+        progVinc = 0;
+        subProgVinc = 0;
+        adInscriptas = 0;
+        adRecibidas = 0;
+        adAprobadas = 0;
+        clasesTomadas = 0;
+        sedesConcurridas = 0;
+    }
     
     /**
      * Método para inicializar los totales del resumen general
@@ -950,6 +981,14 @@ public class MbReqAgentes implements Serializable{
     private void inicTotalesAgente(){
         // inicializo las AD en las que se capacitó
         List<ActividadImplementada> listAd = new ArrayList<>();
+        int iClases;
+        
+        // inicilizo las variables para las aprobadas
+        double porcAsist;
+        double dPorcAsistAD;
+        
+        // inicializo las variables para las sedes
+        List<Sede> listSedes = new ArrayList<>();
         
         // recorro las participaciones del agente
         for(Participante part : current.getParticipaciones()){
@@ -958,14 +997,39 @@ public class MbReqAgentes implements Serializable{
                 // si la AD no se encuetra en la lista temporal, la agrego
                 if(!listAd.contains(part.getActividad())){
                     listAd.add(part.getActividad());
+                    
+                    // actualizo la cantidad de AD recibidas
+                    adRecibidas += 1;
+                    
+                    // leo la cantidad de clases tomadas por el Agente para la AD
+                    iClases = adFacade.getClasesXInscripto(part.getActividad(), part);
+                    clasesTomadas += iClases;
+                    
+                    // actualizo la cantidad de sedes
+                    if(!listSedes.contains(part.getActividad().getSede())){
+                        listSedes.add(part.getActividad().getSede());
+                    }
+                    
+                    if(part.getActividad().getPorcAsistencia() > 0){
+                        porcAsist = (double)iClases / part.getActividad().getClases().size();
+                        dPorcAsistAD = (double)part.getActividad().getPorcAsistencia() / 100;
+                        if(porcAsist >= (dPorcAsistAD)){
+                            adAprobadas += 1;
+                        } 
+                    }else{
+                        // si no tiene porcentaje de asistencia la doy por aprobada
+                        adAprobadas += 1;
+                    }
                 }
             }
         }
         
+        if(!listSedes.isEmpty()){
+            sedesConcurridas = listSedes.size();
+        }
+        
         if(!listAd.isEmpty()){
             adRecibidas = listAd.size();
-        }else{
-            adRecibidas = 0;
         }
         
         // inicializo Programas y Subprogramas vinculados

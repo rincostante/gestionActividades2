@@ -1,12 +1,116 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Resumen general del Agente seleccionado</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
     </h:head>
+     
     <h:body>
-        Hello from Facelets
+        <h:form id="frmResAgenteSel">
+            <h:panelGroup id="pnGral" >
+                <p:panel id="pnParam" header="#{bundle.ReqAgentesResumenGral_param}" toggleable="true" >
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nro Documento: " rendered="#{mbReqAgentes.tipoDoc.id> 0}"/>
+                        <h:outputText value="#{mbReqAgentes.numDoc}" rendered="#{mbReqAgentes.tipoDoc.id > 0}"/>  
+                        
+                        <h:outputLabel value="Agente: " rendered="#{mbReqAgentes.tipoDoc.id> 0}"/>
+                        <h:outputText value="#{mbReqAgentes.listAgentes.get(0).apYNom}" rendered="#{mbReqAgentes.tipoDoc.id > 0}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramTipoOrg}: " rendered="#{mbReqAgentes.tipoOrg.id > 0}"/>
+                        <h:outputText value="#{mbReqAgentes.tipoOrg.nombre}" rendered="#{mbReqAgentes.tipoOrg.id > 0}"/>   
+
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramOrg}: " rendered="#{mbReqAgentes.organismo.id > 0}"/>
+                        <h:outputText value="#{mbReqAgentes.organismo.nombre}" rendered="#{mbReqAgentes.organismo.id > 0}"/>   
+
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramSitRevista}: " rendered="#{mbReqAgentes.sitRevista.id > 0}"/>
+                        <h:outputText value="#{mbReqAgentes.sitRevista.nombre}" rendered="#{mbReqAgentes.sitRevista.id > 0}"/>  
+                    
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramCargo}: " rendered="#{mbReqAgentes.cargo.id > 0}"/>
+                        <h:outputText value="#{mbReqAgentes.cargo.nombre}" rendered="#{mbReqAgentes.cargo.id > 0}"/>  
+                    
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramFechaInicAct}: " />
+                        <p:calendar id="fechaInicioAct" value="#{mbReqAgentes.fInicioAct}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                    
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramNivelIpap}: " rendered="#{mbReqAgentes.nivelIpap.id > 0}"/>
+                        <h:outputText value="#{mbReqAgentes.nivelIpap.nombre}" rendered="#{mbReqAgentes.nivelIpap.id > 0}"/> 
+                    
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramEstCur}: " rendered="#{mbReqAgentes.estCursados.id > 0}"/>
+                        <h:outputText value="#{mbReqAgentes.estCursados.nombre}" rendered="#{mbReqAgentes.estCursados.id > 0}"/> 
+                        
+                        <h:outputLabel value="#{bundle.ReqAgentesResumenGral_paramTitulo}: " rendered="#{mbReqAgentes.titulo.id > 0}"/>
+                        <h:outputText value="#{mbReqAgentes.titulo.nombre}" rendered="#{mbReqAgentes.titulo.id > 0}"/>                         
+                        
+                        <h:outputLabel value="#{bundle.ReqActividades_fechaInicio}: " />
+                        <p:calendar id="fechaInicio" value="#{mbReqAgentes.fDespuesDe}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                        
+                        <h:outputLabel value="#{bundle.ReqActividades_fechafin}: " />
+                        <p:calendar id="fechaFin" value="#{mbReqAgentes.fAntesDe}" 
+                                    pattern="dd/MM/yyyy HH:mm" 
+                                    disabled="true"
+                                    locale="es"/>
+                    </h:panelGrid>
+                </p:panel>
+                
+                <p:panel id="pnResumen" header="Resumen de los totales de las capacitaciones del Agente seleccionado" >
+                    <h:panelGrid columns="2">
+                        <h:outputLabel value="Nombre: " />
+                        <h:outputText value="#{mbReqAgentes.selected.apYNom}" />  
+                        
+                        <h:outputLabel value="Documento: " />
+                        <h:outputText value="#{mbReqAgentes.selected.documento}" />  
+                        
+                        <h:outputLabel value="Cargo: " />
+                        <h:outputText value="#{mbReqAgentes.selected.cargo.nombre}" />  
+                        
+                        <h:outputLabel value="Organismo: " />
+                        <h:outputText value="#{mbReqAgentes.selected.organismo.nombre}" /> 
+                        
+                        <h:outputLabel value="Programas vinculados: " />
+                        <h:outputText value="#{mbReqAgentes.progVinc}" /> 
+                        
+                        <h:outputLabel value="SubProgramas vinculados: " />
+                        <h:outputText value="#{mbReqAgentes.subProgVinc}" /> 
+                        
+                        <h:outputLabel value="Actividades Dispuestas en las que se inscribió: " />
+                        <h:outputText value="#{mbReqAgentes.selected.participaciones.size()}" /> 
+                        
+                        <h:outputLabel value="Actividades Dispuestas con las que se capacitó: " />
+                        <h:outputText value="#{mbReqAgentes.adRecibidas}" />
+                        
+                        <h:outputLabel value="Actividades Dispuestas que aprobó: " />
+                        <h:outputText value="#{mbReqAgentes.adAprobadas}" />
+                        
+                        <h:outputLabel value="Cantidad de clases tomadas: " />
+                        <h:outputText value="#{mbReqAgentes.clasesTomadas}" />
+                        
+                        <h:outputLabel value="Cantidad de sedes a las que concurrió: " />
+                        <h:outputText value="#{mbReqAgentes.sedesConcurridas}" /> 
+                        
+                    </h:panelGrid>
+                </p:panel>             
+            </h:panelGroup>
+            <p:toolbar>
+                <f:facet name="left">
+                    <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" >
+                        <p:printer target="pnGral" />
+                    </p:commandButton>
+                </f:facet>
+            </p:toolbar>
+        </h:form>
     </h:body>
 </html>
 
