@@ -10,7 +10,6 @@ import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.SubPrograma;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actividades.TipoOrganismo;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Agente;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Cargo;
-import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Clase;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.EstudiosCursados;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.NivelIpap;
 import ar.gov.gba.sg.ipap.gestionactividades2.entities.actores.Participante;
@@ -54,25 +53,9 @@ import org.primefaces.context.RequestContext;
 /**
  * Bean de respaldo para gestionar las consultas sobre Agentes capacitados
  * @author rincostante
-    Parámetros de la consulta
 
-    Datos del Agente
-
-    Programas desde los que se capacitó
-    Subprogramas desde los que se capacitó
-    AD en las que se inscribió
-    AD en las que se capacitó
-    AD aprobadas
-    Clases tomadas
-    Sedes a las que concurrió
-
-        private int progVinc;
-        private int subProgVinc;
-        private int adInscriptas;
-        private int adRecibidas;
-        private int adAprobadas;
-        private int clasesTomadas;
-        private int sedesConcurridas;
+ * Continuar con el listado de AD recibidas del Agente seleccionado
+ * Luego un detalle de la AD par ael Agente
 
  */
 public class MbReqAgentes implements Serializable{
