@@ -180,7 +180,7 @@
                                 <p:commandButton icon="ui-icon-zoomin" action="#{mbReqAgentes.verResGralAgente}" title="Ver Resumen">
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-lightbulb" action="#" update="messages" title="Ver Actividades recibidas" >
+                                <p:commandButton icon="ui-icon-lightbulb" action="#{mbReqAgentes.verAdAgenteSeleccionado}" update="messages" title="Ver Actividades recibidas" >
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>  
                                 <p:commandButton icon="ui-icon-suitcase" action="#" title="Ver Programas vinculados">

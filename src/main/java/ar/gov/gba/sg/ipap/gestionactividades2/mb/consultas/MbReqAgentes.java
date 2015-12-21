@@ -673,6 +673,16 @@ public class MbReqAgentes implements Serializable{
         RequestContext.getCurrentInstance().openDialog("dlgResGralAgente", options, null);
     }    
     
+    /**
+     * Método para ver el listado de las AD recibidas por el Agente seleccionado
+     */
+    public void verAdAgenteSeleccionado(){
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 800);
+        RequestContext.getCurrentInstance().openDialog("actividades/dlgActList", options, null);
+    }
+    
     
     /*************************
      * Métodos de operación **
