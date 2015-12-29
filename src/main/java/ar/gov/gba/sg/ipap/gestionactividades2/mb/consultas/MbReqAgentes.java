@@ -118,7 +118,7 @@ public class MbReqAgentes implements Serializable{
     private ActividadImplementada aDSel;  
     
     /**
-     * Campos para el detalle de la AD seleccionada
+     * Campos para el detalle del Agente seleccionado
      */
     private int progVinc;
     private int subProgVinc;
@@ -128,6 +128,18 @@ public class MbReqAgentes implements Serializable{
     private int clasesTomadas;
     private int sedesConcurridas;
     
+    /**
+     * Campos para las actividades recibidas por el Agente seleccionado
+     */
+    private List<ActividadImplementada> listAdXAgente;
+    private List<ActividadImplementada> listAdXAgenteFilter;
+    
+    /**
+     * Campos para las Sedes transitadas por el Agente seleccionado
+     */
+    private List<Sede> listSedesXAgente;
+    private List<Sede> listSedesXAgenteFilter;
+    private Sede sedeSelected;
     
     /**
      * Campos de uso interno
@@ -167,6 +179,46 @@ public class MbReqAgentes implements Serializable{
      * @return 
      ***********************************/
     
+    public List<Sede> getListSedesXAgente() {
+        return listSedesXAgente;
+    }
+
+    public void setListSedesXAgente(List<Sede> listSedesXAgente) {
+        this.listSedesXAgente = listSedesXAgente;
+    }
+
+    public List<Sede> getListSedesXAgenteFilter() {
+        return listSedesXAgenteFilter;
+    }
+
+    public void setListSedesXAgenteFilter(List<Sede> listSedesXAgenteFilter) {
+        this.listSedesXAgenteFilter = listSedesXAgenteFilter;
+    }
+
+    public Sede getSedeSelected() {
+        return sedeSelected;
+    }
+
+    public void setSedeSelected(Sede sedeSelected) {
+        this.sedeSelected = sedeSelected;
+    }
+    
+    public List<ActividadImplementada> getListAdXAgente() {
+        return listAdXAgente;
+    }
+
+    public void setListAdXAgente(List<ActividadImplementada> listAdXAgente) {
+        this.listAdXAgente = listAdXAgente;
+    }
+
+    public List<ActividadImplementada> getListAdXAgenteFilter() {
+        return listAdXAgenteFilter;
+    }
+
+    public void setListAdXAgenteFilter(List<ActividadImplementada> listAdXAgenteFilter) {
+        this.listAdXAgenteFilter = listAdXAgenteFilter;
+    }
+
     public int getProgVinc() {
         return progVinc;
     }
@@ -660,6 +712,15 @@ public class MbReqAgentes implements Serializable{
     }    
     
     /**
+     * Método para ver el resumen de la AD seleccionada del Agente seleccionado
+     */
+    public void verAdSelXAgente(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 800);
+        RequestContext.getCurrentInstance().openDialog("dlgActView", options, null);
+    }      
+    
+    /**
      * Método para ver el resumen de uno del Agente seleccionado
      */
     public void verResGralAgente(){
@@ -678,9 +739,44 @@ public class MbReqAgentes implements Serializable{
      */
     public void verAdAgenteSeleccionado(){
         
+        inicAdXAgente();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 1150);
+        options.put("contentHeight", 700);
+        RequestContext.getCurrentInstance().openDialog("actividades/dlgActList", options, null);
+    }
+    
+    /**
+     * Método para ver el listado de Sedes transitadas por el Agente seleccionado
+     */
+    public void verSedesAgenteSeleccionado(){
+        inicSedesXAgente();
+        
         Map<String,Object> options = new HashMap<>();
         options.put("contentWidth", 800);
-        RequestContext.getCurrentInstance().openDialog("actividades/dlgActList", options, null);
+        options.put("contentHeight", 600);
+        RequestContext.getCurrentInstance().openDialog("sedes/dlgSedesList", options, null);
+    }
+    
+    /**
+     * Método para ver el resumen de la Sede seleccionada del Agente seleccionado
+     */
+    public void verSedeSel(){
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 700);
+        RequestContext.getCurrentInstance().openDialog("dlgSedeView", options, null);
+    }
+    
+    /**
+     * Método para ver las AD de la Sede seleccionada
+     */
+    public void verADXSede(){
+        inicADXSede();
+        
+        Map<String,Object> options = new HashMap<>();
+        options.put("contentWidth", 600);
+        RequestContext.getCurrentInstance().openDialog("dlgADXSede", options, null);
     }
     
     
@@ -1048,6 +1144,68 @@ public class MbReqAgentes implements Serializable{
             subProgVinc = 0;
             progVinc = 0;
         }
+    }
+    
+    /**
+     * Método para inicializar el listado de AD del Agente seleccionado
+     */
+    private void inicAdXAgente(){
+        if(aDSel != null) aDSel = null; 
+        if(listAdXAgente != null){
+            listAdXAgente.clear();
+        }else{
+            listAdXAgente = new ArrayList<>();
+        }
+        if(listAdXAgenteFilter != null) listAdXAgenteFilter = null;
+        
+        // recorro las participaciones del agente
+        for(Participante part : current.getParticipaciones()){
+            // verifico si la participación, tiene al menos una clase asociada
+            if(!part.getClases().isEmpty()){
+                // si la AD no se encuetra en el listado la agrego
+                if(!listAdXAgente.contains(part.getActividad())){
+                    listAdXAgente.add(part.getActividad());
+                }
+            }
+        }
+    }
+    
+    /**
+     * Método para inicializar el listado de Sedes del Agente seleccionado
+     */
+    private void inicSedesXAgente(){
+        if(sedeSelected != null) sedeSelected = new Sede(); 
+        if(listSedesXAgente != null){
+            listSedesXAgente.clear();
+        }else{
+            listSedesXAgente = new ArrayList<>();
+        }
+        if(listSedesXAgenteFilter != null) listSedesXAgenteFilter = null;
+        
+        // recorro las participaciones del agente
+        for(Participante part : current.getParticipaciones()){
+            // verifico si la participación, tiene al menos una clase asociada
+            if(!part.getClases().isEmpty()){
+                // si la Sede de la AD no se encuetra en el listado la agrego
+                if(!listSedesXAgente.contains(part.getActividad().getSede())){
+                    listSedesXAgente.add(part.getActividad().getSede());
+                }
+            }
+        }        
+    }
+    
+    /**
+     * Método para inicializar las AD vinculadas a la Sede seleccionada
+     */
+    private void inicADXSede(){
+        if(aDSel != null) aDSel = new ActividadImplementada(); 
+        if(listAdList != null){
+            listAdList.clear();
+        }else{
+            listAdList = new ArrayList<>();
+        }
+        if(listAdListFilter != null) listAdListFilter = null;
+        listAdList = sedeSelected.getActividades();
     }
             
     

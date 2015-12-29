@@ -175,7 +175,7 @@
                                 <p:outputLabel value="#{e.antigAnios} años" rendered="#{e.antigAnios > 0}"/>
                             </p:column>
 
-                            <p:column headerText="Ampliar" style="width:130px" exportable="false">
+                            <p:column headerText="Ampliar" style="width:100px" exportable="false">
                                 <p:growl id="messages" showDetail="true" />
                                 <p:commandButton icon="ui-icon-zoomin" action="#{mbReqAgentes.verResGralAgente}" title="Ver Resumen">
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
@@ -183,10 +183,7 @@
                                 <p:commandButton icon="ui-icon-lightbulb" action="#{mbReqAgentes.verAdAgenteSeleccionado}" update="messages" title="Ver Actividades recibidas" >
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>  
-                                <p:commandButton icon="ui-icon-suitcase" action="#" title="Ver Programas vinculados">
-                                    <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
-                                </p:commandButton>
-                                <p:commandButton icon="ui-icon-home" action="#" update="messages" title="Ver Sedes asistidas" >
+                                <p:commandButton icon="ui-icon-home" action="#{mbReqAgentes.verSedesAgenteSeleccionado}" update="messages" title="Ver Sedes asistidas" >
                                     <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.current}" />
                                 </p:commandButton>                     
                             </p:column>                

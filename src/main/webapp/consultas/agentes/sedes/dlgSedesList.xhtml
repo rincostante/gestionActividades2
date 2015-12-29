@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Listado de Sedes transitadas por el Agente en sus Actividades recibidas</title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+        </style>
+    </h:head>
+     
+    <h:body>
+        <h:form id="frmSedes">
+            <p:dataTable value="#{mbReqAgentes.listSedesXAgente}" var="e" id="sedeList" rows="5"
+                         filteredValue="#{mbReqAgentes.listSedesXAgenteFilter}"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+                <f:facet name="header">
+                    <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
+                    <p:commandButton icon="ui-icon-refresh" value="Listar" update="sedeList" style="margin-left: 10px"/>
+                    
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
+                        <p:dataExporter type="xls" target="actImplList" fileName="ListadoSedesAgenteSeleccionado" />
+                    </h:commandLink>   
+                    <h:commandLink>
+                        <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
+                        <p:dataExporter type="pdf" target="actImplList" fileName="ListadoSedesAgenteSeleccionado" preProcessor="#{mbReqAgentes.preProcessPDF}"/>
+                    </h:commandLink>  
+                    
+                    <p:columnToggler datasource="sedeList" trigger="toggler" />
+                </f:facet>
+                <p:column headerText="#{bundle.SedeLabel_nombre}" sortBy="#{e.nombre}" filterBy="#{e.nombre}" filterMatchMode="contains">
+                    <p:outputLabel value="#{e.nombre}"/>
+                </p:column>   
+                <p:column headerText="Amp." style="width:35px" exportable="false">
+                    <p:growl id="messages" showDetail="true" />
+                    <p:commandButton icon="ui-icon-zoomin" action="#{mbReqAgentes.verSedeSel}" title="Ver Resumen">
+                        <f:setPropertyActionListener value="#{e}" target="#{mbReqAgentes.sedeSelected}" />
+                    </p:commandButton>                 
+                </p:column>               
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>

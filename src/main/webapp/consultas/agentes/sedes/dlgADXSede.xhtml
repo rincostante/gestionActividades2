@@ -13,8 +13,8 @@
     </h:head>
     <h:body>
         <h:form id="frmActImp">
-            <p:dataTable var="actImp" value="#{mbSede.listDMActImp}" style="width: 1100px"
-                         filteredValue="#{mbSede.listActImpFilter}"
+            <p:dataTable var="actImp" value="#{mbReqAgentes.listAdList}"
+                         filteredValue="#{mbReqAgentes.listAdListFilter}"
 			 rows="5" 
                          paginator="true" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
@@ -28,15 +28,8 @@
                 <p:column headerText="Fecha de fin" sortBy="#{actImp.strFechaFinVig}" filterBy="#{actImp.strFechaFinVig}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.strFechaFinVig}" />
                 </p:column>
-
-                <p:column headerText="Sede" sortBy="#{actImp.sede.nombre}" filterBy="#{actImp.sede.nombre}" filterMatchMode="contains">
-                    <h:outputText value="#{actImp.sede.nombre}" />
-                </p:column>
                 <p:column headerText="Coordinador" sortBy="#{actImp.coordinador.apYNom}" filterBy="#{actImp.coordinador.apYNom}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.coordinador.apYNom}" />
-                </p:column>
-                <p:column headerText="Resolución" sortBy="#{actImp.resolucion.resolucion}" filterBy="#{actImp.resolucion.resolucion}" filterMatchMode="contains">
-                    <h:outputText value="#{actImp.resolucion.resolucion} - #{actImp.resolucion.anio}" />
                 </p:column>
                 <p:column headerText="Haibilitada" sortBy="#{actImp.admin.habilitado}" filterBy="#{actImp.admin.habilitado}" filterMatchMode="contains">
                     <h:outputText value="#{actImp.admin.habilitado}" />

@@ -15,8 +15,8 @@
      
     <h:body>
         <h:form id="frmAd">
-            <p:dataTable id="actImplList" value="#{mbReqAgentes.listAdList}" var="e" rows="5"  
-                         filteredValue="#{mbReqAgentes.listAdListFilter}" 
+            <p:dataTable id="actImplList" value="#{mbReqAgentes.listAdXAgente}" var="e" rows="5"  
+                         filteredValue="#{mbReqAgentes.listAdXAgenteFilter}" 
                          paginator="true"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="5,10,15">
@@ -26,11 +26,11 @@
 
                     <h:commandLink>
                         <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>
-                        <p:dataExporter type="xls" target="actImplList" fileName="ListadoAdRecibidasPorConsultaAg" />
+                        <p:dataExporter type="xls" target="actImplList" fileName="ListadoAdXAgenteSeleccionado" />
                     </h:commandLink>   
                     <h:commandLink>
                         <p:graphicImage value="/resources/img/icon_pdf.gif" width="16"/>
-                        <p:dataExporter type="pdf" target="actImplList" fileName="ListadoAdRecibidasPorConsultaAg" preProcessor="#{mbReqAgentes.preProcessPDF}"/>
+                        <p:dataExporter type="pdf" target="actImplList" fileName="ListadoAdXAgenteSeleccionado" preProcessor="#{mbReqAgentes.preProcessPDF}"/>
                     </h:commandLink>  
 
                     <p:columnToggler datasource="actImplList" trigger="toggler" />
