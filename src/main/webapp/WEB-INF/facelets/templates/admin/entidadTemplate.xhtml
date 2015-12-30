@@ -56,8 +56,7 @@
                         
                         <p:submenu label="Consultas" rendered="#{mbLogin.usLogeado.rol.nombre != 'Coordinador'}">
                             <p:menuitem value="Actividades realizadas" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizReqActividades}/query.xhtml"/>
-                            <p:menuitem value="Agentes capacitados" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizReqAgentes}/query.xhtml"/>    
-                            <p:menuitem value="Agentes capacitadores" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizReqDocentes}/query.xhtml"/>    
+                            <p:menuitem value="Agentes capacitados" url="#{bundle.Servidor}#{bundle.RutaAplicacion}/#{bundle.RaizReqAgentes}/query.xhtml"/>      
                         </p:submenu> 
                         
                         <p:submenu label="#{mbLogin.usLogeado.apYNom} | #{mbLogin.usLogeado.rol.nombre}" >

@@ -15,8 +15,8 @@
      
     <h:body>
         <h:form id="frmAd">
-            <p:dataTable id="actImplList" value="#{mbReqAgentes.listAdXAgente}" var="e" rows="5"  
-                         filteredValue="#{mbReqAgentes.listAdXAgenteFilter}" 
+            <p:dataTable id="actImplList" value="#{mbReqAgentes.listAdList}" var="e" rows="5"  
+                         filteredValue="#{mbReqAgentes.listAdListFilter}" 
                          paginator="true"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="5,10,15">

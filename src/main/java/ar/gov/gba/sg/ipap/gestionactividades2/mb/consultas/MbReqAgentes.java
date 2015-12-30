@@ -178,7 +178,7 @@ public class MbReqAgentes implements Serializable{
      * métodos de acceso a los campos **
      * @return 
      ***********************************/
-    
+
     public List<Sede> getListSedesXAgente() {
         return listSedesXAgente;
     }
@@ -754,7 +754,7 @@ public class MbReqAgentes implements Serializable{
         inicSedesXAgente();
         
         Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 800);
+        options.put("contentWidth", 600);
         options.put("contentHeight", 600);
         RequestContext.getCurrentInstance().openDialog("sedes/dlgSedesList", options, null);
     }
@@ -764,21 +764,10 @@ public class MbReqAgentes implements Serializable{
      */
     public void verSedeSel(){
         Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 700);
+        options.put("contentWidth", 500);
         RequestContext.getCurrentInstance().openDialog("dlgSedeView", options, null);
     }
-    
-    /**
-     * Método para ver las AD de la Sede seleccionada
-     */
-    public void verADXSede(){
-        inicADXSede();
-        
-        Map<String,Object> options = new HashMap<>();
-        options.put("contentWidth", 600);
-        RequestContext.getCurrentInstance().openDialog("dlgADXSede", options, null);
-    }
-    
+
     
     /*************************
      * Métodos de operación **
@@ -1151,20 +1140,20 @@ public class MbReqAgentes implements Serializable{
      */
     private void inicAdXAgente(){
         if(aDSel != null) aDSel = null; 
-        if(listAdXAgente != null){
-            listAdXAgente.clear();
+        if(listAdList != null){
+            listAdList.clear();
         }else{
-            listAdXAgente = new ArrayList<>();
+            listAdList = new ArrayList<>();
         }
-        if(listAdXAgenteFilter != null) listAdXAgenteFilter = null;
+        if(listAdListFilter != null) listAdListFilter = null;
         
         // recorro las participaciones del agente
         for(Participante part : current.getParticipaciones()){
             // verifico si la participación, tiene al menos una clase asociada
             if(!part.getClases().isEmpty()){
                 // si la AD no se encuetra en el listado la agrego
-                if(!listAdXAgente.contains(part.getActividad())){
-                    listAdXAgente.add(part.getActividad());
+                if(!listAdList.contains(part.getActividad())){
+                    listAdList.add(part.getActividad());
                 }
             }
         }
@@ -1192,20 +1181,6 @@ public class MbReqAgentes implements Serializable{
                 }
             }
         }        
-    }
-    
-    /**
-     * Método para inicializar las AD vinculadas a la Sede seleccionada
-     */
-    private void inicADXSede(){
-        if(aDSel != null) aDSel = new ActividadImplementada(); 
-        if(listAdList != null){
-            listAdList.clear();
-        }else{
-            listAdList = new ArrayList<>();
-        }
-        if(listAdListFilter != null) listAdListFilter = null;
-        listAdList = sedeSelected.getActividades();
     }
             
     

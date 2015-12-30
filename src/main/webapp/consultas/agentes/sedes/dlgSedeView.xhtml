@@ -71,10 +71,7 @@
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.SedeLabel_nombre}"/>
                         <h:outputText value="#{mbReqAgentes.sedeSelected.nombre}" title="#{bundle.SedeTitle_nombre}"/>  
-                        
-                        <h:outputLabel value="#{bundle.SedeLabel_actividades}" />
-                        <p:commandButton value="Ver" icon="ui-icon-extlink"  actionListener="#{mbReqAgentes.verADXSede}" />
-                        
+
                         <h:outputLabel value="#{bundle.SedeLabel_fechaAlta}"/>
                         <p:calendar id="fechaAlta" value="#{mbReqAgentes.sedeSelected.admin.fechaAlta}" 
                                     pattern="dd/MM/yyyy HH:mm" 
