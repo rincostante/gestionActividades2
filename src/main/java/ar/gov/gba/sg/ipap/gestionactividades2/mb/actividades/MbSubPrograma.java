@@ -412,8 +412,13 @@ public class MbSubPrograma implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectHab(){
-        buscarEntreFechas();
-        return "list";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "list";
+        }
     }
     
     /**
@@ -421,8 +426,13 @@ public class MbSubPrograma implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectVenc(){
-        buscarEntreFechas();
-        return "listVenc";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "listVenc";
+        }
     }    
     
     /**
@@ -430,8 +440,13 @@ public class MbSubPrograma implements Serializable{
      * @return 
      */
     public String prepareSelectDes(){
-        buscarEntreFechas();
-        return "listDes";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "listDes";
+        }
     }     
     
     
@@ -656,14 +671,25 @@ public class MbSubPrograma implements Serializable{
     private void buscarEntreFechas(){
         List<SubPrograma> campos = new ArrayList();
         Iterator itRows = items.iterator();
-        
+
         // recorro el dadamodel
-        while(itRows.hasNext()){
+        while(itRows.hasNext()) {
             SubPrograma sub = (SubPrograma)itRows.next();
-            if(sub.getFechaFinVigencia().after(fDespuesDe) && sub.getFechaFinVigencia().before(fAntesDe)){
-                campos.add(sub);
-            }          
-        }        
+            if(fDespuesDe != null && fAntesDe != null){
+                if(sub.getFechaFinVigencia().after(fDespuesDe) && sub.getFechaFinVigencia().before(fAntesDe)){
+                    campos.add(sub);
+                }
+            }else if(fDespuesDe == null && fAntesDe != null){
+                if(sub.getFechaFinVigencia().before(fAntesDe)){
+                    campos.add(sub);
+                }
+            }else if(fDespuesDe != null && fAntesDe == null){
+                if(sub.getFechaFinVigencia().after(fDespuesDe)){
+                    campos.add(sub);
+                }
+            }
+        }                
+
         items = null;
         items = new ListDataModel(campos); 
     }         

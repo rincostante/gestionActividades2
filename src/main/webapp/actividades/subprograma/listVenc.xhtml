@@ -37,7 +37,7 @@
                             </p:calendar>
                         </h:panelGrid>
                         <h:panelGrid columns="2"> 
-                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de vigencia" action="#{mbSubPrograma.prepareSelectHab}" ajax="false"/> 
+                            <p:commandButton icon="ui-icon-search" value="Búsqueda por fecha fin de vigencia" action="#{mbSubPrograma.prepareSelectVenc}" ajax="false"/> 
                             <p:commandButton icon="ui-icon-close" value="Limpiar" action="#{mbSubPrograma.resetFechas}">
                                 <p:ajax update="fDespDe" resetValues="true" />
                                 <p:ajax update="fAntesDe" resetValues="true" />
@@ -54,7 +54,7 @@
                     <f:facet name="header">
                         Listado de #{bundle.SubProgramaListado}
                         <p:commandButton id="toggler" type="button" value="Columnas" icon="ui-icon-calculator" style="margin-left: 10px" />
-                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSubPrograma.prepareList}" update="subProgList" style="margin-left: 10px"/>
+                        <p:commandButton icon="ui-icon-refresh" value="Listar" action="#{mbSubPrograma.prepareListVenc}" update="subProgList" style="margin-left: 10px"/>
                         
                         <h:commandLink>
                             <p:graphicImage value="/resources/img/icono_excel.gif" width="16"/>

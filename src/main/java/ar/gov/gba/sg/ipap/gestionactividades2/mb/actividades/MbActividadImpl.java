@@ -1128,8 +1128,13 @@ public class MbActividadImpl implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectHab(){
-        buscarEntreFechas();
-        return "list";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "list";
+        }
     }
     
     /**
@@ -1137,8 +1142,13 @@ public class MbActividadImpl implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectFin(){
-        buscarEntreFechas();
-        return "listFin";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "listFin";
+        }
     }    
     
     /**
@@ -1146,8 +1156,13 @@ public class MbActividadImpl implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectSusp(){
-        buscarEntreFechas();
-        return "listSusp";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "listSusp";
+        }
     }        
     
     /**
@@ -1155,8 +1170,13 @@ public class MbActividadImpl implements Serializable{
      * @return 
      */
     public String prepareSelectDes(){
-        buscarEntreFechas();
-        return "listDes";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "listDes";
+        }
     }     
     
 
@@ -2790,8 +2810,18 @@ public class MbActividadImpl implements Serializable{
     private void buscarEntreFechas(){
         List<ActividadImplementada> actImpls = new ArrayList();
         for (ActividadImplementada actImp : listado) {
-            if(actImp.getFechaInicio().after(fDespuesDe) && actImp.getFechaInicio().before(fAntesDe)){
-                actImpls.add(actImp);
+            if(fDespuesDe != null && fAntesDe != null){
+                if(actImp.getFechaInicio().after(fDespuesDe) && actImp.getFechaInicio().before(fAntesDe)){
+                    actImpls.add(actImp);
+                }
+            }else if(fDespuesDe == null && fAntesDe != null){
+                if(actImp.getFechaInicio().before(fAntesDe)){
+                    actImpls.add(actImp);
+                }
+            }else if(fDespuesDe != null && fAntesDe == null){
+                if(actImp.getFechaInicio().after(fDespuesDe)){
+                    actImpls.add(actImp);
+                }
             }
         }        
         listado = actImpls; 

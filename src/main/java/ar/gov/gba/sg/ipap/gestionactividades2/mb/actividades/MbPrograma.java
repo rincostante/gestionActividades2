@@ -352,8 +352,13 @@ public class MbPrograma implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectHab(){
-        buscarEntreFechas();
-        return "list";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "list";
+        }
     }
     
     /**
@@ -361,8 +366,13 @@ public class MbPrograma implements Serializable{
      * @return la ruta a la vista que muestra los resultados de la consulta en forma de listado
      */
     public String prepareSelectVenc(){
-        buscarEntreFechas();
-        return "listVenc";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "listVenc";
+        }
     }    
     
     /**
@@ -370,8 +380,13 @@ public class MbPrograma implements Serializable{
      * @return 
      */
     public String prepareSelectDes(){
-        buscarEntreFechas();
-        return "listDes";
+        if(fAntesDe == null && fDespuesDe == null){
+            JsfUtil.addErrorMessage("Para hacer una búsqueda por fechas, debe completarse alguno de los dos campos.");
+            return null;
+        }else{
+            buscarEntreFechas();
+            return "listDes";
+        }
     }     
     
     
@@ -589,12 +604,23 @@ public class MbPrograma implements Serializable{
         Iterator itRows = items.iterator();
         
         // recorro el dadamodel
-        while(itRows.hasNext()){
+        while(itRows.hasNext()) {
             Programa campo = (Programa)itRows.next();
-            if(campo.getFechaFinVigencia().after(fDespuesDe) && campo.getFechaFinVigencia().before(fAntesDe)){
-                campos.add(campo);
-            }          
-        }        
+            if(fDespuesDe != null && fAntesDe != null){
+                if(campo.getFechaFinVigencia().after(fDespuesDe) && campo.getFechaFinVigencia().before(fAntesDe)){
+                    campos.add(campo);
+                }
+            }else if(fDespuesDe == null && fAntesDe != null){
+                if(campo.getFechaFinVigencia().before(fAntesDe)){
+                    campos.add(campo);
+                }
+            }else if(fDespuesDe != null && fAntesDe == null){
+                if(campo.getFechaFinVigencia().after(fDespuesDe)){
+                    campos.add(campo);
+                }
+            }
+        }                
+
         items = null;
         items = new ListDataModel(campos); 
     }     
